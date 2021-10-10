@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin;
 
 import AnonymousRand.ExtremeDifficultyPlugin.listeners.EntityDamageListeners;
 import AnonymousRand.ExtremeDifficultyPlugin.listeners.EntitySpawnListeners;
+import AnonymousRand.ExtremeDifficultyPlugin.listeners.PlayerMovementListeners;
 import AnonymousRand.ExtremeDifficultyPlugin.listeners.ProjectileListeners;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +17,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntitySpawnListeners(this), this); //registers the listeners
         getServer().getPluginManager().registerEvents(new EntityDamageListeners(this), this);
         getServer().getPluginManager().registerEvents(new ProjectileListeners(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerMovementListeners(), this);
     }
 
     @Override

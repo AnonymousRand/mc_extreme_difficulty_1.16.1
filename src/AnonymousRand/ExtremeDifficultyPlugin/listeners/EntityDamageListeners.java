@@ -14,7 +14,7 @@ public class EntityDamageListeners implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
+    public void EntityDamage(EntityDamageEvent event) {
         switch (event.getEntityType()) {
             case SKELETON: //skeletons are immune to fire damage
                 event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
