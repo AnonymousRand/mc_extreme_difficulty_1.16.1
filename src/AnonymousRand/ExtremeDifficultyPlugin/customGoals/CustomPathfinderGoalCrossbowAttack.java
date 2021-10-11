@@ -1,0 +1,2 @@
+package AnonymousRand.ExtremeDifficultyPlugin.customGoals;public class CustomPathfinderGoalCrossbowAttack {
+}
