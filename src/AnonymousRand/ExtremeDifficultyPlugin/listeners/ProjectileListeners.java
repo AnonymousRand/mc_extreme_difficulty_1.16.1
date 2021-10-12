@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,10 +32,8 @@ public class ProjectileListeners implements Listener {
     public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
         if (event.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow)event.getEntity();
-            Vector v = arrow.getVelocity();
             Location loc = arrow.getLocation();
-            byte pierce = (byte)arrow.getPierceLevel();
-            CustomEntityArrow newArrow = new CustomEntityArrow(((CraftWorld)arrow.getWorld()).getHandle(), v, pierce);
+            CustomEntityArrow newArrow = new CustomEntityArrow(((CraftWorld)arrow.getWorld()).getHandle(), arrow.getVelocity(), (byte)arrow.getPierceLevel(), arrow.getShooter());
             newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
             ((CraftWorld)arrow.getWorld()).getHandle().addEntity(newArrow);
             arrow.remove();
@@ -42,9 +41,9 @@ public class ProjectileListeners implements Listener {
     }
 
     @EventHandler
-    public void projectileHit(ProjectileHitEvent event) { //arrows when shot by an entity other than a player has a 20% chance to destory the block that it hits without dropping anything
-        if (event.getHitBlock() != null && event.getEntity() instanceof AbstractArrow) {
-            if (event.getHitBlock().getType() != Material.BEDROCK && event.getHitBlock().getType() != Material.END_GATEWAY && event.getHitBlock().getType() != Material.END_PORTAL && event.getHitBlock().getType() != Material.END_PORTAL_FRAME && event.getHitBlock().getType() != Material.NETHER_PORTAL && event.getHitBlock().getType() != Material.OBSIDIAN && event.getHitBlock().getType() != Material.CRYING_OBSIDIAN && event.getHitBlock().getType() != Material.COMMAND_BLOCK  && event.getHitBlock().getType() != Material.COMMAND_BLOCK_MINECART && event.getHitBlock().getType() != Material.STRUCTURE_BLOCK && event.getHitBlock().getType() != Material.JIGSAW && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.END_STONE) { //as long as it isn't one of these blocks
+    public void projectileHit(ProjectileHitEvent event) { //arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything
+        if (event.getHitBlock() != null && event.getEntity() instanceof AbstractArrow && !(event.getEntity().getShooter() instanceof CraftPlayer)) {
+            if (event.getHitBlock().getType() != Material.BEDROCK && event.getHitBlock().getType() != Material.END_GATEWAY && event.getHitBlock().getType() != Material.END_PORTAL && event.getHitBlock().getType() != Material.END_PORTAL_FRAME && event.getHitBlock().getType() != Material.NETHER_PORTAL && event.getHitBlock().getType() != Material.OBSIDIAN && event.getHitBlock().getType() != Material.CRYING_OBSIDIAN && event.getHitBlock().getType() != Material.COMMAND_BLOCK  && event.getHitBlock().getType() != Material.COMMAND_BLOCK_MINECART && event.getHitBlock().getType() != Material.STRUCTURE_BLOCK && event.getHitBlock().getType() != Material.JIGSAW && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.END_STONE && event.getHitBlock().getType() != Material.SPAWNER) { //as long as it isn't one of these blocks
                 Random rand = new Random();
                 if (rand.nextDouble() <= 0.2) {
                     event.getHitBlock().setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot {
+public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot { //todo: apply to all applicable mobs
 
     private final T a;
     private final double b;

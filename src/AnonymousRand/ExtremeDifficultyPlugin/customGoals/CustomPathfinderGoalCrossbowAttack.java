@@ -4,7 +4,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack {
+public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack { //todo: apply to all applicable mobs
 
     private final T b;
     private CustomPathfinderGoalCrossbowAttack.State c;
