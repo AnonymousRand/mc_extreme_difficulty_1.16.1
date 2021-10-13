@@ -17,6 +17,8 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerMovementAndInteractionListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);
+        getServer().getPluginManager().registerEvents(new SleepListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathListeners(this), this);
     }
 
     @Override

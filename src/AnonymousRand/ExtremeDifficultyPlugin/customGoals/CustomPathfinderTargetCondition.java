@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
+public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { //used to be called EntityPredicate in Bukkit/non-Spigot source code 1.16.1
     public static final CustomPathfinderTargetCondition a = new CustomPathfinderTargetCondition();
     private double b = -1.0D;
     private boolean c;

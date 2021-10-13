@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -98,10 +99,8 @@ public class PlayerMovementAndInteractionListeners implements Listener {
     }
 
     @EventHandler
-    public void playerInteract(PlayerInteractEvent event) {
-        org.bukkit.inventory.ItemStack i = CraftItemStack.asBukkitCopy(new net.minecraft.server.v1_16_R1.ItemStack(Items.BUCKET)); //convert nms itemstack to craftitemstack which is a subclass of bukkit itemstack
-
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && Objects.equals(event.getItem(), i) && this.fallHeight >= 2.0) { //when the player right clicks onto a block and after the right click they have an empty bucket in their hand and they fell for more than 2 blocks and haven't hit the ground yet (so if they MLG water'ed)
+    public void playerBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (this.fallHeight >= 2.0) { //when the player right clicks onto a block and after the right click they have an empty bucket in their hand and they fell for more than 2 blocks and haven't hit the ground yet (so if they MLG water'ed)
             double damage = 0.0;
             damage += Math.ceil(this.fallHeight) * 0.2;    //assume that the player right clicks the water about 2 blocks before hitting ground (so it is -0 instead of -2); do 20% of the damage they would have taken if they hadn't landed the MLG (basically so water only reduces 80% of fall damage)
             event.getPlayer().damage(damage);
