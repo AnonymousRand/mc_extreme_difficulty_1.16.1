@@ -17,7 +17,7 @@ public class CoordsFromHypotenuse {
         double x = Math.floor(Math.abs(hypotenuse * Math.cos(angle)));
         double z = Math.floor(Math.abs(hypotenuse * Math.sin(angle)));
 
-        if (angle >= 0 && angle < 90) { //quadrant 1,  towards neg pos
+        if (angle >= 0 && angle < 90) { //quadrant 1, towards neg pos
             return new BlockPosition(origin.getX() - x, y, origin.getZ() + z);
         } else if (angle >= 90 && angle < 180) { //quadrant 2, neg neg
             return new BlockPosition(origin.getX() - x, y, origin.getZ() - z);
