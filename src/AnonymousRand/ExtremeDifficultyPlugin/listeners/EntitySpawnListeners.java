@@ -16,12 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class EntitySpawnListeners implements Listener {
 
-    public JavaPlugin plugin;
-
-    public EntitySpawnListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
         Location loc = event.getEntity().getLocation();

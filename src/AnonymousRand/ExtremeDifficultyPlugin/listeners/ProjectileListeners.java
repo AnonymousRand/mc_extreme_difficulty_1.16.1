@@ -22,11 +22,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class ProjectileListeners implements Listener {
-    public JavaPlugin plugin;
-
-    public ProjectileListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
@@ -43,7 +38,7 @@ public class ProjectileListeners implements Listener {
     @EventHandler
     public void projectileHit(ProjectileHitEvent event) { //arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything
         if (event.getHitBlock() != null && event.getEntity() instanceof AbstractArrow && !(event.getEntity().getShooter() instanceof CraftPlayer)) {
-            if (event.getHitBlock().getType() != Material.BEDROCK && event.getHitBlock().getType() != Material.END_GATEWAY && event.getHitBlock().getType() != Material.END_PORTAL && event.getHitBlock().getType() != Material.END_PORTAL_FRAME && event.getHitBlock().getType() != Material.NETHER_PORTAL && event.getHitBlock().getType() != Material.OBSIDIAN && event.getHitBlock().getType() != Material.CRYING_OBSIDIAN && event.getHitBlock().getType() != Material.COMMAND_BLOCK  && event.getHitBlock().getType() != Material.COMMAND_BLOCK_MINECART && event.getHitBlock().getType() != Material.STRUCTURE_BLOCK && event.getHitBlock().getType() != Material.JIGSAW && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.END_STONE && event.getHitBlock().getType() != Material.SPAWNER) { //as long as it isn't one of these blocks
+            if (event.getHitBlock().getType() != Material.BEDROCK && event.getHitBlock().getType() != Material.END_GATEWAY && event.getHitBlock().getType() != Material.END_PORTAL && event.getHitBlock().getType() != Material.END_PORTAL_FRAME && event.getHitBlock().getType() != Material.NETHER_PORTAL && event.getHitBlock().getType() != Material.OBSIDIAN && event.getHitBlock().getType() != Material.CRYING_OBSIDIAN && event.getHitBlock().getType() != Material.COMMAND_BLOCK  && event.getHitBlock().getType() != Material.COMMAND_BLOCK_MINECART && event.getHitBlock().getType() != Material.STRUCTURE_BLOCK && event.getHitBlock().getType() != Material.JIGSAW && event.getHitBlock().getType() != Material.BARRIER && event.getHitBlock().getType() != Material.END_STONE && event.getHitBlock().getType() != Material.SPAWNER) { //as long as it isn't one of these blocks
                 Random rand = new Random();
                 if (rand.nextDouble() <= 0.2) {
                     event.getHitBlock().setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping

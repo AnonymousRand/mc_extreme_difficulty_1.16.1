@@ -12,11 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import static org.bukkit.entity.EntityType.*;
 
 public class EntityDamageListeners implements Listener {
-    public JavaPlugin plugin;
-
-    public EntityDamageListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void EntityDamage(EntityDamageEvent event) {

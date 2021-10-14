@@ -2,9 +2,14 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalBowShoot;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 
 import java.util.Random;
 
@@ -12,11 +17,13 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 15.0F); //custom goal that continues to shoot arrows even when line of sight is broken (provided the mob has already recognized a target via nearestAttackableTarget goal)
     Random rand = new Random();
+    private int teleportToPlayer;
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.b.a(0); //reduced attack cooldown
+        this.teleportToPlayer = 0;
     }
 
     @Override
@@ -62,8 +69,84 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
     }
 
+    private CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse(); //todo: copy all from this point onwards to all applicable mobs
+
     @Override
-    public void checkDespawn() { //todo: copy to all applicable mobs
+    public void tick() {
+        super.tick();
+        
+        if (this.getGoalTarget() == null) { //does not see a target within follow range
+            this.teleportToPlayer++;
+        } else {
+            this.teleportToPlayer = 0;
+        }
+
+        if (this.teleportToPlayer > 300) { //has a 1% chance every tick to teleport to within 10-follow_range blocks of nearest player if it has not seen a player target within follow range for 15 seconds
+            if (rand.nextDouble() < 0.01) {
+                double hypo = rand.nextDouble() * (this.b(GenericAttributes.FOLLOW_RANGE) - 10.0) + 10.0;
+                EntityPlayer player = world.a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+
+                if (player != null) {
+                    BlockPosition pos = coordsFromHypotenuse.RandomCoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY() + 2, player.locZ()), hypo, this.locY(), 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+                    BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
+
+                    if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
+                        this.teleportTo(pos2);
+                    } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
+                        Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
+                        Bukkit.broadcastMessage(loc.toString());
+
+                        double initX = loc.getX();
+                        double initY = loc.getY();
+                        double initZ = loc.getZ();
+
+                        for (int x = -2; x < 3; x++) {
+                            for (int y = -2; y < 3; y++) {
+                                for (int z = -2; z < 3; z++) {
+                                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                                        loc.setX(initX + x);
+                                        loc.setY(initY + y);
+                                        loc.setZ(initZ + z);
+                                        loc.getBlock().setType(org.bukkit.Material.AIR);
+                                    }
+                                }
+                            }
+                        }
+
+                        this.teleportTo(pos);
+                    }
+
+                    this.teleportToPlayer = 0;
+                }
+            }
+        }
+    }
+
+    private boolean teleportTo(BlockPosition pos) {
+        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+
+        while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
+            blockposition_mutableblockposition.c(EnumDirection.DOWN);
+        }
+
+        IBlockData iblockdata = this.world.getType(blockposition_mutableblockposition);
+
+        if (iblockdata.getMaterial().isSolid()) {
+            boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
+
+            if (flag2 && !this.isSilent()) {
+                this.world.playSound((EntityHuman) null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+
+            return flag2;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
