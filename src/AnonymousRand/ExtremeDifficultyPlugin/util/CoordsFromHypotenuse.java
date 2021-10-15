@@ -20,7 +20,11 @@ public class CoordsFromHypotenuse {
         double x = Math.floor(Math.abs(hypotenuse * Math.cos(angle)));
         double z = Math.floor(Math.abs(hypotenuse * Math.sin(angle)));
 
+<<<<<<< HEAD
         if (angle >= 0 && angle < PI / 2) { //quadrant 1, towards neg pos
+=======
+        if (angle >= 0 && angle < 90) { //quadrant 1, towards neg pos
+>>>>>>> 66060874579d61f4bef946b51f6a745f5a8132b3
             return new BlockPosition(origin.getX() - x, y, origin.getZ() + z);
         } else if (angle >= PI / 2 && angle < PI) { //quadrant 2, neg neg
             return new BlockPosition(origin.getX() - x, y, origin.getZ() - z);
