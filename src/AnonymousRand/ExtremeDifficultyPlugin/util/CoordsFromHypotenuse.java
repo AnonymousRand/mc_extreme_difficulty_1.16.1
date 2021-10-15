@@ -1,30 +1,52 @@
 package AnonymousRand.ExtremeDifficultyPlugin.util;
 import net.minecraft.server.v1_16_R1.BlockPosition;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
 
-import java.math.*;
 import java.util.Random;
+
+import static java.lang.Math.PI;
 
 public class CoordsFromHypotenuse {
 
-    Random random = new Random();
+    Random rand = new Random();
 
     public BlockPosition RandomCoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(random.nextDouble() * 360);
+            angle = Math.toRadians(rand.nextDouble() * 360);
         }
 
         double x = Math.floor(Math.abs(hypotenuse * Math.cos(angle)));
         double z = Math.floor(Math.abs(hypotenuse * Math.sin(angle)));
 
-        if (angle >= 0 && angle < 90) { //quadrant 1,  towards neg pos
+        if (angle >= 0 && angle < PI / 2) { //quadrant 1, towards neg pos
             return new BlockPosition(origin.getX() - x, y, origin.getZ() + z);
-        } else if (angle >= 90 && angle < 180) { //quadrant 2, neg neg
+        } else if (angle >= PI / 2 && angle < PI) { //quadrant 2, neg neg
             return new BlockPosition(origin.getX() - x, y, origin.getZ() - z);
-        } else if (angle >= 180 && angle < 270) { //quadrant 3, pos neg
+        } else if (angle >= PI && angle < 3 * PI / 2) { //quadrant 3, pos neg
             return new BlockPosition(origin.getX() + x, y, origin.getZ() - z);
         } else { //quadrant 4, pos pos
             return new BlockPosition(origin.getX() + x, y, origin.getZ() + z);
+        }
+    }
+
+    public Location RandomCoordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
+        if (angle == 361.0) { //random angle
+            angle = Math.toRadians(rand.nextDouble() * 360);
+        }
+
+        double x = Math.abs(hypotenuse * Math.cos(angle));
+        double z = Math.abs(hypotenuse * Math.sin(angle));
+
+        if (angle >= 0 && angle < PI / 2) {
+            return new Location(world, origin.getX() - x, y, origin.getZ() + z);
+        } else if (angle >= PI / 2 && angle < PI) {
+            return new Location(world, origin.getX() - x, y, origin.getZ() - z);
+        } else if (angle >= PI && angle < 3 * PI / 2) {
+            return new Location(world, origin.getX() + x, y, origin.getZ() - z);
+        } else {
+            return new Location(world, origin.getX() + x, y, origin.getZ() + z);
         }
     }
 }

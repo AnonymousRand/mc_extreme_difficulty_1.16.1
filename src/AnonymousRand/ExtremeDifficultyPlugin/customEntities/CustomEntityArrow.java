@@ -3,8 +3,6 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -26,9 +24,14 @@ public class CustomEntityArrow extends EntityArrow {
     @Override
     protected void h() {
         ++this.despawnCounter;
-        if (this.despawnCounter >= 60) { //arrows despawn after 3 seconds to reduce lag and make them harder to pick up
+        if (this.despawnCounter >= 50) { //arrows despawn after 2.5 seconds to reduce lag and make them harder to pick up
             this.die();
         }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
     }
 
     @Override
