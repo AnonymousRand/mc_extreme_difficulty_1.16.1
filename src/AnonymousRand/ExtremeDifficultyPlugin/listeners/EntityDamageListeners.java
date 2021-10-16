@@ -15,14 +15,14 @@ public class EntityDamageListeners implements Listener {
 
     @EventHandler
     public void EntityDamage(EntityDamageEvent event) {
-        if (event.getEntityType() != PLAYER && event.getEntityType() != ENDER_DRAGON && event.getEntityType() != WITHER) {
-            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || event.getCause().equals(AREA_EFFECT_CLOUD)) {
-                event.setDamage(event.getDamage() * 0.066666666666666666); //all non-player mobs take 14/15 less damage from these sources
+        if (event.getEntityType() != PLAYER && event.getEntityType() != ENDER_DRAGON && event.getEntityType() != WITHER) {  /**all non-player mobs take 15/16 less damage from these sources*/
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || event.getCause().equals(EntityDamageEvent.DamageCause.MAGIC)) {
+                event.setDamage(event.getDamage() * 0.0625);
             }
         }
 
-        if (event.getEntityType() == ENDER_DRAGON || event.getEntityType() == WITHER) {
-            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || event.getCause().equals(AREA_EFFECT_CLOUD)) {
+        if (event.getEntityType() == ENDER_DRAGON || event.getEntityType() == WITHER) { /**ender dragon and wither heal from these damage sources*/
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || event.getCause().equals(EntityDamageEvent.DamageCause.MAGIC)) {
                 ((LivingEntity)event.getEntity()).setMaxHealth(((LivingEntity)event.getEntity()).getMaxHealth() + event.getDamage() * 0.25); //increase max health by 25% of the damage dealt
                 ((LivingEntity)event.getEntity()).setHealth(((LivingEntity)event.getEntity()).getHealth() + event.getDamage() * 0.25); //ender dragon and wither heal 25%
                 event.setDamage(0.0); //no damage
@@ -30,9 +30,9 @@ public class EntityDamageListeners implements Listener {
         }
 
         switch (event.getEntityType()) {
-            case SKELETON: //skeletons are immune to fire damage
+            case SKELETON: /**skeletons are immune to fire damage*/
                 event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
-            case ZOMBIE: //zombies are immune to fire damage
+            case ZOMBIE: /**zombies are immune to fire damage*/
                 event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
         }
     }

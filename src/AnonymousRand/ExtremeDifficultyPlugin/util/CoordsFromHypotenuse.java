@@ -12,7 +12,7 @@ public class CoordsFromHypotenuse {
 
     Random rand = new Random();
 
-    public BlockPosition RandomCoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
+    public BlockPosition CoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(rand.nextDouble() * 360);
         }
@@ -31,9 +31,11 @@ public class CoordsFromHypotenuse {
         }
     }
 
-    public Location RandomCoordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
+    public Location CoordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(rand.nextDouble() * 360);
+        } else {
+            angle = Math.toRadians(angle);
         }
 
         double x = Math.abs(hypotenuse * Math.cos(angle));

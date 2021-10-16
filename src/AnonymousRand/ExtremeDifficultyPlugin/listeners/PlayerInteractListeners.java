@@ -1,6 +1,5 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLargeFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityPiglin;
 import net.minecraft.server.v1_16_R1.EnumItemSlot;
 import net.minecraft.server.v1_16_R1.ItemStack;
@@ -9,15 +8,11 @@ import net.minecraft.server.v1_16_R1.PiglinAI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArrow;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Random;
