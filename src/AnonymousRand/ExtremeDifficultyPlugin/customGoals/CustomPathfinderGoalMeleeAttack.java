@@ -1,19 +1,22 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack { //todo: apply to all applicable mobs
+public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
     protected final EntityCreature a;
     private final double b;
     private final boolean c;
+    private PathEntity d;
     private double e;
     private double f;
     private double g;
     private int h;
     private int i;
+    private long k;
 
     public CustomPathfinderGoalMeleeAttack(EntityCreature entitycreature, double d0, boolean flag) {
         super(entitycreature, d0, flag);
@@ -25,6 +28,11 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     @Override
     public void e() {
         EntityLiving entityliving = this.a.getGoalTarget();
+
+        if (entityliving == null) {
+            Bukkit.broadcastMessage("no target");
+            return;
+        }
 
         this.a.getControllerLook().a(entityliving, 30.0F, 30.0F);
         double d0 = this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());

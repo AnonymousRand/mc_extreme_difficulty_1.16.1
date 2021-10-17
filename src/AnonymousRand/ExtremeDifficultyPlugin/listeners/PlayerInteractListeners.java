@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
 
-    Random rand = new Random();
+    protected Random rand = new Random();
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {

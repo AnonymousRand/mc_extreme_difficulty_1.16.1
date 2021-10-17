@@ -16,7 +16,7 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
         Location loc = event.getEntity().getLocation();
 
-        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze ||((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze ||((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
             switch (event.getEntityType()) {
                 case BEE:
                     Bee bee = (Bee)event.getEntity();
@@ -45,6 +45,13 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
                     skeleton.remove();
+                    break;
+                case SPIDER:
+                    Spider spider = (Spider)event.getEntity();
+                    CustomEntitySpider newSpider = new CustomEntitySpider(((CraftWorld)spider.getWorld()).getHandle());
+                    newSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)spider.getWorld()).getHandle().addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    spider.remove();
                     break;
                 case ZOMBIE:
                     Zombie zombie = (Zombie)event.getEntity();

@@ -1,7 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
@@ -15,9 +14,7 @@ import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton {
 
-    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 15.0F); /**custom goal that continues to shoot arrows even when line of sight is broken (provided the mob has already recognized a target via nearestAttackableTarget goal)*/
-    Random rand = new Random();
-    private int teleportToPlayer;
+    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 15.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
@@ -31,7 +28,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**only retaliates against players*/
+        this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, new Class[0]));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityIronGolem.class, false)); /**false for flag (shouldCheckSight) doesn't seem to affect anything, but keeping it false just in case*/
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
@@ -39,7 +36,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public void a(EntityLiving entityliving, float f){
-        for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
+        for (int i = 0; i < 60; i++) { /**shoots 60 arrows at a time with increased inaccuracy to seem like a cone*/
             ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
             EntityArrow entityarrow = this.b(itemstack, f);
             double d0 = entityliving.locX() - this.locX();
@@ -70,12 +67,18 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
+    protected Random rand = new Random();
+    private int teleportToPlayer;
     private CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
     public void tick() {
         super.tick();
-        
+
+        if (this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).getValue() < 24.0) { /**skeletons have 24 block detection range*/
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(24.0);
+        }
+
         if (this.getGoalTarget() == null) { //does not see a target within follow range
             this.teleportToPlayer++;
         } else {

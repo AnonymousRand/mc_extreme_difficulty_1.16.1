@@ -1,7 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityArrowExploding;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLargeFireball;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrowExploding;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
@@ -26,7 +26,7 @@ import static org.bukkit.entity.EntityType.VILLAGER;
 
 public class RaidAndVillageListeners implements Listener {
 
-    Random rand = new Random();
+    protected Random rand = new Random();
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {

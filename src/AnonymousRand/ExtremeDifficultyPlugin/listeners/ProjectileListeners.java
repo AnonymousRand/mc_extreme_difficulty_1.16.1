@@ -1,10 +1,8 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityArrow;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityArrowExploding;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLargeFireball;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrow;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrowExploding;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;

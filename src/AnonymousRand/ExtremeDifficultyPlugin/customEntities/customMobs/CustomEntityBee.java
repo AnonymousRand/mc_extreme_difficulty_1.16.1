@@ -1,14 +1,10 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.*;
-import java.nio.Buffer;
 
 public class CustomEntityBee extends EntityBee {
 
@@ -17,12 +13,6 @@ public class CustomEntityBee extends EntityBee {
         for (Field f : EntityBee.class.getDeclaredFields()) {
             f.setAccessible(true);
         }
-    }
-
-    @Override
-    protected void initPathfinder() {
-        super.initPathfinder();
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**only retaliates against players*/
     }
 
     @Override

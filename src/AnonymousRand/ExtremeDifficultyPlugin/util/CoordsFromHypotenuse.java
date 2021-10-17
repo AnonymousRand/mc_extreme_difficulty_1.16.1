@@ -10,7 +10,7 @@ import static java.lang.Math.PI;
 
 public class CoordsFromHypotenuse {
 
-    Random rand = new Random();
+    protected Random rand = new Random();
 
     public BlockPosition CoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle

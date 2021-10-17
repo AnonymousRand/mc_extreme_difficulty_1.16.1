@@ -2,7 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
 import net.minecraft.server.v1_16_R1.EntityZombie;
 
-public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeAttack { //todo: apply to all applicable mobs
+public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeAttack {
 
     private final EntityZombie b;
 
