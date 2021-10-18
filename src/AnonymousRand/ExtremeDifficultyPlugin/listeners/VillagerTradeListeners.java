@@ -22,7 +22,7 @@ public class VillagerTradeListeners implements Listener {
 
     @EventHandler
     public void openVillagerInventory(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() instanceof AbstractVillager) { //replaces villager trades with these troll trades
+        if (event.getInventory().getHolder() instanceof AbstractVillager) { /**replaces villager trades with these troll trades*/
             ArrayList<MerchantRecipe> trades = new ArrayList<>();
 
             MerchantRecipe recipe = new MerchantRecipe(new ItemStack(Material.POISONOUS_POTATO), 2);
@@ -54,7 +54,7 @@ public class VillagerTradeListeners implements Listener {
             ((AbstractVillager)event.getInventory().getHolder()).setRecipes(trades);
         }
 
-        if (event.getInventory().getHolder() instanceof WanderingTrader) { //replaces wandering trader trades
+        if (event.getInventory().getHolder() instanceof WanderingTrader) { /**replaces wandering trader trades*/
             ArrayList<MerchantRecipe> trades = new ArrayList<>();
 
             MerchantRecipe recipe = new MerchantRecipe(new ItemStack(Material.AIR), 1);

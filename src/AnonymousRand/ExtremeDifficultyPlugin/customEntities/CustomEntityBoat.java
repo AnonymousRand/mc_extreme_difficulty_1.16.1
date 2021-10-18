@@ -15,6 +15,6 @@ public class CustomEntityBoat extends EntityBoat {
 
     @Override
     protected boolean q(Entity entity) {
-        return this.getPassengers().size() < 2 && !this.a((Tag) TagsFluid.WATER) && entity instanceof EntityPlayer; //only players can get in boats (to prevent trapping troublesome mobs like endermen in boats)
+        return this.getPassengers().size() < 2 && !this.a((Tag) TagsFluid.WATER) && entity instanceof EntityPlayer; /**only players can get in boats (to prevent trapping troublesome mobs like endermen in boats)*/
     }
 }

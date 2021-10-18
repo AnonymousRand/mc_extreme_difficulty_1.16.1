@@ -25,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public class PlayerMovementAndFallDamageListeners implements Listener {
+public class PlayerMovementAndFallDamageListeners implements Listener { /**fall damage starts counting at 2 blocks instead of 4 and water only negates 80% of fall damage*/
 
     public double[] arr; //to keep track of fall heights: arr[0] y level of the previous tick, arr[1] is the y level of the current tick
     public double fallHeight;
@@ -39,7 +39,6 @@ public class PlayerMovementAndFallDamageListeners implements Listener {
 
     @EventHandler
     public void playerMove(PlayerMoveEvent event) {
-
         double y = event.getTo().getY(); //gets player's current y level
 
         if (arr[0] == -65.0) {                      //fill up arr[0] first if it hasn't been yet

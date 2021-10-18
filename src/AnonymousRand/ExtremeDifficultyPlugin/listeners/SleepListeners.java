@@ -26,13 +26,13 @@ public class SleepListeners implements Listener {
     }
 
     @EventHandler
-    public void playerBedEnter(PlayerBedEnterEvent event) { //players can't sleep even if there are monsters below it (doesn't count horizontal range; no monster range increased to 30 blocks)
+    public void playerBedEnter(PlayerBedEnterEvent event) { /**players can't sleep even if there are monsters below or above it (doesn't count horizontal range; no monster range increased to 30 blocks)*/
 
         EntityPlayer player = ((CraftPlayer)event.getPlayer()).getHandle();
         World world = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
-        EntityMonster closestMonster = world.a(EntityMonster.class, new CustomPathfinderTargetCondition(), player, player.locX(), player.locY(), player.locZ(), player.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+        EntityMonster closestMonster = world.a(EntityMonster.class, new CustomPathfinderTargetCondition(), player, player.locX(), player.locY(), player.locZ(), player.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest monster within 128 sphere radius of player
 
-        if (world.getMinecraftWorld().isRainingAt(new BlockPosition(player.getPositionVector().getX(), player.getPositionVector().getY(), player.getPositionVector().getZ())) && world.isDay()) { //can't sleep in day thunderstorm anymore
+        if (world.getMinecraftWorld().isRainingAt(new BlockPosition(player.getPositionVector().getX(), player.getPositionVector().getY(), player.getPositionVector().getZ())) && world.isDay()) { /**can't sleep in day thunderstorm anymore*/
             Bukkit.broadcastMessage("The thunder is too loud and you can't fall asleep");
             event.setCancelled(true);
         }

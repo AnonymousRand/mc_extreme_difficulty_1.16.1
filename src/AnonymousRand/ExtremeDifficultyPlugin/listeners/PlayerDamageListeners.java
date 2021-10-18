@@ -59,7 +59,7 @@ public class PlayerDamageListeners implements Listener {
         if (event.getEntityType() == PLAYER) {
             switch (event.getDamager().getType()) {
                 case SPIDER:
-                    ((Player)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /**spiders inflict Slowness 1 for 1.5 seconds on hit*/
+                    ((Player)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**spiders inflict Slowness 1 for 1 second on hit*/
                     break;
             }
         }

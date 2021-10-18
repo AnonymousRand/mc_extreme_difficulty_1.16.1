@@ -41,7 +41,7 @@ public class RaidAndVillageListeners implements Listener {
     }
 
     @EventHandler
-    public void raidFinish(RaidFinishEvent event) {
+    public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends*/
         summonRaidMeteor(event.getWinners());
     }
 
@@ -80,7 +80,7 @@ public class RaidAndVillageListeners implements Listener {
                 CustomEntityLargeFireball meteorFireball = new CustomEntityLargeFireball(EntityTypes.FIREBALL, ((CraftWorld)player.getWorld()).getHandle(), 2, new Vec3D(0.0, -2.9, 0.0), pos.getX(), pos.getY(), pos.getZ());
                 meteorFireball.getWorld().addEntity(meteorFireball);
 
-                //summon wither skulls
+                //todo: summon wither skulls
             }
 
             for (int i = 0; i < 360; i += 3) { //summon a ring of lightning at a 75 block radius

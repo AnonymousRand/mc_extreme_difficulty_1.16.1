@@ -4,7 +4,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack { //todo: apply to all applicable mobs
+public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack {
 
     private final T b;
     private CustomPathfinderGoalCrossbowAttack.State c;
@@ -32,7 +32,7 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
         EntityLiving entityliving = this.b.getGoalTarget();
 
         if (entityliving != null) {
-            boolean flag = true; //breaking line of sight does not stop the mob from attacking
+            boolean flag = true; /**breaking line of sight does not stop the mob from attacking*/
             boolean flag1 = this.f > 0;
 
             if (flag != flag1) {

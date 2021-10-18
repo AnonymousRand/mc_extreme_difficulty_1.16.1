@@ -8,6 +8,7 @@ import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.Random;
 
@@ -27,15 +28,35 @@ public class CustomEntitySpider extends EntitySpider {
     }
 
     protected Random rand = new Random();
-    private int teleportToPlayer;
-    private CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
+    protected int teleportToPlayer;
+    protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() < 0.51) { /**skeletons have +70% movement speed*/
+        if (this.ticksLived == 10) { /**spiders have +70% movement speed*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
+        }
+
+        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**spiders lay down cobwebs that last 10 seconds on itself as long as it is inside an air block*/ //cobwebs also indirectly prevent players from shooting arrows onto the spider as the arrows are blocked by the web hitbox
+            thisLoc.getBlock().setType(org.bukkit.Material.COBWEB);
+            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 10 seconds
+        }
+
+        if (this.getHealth() <= 0) {
+            for (int x = -2; x <= 2; x++) {
+                for (int y = -2; y <= 2; y++) {
+                    for (int z = -2; z <= 2; z++) {
+                        thisLoc = new Location(this.getWorld().getWorld(), Math.floor(this.locX()) + x, Math.floor(this.locY()) + y, Math.floor(this.locZ()) + z);
+                        if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**spiders lay down cobwebs that last 10 seconds when it dies in a 5 by 5 cube around itself*/
+                            thisLoc.getBlock().setType(org.bukkit.Material.COBWEB);
+                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 10 seconds
+                        }
+                    }
+                }
+            }
         }
 
         if (this.getGoalTarget() == null) { //does not see a target within follow range
@@ -57,7 +78,6 @@ public class CustomEntitySpider extends EntitySpider {
                         this.teleportTo(pos2);
                     } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
                         Location loc = new Location(this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
-                        Bukkit.broadcastMessage(loc.toString());
 
                         double initX = loc.getX();
                         double initY = loc.getY();

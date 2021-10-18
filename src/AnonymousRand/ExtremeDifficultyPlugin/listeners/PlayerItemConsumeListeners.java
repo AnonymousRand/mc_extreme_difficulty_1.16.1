@@ -9,7 +9,7 @@ public class PlayerItemConsumeListeners implements Listener {
 
     @EventHandler
     public void playerItemConsume(PlayerItemConsumeEvent event) {
-        if (event.getItem().getType() == Material.POISONOUS_POTATO) { //poisonous potatoes do 1 million damage
+        if (event.getItem().getType() == Material.POISONOUS_POTATO) { /**poisonous potatoes do 1 million damage*/
             event.getPlayer().damage(1000000.0);
         }
     }

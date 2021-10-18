@@ -30,7 +30,6 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         EntityLiving entityliving = this.a.getGoalTarget();
 
         if (entityliving == null) {
-            Bukkit.broadcastMessage("no target");
             return;
         }
 
@@ -38,7 +37,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         double d0 = this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
 
         this.h = Math.max(this.h - 1, 0);
-        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.a.getRandom().nextFloat() < 0.05F)) { //no longer requires line of sight to continue attacking
+        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.a.getRandom().nextFloat() < 0.05F)) { /**no longer requires line of sight to continue attacking*/
             this.e = entityliving.locX();
             this.f = entityliving.locY();
             this.g = entityliving.locZ();

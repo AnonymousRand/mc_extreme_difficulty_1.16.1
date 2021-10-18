@@ -25,15 +25,15 @@ public class CustomEntityBee extends EntityBee {
             this.setGoalTarget(player);
         }
 
-        if (this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() < 0.39) { /**bees move 30% faster*/
+        if (this.ticksLived == 10) { /**bees move 30% faster*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.39);
         }
 
-        if (this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() < 1000.0) { /**bees do 1000 damage*/
+        if (this.ticksLived == 10) { /**bees do 1000 damage*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
         }
 
-        if (this.getAttributeInstance(GenericAttributes.MAX_HEALTH).getValue() > 5.0) { /**bees have 5 health*/
+        if (this.ticksLived == 10) { /**bees have 5 health*/
             this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(5.0);
         }
 

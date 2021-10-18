@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot { //todo: apply to all applicable mobs
+public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot {
 
     private final T a;
     private final double b;
@@ -33,7 +33,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
 
         if (entityliving != null) {
             double d0 = this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
-            boolean flag = true; //breaking line of sight does not stop the mob from attacking
+            boolean flag = true; /***breaking line of sight does not stop the mob from attacking*/
             boolean flag1 = this.f > 0;
 
             if (flag != flag1) {

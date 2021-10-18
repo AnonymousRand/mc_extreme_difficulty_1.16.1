@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 public class DropItemListeners implements Listener {
 
     @EventHandler
-    public void itemSpawn(ItemSpawnEvent event) { //delete bed items immediately when they are spawned (eg. broken or thrown out)
+    public void itemSpawn(ItemSpawnEvent event) { /**delete bed items immediately when they are spawned (eg. broken or thrown out)*/
         if (event.getEntity().getItemStack().getType().toString().contains("_BED")) {
             event.getEntity().remove();
         }

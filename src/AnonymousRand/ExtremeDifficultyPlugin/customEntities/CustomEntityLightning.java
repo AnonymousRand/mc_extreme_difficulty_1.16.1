@@ -24,8 +24,8 @@ public class CustomEntityLightning extends EntityLightning {
 
         if (this.lifeTicks < 0) {
             if (this.remainingBoltAnimationDuration == this.maxLifespan) {
-                this.getWorld().getWorld().createExplosion(this.locX(), this.locY(), this.locZ(), 2.25f, true); //creates explosion power 2.25
-                this.a(20); //ignites lots of blocks on impact
+                this.getWorld().getWorld().createExplosion(this.locX(), this.locY(), this.locZ(), 2.25f, true); /**creates explosion power 2.25*/
+                this.a(20); /**ignites lots of blocks on impact*/
                 --this.remainingBoltAnimationDuration;
             } else if (this.remainingBoltAnimationDuration == 0) {
                 this.die();

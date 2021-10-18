@@ -35,7 +35,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     public void playerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
 
-        collections.put(player, player.getActivePotionEffects()); //negativestatus effects now last after respawning
+        collections.put(player, player.getActivePotionEffects()); /**negative status effects now last after respawning*/
     }
 
     @EventHandler
@@ -54,7 +54,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
 
                 respawnCount.put(player, respawnCount.getOrDefault(player, 0) + 1);
 
-                if (respawnCount.get(player) % 2 == 0) { //create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors
+                if (respawnCount.get(player) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
                     player.getWorld().createExplosion(event.getRespawnLocation(), 1.5f);
                 }
             }

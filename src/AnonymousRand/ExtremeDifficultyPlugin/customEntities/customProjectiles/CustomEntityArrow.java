@@ -24,7 +24,7 @@ public class CustomEntityArrow extends EntityArrow {
     @Override
     protected void h() {
         ++this.despawnCounter;
-        if (this.despawnCounter >= 50) { //arrows despawn after 2.5 seconds to reduce lag and make them harder to pick up
+        if (this.despawnCounter >= 50) { /**arrows despawn after 2.5 seconds to reduce lag and make them harder to pick up*/
             this.die();
         }
     }
@@ -37,6 +37,6 @@ public class CustomEntityArrow extends EntityArrow {
     @Override
     protected ItemStack getItemStack()
     {
-        return new ItemStack(Items.ARROW); //tipped arrows are now nonexistent
+        return new ItemStack(Items.ARROW); /**tipped arrows are now nonexistent*/
     }
 }

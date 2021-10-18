@@ -36,7 +36,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public void a(EntityLiving entityliving, float f){
-        for (int i = 0; i < 60; i++) { /**shoots 60 arrows at a time with increased inaccuracy to seem like a cone*/
+        for (int i = 0; i < 70; i++) { /**shoots 70 arrows at a time with increased inaccuracy to seem like a cone*/
             ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
             EntityArrow entityarrow = this.b(itemstack, f);
             double d0 = entityliving.locX() - this.locX();
@@ -44,7 +44,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             double d2 = entityliving.locZ() - this.locZ();
             double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-            if (rand.nextDouble() <= 0.02) { //2% of arrows are piercing 1
+            if (rand.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                 entityarrow.setPierceLevel((byte)1);
             }
 
@@ -68,15 +68,20 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     //todo: copy all from this point onwards to all applicable mobs
     protected Random rand = new Random();
-    private int teleportToPlayer;
-    private CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
+    protected int teleportToPlayer;
+    protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).getValue() < 24.0) { /**skeletons have 24 block detection range*/
+        if (this.ticksLived == 10) { /**skeletons have 24 block detection range*/
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(24.0);
+        }
+
+        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 
         if (this.getGoalTarget() == null) { //does not see a target within follow range
@@ -98,7 +103,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                         this.teleportTo(pos2);
                     } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
                         Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
-                        Bukkit.broadcastMessage(loc.toString());
 
                         double initX = loc.getX();
                         double initY = loc.getY();

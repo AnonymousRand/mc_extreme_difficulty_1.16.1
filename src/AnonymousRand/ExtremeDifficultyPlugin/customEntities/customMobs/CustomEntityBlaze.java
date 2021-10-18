@@ -32,7 +32,7 @@ public class CustomEntityBlaze extends EntityBlaze {
     @Override
     public void tick() {
         super.tick();
-        if (this.getAttributeInstance(GenericAttributes.MAX_HEALTH).getValue() > 6.0) { /**blazes have 6 health*/
+        if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(6.0);
         }
     }
@@ -50,7 +50,7 @@ public class CustomEntityBlaze extends EntityBlaze {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleeping*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

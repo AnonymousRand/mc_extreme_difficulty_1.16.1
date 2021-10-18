@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends PathfinderGoalNearestAttackableTarget implements CustomIEntityAccess { //todo: apply to all applicable mobs
+public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends PathfinderGoalNearestAttackableTarget implements CustomIEntityAccess {
     protected final Class<T> a;
     protected final int b;
     protected CustomPathfinderTargetCondition d;

@@ -1,6 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalPassiveMeleeAttack;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalZombieAttack;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -12,7 +13,7 @@ public class CustomEntityZombie extends EntityZombie {
 
     @Override
     protected void m() {
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, false));
+        this.goalSelector.a(2, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0D, false)); //todo: revert to zombie attack goal
         this.goalSelector.a(6, new PathfinderGoalMoveThroughVillage(this, 1.0D, true, 4, this::eV));
         this.goalSelector.a(7, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, new Class[0])).a(EntityPigZombie.class));

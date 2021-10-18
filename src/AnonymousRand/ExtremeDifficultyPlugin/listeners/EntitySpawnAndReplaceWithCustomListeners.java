@@ -1,6 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
+import net.minecraft.server.v1_16_R1.AttributeModifier;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -10,19 +11,30 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 
+import java.util.UUID;
+
 public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
 
     @EventHandler
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
         Location loc = event.getEntity().getLocation();
 
-        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze ||((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBat || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCaveSpider ||((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
             switch (event.getEntityType()) {
+                case BAT:
+                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER) { //only if they are spawned in by this event and not by duplicating bats etc
+                        Bat bat = (Bat)event.getEntity();
+                        CustomEntityBat newBat = new CustomEntityBat(((CraftWorld)bat.getWorld()).getHandle()); //bukkit.world vs net.minecraft.server world (spigot nms world): since loc and event listeners are a bukkit thing, it uses the bukkit world, but the customeentityskeleton uses nms. Must cast the bukkit world to craftworld world first, then use craftworld's getHandle() to get an nms world
+                        newBat.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((CraftWorld)bat.getWorld()).getHandle().addEntity(newBat, CreatureSpawnEvent.SpawnReason.NATURAL); //again, must do the casting process as addEntity is only found in an nms world
+                        bat.remove();
+                    }
+                    break;
                 case BEE:
                     Bee bee = (Bee)event.getEntity();
-                    CustomEntityBee newBee = new CustomEntityBee(((CraftWorld)bee.getWorld()).getHandle()); //bukkit.world vs net.minecraft.server world (spigot nms world): since loc and event listeners are a bukkit thing, it uses the bukkit world, but the customeentityskeleton uses nms. Must cast the bukkit world to craftworld world first, then use craftworld's getHandle() to get an nms world
+                    CustomEntityBee newBee = new CustomEntityBee(((CraftWorld)bee.getWorld()).getHandle());
                     newBee.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                    ((CraftWorld)bee.getWorld()).getHandle().addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL); //again, must do the casting process as addEntity is only found in an nms world
+                    ((CraftWorld)bee.getWorld()).getHandle().addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);
                     bee.remove();
                     break;
                 case BLAZE:
@@ -31,6 +43,13 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     newBlaze.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)blaze.getWorld()).getHandle().addEntity(newBlaze, CreatureSpawnEvent.SpawnReason.NATURAL);
                     blaze.remove();
+                    break;
+                case CAVE_SPIDER:
+                    CaveSpider caveSpider = (CaveSpider)event.getEntity();
+                    CustomEntityCaveSpider newCaveSpider = new CustomEntityCaveSpider(((CraftWorld)caveSpider.getWorld()).getHandle());
+                    newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)caveSpider.getWorld()).getHandle().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    caveSpider.remove();
                     break;
                 case HUSK:
                     Husk husk = (Husk)event.getEntity();
