@@ -19,7 +19,19 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
         Location loc = event.getEntity().getLocation();
 
-        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBat || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCaveSpider ||((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider || ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBat ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCaveSpider ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityChicken ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityChickenAggressive ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCow ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCreeper ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+
             switch (event.getEntityType()) {
                 case BAT:
                     if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER) { //only if they are spawned in by this event and not by duplicating bats etc
@@ -50,6 +62,27 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)caveSpider.getWorld()).getHandle().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                     caveSpider.remove();
+                    break;
+                case CHICKEN:
+                    Chicken chicken = (Chicken)event.getEntity();
+                    CustomEntityChicken newChicken = new CustomEntityChicken(((CraftWorld)chicken.getWorld()).getHandle());
+                    newChicken.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)chicken.getWorld()).getHandle().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    chicken.remove();
+                    break;
+                case COW:
+                    Cow cow = (Cow)event.getEntity();
+                    CustomEntityCow newCow = new CustomEntityCow(((CraftWorld)cow.getWorld()).getHandle());
+                    newCow.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)cow.getWorld()).getHandle().addEntity(newCow, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    cow.remove();
+                    break;
+                case CREEPER:
+                    Creeper creeper = (Creeper)event.getEntity();
+                    CustomEntityCreeper newCreeper = new CustomEntityCreeper(((CraftWorld)creeper.getWorld()).getHandle(), 10);
+                    newCreeper.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)creeper.getWorld()).getHandle().addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    creeper.remove();
                     break;
                 case HUSK:
                     Husk husk = (Husk)event.getEntity();

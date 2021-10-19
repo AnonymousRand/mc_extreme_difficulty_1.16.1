@@ -10,6 +10,5 @@ public class CustomEntityHusk extends EntityZombieHusk {
 
     public void tick() {
         super.tick();
-        Bukkit.broadcastMessage("custom husk tick");
     }
 }

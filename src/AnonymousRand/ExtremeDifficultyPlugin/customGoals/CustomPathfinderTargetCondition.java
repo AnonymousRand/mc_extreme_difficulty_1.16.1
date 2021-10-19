@@ -6,6 +6,7 @@ import net.minecraft.server.v1_16_R1.PathfinderTargetCondition;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
 public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { //used to be called EntityPredicate in Bukkit/non-Spigot source code 1.16.1
@@ -18,8 +19,29 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
     private boolean g = true;
     private Predicate<EntityLiving> h;
 
+    Field c1, d1, e1, f1;
+    private PathfinderTargetCondition p = new PathfinderTargetCondition();
+
     public CustomPathfinderTargetCondition a(double d0) {
         this.b = d0;
+
+        try { //get booleans via reflection
+            c1 = PathfinderTargetCondition.class.getDeclaredField("c");
+            c1.setAccessible(true);
+            this.c = c1.getBoolean(p);
+            d1 = PathfinderTargetCondition.class.getDeclaredField("d");
+            d1.setAccessible(true);
+            this.d = d1.getBoolean(p);
+            e1 = PathfinderTargetCondition.class.getDeclaredField("e");
+            e1.setAccessible(true);
+            this.e = e1.getBoolean(p);
+            f1 = PathfinderTargetCondition.class.getDeclaredField("f");
+            f1.setAccessible(true);
+            this.f = f1.getBoolean(p);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         return this;
     }
 

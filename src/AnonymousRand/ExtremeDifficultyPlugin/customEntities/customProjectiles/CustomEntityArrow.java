@@ -30,11 +30,6 @@ public class CustomEntityArrow extends EntityArrow {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
     protected ItemStack getItemStack()
     {
         return new ItemStack(Items.ARROW); /**tipped arrows are now nonexistent*/

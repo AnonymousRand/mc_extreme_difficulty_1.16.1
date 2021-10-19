@@ -41,6 +41,8 @@ public class VillagerTradeListeners implements Listener {
             recipe7.addIngredient(new ItemStack(Material.DRAGON_EGG, 2));
             MerchantRecipe recipe8 = new MerchantRecipe(new ItemStack(Material.POPPY), 1);
             recipe8.addIngredient(new ItemStack(Material.POPPY, 1));
+            MerchantRecipe recipe9 = new MerchantRecipe(new ItemStack(Material.EMERALD), 10000);
+            recipe9.addIngredient(new ItemStack(Material.BLAZE_ROD, 1));
 
             trades.add(recipe);
             trades.add(recipe2);
@@ -50,6 +52,7 @@ public class VillagerTradeListeners implements Listener {
             trades.add(recipe6);
             trades.add(recipe7);
             trades.add(recipe8);
+            trades.add(recipe9);
 
             ((AbstractVillager)event.getInventory().getHolder()).setRecipes(trades);
         }
@@ -73,6 +76,8 @@ public class VillagerTradeListeners implements Listener {
             recipe7.addIngredient(new ItemStack(Material.COMMAND_BLOCK, 1));
             MerchantRecipe recipe8 = new MerchantRecipe(new ItemStack(Material.DEAD_BUSH, 3), 1000);
             recipe8.addIngredient(new ItemStack(Material.END_PORTAL_FRAME, 64));
+            MerchantRecipe recipe9 = new MerchantRecipe(new ItemStack(Material.EMERALD_BLOCK), 10000);
+            recipe9.addIngredient(new ItemStack(Material.ENDER_EYE, 1));
 
             trades.add(recipe);
             trades.add(recipe2);
@@ -82,6 +87,7 @@ public class VillagerTradeListeners implements Listener {
             trades.add(recipe6);
             trades.add(recipe7);
             trades.add(recipe8);
+            trades.add(recipe9);
 
             ((WanderingTrader)event.getInventory().getHolder()).setRecipes(trades);
         }

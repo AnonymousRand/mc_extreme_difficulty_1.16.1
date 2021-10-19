@@ -47,8 +47,6 @@ public class CustomPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal
 
     @Override
     public void e() {
-        if (this.entity.getNavigation().m()) {
-            this.entity.getNavigation().a(targetEntity, this.entity.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue());
-        }
+        this.entity.getNavigation().a(targetEntity, this.entity.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() * 2.0);
     }
 }

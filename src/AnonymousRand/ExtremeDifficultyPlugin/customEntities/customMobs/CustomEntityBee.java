@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Location;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.*;
@@ -25,16 +26,17 @@ public class CustomEntityBee extends EntityBee {
             this.setGoalTarget(player);
         }
 
-        if (this.ticksLived == 10) { /**bees move 30% faster*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.39);
-        }
-
         if (this.ticksLived == 10) { /**bees do 1000 damage*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
         }
 
         if (this.ticksLived == 10) { /**bees have 5 health*/
             this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(5.0);
+        }
+
+        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 
         if (this.hasStung()) {

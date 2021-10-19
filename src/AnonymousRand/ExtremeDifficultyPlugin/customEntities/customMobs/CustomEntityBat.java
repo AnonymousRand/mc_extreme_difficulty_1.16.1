@@ -10,6 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
@@ -22,9 +24,9 @@ public class CustomEntityBat extends EntityBat {
     public CustomEntityBat(World world) { /**bats are now aggressive*/
         super(EntityTypes.BAT, world);
         this.setAsleep(true);
+
         this.goalSelector.a(1, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        //this.goalSelector.a(2, new CustomPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 16.0f)); /**uses the custom goal that makes this mob actually fly towards the player*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -39,7 +41,7 @@ public class CustomEntityBat extends EntityBat {
 
     static {
         try {
-            attributeMap = net.minecraft.server.v1_16_R1.AttributeMapBase.class.getDeclaredField("b");
+            attributeMap = AttributeMapBase.class.getDeclaredField("b");
             attributeMap.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -47,26 +49,33 @@ public class CustomEntityBat extends EntityBat {
     }
 
     public void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
-        net.minecraft.server.v1_16_R1.AttributeMapBase attributeMapBase = ((org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity)entity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<net.minecraft.server.v1_16_R1.AttributeBase, net.minecraft.server.v1_16_R1.AttributeModifiable>)attributeMap.get(attributeMapBase);
-        net.minecraft.server.v1_16_R1.AttributeBase attributeBase = org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap.toMinecraft(attribute);
-        net.minecraft.server.v1_16_R1.AttributeModifiable attributeModifiable = new net.minecraft.server.v1_16_R1.AttributeModifiable(attributeBase, net.minecraft.server.v1_16_R1.AttributeModifiable::getAttribute);
+        AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)attributeMap.get(attributeMapBase);
+        AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
+        AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        if (this.isInvulnerable(damagesource)) {
+            return false;
+        } else {
+            if (!this.world.isClientSide && this.isAsleep()) {
+                this.setAsleep(false);
+            }
 
-        if (this.ticksLived == 10) { /**bats do 1 damage, have 16 blocks of follow range and do even more knockback than a vanilla ravager*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16);
-        }
+            if (damagesource instanceof EntityDamageSource && this.getHealth() - f > 0.0) { /**summons 25 bats when hit and not killed*/
+                EntityBat newBat;
 
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
+                for (int i = 0; i < 25; i++) {
+                    newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
+                    newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.SPAWNER);
+                }
+            }
+
+            return super.damageEntity(damagesource, f);
         }
     }
 
@@ -144,25 +153,65 @@ public class CustomEntityBat extends EntityBat {
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (this.isInvulnerable(damagesource)) {
-            return false;
-        } else {
-            if (!this.world.isClientSide && this.isAsleep()) {
-                this.setAsleep(false);
-            }
+    public void tick() {
+        super.tick();
 
-            if (damagesource instanceof EntityDamageSource && this.getHealth() - f > 0.0) { /**summons 25 bats when hit and not killed*/
-                EntityBat newBat;
+        if (this.ticksLived == 10) { /**bats do 1 damage, have 16 blocks of follow range and do even more knockback than a vanilla ravager*/
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16);
+        }
 
-                for (int i = 0; i < 25; i++) {
-                    newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
-                    newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                    this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.SPAWNER);
+        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
+        }
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+            this.die();
+        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
+            EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
+
+            if (entityhuman != null) {
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                int i = this.getEntityType().e().f();
+                int j = i * i;
+
+                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                }
+
+                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int l = k * k;
+
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                } else if (d0 < (double) l) {
+                    this.ticksFarFromPlayer = 0;
                 }
             }
 
-            return super.damageEntity(damagesource, f);
+        } else {
+            this.ticksFarFromPlayer = 0;
         }
+    }
+
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
     }
 }

@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Location;
 
 import java.util.EnumSet;
 
@@ -34,6 +35,11 @@ public class CustomEntityBlaze extends EntityBlaze {
         super.tick();
         if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(6.0);
+        }
+
+        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

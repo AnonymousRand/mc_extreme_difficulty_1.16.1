@@ -75,8 +75,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**skeletons have 24 block detection range*/
+        if (this.ticksLived == 10) { /**skeletons have 24 block detection range but only 14 health*/
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(24.0);
+            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(14.0);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
@@ -92,40 +93,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
         if (this.teleportToPlayer > 300) { /**has a 1% chance every tick to teleport to within follow_range-2 to follow_range+5 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
             if (rand.nextDouble() < 0.01) {
-                double hypo = rand.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2;
-                EntityPlayer player = world.a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
-
-                if (player != null) {
-                    BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-                    BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
-
-                    if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
-                        this.teleportTo(pos2);
-                    } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
-                        Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
-
-                        double initX = loc.getX();
-                        double initY = loc.getY();
-                        double initZ = loc.getZ();
-
-                        for (int x = -2; x < 3; x++) {
-                            for (int y = -2; y < 3; y++) {
-                                for (int z = -2; z < 3; z++) {
-                                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
-                                        loc.setX(initX + x);
-                                        loc.setY(initY + y);
-                                        loc.setZ(initZ + z);
-                                        loc.getBlock().setType(org.bukkit.Material.AIR);
-                                    }
-                                }
-                            }
-                        }
-
-                        this.teleportTo(pos);
-                    }
-
-                    this.teleportToPlayer = 0;
-                }
+                this.initiateTeleport(rand.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
             }
         }
 
@@ -150,7 +118,48 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
     }
 
-    private boolean teleportTo(BlockPosition pos) {
+    protected void initiateTeleport(double h) {
+        double hypo = h;
+        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+
+        if (player != null) {
+            BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+            BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
+
+            if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
+                this.teleportTo(pos2);
+            } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
+                this.initiateTeleportBreakBlocks(pos);
+            }
+
+            this.teleportToPlayer = 0;
+        }
+    }
+
+    protected void initiateTeleportBreakBlocks(BlockPosition pos) {
+        Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
+
+        double initX = loc.getX();
+        double initY = loc.getY();
+        double initZ = loc.getZ();
+
+        for (int x = -2; x < 3; x++) {
+            for (int y = -2; y < 3; y++) {
+                for (int z = -2; z < 3; z++) {
+                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                        loc.setX(initX + x);
+                        loc.setY(initY + y);
+                        loc.setZ(initZ + z);
+                        loc.getBlock().setType(org.bukkit.Material.AIR);
+                    }
+                }
+            }
+        }
+
+        this.teleportTo(pos);
+    }
+
+    protected boolean teleportTo(BlockPosition pos) {
         BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
         while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
