@@ -1,6 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -170,7 +171,7 @@ public class CustomEntityBlaze extends EntityBlaze {
                                 world.a((EntityHuman) null, 1018, this.a.getChunkCoordinates(), 0);
                             }
 
-                            if (this.a.rapidFireTracker <= 0 && this.a.shotTracker < 50) {
+                            if (this.a.rapidFireTracker <= 0 && this.a.shotTracker < 350) {
                                 if (this.a.shotTracker % 160 == 0 && this.a.shotTracker != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
                                     CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(world, this.a, d1, d2, d3, 2);
                                     entitylargefireball.setPosition(entitylargefireball.locX(), this.a.e(0.5D) + 0.5D, entitylargefireball.locZ());
@@ -182,13 +183,13 @@ public class CustomEntityBlaze extends EntityBlaze {
                                     world.addEntity(entitylargefireball);
                                     this.a.shotTracker++;
                                 } else {
-                                    EntitySmallFireball entitysmallfireball = new EntitySmallFireball(world, this.a, d1, d2, d3); /**blaze has no inaccuracy*/
+                                    CustomEntitySmallFireball entitysmallfireball = new CustomEntitySmallFireball(world, this.a, d1, d2, d3); /**blaze has no inaccuracy*/
                                     entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
                                     world.addEntity(entitysmallfireball);
                                     this.a.shotTracker++;
                                 }
 
-                                if (this.a.shotTracker % 15 == 0) {
+                                if (this.a.shotTracker % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
                                     EntitySmallFireball entitysmallfireball;
 
                                     for (double x = -1.0; x <= 1.0; x += 0.4) {
@@ -203,7 +204,7 @@ public class CustomEntityBlaze extends EntityBlaze {
                                 }
 
                             } else { /**rapid fire phase for 50 shots after 350 normal shots*/
-                                if (this.a.shotTracker >= 50) { /**first entering rapid fire phase*/
+                                if (this.a.shotTracker >= 350) { /**first entering rapid fire phase*/
                                     this.a.shotTracker = 0;
                                     this.a.rapidFireTracker = 50;
                                 } else {
@@ -230,7 +231,7 @@ public class CustomEntityBlaze extends EntityBlaze {
                                                 }
                                             }
                                         }
-                                    } else if (this.a.rapidFireTracker % 17 == 0){
+                                    } else if (this.a.rapidFireTracker % 17 == 0) { /**every 17 shots, the blaze shoots a ring of fireballs*/
                                         for (double x = -1.0; x <= 1.0; x += 0.4) {
                                             for (double y = -1.0; y <= 1.0; y += 0.4) {
                                                 for (double z = -1.0; z <= 1.0; z += 0.4) {

@@ -2,19 +2,22 @@ package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrow;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrowExploding;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.v1_16_R1.entity.*;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
@@ -23,7 +26,7 @@ import static org.bukkit.entity.EntityType.PLAYER;
 public class ProjectileListeners implements Listener {
 
     @EventHandler
-    public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
+    public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows and small fireballs when shot with custom arrows/small fireballs
         if (event.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow)event.getEntity();
             Location loc = arrow.getLocation();
