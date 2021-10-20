@@ -9,6 +9,10 @@ import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalBowShoot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.entity.LivingEntity;
+import org.w3c.dom.Attr;
 
 import java.util.Random;
 
@@ -19,18 +23,16 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-        this.b.a(0); /**reduced attack cooldown*/
         this.teleportToPlayer = 0;
     }
 
     @Override
-    protected void initPathfinder() { /**no longer avoids sun and wolves*/
+    protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, new Class[0]));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
-        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityIronGolem.class, false)); /**false for flag (shouldCheckSight) doesn't seem to affect anything, but keeping it false just in case*/
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
     }
 
@@ -44,7 +46,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             double d2 = entityliving.locZ() - this.locZ();
             double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-            if (rand.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
+            if (random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                 entityarrow.setPierceLevel((byte)1);
             }
 
@@ -56,7 +58,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public void eM() { //"re-registers" the new field "b" since reflection doesn't seem to work
-        if (this.world != null && !this.world.isClientSide) {
+        if (this.world != null && !this.world.isClientSide) { /**skeleton always shoots once per second*/
             this.goalSelector.a((PathfinderGoal) this.b);
             ItemStack itemstack = this.b(ProjectileHelper.a(this, Items.BOW));
 
@@ -67,7 +69,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
-    protected Random rand = new Random();
     protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
@@ -75,9 +76,16 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**skeletons have 24 block detection range but only 14 health*/
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(24.0);
-            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(14.0);
+        if (this.ticksLived == 10) { /**skeletons only have 14 health*/
+            this.setHealth(14.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14.0);
+        }
+
+        if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work)*/
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(22.0, 128.0, 22.0)); //get closes player within bounding box
+            if (player != null && this.getGoalTarget() != null) {
+                this.setGoalTarget(player);
+            }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
@@ -92,14 +100,14 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
 
         if (this.teleportToPlayer > 300) { /**has a 1% chance every tick to teleport to within follow_range-2 to follow_range+5 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (rand.nextDouble() < 0.01) {
-                this.initiateTeleport(rand.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
+            if (random.nextDouble() < 0.01) {
+                this.initiateTeleport(random.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
             }
         }
 
         if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (rand.nextDouble() < 0.0003) {
-                double hypo = rand.nextDouble() * 40;
+            if (random.nextDouble() < 0.0003) {
+                double hypo = random.nextDouble() * 40;
                 BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
 
                 CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
@@ -107,8 +115,8 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 this.world.addEntity(lightning);
             }
         } else {
-            if (rand.nextDouble() < 0.000025) {
-                double hypo = rand.nextDouble() * 50;
+            if (random.nextDouble() < 0.000025) {
+                double hypo = random.nextDouble() * 50;
                 BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
 
                 CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
@@ -120,7 +128,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     protected void initiateTeleport(double h) {
         double hypo = h;
-        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this
 
         if (player != null) {
             BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)

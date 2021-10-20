@@ -17,8 +17,6 @@ import java.util.Random;
 
 public class CustomEntityChickenAggressive extends EntityChicken { //can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
-    protected Random rand = new Random();
-
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
 
@@ -40,7 +38,7 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(1, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.goalSelector.a(2, new CustomPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 16.0f)); /**uses the custom goal that makes this mob actually fly towards the player*/
+        this.goalSelector.a(2, new CustomPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 16.0f)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**targets hostile mobs before players*/
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false)); /**targets players before other non-aggressive chickens*/
@@ -70,10 +68,9 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**aggressive chickens move twice as fast, do 3 damage and have 16 blocks of follow range*/
+        if (this.ticksLived == 10) { /**aggressive chickens move twice as fast and do 3 damage*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

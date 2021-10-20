@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.*;
@@ -22,7 +23,7 @@ public class CustomEntityBee extends EntityBee {
 
         /**always aggro at players within 12 blocks*/
         EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(12.0, 128.0, 12.0));
-        if (player != null) {
+        if (player != null && this.getGoalTarget() != null) {
             this.setGoalTarget(player);
         }
 
@@ -31,7 +32,8 @@ public class CustomEntityBee extends EntityBee {
         }
 
         if (this.ticksLived == 10) { /**bees have 5 health*/
-            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(5.0);
+            this.setHealth(5.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

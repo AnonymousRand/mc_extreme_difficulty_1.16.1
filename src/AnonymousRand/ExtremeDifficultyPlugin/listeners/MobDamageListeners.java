@@ -36,10 +36,15 @@ public class MobDamageListeners implements Listener {
         }
 
         switch (event.getEntityType()) {
-            case SKELETON: /**skeletons are immune to fire damage*/
+            case DROWNED:
+            case SKELETON:
+            case ZOMBIE: /**drowned, skeletons and zombies are immune to fire damage*/
                 event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
-            case ZOMBIE: /**zombies are immune to fire damage*/
-                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
+                break;
+            case ENDERMITE:
+            case SILVERFISH:
+                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE || event.getCause() == EntityDamageEvent.DamageCause.LAVA); /**silverfish and endermites are immune to lava and fire*/
+                break;
         }
     }
 

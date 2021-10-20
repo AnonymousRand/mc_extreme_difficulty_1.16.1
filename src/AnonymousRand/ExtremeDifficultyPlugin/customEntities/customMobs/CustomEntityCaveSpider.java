@@ -9,6 +9,7 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -29,7 +30,6 @@ public class CustomEntityCaveSpider extends EntityCaveSpider {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
-    protected Random rand = new Random();
     protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
@@ -42,7 +42,8 @@ public class CustomEntityCaveSpider extends EntityCaveSpider {
         }
 
         if (this.ticksLived == 10) { /**cave spiders have 10 health*/
-            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(10);
+            this.setHealth(10.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
         }
 
         if (this.ticksLived == 320) { /**duplicates if it has been alive for 16 seconds*/
@@ -64,15 +65,15 @@ public class CustomEntityCaveSpider extends EntityCaveSpider {
         }
 
         if (this.teleportToPlayer > 300) { /**has a 1% chance every tick to teleport to within follow_range-2 to follow_range+5 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (rand.nextDouble() < 0.01) {
-                this.initiateTeleport(rand.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
+            if (random.nextDouble() < 0.01) {
+                this.initiateTeleport(random.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
             }
         }
     }
 
     protected void initiateTeleport(double h) {
         double hypo = h;
-        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this
 
         if (player != null) {
             BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)

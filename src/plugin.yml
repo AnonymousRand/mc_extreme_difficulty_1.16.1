@@ -4,8 +4,3 @@ author: AnonymousRand
 main: AnonymousRand.ExtremeDifficultyPlugin.ExtremeDifficultyPlugin
 api-version: 1.16
 load: STARTUP
-commands:
-  start:
-    description: Good luck
-    usage:
-    permission: yes

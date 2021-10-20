@@ -58,25 +58,17 @@ public class CustomEntityBat extends EntityBat {
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (this.isInvulnerable(damagesource)) {
-            return false;
-        } else {
-            if (!this.world.isClientSide && this.isAsleep()) {
-                this.setAsleep(false);
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /**summons 25 bats when hit by player and not killed*/
+            EntityBat newBat;
+
+            for (int i = 0; i < 25; i++) {
+                newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
+                newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.SPAWNER);
             }
-
-            if (damagesource instanceof EntityDamageSource && this.getHealth() - f > 0.0) { /**summons 25 bats when hit and not killed*/
-                EntityBat newBat;
-
-                for (int i = 0; i < 25; i++) {
-                    newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
-                    newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                    this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.SPAWNER);
-                }
-            }
-
-            return super.damageEntity(damagesource, f);
         }
+
+        return super.damageEntity(damagesource, f);
     }
 
     protected Field c1;
@@ -156,10 +148,9 @@ public class CustomEntityBat extends EntityBat {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**bats do 1 damage, have 16 blocks of follow range and do even more knockback than a vanilla ravager*/
+        if (this.ticksLived == 10) { /**bats do 1 damage and do even more knockback than a vanilla ravager*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

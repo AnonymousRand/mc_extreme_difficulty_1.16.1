@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityCow extends EntityCow {
 
@@ -14,9 +15,10 @@ public class CustomEntityCow extends EntityCow {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**cows move twice as fast and have double health*/
+        if (this.ticksLived == 10) { /**cows move twice as fast and have 20 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
-            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(20.0);
+            this.setHealth(20.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

@@ -20,7 +20,6 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
     private Predicate<EntityLiving> h;
 
     Field c1, d1, e1, f1;
-    private PathfinderTargetCondition p = new PathfinderTargetCondition();
 
     public CustomPathfinderTargetCondition a(double d0) {
         this.b = d0;
@@ -28,16 +27,16 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
         try { //get booleans via reflection
             c1 = PathfinderTargetCondition.class.getDeclaredField("c");
             c1.setAccessible(true);
-            this.c = c1.getBoolean(p);
+            this.c = c1.getBoolean(this);
             d1 = PathfinderTargetCondition.class.getDeclaredField("d");
             d1.setAccessible(true);
-            this.d = d1.getBoolean(p);
+            this.d = d1.getBoolean(this);
             e1 = PathfinderTargetCondition.class.getDeclaredField("e");
             e1.setAccessible(true);
-            this.e = e1.getBoolean(p);
+            this.e = e1.getBoolean(this);
             f1 = PathfinderTargetCondition.class.getDeclaredField("f");
             f1.setAccessible(true);
-            this.f = f1.getBoolean(p);
+            this.f = f1.getBoolean(this);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

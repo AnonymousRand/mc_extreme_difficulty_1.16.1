@@ -8,9 +8,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.util.Random;
 
 public class CustomEntityChicken extends EntityChicken {
-
-    protected Random rand = new Random();
-
+    
     public CustomEntityChicken(World world) {
         super(EntityTypes.CHICKEN, world);
     }
@@ -31,7 +29,7 @@ public class CustomEntityChicken extends EntityChicken {
     }
 
     private void spawnAggressive() {
-        if (rand.nextDouble() < 0.25) { /**25% chance to spawn in as an aggressive chicken instead*/
+        if (random.nextDouble() < 0.25) { /**25% chance to spawn in as an aggressive chicken instead*/
             CustomEntityChickenAggressive newChicken = new CustomEntityChickenAggressive(this.getWorld());
             newChicken.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
             this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);

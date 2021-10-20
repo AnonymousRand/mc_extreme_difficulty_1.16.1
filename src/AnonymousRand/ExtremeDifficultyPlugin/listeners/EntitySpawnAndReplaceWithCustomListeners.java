@@ -1,17 +1,13 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
-import net.minecraft.server.v1_16_R1.AttributeModifier;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-
-import java.util.UUID;
 
 public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
 
@@ -27,8 +23,11 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityChickenAggressive ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCow ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCreeper ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityDrowned ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityEndermite ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton ||
+                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySilverfish ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider ||
                 ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
@@ -79,10 +78,24 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     break;
                 case CREEPER:
                     Creeper creeper = (Creeper)event.getEntity();
-                    CustomEntityCreeper newCreeper = new CustomEntityCreeper(((CraftWorld)creeper.getWorld()).getHandle(), 10);
+                    CustomEntityCreeper newCreeper = new CustomEntityCreeper(((CraftWorld)creeper.getWorld()).getHandle(), 15);
                     newCreeper.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)creeper.getWorld()).getHandle().addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
                     creeper.remove();
+                    break;
+                case DROWNED:
+                    Drowned drowned = (Drowned)event.getEntity();
+                    CustomEntityDrowned newDrowned = new CustomEntityDrowned(((CraftWorld)drowned.getWorld()).getHandle());
+                    newDrowned.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)drowned.getWorld()).getHandle().addEntity(newDrowned, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    drowned.remove();
+                    break;
+                case ENDERMITE:
+                    Endermite endermite = (Endermite)event.getEntity();
+                    CustomEntityEndermite newEndermite = new CustomEntityEndermite(((CraftWorld)endermite.getWorld()).getHandle());
+                    newEndermite.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)endermite.getWorld()).getHandle().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    endermite.remove();
                     break;
                 case HUSK:
                     Husk husk = (Husk)event.getEntity();
@@ -97,6 +110,13 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
                     skeleton.remove();
+                    break;
+                case SILVERFISH:
+                    Silverfish silverfish = (Silverfish)event.getEntity();
+                    CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(((CraftWorld)silverfish.getWorld()).getHandle());
+                    newSilverfish.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)silverfish.getWorld()).getHandle().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    silverfish.remove();
                     break;
                 case SPIDER:
                     Spider spider = (Spider)event.getEntity();

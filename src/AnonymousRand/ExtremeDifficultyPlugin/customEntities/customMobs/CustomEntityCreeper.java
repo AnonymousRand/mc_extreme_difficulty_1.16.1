@@ -4,9 +4,11 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightnin
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
+import io.netty.handler.codec.redis.BulkStringHeaderRedisMessage;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
@@ -34,9 +36,14 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource instanceof EntityDamageSource && this.getHealth() - f > 0.0 && rand.nextDouble() < 0.5) { /**creeper has a 50% chance to duplicate when hit and not killed (double fuse on new creeper)*/
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < 0.5) { /**creeper has a 50% chance to duplicate when hit by player and not killed (extra fuse on new creeper)*/
             CustomEntityCreeper newCreeper = new CustomEntityCreeper(this.getWorld(), 20);
             newCreeper.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+
+            if (this.isPowered()) {
+                newCreeper.setPowered(true);
+            }
+
             this.getWorld().addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
@@ -45,9 +52,16 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     public void explode() {
-        if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 18.0) { //still only explodes within 3 blocks of player
-           super.explode();
-       }
+        if (this.isPowered()) {
+            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0) { //charged creepers still only explode within 5 blocks of player
+                this.world.explode(this, this.locX(), this.locY(), this.locZ(), 15.0f, Explosion.Effect.DESTROY); /**charged creepers explode with power 15*/
+                super.explode();
+            }
+        } else {
+            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 18.0) { //still only explodes within 3 blocks of player
+                super.explode();
+            }
+        }
     }
 
     public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
@@ -58,26 +72,53 @@ public class CustomEntityCreeper extends EntityCreeper {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
-    protected Random rand = new Random();
+    @Override
+    public void onLightningStrike(EntityLightning entitylightning) {
+        super.onLightningStrike(entitylightning);
+        this.maxFuseTicks = 30; /**charged creepers have +60% movement speed and 100 health, but a longer fuse*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
+        this.setHealth(100.0f);
+    }
+
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**creepers have +40% movement speed, 28 block detection range but only 13.4 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(28);
-            this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(13.4);
+        if (this.isPowered() && this.getGoalTarget() != null && !this.isIgnited()) { /**charged creepers detonate starting 5 blocks away*/
+            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0 && this.d(this.getGoalTarget().getPositionVector()) <= 25.0) {
+                this.ignite();
+            }
+        }
 
-            if (rand.nextDouble() < 0.05) { /**upon spawning, creepers have a 5% chance to teleport to 10-15 blocks of player*/
-                this.initiateTeleport(rand.nextDouble() * 5.0 + 10.0, false);
+        if (this.ticksLived == 10) { /**creepers have +40% movement speed but only 13.4 health*/
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
+            this.setHealth(13.4f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.4);
+
+            if (random.nextDouble() < 0.05 && !this.isPowered()) { /**upon spawning, non-charged creepers have a 5% chance to teleport to 10-15 blocks of player*/
+                this.initiateTeleport(random.nextDouble() * 5.0 + 10.0, false);
+            }
+        }
+
+        if (this.ticksLived % 40 == 10) { /**creepers have 28 block detection range (40 for charged creeper; setting attribute doesn't work)*/
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.isPowered() ? 40.0 : 28.0, 128.0, this.isPowered() ? 40.0 : 28.0)); //get closes player within bounding box
+            if (player != null && this.getGoalTarget() != null) {
+                this.setGoalTarget(player);
             }
         }
 
         if (this.getGoalTarget() instanceof EntityPlayer) { //todo: change probability
-            if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && rand.nextDouble() < 0.1) { /**every tick the creeper is more than 2.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
-                this.initiateTeleport(rand.nextDouble() * 3.0 + 12.0, true);
+            if (!this.isPowered()) {
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.1) { /**every tick the creeper is more than 2.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                }
+            } else {
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.1) { /**every tick the charged creeper is more than 8.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
+                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                }
             }
         }
 
@@ -87,8 +128,8 @@ public class CustomEntityCreeper extends EntityCreeper {
         }
 
         if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (rand.nextDouble() < 0.0003) {
-                double hypo = rand.nextDouble() * 40;
+            if (random.nextDouble() < 0.0003) {
+                double hypo = random.nextDouble() * 40;
                 BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
 
                 CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
@@ -96,8 +137,8 @@ public class CustomEntityCreeper extends EntityCreeper {
                 this.world.addEntity(lightning);
             }
         } else {
-            if (rand.nextDouble() < 0.000025) {
-                double hypo = rand.nextDouble() * 50;
+            if (random.nextDouble() < 0.000025) {
+                double hypo = random.nextDouble() * 50;
                 BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
 
                 CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
@@ -111,7 +152,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         EntityPlayer player;
 
         if (!adjustY) { //default teleportation used by most other monsters
-            player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closes monster within 128 sphere radius of player
+            player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this
 
             if (player != null) {
                 BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
@@ -126,13 +167,13 @@ public class CustomEntityCreeper extends EntityCreeper {
         } else { //try to ensure that creeper ends up within detonating range of player
             player = (EntityPlayer)this.getGoalTarget();
 
-            BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+            BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.locY(), 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
             BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
 
             if (pos2 != null) {
-                if (Math.abs(this.getGoalTarget().locY() - pos2.getY()) < 3.0) { //if the teleport allows the creeper to be within 3 y levels of player
+                if (Math.abs(this.getGoalTarget().locY() - pos2.getY()) < (this.isPowered()? 5.0 : 3.0)) { //if the teleport allows the creeper to be within 3 y levels of player (5 for charged creepers)
                     if (pos2.getY() < 128.0) {
-                        this.maxFuseTicks = 25; //increase fuse length by 150% if teleporting very close to player
+                        this.maxFuseTicks = (this.isPowered() ? 30 : 24); //increase fuse length by 60% (0% for charged creepers) if teleporting very close to player
                         this.teleportTo(pos2);
                         return;
                     }
@@ -145,7 +186,7 @@ public class CustomEntityCreeper extends EntityCreeper {
             } else if (h > 1.0){
                 this.initiateTeleport(h - 1.0, true);
             } else { //teleport onto player if that's the only avaliable block
-                this.maxFuseTicks = 25; //increase fuse length by 150% if teleporting very close to player
+                this.maxFuseTicks = (this.isPowered() ? 30 : 24); //increase fuse length by 60% (0% for charged creepers) if teleporting very close to player
                 this.teleportTo(new BlockPosition(player.locX(), player.locY(), player.locZ()));
             }
         }
