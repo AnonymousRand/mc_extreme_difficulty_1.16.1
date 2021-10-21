@@ -2,12 +2,14 @@ package AnonymousRand.ExtremeDifficultyPlugin;
 
 import AnonymousRand.ExtremeDifficultyPlugin.listeners.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.BlockOverride;
+import net.minecraft.server.v1_16_R1.Block;
 import net.minecraft.server.v1_16_R1.BlockBase;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
     @Override
@@ -29,7 +31,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDamageListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(this), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerEatListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerEatListeners(this),this);
         getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new ProjectileListeners(), this);
         getServer().getPluginManager().registerEvents(new RaidAndVillageListeners(),this);

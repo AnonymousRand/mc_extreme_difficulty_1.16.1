@@ -29,7 +29,7 @@ public class CustomEntityDrowned extends EntityDrowned {
     public void m() { /**drowned no longer target iron golems*/
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
         this.goalSelector.a(1, new CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks*/
-        this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false));
+        this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));

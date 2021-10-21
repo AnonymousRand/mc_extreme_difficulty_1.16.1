@@ -15,9 +15,13 @@ import org.bukkit.inventory.ItemStack;
 public class DropItemListeners implements Listener {
 
     @EventHandler
-    public void itemSpawn(ItemSpawnEvent event) { /**delete bed items immediately when they are spawned (eg. broken or thrown out)*/
-        if (event.getEntity().getItemStack().getType().toString().contains("_BED")) {
+    public void itemSpawn(ItemSpawnEvent event) {
+        if (event.getEntity().getItemStack().getType().toString().contains("_BED") || event.getEntity().getItemStack().getType().toString().contains("_HEAD") || event.getEntity().getItemStack().getType().toString().contains("_SKULL") || event.getEntity().getItemStack().getType() == Material.TOTEM_OF_UNDYING) {  /**delete bed, mob head and totem items immediately when they are spawned (eg. broken or thrown out)*/
             event.getEntity().remove();
+        }
+
+        if (event.getEntity().getItemStack().getType() == Material.POTATO) { /**every potato item dropped is replaced with 16 poisonous potatoes*/
+            event.getEntity().setItemStack(new ItemStack(Material.POISONOUS_POTATO, 16));
         }
     }
 }

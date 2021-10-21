@@ -1,6 +1,9 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
+import net.minecraft.server.v1_16_R1.Entity;
+import net.minecraft.server.v1_16_R1.MobEffect;
+import net.minecraft.server.v1_16_R1.MobEffects;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
@@ -8,6 +11,8 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
 
@@ -15,21 +20,27 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
         Location loc = event.getEntity().getLocation();
 
-        if (!(((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBat ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBee ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityBlaze ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCaveSpider ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityChicken ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityChickenAggressive ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCow ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityCreeper ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityDrowned ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityEndermite ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityHusk ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySkeleton ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySilverfish ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntitySpider ||
-                ((CraftLivingEntity)event.getEntity()).getHandle() instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+        Entity entity = ((CraftLivingEntity)event.getEntity()).getHandle();
+
+        if (!(entity instanceof CustomEntityBat ||
+                entity instanceof CustomEntityBee ||
+                entity instanceof CustomEntityBlaze ||
+                entity instanceof CustomEntityCaveSpider ||
+                entity instanceof CustomEntityChicken ||
+                entity instanceof CustomEntityChickenAggressive ||
+                entity instanceof CustomEntityCow ||
+                entity instanceof CustomEntityCreeper ||
+                entity instanceof CustomEntityDrowned ||
+                entity instanceof CustomEntityEndermite ||
+                entity instanceof CustomEntityGuardian ||
+                entity instanceof CustomEntityHusk ||
+                entity instanceof CustomEntityMushroomCow ||
+                entity instanceof CustomEntityRabbit ||
+                entity instanceof CustomEntityRavager ||
+                entity instanceof CustomEntitySkeleton ||
+                entity instanceof CustomEntitySilverfish ||
+                entity instanceof CustomEntitySpider ||
+                entity instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
             switch (event.getEntityType()) {
                 case BAT:
@@ -97,12 +108,46 @@ public class EntitySpawnAndReplaceWithCustomListeners implements Listener {
                     ((CraftWorld)endermite.getWorld()).getHandle().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     endermite.remove();
                     break;
+                case GUARDIAN:
+                    Guardian guardian = (Guardian)event.getEntity();
+                    CustomEntityGuardian newGuardian = new CustomEntityGuardian(((CraftWorld)guardian.getWorld()).getHandle());
+                    newGuardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)guardian.getWorld()).getHandle().addEntity(newGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    guardian.remove();
+                    break;
                 case HUSK:
                     Husk husk = (Husk)event.getEntity();
                     CustomEntityHusk newHusk = new CustomEntityHusk(((CraftWorld)husk.getWorld()).getHandle());
                     newHusk.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)husk.getWorld()).getHandle().addEntity(newHusk, CreatureSpawnEvent.SpawnReason.NATURAL);
                     husk.remove();
+                    break;
+                case MUSHROOM_COW:
+                    MushroomCow mooshroom = (MushroomCow)event.getEntity();
+                    CustomEntityMushroomCow newMooshroom = new CustomEntityMushroomCow(((CraftWorld)mooshroom.getWorld()).getHandle());
+                    newMooshroom.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)mooshroom.getWorld()).getHandle().addEntity(newMooshroom, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    mooshroom.remove();
+                    break;
+                case RABBIT:
+                    Rabbit rabbit = (Rabbit)event.getEntity();
+                    CustomEntityRabbit newRabbit;
+
+                    for (int i = 0; i < 10; i++) { /**all rabbits are spawned in as 10 killer bunnies instead*/
+                        newRabbit = new CustomEntityRabbit(((CraftWorld)rabbit.getWorld()).getHandle());
+                        newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((CraftWorld)rabbit.getWorld()).getHandle().addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
+                        newRabbit.setRabbitType(99);
+                    }
+                    rabbit.remove();
+                    break;
+                case RAVAGER:
+                    Ravager ravager = (Ravager)event.getEntity();
+                    CustomEntityRavager newRavager = new CustomEntityRavager(((CraftWorld)ravager.getWorld()).getHandle());
+                    newRavager.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)ravager.getWorld()).getHandle().addEntity(newRavager, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    newRavager.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1)); /**changing attributes don't work on ravagers so ravagers have speed 2*/
+                    ravager.remove();
                     break;
                 case SKELETON:
                     Skeleton skeleton = (Skeleton)event.getEntity();

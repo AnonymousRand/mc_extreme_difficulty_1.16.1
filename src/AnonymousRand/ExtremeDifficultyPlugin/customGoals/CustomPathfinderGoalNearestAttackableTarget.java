@@ -11,12 +11,12 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     protected final int b;
     protected CustomPathfinderTargetCondition d;
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean flag) {
-        this(entityinsentient, oclass, flag, false);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean useLineOfSight) {
+        this(entityinsentient, oclass, useLineOfSight, false);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean flag, boolean flag1) {
-        this(entityinsentient, oclass, 10, flag, flag1, (Predicate) null);
+        this(entityinsentient, oclass, 10, flag, flag1, (Predicate)null);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, int i, boolean flag, boolean flag1, @Nullable Predicate<EntityLiving> predicate) {

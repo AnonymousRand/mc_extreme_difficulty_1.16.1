@@ -22,7 +22,7 @@ public class CustomEntitySpider extends EntitySpider {
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(3, new CustomPathfinderGoalMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/ //false for the flag paramter causes the spider to continue attacking instead of only hitting you once
+        this.goalSelector.a(3, new CustomPathfinderGoalMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/ //false for the long memory parameter causes the spider to continue attacking instead of only hitting you once
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
@@ -55,6 +55,53 @@ public class CustomEntitySpider extends EntitySpider {
                 this.initiateTeleport(random.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
             }
         }
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+            this.die();
+        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
+            EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
+
+            if (entityhuman != null) {
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                int i = this.getEntityType().e().f();
+                int j = i * i;
+
+                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                }
+
+                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int l = k * k;
+
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                } else if (d0 < (double) l) {
+                    this.ticksFarFromPlayer = 0;
+                }
+            }
+
+        } else {
+            this.ticksFarFromPlayer = 0;
+        }
+    }
+
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
     }
 
     protected void initiateTeleport(double h) {
@@ -119,52 +166,5 @@ public class CustomEntitySpider extends EntitySpider {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
-            this.die();
-        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
-
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
-
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
-                    this.die();
-                }
-
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
-                int l = k * k;
-
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
-                    this.die();
-                } else if (d0 < (double) l) {
-                    this.ticksFarFromPlayer = 0;
-                }
-            }
-
-        } else {
-            this.ticksFarFromPlayer = 0;
-        }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
-        double d5 = this.locZ() - d2;
-
-        return d3 * d3 + d5 * d5;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
-        double d2 = this.locZ() - vec3d.z;
-
-        return d0 * d0 + d2 * d2;
     }
 }

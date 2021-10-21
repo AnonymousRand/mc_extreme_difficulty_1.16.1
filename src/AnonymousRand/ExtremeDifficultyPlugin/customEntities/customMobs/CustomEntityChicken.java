@@ -19,21 +19,18 @@ public class CustomEntityChicken extends EntityChicken {
 
         if (this.ticksLived == 10) { /**chickens move twice as fast*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-            this.spawnAggressive();
+
+            if (random.nextDouble() < 0.25) { /**25% chance to spawn in as an aggressive chicken instead*/
+                CustomEntityChickenAggressive newChicken = new CustomEntityChickenAggressive(this.getWorld());
+                newChicken.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
+                this.die();
+            }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
         if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
-    }
-
-    private void spawnAggressive() {
-        if (random.nextDouble() < 0.25) { /**25% chance to spawn in as an aggressive chicken instead*/
-            CustomEntityChickenAggressive newChicken = new CustomEntityChickenAggressive(this.getWorld());
-            newChicken.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-            this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
-            this.die();
         }
     }
 }

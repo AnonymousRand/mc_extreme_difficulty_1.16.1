@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -105,6 +107,18 @@ public class PlayerMovementAndFallDamageListeners implements Listener { /**fall 
             event.getPlayer().damage(damage);
             this.fallHeight = 0.0;                          //reset fallHeight as the MLG has been landed, meaning the fall ended
             this.MLG = true;
+        }
+    }
+
+    @EventHandler
+    public void playerMoveThroughGrass(PlayerMoveEvent event) {
+        if (event.getPlayer().getLocation().getBlock().getType() == Material.GRASS || event.getPlayer().getLocation().getBlock().getType() == Material.TALL_GRASS) {
+            if (event.getPlayer().getLocation().getBlock().getType() == Material.GRASS) {
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0)); /**grass gives players slowness 1 for half a second*/
+            } else {
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**tall grass gives players slowness 1 for 1 second and weakness 1 for 3 seconds*/
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 0));
+            }
         }
     }
 }
