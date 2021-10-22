@@ -7,6 +7,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
+
 public class CustomEntityThrownTrident extends EntityThrownTrident {
 
     public CustomEntityThrownTrident(World world, Vector a, byte pierce, @Nullable ProjectileSource source) {
@@ -20,6 +22,69 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         if (source instanceof Entity) {
             this.setShooter(((CraftEntity)source).getHandle());
         }
+    }
+
+    Field ap;
+
+    @Override
+    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+        net.minecraft.server.v1_16_R1.Entity entity = movingobjectpositionentity.getEntity();
+        float f = 3.0F; /**trident damage decreased from 8 to 3*/
+
+        if (entity instanceof EntityLiving) {
+            EntityLiving entityliving = (EntityLiving) entity;
+
+            f += EnchantmentManager.a(this.trident, entityliving.getMonsterType());
+        }
+
+        net.minecraft.server.v1_16_R1.Entity entity1 = this.getShooter();
+        DamageSource damagesource = DamageSource.a((net.minecraft.server.v1_16_R1.Entity)this, (net.minecraft.server.v1_16_R1.Entity)(entity1 == null ? this : entity1));
+
+        try {
+            ap = EntityThrownTrident.class.getDeclaredField("ap");
+            ap.setAccessible(true);
+            this.ap.setBoolean(this, true);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        SoundEffect soundeffect = SoundEffects.ITEM_TRIDENT_HIT;
+
+        if (entity.damageEntity(damagesource, f)) {
+            if (entity.getEntityType() == EntityTypes.ENDERMAN) {
+                return;
+            }
+
+            if (entity instanceof EntityLiving) {
+                EntityLiving entityliving1 = (EntityLiving) entity;
+
+                if (entity1 instanceof EntityLiving) {
+                    EnchantmentManager.a(entityliving1, entity1);
+                    EnchantmentManager.b((EntityLiving) entity1, (net.minecraft.server.v1_16_R1.Entity)entityliving1);
+                }
+
+                this.a(entityliving1);
+            }
+        }
+
+        this.setMot(this.getMot().d(-0.01D, -0.1D, -0.01D));
+        float f1 = 1.0F;
+
+        if (this.world instanceof WorldServer && this.world.T() && EnchantmentManager.h(this.trident)) {
+            BlockPosition blockposition = entity.getChunkCoordinates();
+
+            if (this.world.f(blockposition)) {
+                EntityLightning entitylightning = (EntityLightning) EntityTypes.LIGHTNING_BOLT.a(this.world);
+
+                entitylightning.c(Vec3D.c((BaseBlockPosition) blockposition));
+                entitylightning.d(entity1 instanceof EntityPlayer ? (EntityPlayer) entity1 : null);
+                this.world.addEntity(entitylightning);
+                soundeffect = SoundEffects.ITEM_TRIDENT_THUNDER;
+                f1 = 5.0F;
+            }
+        }
+
+        this.playSound(soundeffect, f1, 1.0F);
     }
 
     @Override

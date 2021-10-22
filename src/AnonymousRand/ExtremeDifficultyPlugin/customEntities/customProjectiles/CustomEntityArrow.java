@@ -1,6 +1,9 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles;
 
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntitySkeleton;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntitySkeletonStray;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -20,6 +23,14 @@ public class CustomEntityArrow extends EntityArrow {
         if (source instanceof Entity) {
             this.setShooter(((CraftEntity)source).getHandle());
         }
+
+        if (this.getShooter() instanceof CustomEntitySkeleton || this.getShooter() instanceof CustomEntitySkeletonStray) {
+            this.setDamage(1.5); /**skeletons and strays do slightly less damage*/
+        }
+    }
+
+    public CustomEntityArrow(World world) {
+        super(EntityTypes.ARROW, world);
     }
 
     @Override

@@ -50,9 +50,9 @@ public class CustomEntitySpider extends EntitySpider {
             this.teleportToPlayer = 0;
         }
 
-        if (this.teleportToPlayer > 300) { /**has a 1% chance every tick to teleport to within follow_range-2 to follow_range+5 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (random.nextDouble() < 0.01) {
-                this.initiateTeleport(random.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
+        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+11 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+            if (random.nextDouble() < 0.005) {
+                this.initiateTeleport(random.nextDouble() * 13.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2.0);
             }
         }
     }
@@ -132,7 +132,7 @@ public class CustomEntitySpider extends EntitySpider {
         for (int x = -2; x < 3; x++) {
             for (int y = -2; y < 3; y++) {
                 for (int z = -2; z < 3; z++) {
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
                         loc.setX(initX + x);
                         loc.setY(initY + y);
                         loc.setZ(initZ + z);

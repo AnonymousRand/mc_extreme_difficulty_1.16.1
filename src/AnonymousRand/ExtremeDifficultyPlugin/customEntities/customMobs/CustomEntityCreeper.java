@@ -81,6 +81,10 @@ public class CustomEntityCreeper extends EntityCreeper {
         this.setHealth(100.0f);
     }
 
+    private double getFollowRange() {
+        return this.isPowered() ? 40.0 : 28.0;
+    }
+
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
@@ -104,26 +108,27 @@ public class CustomEntityCreeper extends EntityCreeper {
         }
 
         if (this.ticksLived % 40 == 10) { /**creepers have 28 block detection range (40 for charged creeper; setting attribute doesn't work)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.isPowered() ? 40.0 : 28.0, 128.0, this.isPowered() ? 40.0 : 28.0)); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() != null) {
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
+            if (player != null && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
             }
         }
 
-        if (this.getGoalTarget() instanceof EntityPlayer) { //todo: change probability
+        if (this.getGoalTarget() instanceof EntityPlayer) {
             if (!this.isPowered()) {
-                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.1) { /**every tick the creeper is more than 2.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.0005) { /**every tick the creeper is more than 2.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
                     this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
                 }
             } else {
-                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.1) { /**every tick the charged creeper is more than 8.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.0005) { /**every tick the charged creeper is more than 8.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
                     this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
                 }
             }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 
@@ -249,7 +254,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         for (int x = -2; x < 3; x++) {
             for (int y = -2; y < 3; y++) {
                 for (int z = -2; z < 3; z++) {
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
                         loc.setX(initX + x);
                         loc.setY(initY + y);
                         loc.setZ(initZ + z);

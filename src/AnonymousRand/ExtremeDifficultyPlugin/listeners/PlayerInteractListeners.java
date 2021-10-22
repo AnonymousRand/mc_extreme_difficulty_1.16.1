@@ -41,6 +41,10 @@ public class PlayerInteractListeners implements Listener {
             if (event.getClickedBlock().getType() == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 2 for 8 seconds*/
                 event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 160, 2));
             }
+
+            if (event.getClickedBlock().getType() == Material.OBSIDIAN || event.getClickedBlock().getType() == Material.CRYING_OBSIDIAN || event.getClickedBlock().getType() == Material.ANCIENT_DEBRIS || event.getClickedBlock().getType() == Material.NETHERITE_BLOCK) { /**attempting to mine these blocks gives the player mining fatigue 1 for 30 seconds*/
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 600, 0));
+            }
         }
     }
 }

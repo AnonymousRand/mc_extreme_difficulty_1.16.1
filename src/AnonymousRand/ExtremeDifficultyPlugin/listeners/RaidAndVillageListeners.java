@@ -68,7 +68,7 @@ public class RaidAndVillageListeners implements Listener {
                 hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
                 pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
 
-                CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player); //10% of arrows are piercing 1
+                CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player, 1.0f); //10% of arrows are piercing 1
                 explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ()); //summon arrow at random spot within 51 by 51 area around player and 20-40 blocks above player
                 explodingArrow.getWorld().addEntity(explodingArrow);
             }
@@ -104,7 +104,7 @@ public class RaidAndVillageListeners implements Listener {
                 hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
                 pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
 
-                CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player); //10% of arrows are piercing 1
+                CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player, 1.0f); //10% of arrows are piercing 1
                 explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ()); //summon arrow at random spot within 51 by 51 area around player and 20-40 blocks above player
                 explodingArrow.getWorld().addEntity(explodingArrow);
             }

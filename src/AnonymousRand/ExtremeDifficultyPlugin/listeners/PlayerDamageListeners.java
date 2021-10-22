@@ -1,5 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityGuardian;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityPiglin;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntitySkeleton;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityZombie;
@@ -10,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEgg;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.entity.LlamaSpit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,12 +28,17 @@ public class PlayerDamageListeners implements Listener {
 
     protected Random rand = new Random();
     private static HashMap<Player, Boolean> blazeHit = new HashMap<>();
+    private static HashMap<Player, Boolean> llamaHit = new HashMap<>();
 
     @EventHandler
     public void playerDamage(EntityDamageEvent event) {
-        if (event.getEntityType() == PLAYER && event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && blazeHit.getOrDefault(((Player)event.getEntity()), false)) { /**blaze fireballs only do 1 damage on impact*/
-            blazeHit.replace((Player)event.getEntity(), false);
-            event.setDamage(1.0);
+        if (event.getEntityType() == PLAYER && event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+            if (blazeHit.getOrDefault(((Player)event.getEntity()), false)) { /**blaze fireballs only do 1 damage on impact*/
+                blazeHit.replace((Player)event.getEntity(), false);
+                event.setDamage(1.0);
+            } else if (llamaHit.getOrDefault(((Player)event.getEntity()), false)) { /**llama spit does 15 damage on impact*/
+                event.setDamage(15.0);
+            }
         }
 
         if (event.getEntityType() == PLAYER && event.getCause().equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning spawns a pufferfish per damage tick, with 25% chance to also spawn a guardian and a 5% chance to spawn an elder guardian*/
@@ -39,9 +46,9 @@ public class PlayerDamageListeners implements Listener {
             Location loc = player.getLocation();
 
             if (rand.nextDouble() < 0.25) {
-                CustomEntitySkeleton skeleton = new CustomEntitySkeleton(((CraftWorld)player.getWorld()).getHandle()); //todo change to guardian
-                skeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                ((CraftWorld)player.getWorld()).getHandle().addEntity(skeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
+                CustomEntityGuardian guardian = new CustomEntityGuardian(((CraftWorld)player.getWorld()).getHandle());
+                guardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                ((CraftWorld)player.getWorld()).getHandle().addEntity(guardian, CreatureSpawnEvent.SpawnReason.NATURAL);
             } else if (rand.nextDouble() < 0.05) {
                 CustomEntityZombie zombie = new CustomEntityZombie(((CraftWorld)player.getWorld()).getHandle()); //todo change to elder guardian
                 zombie.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
@@ -55,7 +62,7 @@ public class PlayerDamageListeners implements Listener {
     }
 
     @EventHandler
-    public void playerDamageByEntity(EntityDamageByEntityEvent event) {
+    public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects etc. if it is hard to do in game
         if (event.getEntityType() == PLAYER) {
             switch (event.getDamager().getType()) {
                 case SPIDER:
@@ -66,15 +73,19 @@ public class PlayerDamageListeners implements Listener {
     }
 
     @EventHandler
-    public void playerHitByProjectile(ProjectileHitEvent event) { /**blaze fireballs only do 1 damage on impact*/
-        if (event.getHitEntity() instanceof Player && ((CraftEntity)event.getEntity()).getHandle() instanceof EntitySmallFireball) {
-            blazeHit.put(((Player)event.getHitEntity()), true);
+    public void playerHitByProjectile(ProjectileHitEvent event) {
+        if (event.getHitEntity() instanceof Player) {
+            if (((CraftEntity)event.getEntity()).getHandle() instanceof EntitySmallFireball) { /**blaze fireballs only do 1 damage on impact*/
+                blazeHit.put(((Player)event.getHitEntity()), true);
+            } else if (event.getEntity() instanceof LlamaSpit) { /**llama spit does 15 damage on impact*/
+                llamaHit.put((Player)event.getHitEntity(), true);
+            }
         }
     }
 
     @EventHandler
     public void entityAirChange(EntityAirChangeEvent event) {
-        if (event.getEntityType() == PLAYER && event.getAmount() > 1) { /**air goes down 3 times as fast*/
+        if (event.getEntityType() == PLAYER && event.getAmount() > 1) { /**player air goes down 3 times as fast*/
             event.setAmount(event.getAmount() - 2);
         }
     }

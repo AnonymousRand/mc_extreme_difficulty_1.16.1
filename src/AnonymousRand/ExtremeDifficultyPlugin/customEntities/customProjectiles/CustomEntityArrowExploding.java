@@ -7,8 +7,12 @@ import org.bukkit.util.Vector;
 
 public class CustomEntityArrowExploding extends CustomEntityArrow {
 
-    public CustomEntityArrowExploding(World world, Vector a, byte pierce, ProjectileSource source) {
+    private float yield;
+
+    public CustomEntityArrowExploding(World world, Vector a, byte pierce, ProjectileSource source, float yield) {
         super(world, a, pierce, source);
+
+        this.yield = yield;
     }
 
     @Override
@@ -22,6 +26,6 @@ public class CustomEntityArrowExploding extends CustomEntityArrow {
     @Override
     public void die() {
         super.die();
-        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0f, false, Explosion.Effect.DESTROY); /**these arrows explode when they die*/
+        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), this.yield, false, Explosion.Effect.DESTROY); /**these arrows explode when they die*/
     }
 }

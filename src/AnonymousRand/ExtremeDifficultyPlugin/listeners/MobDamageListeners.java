@@ -17,6 +17,19 @@ public class MobDamageListeners implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent event) {
+        switch (event.getEntityType()) { //general natural damage immunities by mobs
+            case DROWNED:
+            case SKELETON:
+            case STRAY:
+            case ZOMBIE: /**drowned, skeletons and zombies are immune to fire damage*/
+                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
+                break;
+            case ENDERMITE:
+            case SILVERFISH:
+                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE || event.getCause() == EntityDamageEvent.DamageCause.LAVA); /**silverfish and endermites are immune to lava and fire*/
+                break;
+        }
+
         if (event.getEntityType() != PLAYER && event.getEntityType() != ENDER_DRAGON && event.getEntityType() != WITHER) {  /**all non-player mobs take 15/16 less damage from these sources*/
             if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.MAGIC)) {
                 event.setDamage(event.getDamage() * 0.0625);
@@ -33,18 +46,6 @@ public class MobDamageListeners implements Listener {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs don't cause an endless cycle*/
             event.setCancelled(true);
-        }
-
-        switch (event.getEntityType()) {
-            case DROWNED:
-            case SKELETON:
-            case ZOMBIE: /**drowned, skeletons and zombies are immune to fire damage*/
-                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
-                break;
-            case ENDERMITE:
-            case SILVERFISH:
-                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE || event.getCause() == EntityDamageEvent.DamageCause.LAVA); /**silverfish and endermites are immune to lava and fire*/
-                break;
         }
     }
 

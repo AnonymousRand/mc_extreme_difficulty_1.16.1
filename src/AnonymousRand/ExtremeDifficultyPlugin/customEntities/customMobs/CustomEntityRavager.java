@@ -35,13 +35,14 @@ public class CustomEntityRavager extends EntityRavager {
 
         if (this.ticksLived % 40 == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(40.0, 128.0, 40.0)); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() != null) {
+            if (player != null && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
             }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }

@@ -18,12 +18,12 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
     private boolean h;
     private int i = -1;
 
-    public CustomPathfinderGoalBowShoot(T t0, double d0, int i, float f) {
-        super(t0, d0, i, f);
+    public CustomPathfinderGoalBowShoot(T t0, double d0, int attackSpeed, float maxAttackDistance) {
+        super(t0, d0, attackSpeed, maxAttackDistance);
         this.a = t0;
         this.b = d0;
-        this.c = i;
-        this.d = f * f;
+        this.c = attackSpeed;
+        this.d = maxAttackDistance * maxAttackDistance;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 

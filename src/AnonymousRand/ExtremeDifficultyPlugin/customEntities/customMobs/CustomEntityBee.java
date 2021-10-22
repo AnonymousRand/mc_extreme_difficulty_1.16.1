@@ -27,17 +27,15 @@ public class CustomEntityBee extends EntityBee {
             this.setGoalTarget(player);
         }
 
-        if (this.ticksLived == 10) { /**bees do 1000 damage*/
+        if (this.ticksLived == 10) { /**bees do 1000 damage but only have 5 health*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
-        }
-
-        if (this.ticksLived == 10) { /**bees have 5 health*/
             this.setHealth(5.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 

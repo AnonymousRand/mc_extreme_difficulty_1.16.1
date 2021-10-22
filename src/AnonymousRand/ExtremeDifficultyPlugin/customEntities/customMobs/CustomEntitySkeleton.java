@@ -12,13 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.w3c.dom.Attr;
 
 import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton {
 
-    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 15.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
@@ -38,19 +39,19 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public void a(EntityLiving entityliving, float f){
-        for (int i = 0; i < 70; i++) { /**shoots 70 arrows at a time with increased inaccuracy to seem like a cone*/
+        for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
             ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
             EntityArrow entityarrow = this.b(itemstack, f);
             double d0 = entityliving.locX() - this.locX();
-            double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
+            double d1 = entityliving.locY() - this.locY(); /**arrows experience less loss in y level*/
             double d2 = entityliving.locZ() - this.locZ();
-            double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+            double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
             if (random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                 entityarrow.setPierceLevel((byte)1);
             }
 
-            entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (40 - this.world.getDifficulty().a() * 4));
+            entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(40 - this.world.getDifficulty().a() * 4));
             this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             this.world.addEntity(entityarrow);
         }
@@ -69,6 +70,10 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
+    private double getFollowRange() {
+        return 22.0;
+    }
+
     protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
@@ -79,17 +84,25 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         if (this.ticksLived == 10) { /**skeletons only have 14 health*/
             this.setHealth(14.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14.0);
+
+            if (random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead*/
+                CustomEntitySkeletonStray newStray = new CustomEntitySkeletonStray(this.getWorld());
+                newStray.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newStray, CreatureSpawnEvent.SpawnReason.NATURAL);
+                this.die();
+            }
         }
 
         if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(22.0, 128.0, 22.0)); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() != null) {
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
+            if (player != null && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
             }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 
@@ -99,9 +112,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             this.teleportToPlayer = 0;
         }
 
-        if (this.teleportToPlayer > 300) { /**has a 1% chance every tick to teleport to within follow_range-2 to follow_range+5 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (random.nextDouble() < 0.01) {
-                this.initiateTeleport(random.nextDouble() * 7.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2);
+        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+11 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+            if (random.nextDouble() < 0.005) {
+                this.initiateTeleport(random.nextDouble() * 13.0 + this.getFollowRange() - 2.0);
             }
         }
 
@@ -201,7 +214,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         for (int x = -2; x < 3; x++) {
             for (int y = -2; y < 3; y++) {
                 for (int z = -2; z < 3; z++) {
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
                         loc.setX(initX + x);
                         loc.setY(initY + y);
                         loc.setZ(initZ + z);

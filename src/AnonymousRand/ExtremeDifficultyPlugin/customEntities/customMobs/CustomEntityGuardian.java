@@ -22,7 +22,6 @@ public class CustomEntityGuardian extends EntityGuardian {
     @Override
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
-
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         this.goalSelector.a(4, new CustomEntityGuardian.CustomPathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
@@ -59,13 +58,14 @@ public class CustomEntityGuardian extends EntityGuardian {
 
         if (this.ticksLived % 40 == 10) { /**guardians have 24 block detection range (setting attribute doesn't work)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(24.0, 128.0, 24.0)); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() != null) {
+            if (player != null && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
             }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
@@ -178,11 +178,11 @@ public class CustomEntityGuardian extends EntityGuardian {
                     }
 
                     entityliving.damageEntity(DamageSource.c(this.entity, this.entity), f);
-                    entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
+                    entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget((EntityLiving)null);
                 }
 
-                if (this.b >= this.entity.eL() / 3 && this.entity.ticksLived % 3 == 0) { /**tractor beam-like effect every 3 ticks for the latter 2/3 of the laser charging period*/
+                if (this.b >= this.entity.eL() / 2.75 && this.entity.ticksLived % 3 == 0) { /**tractor beam-like effect every 3 ticks for the latter ~64% of the laser charging period*/
                     LivingEntity bukkitEntity = (LivingEntity)entityliving.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.entity.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.entity.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.entity.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
                 }
@@ -201,7 +201,7 @@ public class CustomEntityGuardian extends EntityGuardian {
         }
 
         public boolean test(@Nullable EntityLiving entityliving) {
-            return (entityliving instanceof EntityHuman || entityliving instanceof EntitySquid) && entityliving.h((Entity) this.a) > 9.0D;
+            return (entityliving instanceof EntityHuman || entityliving instanceof EntitySquid) && entityliving.h((Entity)this.a) > 9.0D;
         }
     }
 }
