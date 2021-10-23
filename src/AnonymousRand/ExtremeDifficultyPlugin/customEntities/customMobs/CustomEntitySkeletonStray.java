@@ -6,22 +6,26 @@ import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNea
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-    public boolean spawnMob, spawnFirework;
+    public boolean spawnMob, spawnExplodingArrow;
+    public int attacks;
+    private boolean a100;
 
 
     public CustomEntitySkeletonStray(World world) {
         super(EntityTypes.STRAY, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
+        this.attacks = 0;
         this.teleportToPlayer = 0;
         this.spawnMob = false;
-        this.spawnFirework = false;
+        this.spawnExplodingArrow = false;
+        this.a100 = false;
     }
 
     @Override
@@ -36,12 +40,13 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     @Override
     public void a(EntityLiving entityliving, float f) {
+        this.attacks+=5;
         double rand = random.nextDouble();
 
-        if (rand < 0.9) { /**strays have 4 choices of attack: 60% chance to shoot 70 normal slowness arrows, 20% chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
-            boolean fire = random.nextDouble() < 0.222222222;
+        if (rand < (this.attacks < 30 ? 0.9 : this.attacks < 50 ? 0.85 : this.attacks < 75 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 20 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 20 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
+            boolean fire = random.nextDouble() < (this.attacks < 20 ? 0.222222222 : 0.444444444);
             this.spawnMob = false;
-            this.spawnFirework = false;
+            this.spawnExplodingArrow = false;
 
             for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
                 ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
@@ -63,9 +68,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
-        } else if (rand < 0.95) {
+        } else if (rand < (this.attacks < 50 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
             for (int i = 0; i < 10; i++) {
-                this.spawnFirework = true;
+                this.spawnExplodingArrow = true;
                 this.spawnMob = false;
                 ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
                 EntityArrow entityarrow = this.b(itemstack, f);
@@ -73,24 +78,22 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 double d0 = entityliving.locX() - this.locX();
                 double d1 = entityliving.locY() - this.locY();
                 double d2 = entityliving.locZ() - this.locZ();
-                double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-                entityarrow.shoot(d0, d1, d2, 1.4F, (float)(50 - this.world.getDifficulty().a() * 4)); //slightly slower arrows and more inaccuracy
+                entityarrow.shoot(d0, d1, d2, 1.6F, (float)(50 - this.world.getDifficulty().a() * 4)); //more inaccuracy
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
         } else {
             this.spawnMob = true;
-            this.spawnFirework = false;
+            this.spawnExplodingArrow = false;
             ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
             EntityArrow entityarrow = this.b(itemstack, f);
 
             double d0 = entityliving.locX() - this.locX();
             double d1 = entityliving.locY() - this.locY();
             double d2 = entityliving.locZ() - this.locZ();
-            double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-            entityarrow.shoot(d0, d1, d2, 1.8F, 0); //slightly increased speed and no inaccuracy for this arrow
+            entityarrow.shoot(d0, d1, d2, 1.6F, 0); /**no inaccuracy for this arrow*/
             this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             this.world.addEntity(entityarrow);
         }
@@ -98,8 +101,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     @Override
     public void eM() { //"re-registers" the new field "b" since reflection doesn't seem to work
-        if (this.world != null && !this.world.isClientSide) { /**skeleton always shoots once per second*/
-            this.goalSelector.a((PathfinderGoal) this.b);
+        if (this.world != null && !this.world.isClientSide) {
+            this.goalSelector.a((PathfinderGoal)this.b);
             ItemStack itemstack = this.b(ProjectileHelper.a(this, Items.BOW));
 
             if (itemstack.getItem() == Items.BOW) {
@@ -118,6 +121,17 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     @Override
     public void tick() {
         super.tick();
+
+        if (this.attacks == 100 && !this.a100) { /**summons 8 vanilla skeletons on the 100th shot*/
+            this.a100 = true;
+
+            for (int i = 0; i < 8; i++) {
+                EntitySkeleton skeleton = new EntitySkeleton(EntityTypes.SKELETON, this.getWorld());
+                skeleton.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                skeleton.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
+                this.getWorld().addEntity(skeleton, CreatureSpawnEvent.SpawnReason.DROWNED);
+            }
+        }
 
         if (this.ticksLived == 10) { /**strays only have 14 health*/
             this.setHealth(14.0f);

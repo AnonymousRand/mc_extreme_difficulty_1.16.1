@@ -182,7 +182,7 @@ public class CustomEntityGuardian extends EntityGuardian {
                     this.entity.setGoalTarget((EntityLiving)null);
                 }
 
-                if (this.b >= this.entity.eL() / 2.75 && this.entity.ticksLived % 3 == 0) { /**tractor beam-like effect every 3 ticks for the latter ~64% of the laser charging period*/
+                if (this.b >= this.entity.eL() / 2.5 && this.entity.ticksLived % 3 == 0) { /**tractor beam-like effect every 3 ticks for the latter 60% of the laser charging period*/
                     LivingEntity bukkitEntity = (LivingEntity)entityliving.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.entity.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.entity.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.entity.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
                 }

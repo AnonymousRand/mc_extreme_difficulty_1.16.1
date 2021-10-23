@@ -8,15 +8,23 @@ import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockPlaceEvent;
-
-import java.util.Random;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntitySpider extends EntitySpider {
 
+    public int attacks;
+    private boolean a25, a50, a70, a100;
+
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
+        this.attacks = 0;
         this.teleportToPlayer = 0;
+        this.a25 = false;
+        this.a50 = false;
+        this.a70 = false;
+        this.a100 = false;
     }
 
     @Override
@@ -34,8 +42,57 @@ public class CustomEntitySpider extends EntitySpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**spiders have +70% movement speed*/
+        if (this.ticksLived == 10) { /**spiders have +70% movement speed but only 1 damage and 12 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.setHealth(12.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
+        }
+
+        if (this.attacks % 24 == 0 && this.a25) { //reset right before the next cycle
+            this.a25 = false;
+        }
+
+        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) {
+            this.a25 = true;
+
+            Location loc;
+            for (int x = -2; x <= 2; x++) {
+                for (int y = -2; y <= 2; y++) {
+                    for (int z = -2; z <= 2; z++) {
+                        loc = new Location(this.getWorld().getWorld(), Math.floor(this.locX()) + x, Math.floor(this.locY()) + y, Math.floor(this.locZ()) + z);
+                        if (loc.getBlock().getType() == org.bukkit.Material.AIR) { /**every 25 attacks, spiders lay down cobwebs that last 10 seconds in a 5 by 5 cube around itself*/
+                            loc.getBlock().setType(org.bukkit.Material.COBWEB);
+                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(loc.getBlock(), loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 10 seconds
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.attacks == 50 && !this.a50) { /**summons 3 vanilla cave spiders on the 50th attack*/
+            this.a50 = true;
+            EntityCaveSpider caveSpider;
+            for (int i = 0; i < 3; i++) {
+                caveSpider = new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld());
+                caveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(caveSpider, CreatureSpawnEvent.SpawnReason.DROWNED);
+            }
+        }
+
+        if (this.attacks == 70 && !this.a70) { /**gains speed 1 after the 70th attack*/
+            this.a70 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+        }
+
+        if (this.attacks == 100 && !this.a100) { /**summons 5 cave spiders on the 100th attack*/
+            this.a100 = true;
+            CustomEntitySpiderCave caveSpider;
+            for (int i = 0; i < 6; i++) {
+                caveSpider = new CustomEntitySpiderCave(this.getWorld());
+                caveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(caveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
+            }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

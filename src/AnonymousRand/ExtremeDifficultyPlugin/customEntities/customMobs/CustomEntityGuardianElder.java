@@ -21,11 +21,11 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
     }
 
     @Override
-    public void initPathfinder() { /**no longer randomly looks around or at guardians (only at players)*/
+    public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
-        this.goalSelector.a(3, new CustomEntityGuardianElder.CustomPathfinderGoalGuardianAttack(this)); //todo: custom look at player goal
-        this.goalSelector.a(4, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 40.0F, 1.0f)); //always looks at player so blocks are broken in that direction
+        this.goalSelector.a(3, new CustomEntityGuardianElder.CustomPathfinderGoalGuardianAttack(this));
+        this.goalSelector.a(4, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 40.0F));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
@@ -54,7 +54,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
     protected void mobTick() {
         super.mobTick();
 
-        if ((this.ticksLived  + this.getId()) % 20 == 0) { /**applies mining fatigue every second*/
+        if ((this.ticksLived  + this.getId()) % 20 == 0) { /**applies mining fatigue every second, but effect duration decreased to 150 seconds*/
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
             List<EntityPlayer> list = ((WorldServer)this.world).a((entityplayer) -> {
                 return this.h((Entity)entityplayer) < 2500.0D && entityplayer.playerInteractManager.d();
@@ -67,9 +67,17 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
 
                 //plays the animation every time mining fatigue happens (every second)
                 entityplayer.playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.k, this.isSilent() ? 0.0F : 1.0F));
-                entityplayer.addEffect(new MobEffect(mobeffectlist, 6000, 2));
+                entityplayer.addEffect(new MobEffect(mobeffectlist, 3000, 2));
             }
         }
+    }
+
+    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
+        double d0 = vec3dt.getX() - vec3d1.getX(); //for calculating laser distance
+        double d1 = vec3dt.getY() - vec3d1.getY();
+        double d2 = vec3dt.getZ() - vec3d1.getZ();
+
+        return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
     @Override
@@ -197,18 +205,10 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                         f += 2.0F;
                     }
 
-                    //todo: not breaking enough blocks (see: blockiterator along a vector) https://hub.spigotmc.org/javadocs/spigot/org/bukkit/util/BlockIterator.html#BlockIterator(org.bukkit.World,%20org.bukkit.util.Vector,%20org.bukkit.util.Vector,%20double,%20int)
-                    ArrayList<Block> blocks = (ArrayList<Block>)((LivingEntity)this.entity.getBukkitEntity()).getLineOfSight(null, 20); //gets all blocks in elder guardian's line of sight up to 20 blocks away including all transparent blocks
+                    /*ArrayList<Block> blocks = (ArrayList<Block>)((LivingEntity)this.entity.getBukkitEntity()).getLineOfSight(null, 20); //gets all blocks in elder guardian's line of sight up to 20 blocks away including all transparent blocks
                     Random rand = new Random();
 
-                    BlockIterator iterator = new BlockIterator((LivingEntity)this.entity.getBukkitEntity(), 20);
-                    while (iterator.hasNext()) {
-                        if (iterator.next().getType() != org.bukkit.Material.BEDROCK && iterator.next().getType() != org.bukkit.Material.END_GATEWAY && iterator.next().getType() != org.bukkit.Material.END_PORTAL && iterator.next().getType() != org.bukkit.Material.END_PORTAL_FRAME && iterator.next().getType() != org.bukkit.Material.NETHER_PORTAL && iterator.next().getType() != org.bukkit.Material.OBSIDIAN && iterator.next().getType() != org.bukkit.Material.CRYING_OBSIDIAN && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && iterator.next().getType() != org.bukkit.Material.STRUCTURE_BLOCK && iterator.next().getType() != org.bukkit.Material.JIGSAW && iterator.next().getType() != org.bukkit.Material.BARRIER && iterator.next().getType() != org.bukkit.Material.END_STONE && iterator.next().getType() != org.bukkit.Material.SPAWNER && iterator.next().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
-                            iterator.next().setType(org.bukkit.Material.AIR);
-                        }
-                    }
-
-                    /*for (Block b : blocks) { /**elder guardians break all blocks in a 3 by 3 by 3 in its line of sight when the laser fires*/
+                    for (Block b : blocks) { /**elder guardians break all blocks in a 3 by 3 by 3 in its line of sight when the laser fires*/
                         /*Location locBase = b.getLocation();
                         Location loc = locBase;
 
@@ -232,6 +232,34 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                     entityliving.damageEntity(DamageSource.c(this.entity, this.entity), f);
                     entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget((EntityLiving)null);
+                } else if (this.b + 40 == this.entity.eL()) { /**2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player*/
+
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityliving.locX() - this.entity.locX(), entityliving.locY() - this.entity.locY(), entityliving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.normalGetDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()), 0.5) + 1);
+                    while (iterator.hasNext()) {
+                        Location locBase = iterator.next().getLocation();
+                        Location loc = locBase;
+                        Random rand = new Random();
+
+                        for (int x = -1; x <= 1; x++) {
+                            for (int y = -1; y <= 1; y++) {
+                                for (int z = -1; z <= 1; z++) {
+                                    loc = new Location(this.entity.getWorld().getWorld(), locBase.getX() + x, locBase.getY() + y, locBase.getZ() + z);
+
+                                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.CRYING_OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.END_STONE && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
+                                        loc.getBlock().setType(org.bukkit.Material.AIR);
+                                    } else if (loc.getBlock().getType() == org.bukkit.Material.OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.CRYING_OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.ANCIENT_DEBRIS || loc.getBlock().getType() == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to break these blocks
+                                        if (rand.nextDouble() < 0.5) {
+                                            loc.getBlock().setType(org.bukkit.Material.AIR);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        /*if (iterator.next().getType() != org.bukkit.Material.BEDROCK && iterator.next().getType() != org.bukkit.Material.END_GATEWAY && iterator.next().getType() != org.bukkit.Material.END_PORTAL && iterator.next().getType() != org.bukkit.Material.END_PORTAL_FRAME && iterator.next().getType() != org.bukkit.Material.NETHER_PORTAL && iterator.next().getType() != org.bukkit.Material.OBSIDIAN && iterator.next().getType() != org.bukkit.Material.CRYING_OBSIDIAN && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && iterator.next().getType() != org.bukkit.Material.STRUCTURE_BLOCK && iterator.next().getType() != org.bukkit.Material.JIGSAW && iterator.next().getType() != org.bukkit.Material.BARRIER && iterator.next().getType() != org.bukkit.Material.END_STONE && iterator.next().getType() != org.bukkit.Material.SPAWNER && iterator.next().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
+                            iterator.next().setType(org.bukkit.Material.AIR);
+                        }*/
+                    }
                 }
 
                 if (this.b >= this.entity.eL() / 3.35 && this.entity.ticksLived % 3 == 0) { /**stronger tractor beam-like effect every 3 ticks for the latter ~70% of the laser charging period*/

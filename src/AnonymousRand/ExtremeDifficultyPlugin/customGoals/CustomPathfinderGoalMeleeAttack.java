@@ -2,6 +2,8 @@ package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
 import net.minecraft.server.v1_16_R1.*;
 
+import java.lang.reflect.Field;
+
 public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
     protected final EntityCreature entity;
@@ -45,12 +47,23 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
                 this.h += 5;
             }
 
-            if (!this.entity.getNavigation().a((Entity) entityliving, this.b)) {
+            if (!this.entity.getNavigation().a((Entity)entityliving, this.b)) {
                 this.h += 15;
             }
         }
 
         this.i = Math.max(this.i - 1, 0);
         this.a(entityliving, d0);
+    }
+
+    @Override
+    public void a(EntityLiving entityliving, double d0) {
+        double d1 = this.a(entityliving);
+
+        if (d0 <= d1 && this.i <= 0) {
+            this.g();
+            this.a.swingHand(EnumHand.MAIN_HAND);
+            this.a.attackEntity(entityliving);
+        }
     }
 }

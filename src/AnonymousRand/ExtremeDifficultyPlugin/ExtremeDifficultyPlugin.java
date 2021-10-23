@@ -20,7 +20,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(this), this);  //registers the listeners
         getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
-        getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(), this);
+        getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(this), this);
         getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerDamageListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(this), this);

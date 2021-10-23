@@ -64,7 +64,7 @@ public class CustomEntityBat extends EntityBat {
             for (int i = 0; i < 25; i++) {
                 newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
                 newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.SPAWNER);
+                this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.DROWNED);
             }
         }
 

@@ -11,10 +11,15 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobSpawnAndReplaceWithCustomListeners implements Listener {
+
+    private JavaPlugin plugin;
+
+    public MobSpawnAndReplaceWithCustomListeners(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
@@ -25,7 +30,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
         if (!(entity instanceof CustomEntityBat ||
                 entity instanceof CustomEntityBee ||
                 entity instanceof CustomEntityBlaze ||
-                entity instanceof CustomEntityCaveSpider ||
+                entity instanceof CustomEntitySpiderCave ||
                 entity instanceof CustomEntityChicken ||
                 entity instanceof CustomEntityChickenAggressive ||
                 entity instanceof CustomEntityCow ||
@@ -48,7 +53,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
             switch (event.getEntityType()) {
                 case BAT:
-                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER) { //only if they are spawned in by this event and not by duplicating bats etc
+                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) { //only if they are spawned in by this event and not by duplicating bats etc
                         Bat bat = (Bat)event.getEntity();
                         CustomEntityBat newBat = new CustomEntityBat(((CraftWorld)bat.getWorld()).getHandle()); //bukkit.world vs net.minecraft.server world (spigot nms world): since loc and event listeners are a bukkit thing, it uses the bukkit world, but the customeentityskeleton uses nms. Must cast the bukkit world to craftworld world first, then use craftworld's getHandle() to get an nms world
                         newBat.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
@@ -71,11 +76,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     blaze.remove();
                     break;
                 case CAVE_SPIDER:
-                    CaveSpider caveSpider = (CaveSpider)event.getEntity();
-                    CustomEntityCaveSpider newCaveSpider = new CustomEntityCaveSpider(((CraftWorld)caveSpider.getWorld()).getHandle());
-                    newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                    ((CraftWorld)caveSpider.getWorld()).getHandle().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
-                    caveSpider.remove();
+                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
+                        CaveSpider caveSpider = (CaveSpider)event.getEntity();
+                        CustomEntitySpiderCave newCaveSpider = new CustomEntitySpiderCave(((CraftWorld)caveSpider.getWorld()).getHandle());
+                        newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((CraftWorld)caveSpider.getWorld()).getHandle().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
+                        caveSpider.remove();
+                    }
                     break;
                 case CHICKEN:
                     Chicken chicken = (Chicken)event.getEntity();
@@ -158,7 +165,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Rabbit rabbit = (Rabbit)event.getEntity();
                     CustomEntityRabbit newRabbit;
 
-                    for (int i = 0; i < 10; i++) { /**all rabbits are spawned in as 10 killer bunnies instead*/
+                    for (int i = 0; i < 5; i++) { /**all rabbits are spawned in as 5 killer bunnies instead*/
                         newRabbit = new CustomEntityRabbit(((CraftWorld)rabbit.getWorld()).getHandle());
                         newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                         ((CraftWorld)rabbit.getWorld()).getHandle().addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -175,11 +182,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     ravager.remove();
                     break;
                 case SKELETON:
-                    Skeleton skeleton = (Skeleton)event.getEntity();
-                    CustomEntitySkeleton newSkeleton = new CustomEntitySkeleton(((CraftWorld)skeleton.getWorld()).getHandle());
-                    newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                    ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
-                    skeleton.remove();
+                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
+                        Skeleton skeleton = (Skeleton)event.getEntity();
+                        CustomEntitySkeleton newSkeleton = new CustomEntitySkeleton(((CraftWorld)skeleton.getWorld()).getHandle(), this.plugin);
+                        newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
+                        skeleton.remove();
+                    }
                     break;
                 case SILVERFISH:
                     Silverfish silverfish = (Silverfish)event.getEntity();

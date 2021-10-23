@@ -1,15 +1,9 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityGuardian;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityPiglin;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntitySkeleton;
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityZombie;
-import net.minecraft.server.v1_16_R1.EntityPlayer;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
 import net.minecraft.server.v1_16_R1.EntitySmallFireball;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEgg;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.LlamaSpit;
 import org.bukkit.entity.Player;
@@ -64,9 +58,22 @@ public class PlayerDamageListeners implements Listener {
     @EventHandler
     public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects etc. if it is hard to do in game
         if (event.getEntityType() == PLAYER) {
+            Player player = (Player)event.getEntity();
+
             switch (event.getDamager().getType()) {
+                case CAVE_SPIDER:
+                    CustomEntitySpiderCave caveSpider = (CustomEntitySpiderCave)(((CraftEntity)event.getDamager()).getHandle());
+                    caveSpider.attacks++; //increase cave spider's attack count by 1
+                    break;
                 case SPIDER:
-                    ((Player)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**spiders inflict Slowness 1 for 1 second on hit*/
+                    CustomEntitySpider spider = (CustomEntitySpider)(((CraftEntity)event.getDamager()).getHandle());
+                    spider.attacks++; //increase spider's attack count by 1
+
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**spiders inflict slowness 1 for 1 second on hit*/
+
+                    if ((spider).attacks >= 30) {
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 30 times*/
+                    }
                     break;
             }
         }

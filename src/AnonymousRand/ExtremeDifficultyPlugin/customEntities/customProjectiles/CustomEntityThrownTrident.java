@@ -100,8 +100,8 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     public void die() {
         super.die();
 
-        if (random.nextDouble() < 0.5) {
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.4f, false, Explosion.Effect.DESTROY); /**tridents have a 50% chance to explode when they die*/
+        if (random.nextDouble() < 0.2) {
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.4f, false, Explosion.Effect.DESTROY); /**tridents have a 20% chance to explode when they die*/
         }
     }
 }

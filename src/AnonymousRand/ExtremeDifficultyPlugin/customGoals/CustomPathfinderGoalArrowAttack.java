@@ -6,9 +6,9 @@ import java.util.EnumSet;
 
 public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
-    private final EntityInsentient a;
-    private final IRangedEntity b;
-    private EntityLiving c;
+    private final EntityInsentient drowned;
+    private final IRangedEntity entityButIRangedEntity;
+    private EntityLiving attackTarget;
     private int d;
     private final double e;
     private int f;
@@ -26,8 +26,8 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
         if (!(irangedentity instanceof EntityLiving)) {
             throw new IllegalArgumentException("ArrowAttackGoal requires Mob implements RangedAttackMob");
         } else {
-            this.b = irangedentity;
-            this.a = (EntityInsentient) irangedentity;
+            this.entityButIRangedEntity = irangedentity;
+            this.drowned = (EntityInsentient) irangedentity;
             this.e = d0;
             this.g = i;
             this.h = j;
@@ -39,10 +39,10 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        EntityLiving entityliving = this.a.getGoalTarget();
+        EntityLiving entityliving = this.drowned.getGoalTarget();
 
         if (entityliving != null && entityliving.isAlive()) {
-            this.c = entityliving;
+            this.attackTarget = entityliving;
             return true;
         } else {
             return false;
@@ -51,19 +51,19 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public boolean b() {
-        return this.a() || !this.a.getNavigation().m();
+        return this.a() || !this.drowned.getNavigation().m();
     }
 
     @Override
     public void d() {
-        this.c = null;
+        this.attackTarget = null;
         this.f = 0;
         this.d = -1;
     }
 
     @Override
     public void e() {
-        double d0 = this.a.g(this.c.locX(), this.c.locY(), this.c.locZ());
+        double d0 = this.drowned.g(this.attackTarget.locX(), this.attackTarget.locY(), this.attackTarget.locZ());
         boolean flag = true; /***breaking line of sight does not stop the mob from attacking*/
 
         if (flag) {
@@ -73,12 +73,12 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
         }
 
         if (d0 <= (double) this.j && this.f >= 5) {
-            this.a.getNavigation().o();
+            this.drowned.getNavigation().o();
         } else {
-            this.a.getNavigation().a((Entity) this.c, this.e);
+            this.drowned.getNavigation().a((Entity) this.attackTarget, this.e);
         }
 
-        this.a.getControllerLook().a(this.c, 30.0F, 30.0F);
+        this.drowned.getControllerLook().a(this.attackTarget, 30.0F, 30.0F);
         float f;
 
         if (--this.d == 0) {
@@ -89,7 +89,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
             f = MathHelper.sqrt(d0) / this.i;
             float f1 = MathHelper.a(f, 0.1F, 1.0F);
 
-            this.b.a(this.c, f1);
+            this.entityButIRangedEntity.a(this.attackTarget, f1);
             this.d = MathHelper.d(f * (float) (this.h - this.g) + (float) this.g);
         } else if (this.d < 0) {
             f = MathHelper.sqrt(d0) / this.i;

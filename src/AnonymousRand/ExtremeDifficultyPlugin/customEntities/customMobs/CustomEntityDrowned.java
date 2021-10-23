@@ -7,8 +7,10 @@ import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalZom
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -19,16 +21,21 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned {
 
+    public int attacks;
+    private boolean a60, a100;
+
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
-
+        this.attacks = 0;
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT)); /**drowned always spawn with tridents*/
+        this.a60 = false;
+        this.a100 = false;
     }
 
     @Override
     public void m() { /**drowned no longer target iron golems*/
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(1, new CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks*/
+        this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks*/
         this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.world.getSeaLevel()));
@@ -45,12 +52,28 @@ public class CustomEntityDrowned extends EntityDrowned {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
-    protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
     public void tick() {
         super.tick();
+
+        Bukkit.broadcastMessage(this.attacks + "");
+        if (this.attacks == 60 && !this.a60) { /**summons 2 guardians on the 60th attack*/
+            this.a60 = true;
+            for (int i = 0; i < 2; i++) {
+                CustomEntityGuardian guardian = new CustomEntityGuardian(this.getWorld());
+                guardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(guardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+            }
+        }
+
+        if (this.attacks == 100 && !this.a100) { /**summons an elder guardian on the 100th attack*/
+            this.a100 = true;
+            CustomEntityGuardianElder elderGuardian = new CustomEntityGuardianElder(this.getWorld());
+            elderGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            this.getWorld().addEntity(elderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+        }
 
         if (this.ticksLived == 10) { /**drowned only have 14 health*/
             this.setHealth(14.0f);
@@ -245,7 +268,7 @@ public class CustomEntityDrowned extends EntityDrowned {
                 BlockPosition blockposition1 = blockposition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
 
                 if (this.world.getType(blockposition1).a(Blocks.WATER)) {
-                    return Vec3D.c((BaseBlockPosition) blockposition1);
+                    return Vec3D.c((BaseBlockPosition)blockposition1);
                 }
             }
 
@@ -319,11 +342,13 @@ public class CustomEntityDrowned extends EntityDrowned {
 
     static class CustomPathfinderGoalDrownedTridentAttack extends CustomPathfinderGoalArrowAttack {
 
-        private final EntityDrowned drowned;
+        private final CustomEntityDrowned drowned;
+        private int attackCount;
 
         public CustomPathfinderGoalDrownedTridentAttack(IRangedEntity irangedentity, double d0, int i, float f) {
             super(irangedentity, d0, i, f);
-            this.drowned = (EntityDrowned) irangedentity;
+            this.drowned = (CustomEntityDrowned)irangedentity;
+            this.attackCount = 0;
         }
 
         @Override
@@ -343,6 +368,18 @@ public class CustomEntityDrowned extends EntityDrowned {
             super.d();
             this.drowned.clearActiveItem();
             this.drowned.setAggressive(false);
+        }
+
+        @Override
+        public void e() {
+            for (int i = 0; i <= (this.drowned.attacks < 30 ? 0 : this.drowned.attacks < 80 ? 2 : 5); i++) { /**shoots 1, 3 or 6 tridents at a time depending on attack count*/
+                super.e();
+            }
+
+            if (++this.attackCount == 40) { //attack count only goes up every 2 seconds
+                this.attackCount = 0;
+                this.drowned.attacks++;
+            }
         }
     }
 }

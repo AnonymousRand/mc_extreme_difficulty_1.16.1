@@ -17,34 +17,43 @@ public class MobDamageListeners implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent event) {
-        switch (event.getEntityType()) { //general natural damage immunities by mobs
+        EntityType entityType = event.getEntityType();
+        EntityDamageEvent.DamageCause cause = event.getCause();
+        
+        switch (entityType) { //general natural damage immunities by mobs
             case DROWNED:
             case SKELETON:
             case STRAY:
             case ZOMBIE: /**drowned, skeletons and zombies are immune to fire damage*/
-                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE);
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE);
                 break;
             case ENDERMITE:
             case SILVERFISH:
-                event.setCancelled(event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || event.getCause() == EntityDamageEvent.DamageCause.FIRE || event.getCause() == EntityDamageEvent.DamageCause.LAVA); /**silverfish and endermites are immune to lava and fire*/
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA); /**silverfish and endermites are immune to lava and fire*/
                 break;
         }
 
-        if (event.getEntityType() != PLAYER && event.getEntityType() != ENDER_DRAGON && event.getEntityType() != WITHER) {  /**all non-player mobs take 15/16 less damage from these sources*/
-            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.MAGIC)) {
+        boolean mobReduceDamage = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION);
+
+        if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) {  /**all non-player mobs take 15/16 less damage from these sources*/
+            if (mobReduceDamage) {
                 event.setDamage(event.getDamage() * 0.0625);
             }
         }
 
-        if (event.getEntityType() == ENDER_DRAGON || event.getEntityType() == WITHER) { /**ender dragon and wither heal from these damage sources*/
-            if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || event.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING) || event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION) || event.getCause().equals(EntityDamageEvent.DamageCause.MAGIC)) {
+        if (entityType == ENDER_DRAGON || entityType == WITHER) { /**ender dragon and wither heal from these damage sources*/
+            if (mobReduceDamage) {
                 ((LivingEntity)event.getEntity()).setMaxHealth(((LivingEntity)event.getEntity()).getMaxHealth() + event.getDamage() * 0.25); //increase max health by 25% of the damage dealt
                 ((LivingEntity)event.getEntity()).setHealth(((LivingEntity)event.getEntity()).getHealth() + event.getDamage() * 0.25); //ender dragon and wither heal 25%
-                event.setDamage(0.0); //no damage
+                event.setDamage(0.0);
             }
         }
 
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs don't cause an endless cycle*/
+        if (cause.equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs don't cause an endless cycle*/
+            event.setCancelled(true);
+        }
+
+        if (cause.equals(EntityDamageEvent.DamageCause.MAGIC) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds*/
             event.setCancelled(true);
         }
     }
