@@ -19,8 +19,8 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     public CustomEntitySpiderCave(World world) {
         super(EntityTypes.CAVE_SPIDER, world);
-        this.attacks = 0;
         this.teleportToPlayer = 0;
+        this.attacks = 0;
         this.a60 = false;
         this.a100 = false;
     }
@@ -28,8 +28,8 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(3, new CustomPathfinderGoalMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/ //false for the long memory parameter causes the spider to continue attacking instead of only hitting you once
-        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1)); /**custom goal that breaks blocks around the mob periodically*/
+        this.goalSelector.a(3, new CustomPathfinderGoalMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/ //false for the long memory parameter allows the spider to continue attacking instead of only hitting you once
+        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
@@ -115,7 +115,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -123,7 +123,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -170,7 +170,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
         this.teleportTo(pos);
     }
 
-    private boolean teleportTo(BlockPosition pos) {
+    protected boolean teleportTo(BlockPosition pos) {
         BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
         while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
@@ -183,13 +183,62 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
             boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
 
             if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman) null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                 this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
 
             return flag2;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public boolean a(double d0, double d1, double d2, boolean flag) {
+        double d3 = this.locX();
+        double d4 = this.locY();
+        double d5 = this.locZ();
+        double d6 = d1;
+        boolean flag1 = false;
+        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        World world = this.world;
+
+        if (world.isLoaded(blockposition)) {
+            boolean flag2 = false;
+
+            while (!flag2 && blockposition.getY() > 0) {
+                BlockPosition blockposition1 = blockposition.down();
+                IBlockData iblockdata = world.getType(blockposition1);
+
+                if (iblockdata.getMaterial().isSolid()) {
+                    flag2 = true;
+                } else {
+                    --d6;
+                    blockposition = blockposition1;
+                }
+            }
+
+            if (flag2) {
+                this.enderTeleportTo(d0, d6, d2);
+                if (world.getCubes(this)) { /**can teleport onto fluids*/
+                    flag1 = true;
+                }
+            }
+        }
+
+        if (!flag1) {
+            this.enderTeleportTo(d3, d4, d5);
+            return false;
+        } else {
+            if (flag) {
+                world.broadcastEntityEffect(this, (byte) 46);
+            }
+
+            if (this instanceof EntityCreature) {
+                ((EntityCreature)this).getNavigation().o();
+            }
+
+            return true;
         }
     }
 }

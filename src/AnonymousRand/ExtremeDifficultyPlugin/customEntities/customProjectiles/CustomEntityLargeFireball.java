@@ -47,6 +47,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     @Override
     public void tick() {
         super.tick();
+
         if (this.ticksLived > 100) { /**large fireballs despawn after 5 seconds to reduce lag*/
             this.die();
         }

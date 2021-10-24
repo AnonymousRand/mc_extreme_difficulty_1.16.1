@@ -36,7 +36,9 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 entity instanceof CustomEntityCow ||
                 entity instanceof CustomEntityCreeper ||
                 entity instanceof CustomEntityDrowned ||
+                entity instanceof CustomEntityEnderman ||
                 entity instanceof CustomEntityEndermite ||
+                entity instanceof CustomEntityEvoker ||
                 entity instanceof CustomEntityGuardian ||
                 entity instanceof CustomEntityGuardianElder ||
                 entity instanceof CustomEntityHusk ||
@@ -119,12 +121,26 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     ((CraftWorld)elderGuardian.getWorld()).getHandle().addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
                     elderGuardian.remove();
                     break;
+                case ENDERMAN:
+                    Enderman enderman = (Enderman)event.getEntity();
+                    CustomEntityEnderman newEnderman = new CustomEntityEnderman(((CraftWorld)enderman.getWorld()).getHandle());
+                    newEnderman.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)enderman.getWorld()).getHandle().addEntity(newEnderman, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    enderman.remove();
+                    break;
                 case ENDERMITE:
                     Endermite endermite = (Endermite)event.getEntity();
                     CustomEntityEndermite newEndermite = new CustomEntityEndermite(((CraftWorld)endermite.getWorld()).getHandle());
                     newEndermite.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)endermite.getWorld()).getHandle().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     endermite.remove();
+                    break;
+                case EVOKER:
+                    Evoker evoker = (Evoker)event.getEntity();
+                    CustomEntityEvoker newEvoker = new CustomEntityEvoker(((CraftWorld)evoker.getWorld()).getHandle(), this.plugin);
+                    newEvoker.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)evoker.getWorld()).getHandle().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    evoker.remove();
                     break;
                 case GUARDIAN:
                     Guardian guardian = (Guardian)event.getEntity();

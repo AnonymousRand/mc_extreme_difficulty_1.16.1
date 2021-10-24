@@ -21,10 +21,10 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     public CustomEntitySkeletonStray(World world) {
         super(EntityTypes.STRAY, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-        this.attacks = 0;
         this.teleportToPlayer = 0;
         this.spawnMob = false;
         this.spawnExplodingArrow = false;
+        this.attacks = 0;
         this.a100 = false;
     }
 
@@ -217,7 +217,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -225,7 +225,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -285,13 +285,62 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
 
             if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman) null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                 this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
 
             return flag2;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public boolean a(double d0, double d1, double d2, boolean flag) {
+        double d3 = this.locX();
+        double d4 = this.locY();
+        double d5 = this.locZ();
+        double d6 = d1;
+        boolean flag1 = false;
+        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        World world = this.world;
+
+        if (world.isLoaded(blockposition)) {
+            boolean flag2 = false;
+
+            while (!flag2 && blockposition.getY() > 0) {
+                BlockPosition blockposition1 = blockposition.down();
+                IBlockData iblockdata = world.getType(blockposition1);
+
+                if (iblockdata.getMaterial().isSolid()) {
+                    flag2 = true;
+                } else {
+                    --d6;
+                    blockposition = blockposition1;
+                }
+            }
+
+            if (flag2) {
+                this.enderTeleportTo(d0, d6, d2);
+                if (world.getCubes(this)) { /**can teleport onto fluids*/
+                    flag1 = true;
+                }
+            }
+        }
+
+        if (!flag1) {
+            this.enderTeleportTo(d3, d4, d5);
+            return false;
+        } else {
+            if (flag) {
+                world.broadcastEntityEffect(this, (byte) 46);
+            }
+
+            if (this instanceof EntityCreature) {
+                ((EntityCreature)this).getNavigation().o();
+            }
+
+            return true;
         }
     }
 }

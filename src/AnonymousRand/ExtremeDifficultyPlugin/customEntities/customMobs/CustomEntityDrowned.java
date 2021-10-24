@@ -26,8 +26,8 @@ public class CustomEntityDrowned extends EntityDrowned {
 
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
-        this.attacks = 0;
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT)); /**drowned always spawn with tridents*/
+        this.attacks = 0;
         this.a60 = false;
         this.a100 = false;
     }
@@ -58,7 +58,6 @@ public class CustomEntityDrowned extends EntityDrowned {
     public void tick() {
         super.tick();
 
-        Bukkit.broadcastMessage(this.attacks + "");
         if (this.attacks == 60 && !this.a60) { /**summons 2 guardians on the 60th attack*/
             this.a60 = true;
             for (int i = 0; i < 2; i++) {
@@ -140,7 +139,7 @@ public class CustomEntityDrowned extends EntityDrowned {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -148,7 +147,7 @@ public class CustomEntityDrowned extends EntityDrowned {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

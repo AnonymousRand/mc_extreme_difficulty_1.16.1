@@ -33,6 +33,11 @@ public class CustomEntityBlaze extends EntityBlaze {
     }
 
     @Override
+    public boolean dN() { /**no longer damaged by water*/
+        return false;
+    } /**no longer damaged by water*/
+
+    @Override
     public void tick() {
         super.tick();
         if (this.ticksLived == 10) { /**blazes have 6 health*/
@@ -45,11 +50,6 @@ public class CustomEntityBlaze extends EntityBlaze {
         if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
-    }
-
-    @Override
-    public boolean dN() { /**no longer damaged by water*/
-        return false;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class CustomEntityBlaze extends EntityBlaze {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -93,7 +93,7 @@ public class CustomEntityBlaze extends EntityBlaze {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

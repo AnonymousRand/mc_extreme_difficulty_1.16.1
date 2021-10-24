@@ -20,12 +20,15 @@ public class MobDamageListeners implements Listener {
         EntityType entityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         
-        switch (entityType) { //general natural damage immunities by mobs
+        switch (entityType) { //natural damage immunities by specific mobs
             case DROWNED:
             case SKELETON:
             case STRAY:
             case ZOMBIE: /**drowned, skeletons and zombies are immune to fire damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE);
+                break;
+            case ENDERMAN: /**endermen don't take fire, lava, or lava damage*/
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
                 break;
             case ENDERMITE:
             case SILVERFISH:
@@ -35,9 +38,9 @@ public class MobDamageListeners implements Listener {
 
         boolean mobReduceDamage = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION);
 
-        if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) {  /**all non-player mobs take 15/16 less damage from these sources*/
+        if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) {  /**all non-player mobs take 95% less damage from these sources*/
             if (mobReduceDamage) {
-                event.setDamage(event.getDamage() * 0.0625);
+                event.setDamage(event.getDamage() * 0.05);
             }
         }
 

@@ -63,11 +63,29 @@ public class PlayerDamageListeners implements Listener {
             switch (event.getDamager().getType()) {
                 case CAVE_SPIDER:
                     CustomEntitySpiderCave caveSpider = (CustomEntitySpiderCave)(((CraftEntity)event.getDamager()).getHandle());
-                    caveSpider.attacks++; //increase cave spider's attack count by 1
+                    caveSpider.attacks++; //increase attack count by 1
+                    break;
+                case ENDERMAN:
+                    CustomEntityEnderman enderman = (CustomEntityEnderman)(((CraftEntity)event.getDamager()).getHandle());
+                    enderman.attacks++;
+                    break;
+                case ENDERMITE:
+                    CustomEntityEndermite endermite = (CustomEntityEndermite)(((CraftEntity)event.getDamager()).getHandle());
+                    endermite.attacks++;
+                    break;
+                case SILVERFISH:
+                    CustomEntitySilverfish silverfish = (CustomEntitySilverfish)(((CraftEntity)event.getDamager()).getHandle());
+                    silverfish.attacks++;
+
+                    if (silverfish.attacks > 80 && rand.nextDouble() < 0.25) { /**silverfish hava a 25% chance to duplicate when hitting a player after 80 attacks*/
+                        CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(silverfish.getWorld());
+                        newSilverfish.setPositionRotation(silverfish.locX(), silverfish.locY(), silverfish.locZ(), silverfish.yaw, silverfish.pitch);
+                        silverfish.getWorld().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    }
                     break;
                 case SPIDER:
                     CustomEntitySpider spider = (CustomEntitySpider)(((CraftEntity)event.getDamager()).getHandle());
-                    spider.attacks++; //increase spider's attack count by 1
+                    spider.attacks++;
 
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**spiders inflict slowness 1 for 1 second on hit*/
 

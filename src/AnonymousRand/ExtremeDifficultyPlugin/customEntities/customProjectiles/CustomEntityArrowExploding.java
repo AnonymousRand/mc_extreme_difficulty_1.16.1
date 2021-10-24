@@ -16,14 +16,6 @@ public class CustomEntityArrowExploding extends CustomEntityArrow {
     }
 
     @Override
-    protected void h() {
-        ++this.despawnCounter;
-        if (this.despawnCounter >= 30) { /**arrows despawn after 1.5 seconds to reduce lag*/
-            this.die();
-        }
-    }
-
-    @Override
     public void die() {
         super.die();
         this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), this.yield, false, Explosion.Effect.DESTROY); /**these arrows explode when they die*/

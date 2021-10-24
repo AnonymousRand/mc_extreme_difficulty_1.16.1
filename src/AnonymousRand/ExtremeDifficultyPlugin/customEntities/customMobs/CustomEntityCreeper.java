@@ -97,6 +97,18 @@ public class CustomEntityCreeper extends EntityCreeper {
             }
         }
 
+        if (this.getGoalTarget() instanceof EntityPlayer) {
+            if (!this.isPowered()) {
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.002) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.2% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                }
+            } else {
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.005) { /**every tick the charged creeper is more than 8.5 blocks of elevation different from its target, it has a 0.5% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
+                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                }
+            }
+        }
+
         if (this.ticksLived == 10) { /**creepers have +40% movement speed but only 13.4 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
             this.setHealth(13.4f);
@@ -111,18 +123,6 @@ public class CustomEntityCreeper extends EntityCreeper {
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
-            }
-        }
-
-        if (this.getGoalTarget() instanceof EntityPlayer) {
-            if (!this.isPowered()) {
-                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.0005) { /**every tick the creeper is more than 2.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
-                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
-                }
-            } else {
-                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.0005) { /**every tick the charged creeper is more than 8.5 blocks of elevation different than its target, it has a 0.05% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
-                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
-                }
             }
         }
 
@@ -186,7 +186,7 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -194,7 +194,7 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -225,7 +225,7 @@ public class CustomEntityCreeper extends EntityCreeper {
             if (pos2 != null) {
                 if (Math.abs(this.getGoalTarget().locY() - pos2.getY()) < (this.isPowered()? 5.0 : 3.0)) { //if the teleport allows the creeper to be within 3 y levels of player (5 for charged creepers)
                     if (pos2.getY() < 128.0) {
-                        this.maxFuseTicks = (this.isPowered() ? 30 : 24); //increase fuse length by 60% (0% for charged creepers) if teleporting very close to player
+                        this.maxFuseTicks = (this.isPowered() ? 35 : 30); //increase fuse length by 100% (16.7% for charged creepers) if teleporting very close to player
                         this.teleportTo(pos2);
                         return;
                     }
@@ -238,7 +238,7 @@ public class CustomEntityCreeper extends EntityCreeper {
             } else if (h > 1.0){
                 this.initiateTeleport(h - 1.0, true);
             } else { //teleport onto player if that's the only avaliable block
-                this.maxFuseTicks = (this.isPowered() ? 30 : 24); //increase fuse length by 60% (0% for charged creepers) if teleporting very close to player
+                this.maxFuseTicks = (this.isPowered() ? 35 : 30); //increase fuse length by 100% (16.7% for charged creepers) if teleporting very close to player
                 this.teleportTo(new BlockPosition(player.locX(), player.locY(), player.locZ()));
             }
         }
@@ -280,13 +280,62 @@ public class CustomEntityCreeper extends EntityCreeper {
             boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
 
             if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman) null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                 this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
 
             return flag2;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public boolean a(double d0, double d1, double d2, boolean flag) {
+        double d3 = this.locX();
+        double d4 = this.locY();
+        double d5 = this.locZ();
+        double d6 = d1;
+        boolean flag1 = false;
+        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        World world = this.world;
+
+        if (world.isLoaded(blockposition)) {
+            boolean flag2 = false;
+
+            while (!flag2 && blockposition.getY() > 0) {
+                BlockPosition blockposition1 = blockposition.down();
+                IBlockData iblockdata = world.getType(blockposition1);
+
+                if (iblockdata.getMaterial().isSolid()) {
+                    flag2 = true;
+                } else {
+                    --d6;
+                    blockposition = blockposition1;
+                }
+            }
+
+            if (flag2) {
+                this.enderTeleportTo(d0, d6, d2);
+                if (world.getCubes(this)) { /**can teleport onto fluids*/
+                    flag1 = true;
+                }
+            }
+        }
+
+        if (!flag1) {
+            this.enderTeleportTo(d3, d4, d5);
+            return false;
+        } else {
+            if (flag) {
+                world.broadcastEntityEffect(this, (byte) 46);
+            }
+
+            if (this instanceof EntityCreature) {
+                ((EntityCreature)this).getNavigation().o();
+            }
+
+            return true;
         }
     }
 }

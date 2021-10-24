@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -39,5 +40,10 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 }, 200);
             }
         }
+    }
+
+    @EventHandler
+    public void blockExplode(BlockExplodeEvent event) { /**explosions do not cause blocks to drop*/
+        event.setYield(0.0f);
     }
 }

@@ -131,7 +131,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -139,7 +139,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -237,7 +237,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                     BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityliving.locX() - this.entity.locX(), entityliving.locY() - this.entity.locY(), entityliving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.normalGetDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()), 0.5) + 1);
                     while (iterator.hasNext()) {
                         Location locBase = iterator.next().getLocation();
-                        Location loc = locBase;
+                        Location loc;
                         Random rand = new Random();
 
                         for (int x = -1; x <= 1; x++) {
@@ -255,10 +255,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                                 }
                             }
                         }
-
-                        /*if (iterator.next().getType() != org.bukkit.Material.BEDROCK && iterator.next().getType() != org.bukkit.Material.END_GATEWAY && iterator.next().getType() != org.bukkit.Material.END_PORTAL && iterator.next().getType() != org.bukkit.Material.END_PORTAL_FRAME && iterator.next().getType() != org.bukkit.Material.NETHER_PORTAL && iterator.next().getType() != org.bukkit.Material.OBSIDIAN && iterator.next().getType() != org.bukkit.Material.CRYING_OBSIDIAN && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK && iterator.next().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && iterator.next().getType() != org.bukkit.Material.STRUCTURE_BLOCK && iterator.next().getType() != org.bukkit.Material.JIGSAW && iterator.next().getType() != org.bukkit.Material.BARRIER && iterator.next().getType() != org.bukkit.Material.END_STONE && iterator.next().getType() != org.bukkit.Material.SPAWNER && iterator.next().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
-                            iterator.next().setType(org.bukkit.Material.AIR);
-                        }*/
                     }
                 }
 

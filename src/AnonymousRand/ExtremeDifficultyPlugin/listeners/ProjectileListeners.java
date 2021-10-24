@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.potion.PotionEffect;
@@ -95,7 +96,7 @@ public class ProjectileListeners implements Listener {
                     CustomEntityArrowExploding newArrow = new CustomEntityArrowExploding(nmsWorld, arrow.getVelocity(), (byte)0, arrow.getShooter(), 1.0f);
                     newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newArrow);
-                    newArrow.setNoGravity(true); /**this arrow does not lose y-level*/
+                    newArrow.setNoGravity(true); /**this arrow does not lose y level*/
                     arrow.remove();
                 }
             }
@@ -166,6 +167,12 @@ public class ProjectileListeners implements Listener {
 
         if (nmsProjectile instanceof CustomEntityArrowSpawnMob) { /**spawn mob on any impact and despawn*/
             nmsProjectile.die();
+        }
+
+        if (nmsProjectile instanceof EntityEnderPearl) { /**ender pearls spawn an endermite on landing*/
+            CustomEntityEndermite endermite = new CustomEntityEndermite(nmsProjectile.getWorld());
+            endermite.setPositionRotation(nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), nmsProjectile.yaw, nmsProjectile.pitch);
+            nmsProjectile.getWorld().addEntity(endermite, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
     }
 }

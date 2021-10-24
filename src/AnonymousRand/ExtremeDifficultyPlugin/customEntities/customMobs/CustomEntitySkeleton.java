@@ -7,17 +7,11 @@ import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalBowShoot;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.w3c.dom.Attr;
 
 import java.util.Random;
 
@@ -33,9 +27,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         super(EntityTypes.SKELETON, world);
         this.plugin = plugin;
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-        this.attacks = 0;
         this.teleportToPlayer = 0;
         this.spawnExplodingArrow = false;
+        this.attacks = 0;
         this.a75 = false;
         this.a100 = false;
     }
@@ -123,7 +117,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, skeletons get and 50 max health*/
+        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, skeletons get 50 max health*/
             this.a75 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
             this.setHealth(50.0f);
@@ -227,7 +221,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -235,7 +229,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y-level does not matter, eg. mob follow range*/
+        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -295,7 +289,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
 
             if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman) null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                 this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
 
@@ -305,17 +299,66 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
     }
 
+    @Override
+    public boolean a(double d0, double d1, double d2, boolean flag) {
+        double d3 = this.locX();
+        double d4 = this.locY();
+        double d5 = this.locZ();
+        double d6 = d1;
+        boolean flag1 = false;
+        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        World world = this.world;
+
+        if (world.isLoaded(blockposition)) {
+            boolean flag2 = false;
+
+            while (!flag2 && blockposition.getY() > 0) {
+                BlockPosition blockposition1 = blockposition.down();
+                IBlockData iblockdata = world.getType(blockposition1);
+
+                if (iblockdata.getMaterial().isSolid()) {
+                    flag2 = true;
+                } else {
+                    --d6;
+                    blockposition = blockposition1;
+                }
+            }
+
+            if (flag2) {
+                this.enderTeleportTo(d0, d6, d2);
+                if (world.getCubes(this)) { /**can teleport onto fluids*/
+                    flag1 = true;
+                }
+            }
+        }
+
+        if (!flag1) {
+            this.enderTeleportTo(d3, d4, d5);
+            return false;
+        } else {
+            if (flag) {
+                world.broadcastEntityEffect(this, (byte) 46);
+            }
+
+            if (this instanceof EntityCreature) {
+                ((EntityCreature)this).getNavigation().o();
+            }
+
+            return true;
+        }
+    }
+
     static class ShootArrowRepeating extends BukkitRunnable {
 
         private CustomEntitySkeleton skeleton;
-        private EntityLiving entityliving;
+        private EntityLiving target;
         private int cycles, maxCycles;
         private float f;
         private Random rand = new Random();
 
-        public ShootArrowRepeating(CustomEntitySkeleton skeleton, EntityLiving entityliving, int maxCycles, float f) {
+        public ShootArrowRepeating(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float f) {
             this.skeleton = skeleton;
-            this.entityliving = entityliving;
+            this.target = target;
             this.cycles = 0;
             this.maxCycles = maxCycles;
             this.f = f;
@@ -329,9 +372,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             for (int i = 0; i < (skeleton.attacks < 55 ? 10 : 1); i++) {
                 ItemStack itemstack = skeleton.f(skeleton.b(ProjectileHelper.a(skeleton, Items.BOW)));
                 EntityArrow entityarrow = skeleton.b(itemstack, f);
-                double d0 = entityliving.locX() - skeleton.locX();
-                double d1 = entityliving.locY() - skeleton.locY();
-                double d2 = entityliving.locZ() - skeleton.locZ();
+                double d0 = target.locX() - skeleton.locX();
+                double d1 = target.locY() - skeleton.locY();
+                double d2 = target.locZ() - skeleton.locZ();
 
                 if (rand.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                     entityarrow.setPierceLevel((byte)1);

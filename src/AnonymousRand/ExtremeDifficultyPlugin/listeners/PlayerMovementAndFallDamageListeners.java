@@ -54,7 +54,7 @@ public class PlayerMovementAndFallDamageListeners implements Listener { /**fall 
             this.fallHeight += arr[0] - arr[1];     //update fallHeight
             arr[0] = y;                             //set previous y level as the current y level in preparation for next tick
             arr[1] = -65.0;                         //empty the current y level slot in preparation for next tick
-        } else {                                    //fall ended or no change in y-level
+        } else {                                    //fall ended or no change in y level
             Location loc = event.getTo();
             BlockData b = loc.getBlock().getBlockData();
             int level = -1;
