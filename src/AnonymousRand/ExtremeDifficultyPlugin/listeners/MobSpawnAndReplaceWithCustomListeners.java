@@ -39,6 +39,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 entity instanceof CustomEntityEnderman ||
                 entity instanceof CustomEntityEndermite ||
                 entity instanceof CustomEntityEvoker ||
+                entity instanceof CustomEntityGhast ||
                 entity instanceof CustomEntityGuardian ||
                 entity instanceof CustomEntityGuardianElder ||
                 entity instanceof CustomEntityHusk ||
@@ -141,6 +142,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     newEvoker.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)evoker.getWorld()).getHandle().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
                     evoker.remove();
+                    break;
+                case GHAST:
+                    Ghast ghast = (Ghast)event.getEntity();
+                    CustomEntityGhast newGhast = new CustomEntityGhast(((CraftWorld)ghast.getWorld()).getHandle());
+                    newGhast.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((CraftWorld)ghast.getWorld()).getHandle().addEntity(newGhast, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    ghast.remove();
                     break;
                 case GUARDIAN:
                     Guardian guardian = (Guardian)event.getEntity();

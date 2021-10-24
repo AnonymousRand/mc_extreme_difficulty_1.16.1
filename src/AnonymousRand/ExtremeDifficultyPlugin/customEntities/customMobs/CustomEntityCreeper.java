@@ -52,15 +52,19 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     public void explode() {
-        if (this.isPowered()) {
-            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0) { //charged creepers still only explode within 5 blocks of player
-                this.world.explode(this, this.locX(), this.locY(), this.locZ(), 15.0f, Explosion.Effect.DESTROY); /**charged creepers explode with power 15*/
-                super.explode();
+        if (this.getGoalTarget() != null) {
+            if (this.isPowered()) {
+                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0) { //charged creepers still only explode within 5 blocks of player
+                    this.world.explode(this, this.locX(), this.locY(), this.locZ(), 15.0f, Explosion.Effect.DESTROY); /**charged creepers explode with power 15*/
+                    super.explode();
+                }
+            } else {
+                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 18.0) { //still only explodes within 3 blocks of player
+                    super.explode();
+                }
             }
         } else {
-            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 18.0) { //still only explodes within 3 blocks of player
-                super.explode();
-            }
+            super.explode();
         }
     }
 

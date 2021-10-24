@@ -3,6 +3,13 @@ package AnonymousRand.ExtremeDifficultyPlugin;
 import AnonymousRand.ExtremeDifficultyPlugin.listeners.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.BlockOverride;
 import net.minecraft.server.v1_16_R1.Blocks;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
@@ -32,10 +39,28 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SleepListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);
+
+        addEyeOfEnderRecipe(); /**changes eye of ender recipe*/
     }
 
     @Override
     public void onDisable() {
 
+    }
+
+    public void addEyeOfEnderRecipe() {
+        Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
+        NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
+        ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));
+        newRecipe.addIngredient(Material.BLAZE_ROD);
+        newRecipe.addIngredient(Material.ENDER_PEARL);
+        newRecipe.addIngredient(Material.NETHERITE_HOE);
+        newRecipe.addIngredient(Material.BEETROOT_SOUP);
+        newRecipe.addIngredient(Material.SCUTE);
+        newRecipe.addIngredient(Material.WRITABLE_BOOK);
+        newRecipe.addIngredient(Material.DRIED_KELP_BLOCK);
+        newRecipe.addIngredient(Material.CRACKED_POLISHED_BLACKSTONE_BRICKS);
+        newRecipe.addIngredient(Material.DEAD_BRAIN_CORAL);
+        Bukkit.getServer().addRecipe(newRecipe);
     }
 }

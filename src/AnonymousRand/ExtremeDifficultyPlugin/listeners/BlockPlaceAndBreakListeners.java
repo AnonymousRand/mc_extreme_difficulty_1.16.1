@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -43,7 +44,12 @@ public class BlockPlaceAndBreakListeners implements Listener {
     }
 
     @EventHandler
-    public void blockExplode(BlockExplodeEvent event) { /**explosions do not cause blocks to drop*/
+    public void blockExplodeAndBreakBlock(BlockExplodeEvent event) { /**explosions do not cause blocks to drop*/
+        event.setYield(0.0f);
+    }
+
+    @EventHandler
+    public void entityExplodeAndBreakBlock(EntityExplodeEvent event) { /**explosions do not cause blocks to drop*/
         event.setYield(0.0f);
     }
 }
