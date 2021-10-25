@@ -69,17 +69,16 @@ public class CustomEntityEndermite extends EntityEndermite {
             }
         }
 
-        if (this.ticksLived == 10) { /**endermites move 60% faster, have extra knockback, and have 11 health, but only do 1 damage*/
+        if (this.ticksLived == 10) { /**endermites move 60% faster, have extra knockback, and have 10.5 health, but only do 1 damage*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(11.0);
-            this.setHealth(11.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.5);
+            this.setHealth(10.5f);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
@@ -96,16 +95,16 @@ public class CustomEntityEndermite extends EntityEndermite {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

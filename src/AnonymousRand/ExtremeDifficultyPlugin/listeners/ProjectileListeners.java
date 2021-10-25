@@ -26,7 +26,7 @@ public class ProjectileListeners implements Listener {
     Random rand = new Random();
 
     @EventHandler
-    public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows and small fireballs when shot with custom arrows/small fireballs
+    public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
         Projectile projectile = event.getEntity();
         Entity nmsProjectile = ((CraftEntity)projectile).getHandle();
         Entity nmsShooter = ((CraftEntity)projectile.getShooter()).getHandle();
@@ -122,9 +122,9 @@ public class ProjectileListeners implements Listener {
 
     @EventHandler
     public void projectileHit(ProjectileHitEvent event) {
-        Projectile projectile = event.getEntity();
-        ProjectileSource bukkitShooter = projectile.getShooter();
-        Entity nmsProjectile = ((CraftEntity)projectile).getHandle();
+        Projectile bukkitProjectile = event.getEntity();
+        ProjectileSource bukkitShooter = bukkitProjectile.getShooter();
+        Entity nmsProjectile = ((CraftEntity)bukkitProjectile).getHandle();
         Entity nmsShooter = ((CraftEntity)bukkitShooter).getHandle();
 
         if (event.getHitBlock() != null) {
@@ -147,25 +147,29 @@ public class ProjectileListeners implements Listener {
                     }
                 }
 
-                nmsProjectile.die(); /**tridents despawn and die on block hit*/
+                nmsProjectile.die(); /**tridents die on block hit*/
             }
         }
 
-        if (event.getHitEntity() != null && nmsProjectile instanceof CustomEntityArrow) {
-            if (((CustomEntityArrow)nmsProjectile).getPierceLevel() == 0) { /**0 pierce arrows despawn on entity impact*/
-                nmsProjectile.die();
-            }
+        if (event.getHitEntity() != null) {
+            Entity nmsHitEntity = ((CraftEntity)event.getHitEntity()).getHandle();
 
-            if (event.getHitEntity() instanceof CraftPlayer && nmsShooter instanceof EntitySkeletonStray && !(nmsProjectile instanceof CustomEntityArrowExploding) && !(nmsProjectile instanceof CustomEntityArrowSpawnMob)) { //normal arrows shot by strays inflict slowness as custom strays do not have the slowness method properly applied
-                ((LivingEntity)event.getHitEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 600, 0));
+            if (nmsProjectile instanceof CustomEntityArrow) {
+                if (((CustomEntityArrow)nmsProjectile).getPierceLevel() == 0) { /**0 pierce arrows die on entity impact*/
+                    nmsProjectile.die();
+                }
+
+                if (nmsHitEntity instanceof EntityPlayer && nmsShooter instanceof EntitySkeletonStray && !(nmsProjectile instanceof CustomEntityArrowExploding) && !(nmsProjectile instanceof CustomEntityArrowSpawnMob)) { //normal arrows shot by strays inflict slowness as custom strays do not have the slowness method properly applied
+                    ((EntityLiving)nmsHitEntity).addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 600, 0));
+                }
             }
         }
 
-        if (nmsProjectile instanceof CustomEntityArrowExploding) { /**meteor rain arrows explode on any impact and despawn*/
+        if (nmsProjectile instanceof CustomEntityArrowExploding) { /**meteor rain arrows explode on any impact and die*/
             nmsProjectile.die();
         }
 
-        if (nmsProjectile instanceof CustomEntityArrowSpawnMob) { /**spawn mob on any impact and despawn*/
+        if (nmsProjectile instanceof CustomEntityArrowSpawnMob) { /**spawn mob arrows spawn their mob on any impact and die*/
             nmsProjectile.die();
         }
 
@@ -173,6 +177,10 @@ public class ProjectileListeners implements Listener {
             CustomEntityEndermite endermite = new CustomEntityEndermite(nmsProjectile.getWorld());
             endermite.setPositionRotation(nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), nmsProjectile.yaw, nmsProjectile.pitch);
             nmsProjectile.getWorld().addEntity(endermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+        }
+
+        if (nmsProjectile instanceof CustomEntitySmallFireball && nmsShooter instanceof CustomEntityGhast) { /**blaze fireballs when shot by ghasts during their death still explode like large fireballs; the reason I use small fireballs instead is because large fireballs keep hitting each other as they are spawned on the same spot*/
+            nmsProjectile.world.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 1.0f, false, Explosion.Effect.DESTROY);
         }
     }
 }

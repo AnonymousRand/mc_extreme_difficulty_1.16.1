@@ -15,21 +15,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     public CustomEntityLargeFireball(World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield) {
         super(world, entityliving, d0, d1, d2);
         this.yield = intYield;
-    }
-
-    @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
-        super.a(movingobjectpositionentity);
-        if (!this.world.isClientSide) {
-            Entity entity = movingobjectpositionentity.getEntity();
-            Entity entity1 = this.getShooter();
-
-            entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /**only 1 damage from fireball hit*/
-            if (entity1 instanceof EntityLiving) {
-                this.a((EntityLiving) entity1, entity);
-            }
-
-        }
+        this.setShooter(entityliving);
     }
 
     @Override

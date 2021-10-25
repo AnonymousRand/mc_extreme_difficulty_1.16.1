@@ -26,10 +26,10 @@ public class CustomEntityRavager extends EntityRavager {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**ravagers have 500 health, and extra knockback, but only 1 damage*/
+        if (this.ticksLived == 10) { /**ravagers have 400 health and extra knockback, but only 1 damage*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.0);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(500.0);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
             this.setHealth(500.0f);
         }
 
@@ -59,16 +59,16 @@ public class CustomEntityRavager extends EntityRavager {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

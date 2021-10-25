@@ -7,8 +7,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -43,7 +47,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CastingSpellGoal());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
-        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 10, 2, 1, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
+        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(4, new SummonVexSpell());
         this.goalSelector.a(5, new FangAttackSpell());
         this.goalSelector.a(6, new WololoSpellGoal());
@@ -279,7 +283,7 @@ public class CustomEntityEvoker extends EntityEvoker {
                 }
             }
 
-            new StopPlayer(CustomEntityEvoker.this, entityliving, 6).runTaskTimer(CustomEntityEvoker.this.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 0.9 seconds*/
+            new StopPlayer(CustomEntityEvoker.this, entityliving, 7).runTaskTimer(CustomEntityEvoker.this.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
@@ -352,8 +356,8 @@ public class CustomEntityEvoker extends EntityEvoker {
 
     public class WololoSpellGoal extends EntityIllagerWizard.c {
 
-        private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(24.0D).a().a((entityliving) -> {
-            return ((EntitySheep)entityliving).getColor() != EnumColor.RED; /**can target all non-red sheep now within 24 blocks and with line of sight*/
+        private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityliving) -> {
+            return !((EntitySheep)entityliving).getColor().equals(EnumColor.PINK); /**can target all non-pink sheep now within 32 blocks and with line of sight*/
         });
 
         public WololoSpellGoal() {
@@ -371,7 +375,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             } else if (!CustomEntityEvoker.this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
                 return false;
             } else {
-                List<EntitySheep> list = CustomEntityEvoker.this.world.a(EntitySheep.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().grow(16.0D, 4.0D, 16.0D));
+                List<EntitySheep> list = CustomEntityEvoker.this.world.a(EntitySheep.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().grow(32.0D, 128.0D, 32.0D));
 
                 if (list.isEmpty()) {
                     return false;
@@ -390,7 +394,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         @Override
         public void d() {
             super.d();
-            CustomEntityEvoker.this.a((EntitySheep) null);
+            CustomEntityEvoker.this.a((EntitySheep)null);
         }
 
         @Override
@@ -398,9 +402,19 @@ public class CustomEntityEvoker extends EntityEvoker {
             CustomEntityEvoker.this.attacks++;
             EntitySheep entitysheep = CustomEntityEvoker.this.fh();
 
-            if (entitysheep != null && entitysheep.isAlive()) {
-                entitysheep.setColor(EnumColor.RED);
-                //todo: summon aggressive sheep
+            if (entitysheep != null && entitysheep.isAlive()) { /**instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep*/
+                Vec3D loc = entitysheep.getPositionVector();
+
+                org.bukkit.inventory.ItemStack boots = new ItemStack(org.bukkit.Material.LEATHER_BOOTS);
+                boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 6 to avoid loopholes such as using water flow to keep them back*/
+                boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
+
+                CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(entitysheep.getWorld());
+                newSheep.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
+                newSheep.setColor(EnumColor.PINK);
+                entitysheep.getWorld().addEntity(newSheep, CreatureSpawnEvent.SpawnReason.NATURAL);
+                entitysheep.die();
             }
         }
 
@@ -608,7 +622,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
 
         public void run() {
-            if (++this.cycles > maxCycles) {
+            if (++this.cycles >= maxCycles) {
                 this.cancel();
             }
 

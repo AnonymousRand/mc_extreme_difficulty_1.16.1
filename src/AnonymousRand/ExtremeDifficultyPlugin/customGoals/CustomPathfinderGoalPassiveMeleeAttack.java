@@ -127,6 +127,6 @@ public class CustomPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     protected double a(EntityLiving entityliving) {
-        return (double) (this.entity.getWidth() * 4.0F * this.entity.getWidth() * 4.0F + entityliving.getWidth());
+        return (double)(this.entity.getWidth() * 4.0F * this.entity.getWidth() * 4.0F + entityliving.getWidth());
     }
 }

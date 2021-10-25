@@ -1,16 +1,20 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
+import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
-import net.minecraft.server.v1_16_R1.MobEffect;
-import net.minecraft.server.v1_16_R1.MobEffects;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobSpawnAndReplaceWithCustomListeners implements Listener {
@@ -22,9 +26,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
     }
 
     @EventHandler
-    public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs
+    public void creatureSpawn(CreatureSpawnEvent event) { //replace mobs with custom mobs when they spawn in
         Location loc = event.getEntity().getLocation();
-
         Entity entity = ((CraftLivingEntity)event.getEntity()).getHandle();
 
         if (!(entity instanceof CustomEntityBat ||
@@ -48,11 +51,16 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 entity instanceof CustomEntityMushroomCow ||
                 entity instanceof CustomEntityRabbit ||
                 entity instanceof CustomEntityRavager ||
-                entity instanceof CustomEntitySkeleton ||
+                entity instanceof CustomEntitySheepAggressive ||
                 entity instanceof CustomEntitySilverfish ||
+                entity instanceof CustomEntitySkeleton ||
                 entity instanceof CustomEntitySkeletonStray ||
                 entity instanceof CustomEntitySpider ||
                 entity instanceof CustomEntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+
+            org.bukkit.inventory.ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
+            boots.addUnsafeEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 6 to avoid loopholes such as using water flow to keep them back*/
+            boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
             switch (event.getEntityType()) {
                 case BAT:
@@ -83,6 +91,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         CaveSpider caveSpider = (CaveSpider)event.getEntity();
                         CustomEntitySpiderCave newCaveSpider = new CustomEntitySpiderCave(((CraftWorld)caveSpider.getWorld()).getHandle());
                         newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((LivingEntity)newCaveSpider.getBukkitEntity()).getEquipment().setBoots(boots);
                         ((CraftWorld)caveSpider.getWorld()).getHandle().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                         caveSpider.remove();
                     }
@@ -91,6 +100,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Chicken chicken = (Chicken)event.getEntity();
                     CustomEntityChicken newChicken = new CustomEntityChicken(((CraftWorld)chicken.getWorld()).getHandle());
                     newChicken.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newChicken.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)chicken.getWorld()).getHandle().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
                     chicken.remove();
                     break;
@@ -98,6 +108,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Cow cow = (Cow)event.getEntity();
                     CustomEntityCow newCow = new CustomEntityCow(((CraftWorld)cow.getWorld()).getHandle());
                     newCow.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newCow.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)cow.getWorld()).getHandle().addEntity(newCow, CreatureSpawnEvent.SpawnReason.NATURAL);
                     cow.remove();
                     break;
@@ -105,6 +116,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Creeper creeper = (Creeper)event.getEntity();
                     CustomEntityCreeper newCreeper = new CustomEntityCreeper(((CraftWorld)creeper.getWorld()).getHandle(), 15);
                     newCreeper.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newCreeper.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)creeper.getWorld()).getHandle().addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
                     creeper.remove();
                     break;
@@ -112,6 +124,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Drowned drowned = (Drowned)event.getEntity();
                     CustomEntityDrowned newDrowned = new CustomEntityDrowned(((CraftWorld)drowned.getWorld()).getHandle());
                     newDrowned.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newDrowned.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)drowned.getWorld()).getHandle().addEntity(newDrowned, CreatureSpawnEvent.SpawnReason.NATURAL);
                     drowned.remove();
                     break;
@@ -126,6 +139,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Enderman enderman = (Enderman)event.getEntity();
                     CustomEntityEnderman newEnderman = new CustomEntityEnderman(((CraftWorld)enderman.getWorld()).getHandle());
                     newEnderman.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newEnderman.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)enderman.getWorld()).getHandle().addEntity(newEnderman, CreatureSpawnEvent.SpawnReason.NATURAL);
                     enderman.remove();
                     break;
@@ -133,6 +147,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Endermite endermite = (Endermite)event.getEntity();
                     CustomEntityEndermite newEndermite = new CustomEntityEndermite(((CraftWorld)endermite.getWorld()).getHandle());
                     newEndermite.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newEndermite.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)endermite.getWorld()).getHandle().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     endermite.remove();
                     break;
@@ -140,12 +155,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Evoker evoker = (Evoker)event.getEntity();
                     CustomEntityEvoker newEvoker = new CustomEntityEvoker(((CraftWorld)evoker.getWorld()).getHandle(), this.plugin);
                     newEvoker.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newEvoker.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)evoker.getWorld()).getHandle().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
                     evoker.remove();
                     break;
                 case GHAST:
                     Ghast ghast = (Ghast)event.getEntity();
-                    CustomEntityGhast newGhast = new CustomEntityGhast(((CraftWorld)ghast.getWorld()).getHandle());
+                    CustomEntityGhast newGhast = new CustomEntityGhast(((CraftWorld)ghast.getWorld()).getHandle(), this.plugin);
                     newGhast.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)ghast.getWorld()).getHandle().addEntity(newGhast, CreatureSpawnEvent.SpawnReason.NATURAL);
                     ghast.remove();
@@ -161,6 +177,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Husk husk = (Husk)event.getEntity();
                     CustomEntityHusk newHusk = new CustomEntityHusk(((CraftWorld)husk.getWorld()).getHandle());
                     newHusk.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newHusk.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)husk.getWorld()).getHandle().addEntity(newHusk, CreatureSpawnEvent.SpawnReason.NATURAL);
                     husk.remove();
                     break;
@@ -168,22 +185,25 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Llama llama = (Llama)event.getEntity();
                     CustomEntityLlama newLlama = new CustomEntityLlama(((CraftWorld)llama.getWorld()).getHandle());
                     newLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newLlama.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)llama.getWorld()).getHandle().addEntity(newLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
                     llama.remove();
-                    break;
-                case TRADER_LLAMA:
-                    TraderLlama traderLlama = (TraderLlama)event.getEntity();
-                    CustomEntityLlamaTrader newTraderLlama = new CustomEntityLlamaTrader(((CraftWorld)traderLlama.getWorld()).getHandle());
-                    newTraderLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                    ((CraftWorld)traderLlama.getWorld()).getHandle().addEntity(newTraderLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
-                    traderLlama.remove();
                     break;
                 case MUSHROOM_COW:
                     MushroomCow mooshroom = (MushroomCow)event.getEntity();
                     CustomEntityMushroomCow newMooshroom = new CustomEntityMushroomCow(((CraftWorld)mooshroom.getWorld()).getHandle());
                     newMooshroom.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newMooshroom.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)mooshroom.getWorld()).getHandle().addEntity(newMooshroom, CreatureSpawnEvent.SpawnReason.NATURAL);
                     mooshroom.remove();
+                    break;
+                case TRADER_LLAMA:
+                    TraderLlama traderLlama = (TraderLlama)event.getEntity();
+                    CustomEntityLlamaTrader newTraderLlama = new CustomEntityLlamaTrader(((CraftWorld)traderLlama.getWorld()).getHandle());
+                    newTraderLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newTraderLlama.getBukkitEntity()).getEquipment().setBoots(boots);
+                    ((CraftWorld)traderLlama.getWorld()).getHandle().addEntity(newTraderLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    traderLlama.remove();
                     break;
                 case RABBIT:
                     Rabbit rabbit = (Rabbit)event.getEntity();
@@ -192,6 +212,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     for (int i = 0; i < 5; i++) { /**all rabbits are spawned in as 5 killer bunnies instead*/
                         newRabbit = new CustomEntityRabbit(((CraftWorld)rabbit.getWorld()).getHandle());
                         newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((LivingEntity)newRabbit.getBukkitEntity()).getEquipment().setBoots(boots);
                         ((CraftWorld)rabbit.getWorld()).getHandle().addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
                         newRabbit.setRabbitType(99);
                     }
@@ -201,30 +222,46 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Ravager ravager = (Ravager)event.getEntity();
                     CustomEntityRavager newRavager = new CustomEntityRavager(((CraftWorld)ravager.getWorld()).getHandle());
                     newRavager.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newRavager.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)ravager.getWorld()).getHandle().addEntity(newRavager, CreatureSpawnEvent.SpawnReason.NATURAL);
                     newRavager.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1)); /**changing attributes don't work on ravagers so ravagers have speed 2*/
                     ravager.remove();
                     break;
-                case SKELETON:
-                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
-                        Skeleton skeleton = (Skeleton)event.getEntity();
-                        CustomEntitySkeleton newSkeleton = new CustomEntitySkeleton(((CraftWorld)skeleton.getWorld()).getHandle(), this.plugin);
-                        newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                        ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
-                        skeleton.remove();
+                case SHEEP:
+                    Sheep sheep = (Sheep)event.getEntity();
+
+                    if (sheep.getColor() == DyeColor.PINK) {
+                        CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(((CraftWorld)sheep.getWorld()).getHandle());
+                        newSheep.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
+                        newSheep.setColor(EnumColor.PINK);
+                        ((CraftWorld)sheep.getWorld()).getHandle().addEntity(newSheep, CreatureSpawnEvent.SpawnReason.NATURAL);
+                        sheep.remove();
                     }
                     break;
                 case SILVERFISH:
                     Silverfish silverfish = (Silverfish)event.getEntity();
                     CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(((CraftWorld)silverfish.getWorld()).getHandle());
                     newSilverfish.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newSilverfish.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)silverfish.getWorld()).getHandle().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
                     silverfish.remove();
+                    break;
+                case SKELETON:
+                    if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
+                        Skeleton skeleton = (Skeleton)event.getEntity();
+                        CustomEntitySkeleton newSkeleton = new CustomEntitySkeleton(((CraftWorld)skeleton.getWorld()).getHandle(), this.plugin);
+                        newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        ((LivingEntity)newSkeleton.getBukkitEntity()).getEquipment().setBoots(boots);
+                        ((CraftWorld)skeleton.getWorld()).getHandle().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
+                        skeleton.remove();
+                    }
                     break;
                 case SPIDER:
                     Spider spider = (Spider)event.getEntity();
                     CustomEntitySpider newSpider = new CustomEntitySpider(((CraftWorld)spider.getWorld()).getHandle());
                     newSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newSpider.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)spider.getWorld()).getHandle().addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                     spider.remove();
                     break;
@@ -232,6 +269,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Stray stray = (Stray)event.getEntity();
                     CustomEntitySkeletonStray newStray = new CustomEntitySkeletonStray(((CraftWorld)stray.getWorld()).getHandle());
                     newStray.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newStray.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)stray.getWorld()).getHandle().addEntity(newStray, CreatureSpawnEvent.SpawnReason.NATURAL);
                     stray.remove();
                     break;
@@ -239,6 +277,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     Zombie zombie = (Zombie)event.getEntity();
                     CustomEntityZombie newZombie = new CustomEntityZombie(((CraftWorld)zombie.getWorld()).getHandle());
                     newZombie.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    ((LivingEntity)newZombie.getBukkitEntity()).getEquipment().setBoots(boots);
                     ((CraftWorld)zombie.getWorld()).getHandle().addEntity(newZombie, CreatureSpawnEvent.SpawnReason.NATURAL);
                     zombie.remove();
                     break;

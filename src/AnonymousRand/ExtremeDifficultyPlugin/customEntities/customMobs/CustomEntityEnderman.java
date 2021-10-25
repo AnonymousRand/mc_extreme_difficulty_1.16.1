@@ -92,7 +92,7 @@ public class CustomEntityEnderman extends EntityEnderman {
         vec3d = vec3d.d();
         double d0 = 16.0D;
         double d1 = this.locX() + (this.random.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
-        double d2 = this.locY() + (double) (this.random.nextInt(16) - 8) - vec3d.y * 16.0D;
+        double d2 = this.locY() + (double)(this.random.nextInt(16) - 8) - vec3d.y * 16.0D;
         double d3 = this.locZ() + (this.random.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
 
         return this.o(d1, d2, d3);
@@ -222,7 +222,8 @@ public class CustomEntityEnderman extends EntityEnderman {
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
         Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        Location thisLoc3 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 2.0, this.locZ());
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc3.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
@@ -239,16 +240,16 @@ public class CustomEntityEnderman extends EntityEnderman {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -424,8 +425,8 @@ public class CustomEntityEnderman extends EntityEnderman {
             BlockPosition blockposition = new BlockPosition(i, j, k);
             IBlockData iblockdata = world.getType(blockposition);
             Block block = iblockdata.getBlock();
-            Vec3D vec3d = new Vec3D((double) MathHelper.floor(this.entity.locX()) + 0.5D, (double) j + 0.5D, (double) MathHelper.floor(this.entity.locZ()) + 0.5D);
-            Vec3D vec3d1 = new Vec3D((double) i + 0.5D, (double) j + 0.5D, (double) k + 0.5D);
+            Vec3D vec3d = new Vec3D((double)MathHelper.floor(this.entity.locX()) + 0.5D, (double)j + 0.5D, (double)MathHelper.floor(this.entity.locZ()) + 0.5D);
+            Vec3D vec3d1 = new Vec3D((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
             MovingObjectPositionBlock movingobjectpositionblock = world.rayTrace(new RayTrace(vec3d, vec3d1, RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.entity));
             boolean flag = movingobjectpositionblock.getBlockPosition().equals(blockposition);
 

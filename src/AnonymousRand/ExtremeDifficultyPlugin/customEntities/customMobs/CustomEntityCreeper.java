@@ -113,10 +113,10 @@ public class CustomEntityCreeper extends EntityCreeper {
             }
         }
 
-        if (this.ticksLived == 10) { /**creepers have +40% movement speed but only 13.4 health*/
+        if (this.ticksLived == 10) { /**creepers have +40% movement speed but only 12.75 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
-            this.setHealth(13.4f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.4);
+            this.setHealth(12.75f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
 
             if (random.nextDouble() < 0.05 && !this.isPowered()) { /**upon spawning, non-charged creepers have a 5% chance to teleport to 10-15 blocks of player*/
                 this.initiateTeleport(random.nextDouble() * 5.0 + 10.0, false);
@@ -169,16 +169,16 @@ public class CustomEntityCreeper extends EntityCreeper {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

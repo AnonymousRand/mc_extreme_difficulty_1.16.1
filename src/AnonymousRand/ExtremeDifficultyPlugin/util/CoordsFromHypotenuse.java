@@ -1,5 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.util;
 import net.minecraft.server.v1_16_R1.BlockPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -15,6 +16,8 @@ public class CoordsFromHypotenuse {
     public BlockPosition CoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(rand.nextDouble() * 360);
+        } else {
+            angle = Math.toRadians(angle);
         }
 
         double x = Math.floor(Math.abs(hypotenuse * Math.cos(angle)));
@@ -38,8 +41,8 @@ public class CoordsFromHypotenuse {
             angle = Math.toRadians(angle);
         }
 
-        double x = Math.abs(hypotenuse * Math.cos(angle));
-        double z = Math.abs(hypotenuse * Math.sin(angle));
+        double x = Math.abs(hypotenuse * Math.sin(angle));
+        double z = Math.abs(hypotenuse * Math.cos(angle));
 
         if (angle >= 0 && angle < PI / 2) {
             return new Location(world, origin.getX() - x, y, origin.getZ() + z);

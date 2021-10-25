@@ -28,7 +28,7 @@ public class CustomEntityRabbit extends EntityRabbit {
 
         @Override
         protected double a(EntityLiving entityliving) {
-            return (double) (4.0F + entityliving.getWidth());
+            return (double)(4.0F + entityliving.getWidth());
         }
     }
 }

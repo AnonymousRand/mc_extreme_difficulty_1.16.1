@@ -64,16 +64,16 @@ public class CustomEntityBlaze extends EntityBlaze {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -101,21 +101,21 @@ public class CustomEntityBlaze extends EntityBlaze {
 
     static class CustomPathfinderGoalBlazeFireball extends PathfinderGoal { //new attack goal
 
-        private final CustomEntityBlaze a;
+        private final CustomEntityBlaze blaze;
         private int b;
         private int c;
         private int d;
 
         public CustomPathfinderGoalBlazeFireball(CustomEntityBlaze entityblaze) {
-            this.a = entityblaze;
+            this.blaze = entityblaze;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         }
 
         @Override
         public boolean a() {
-            EntityLiving entityliving = this.a.getGoalTarget();
+            EntityLiving entityliving = this.blaze.getGoalTarget();
 
-            return entityliving != null && entityliving.isAlive() && this.a.d(entityliving);
+            return entityliving != null && entityliving.isAlive() && this.blaze.d(entityliving);
         }
 
         @Override
@@ -131,32 +131,32 @@ public class CustomEntityBlaze extends EntityBlaze {
         @Override
         public void e() {
             --this.c;
-            EntityLiving entityliving = this.a.getGoalTarget();
+            EntityLiving entityliving = this.blaze.getGoalTarget();
 
             if (entityliving != null) { /**attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via nearestAttackableTarget goal)*/
                 ++this.d;
 
-                double d0 = this.a.h((Entity) entityliving);
+                double d0 = this.blaze.h((Entity) entityliving);
 
                 if (d0 < 4.0D) {
                     if (this.c <= 0) {
                         this.c = 80; /**only melees every 4 seconds*/
-                        this.a.attackEntity(entityliving);
-                        this.a.getWorld().createExplosion(this.a, entityliving.locX(), entityliving.locY(), entityliving.locZ(), 0.4f, false, Explosion.Effect.DESTROY); /**melee attack creates a power 0.4 explosion on player's location*/
+                        this.blaze.attackEntity(entityliving);
+                        this.blaze.getWorld().createExplosion(this.blaze, entityliving.locX(), entityliving.locY(), entityliving.locZ(), 0.4f, false, Explosion.Effect.DESTROY); /**melee attack creates a power 0.4 explosion on player's location*/
                     }
 
-                    this.a.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
+                    this.blaze.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
                 } else if (d0 < this.g() * this.g()) {
-                    double d1 = entityliving.locX() - this.a.locX();
-                    double d2 = entityliving.e(0.5D) - this.a.e(0.5D);
-                    double d3 = entityliving.locZ() - this.a.locZ();
+                    double d1 = entityliving.locX() - this.blaze.locX();
+                    double d2 = entityliving.e(0.5D) - this.blaze.e(0.5D);
+                    double d3 = entityliving.locZ() - this.blaze.locZ();
 
                     if (this.c <= 0) {
                         ++this.b;
                         if (this.b == 1) {
                             this.c = 0; /**no pause between each volley; shoots constantly*/
                         } else if (this.b <= 4) {
-                            if (this.a.rapidFireTracker == 0) {
+                            if (this.blaze.rapidFireTracker == 0) {
                                 this.c = 2; /**tripled attack speed*/
                             } else {
                                 this.c = 1; /**6x attack speed during rapidfire*/
@@ -168,93 +168,93 @@ public class CustomEntityBlaze extends EntityBlaze {
 
                         if (this.b > 1) {
                             float f = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
-                            World world = this.a.world;
+                            World world = this.blaze.world;
 
-                            if (!this.a.isSilent()) {
-                                world.a((EntityHuman) null, 1018, this.a.getChunkCoordinates(), 0);
+                            if (!this.blaze.isSilent()) {
+                                world.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
                             }
 
-                            if (this.a.rapidFireTracker <= 0 && this.a.shotTracker < 350) {
-                                if (this.a.shotTracker % 160 == 0 && this.a.shotTracker != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
-                                    CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(world, this.a, d1, d2, d3, 2);
-                                    entitylargefireball.setPosition(entitylargefireball.locX(), this.a.e(0.5D) + 0.5D, entitylargefireball.locZ());
-                                    world.addEntity(entitylargefireball);
-                                    this.a.shotTracker++;
-                                } else if (this.a.shotTracker % 60 == 0 && this.a.shotTracker != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
-                                    EntityLargeFireball entitylargefireball = new EntityLargeFireball(world, this.a, d1, d2, d3);
-                                    entitylargefireball.setPosition(entitylargefireball.locX(), this.a.e(0.5D) + 0.5D, entitylargefireball.locZ());
-                                    world.addEntity(entitylargefireball);
-                                    this.a.shotTracker++;
+                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.shotTracker < 350) {
+                                if (this.blaze.shotTracker % 160 == 0 && this.blaze.shotTracker != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
+                                    CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 2);
+                                    entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                    world.addEntity(entityLargeFireball);
+                                    this.blaze.shotTracker++;
+                                } else if (this.blaze.shotTracker % 60 == 0 && this.blaze.shotTracker != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
+                                    CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 1);
+                                    entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                    world.addEntity(entityLargeFireball);
+                                    this.blaze.shotTracker++;
                                 } else {
-                                    CustomEntitySmallFireball entitysmallfireball = new CustomEntitySmallFireball(world, this.a, d1, d2, d3); /**blaze has no inaccuracy*/
-                                    entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
-                                    world.addEntity(entitysmallfireball);
-                                    this.a.shotTracker++;
+                                    CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, d1, d2, d3); /**blaze has no inaccuracy*/
+                                    entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                    world.addEntity(entitySmallFireball);
+                                    this.blaze.shotTracker++;
                                 }
 
-                                if (this.a.shotTracker % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
-                                    EntitySmallFireball entitysmallfireball;
+                                if (this.blaze.shotTracker % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
+                                    CustomEntitySmallFireball entitySmallFireball;
 
                                     for (double x = -1.0; x <= 1.0; x += 0.4) {
                                         for (double y = -1.0; y <= 1.0; y += 0.4) {
                                             for (double z = -1.0; z <= 1.0; z += 0.4) {
-                                                entitysmallfireball = new EntitySmallFireball(world, this.a, x, y, z);
-                                                entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
-                                                world.addEntity(entitysmallfireball);
+                                                entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, x, y, z);
+                                                entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                                world.addEntity(entitySmallFireball);
                                             }
                                         }
                                     }
                                 }
 
                             } else { /**rapid fire phase for 50 shots after 350 normal shots*/
-                                if (this.a.shotTracker >= 350) { /**first entering rapid fire phase*/
-                                    this.a.shotTracker = 0;
-                                    this.a.rapidFireTracker = 50;
+                                if (this.blaze.shotTracker >= 350) { /**first entering rapid fire phase*/
+                                    this.blaze.shotTracker = 0;
+                                    this.blaze.rapidFireTracker = 50;
                                 } else {
                                     for (int i = 0; i < 8; i++) { /**shoots 8 fireballs at a time during this phase*/
-                                        EntitySmallFireball entitysmallfireball = new EntitySmallFireball(world, this.a, d1 + this.a.getRandom().nextGaussian() * (double)f * 0.5, d2, d3 + this.a.getRandom().nextGaussian() * (double)f * 0.5); /**blaze has 0.5x default inaccuracy in this phase*/
+                                        CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * (double)f * 0.5, d2, d3 + this.blaze.getRandom().nextGaussian() * (double)f * 0.5); /**blaze has 0.5x default inaccuracy in this phase*/
 
-                                        entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
-                                        world.addEntity(entitysmallfireball);
+                                        entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                        world.addEntity(entitySmallFireball);
                                     }
 
-                                    EntitySmallFireball entitysmallfireball;
+                                    CustomEntitySmallFireball entitySmallFireball;
 
-                                    if (this.a.rapidFireTracker == 1) { /**shoots a large fireball with explosion power 4 when this phase ends*/
-                                        CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(world, this.a, d1, d2, d3, 4);
-                                        entitylargefireball.setPosition(entitylargefireball.locX(), this.a.e(0.5D) + 0.5D, entitylargefireball.locZ());
-                                        world.addEntity(entitylargefireball);
+                                    if (this.blaze.rapidFireTracker == 1) { /**shoots a large fireball with explosion power 4 when this phase ends*/
+                                        CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 4);
+                                        entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                        world.addEntity(entityLargeFireball);
 
                                         for (double x = -1.0; x <= 1.0; x += 0.3) {
                                             for (double y = -1.0; y <= 1.0; y += 0.3) {
                                                 for (double z = -1.0; z <= 1.0; z += 0.3) {
-                                                    entitysmallfireball = new EntitySmallFireball(world, this.a, x, y, z);
-                                                    entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
-                                                    world.addEntity(entitysmallfireball);
+                                                    entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, x, y, z);
+                                                    entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                                    world.addEntity(entitySmallFireball);
                                                 }
                                             }
                                         }
-                                    } else if (this.a.rapidFireTracker % 17 == 0) { /**every 17 shots, the blaze shoots a ring of fireballs*/
+                                    } else if (this.blaze.rapidFireTracker % 17 == 0) { /**every 17 shots, the blaze shoots a ring of fireballs*/
                                         for (double x = -1.0; x <= 1.0; x += 0.4) {
                                             for (double y = -1.0; y <= 1.0; y += 0.4) {
                                                 for (double z = -1.0; z <= 1.0; z += 0.4) {
-                                                    entitysmallfireball = new EntitySmallFireball(world, this.a, x, y, z);
-                                                    entitysmallfireball.setPosition(entitysmallfireball.locX(), this.a.e(0.5D) + 0.5D, entitysmallfireball.locZ());
-                                                    world.addEntity(entitysmallfireball);
+                                                    entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, x, y, z);
+                                                    entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                                    world.addEntity(entitySmallFireball);
                                                 }
                                             }
                                         }
                                     }
 
-                                    this.a.rapidFireTracker--;
+                                    this.blaze.rapidFireTracker--;
                                 }
                             }
                         }
                     }
 
-                    this.a.getControllerLook().a(entityliving, 10.0F, 10.0F);
+                    this.blaze.getControllerLook().a(entityliving, 10.0F, 10.0F);
                 } else if (this.d < 5) {
-                    this.a.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
+                    this.blaze.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
                 }
 
                 super.e();
@@ -262,7 +262,7 @@ public class CustomEntityBlaze extends EntityBlaze {
         }
 
         private double g() {
-            return this.a.b(GenericAttributes.FOLLOW_RANGE);
+            return this.blaze.b(GenericAttributes.FOLLOW_RANGE);
         }
     }
 }

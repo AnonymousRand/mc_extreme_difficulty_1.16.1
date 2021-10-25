@@ -78,15 +78,14 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             }
         }
 
-        if (this.ticksLived == 10) { /**silverfish move 50% faster and have 9.5 health*/
+        if (this.ticksLived == 10) { /**silverfish move 50% faster and have 9 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.5);
-            this.setHealth(9.5f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
+            this.setHealth(9.0f);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
@@ -103,16 +102,16 @@ public class CustomEntitySilverfish extends EntitySilverfish {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

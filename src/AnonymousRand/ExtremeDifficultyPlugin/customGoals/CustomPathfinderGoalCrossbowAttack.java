@@ -46,7 +46,7 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
             }
 
             double d0 = this.b.h((Entity) entityliving);
-            boolean flag2 = (d0 > (double) this.e || this.f < 5) && this.g == 0;
+            boolean flag2 = (d0 > (double)this.e || this.f < 5) && this.g == 0;
 
             if (flag2) {
                 --this.h;

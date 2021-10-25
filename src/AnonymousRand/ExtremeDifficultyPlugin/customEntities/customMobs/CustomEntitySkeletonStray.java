@@ -133,9 +133,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             }
         }
 
-        if (this.ticksLived == 10) { /**strays only have 14 health*/
-            this.setHealth(14.0f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14.0);
+        if (this.ticksLived == 10) { /**strays only have 13.5 health*/
+            this.setHealth(13.5f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
         if (this.ticksLived % 40 == 10) { /**strays have 22 block detection range (setting attribute doesn't work)*/
@@ -196,16 +196,16 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

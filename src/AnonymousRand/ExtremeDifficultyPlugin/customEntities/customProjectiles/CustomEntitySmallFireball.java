@@ -7,6 +7,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
 
     public CustomEntitySmallFireball(World world, EntityLiving entityliving, double d0, double d1, double d2) {
         super(world, entityliving, d0, d1, d2);
+        this.setShooter(entityliving);
     }
 
     @Override

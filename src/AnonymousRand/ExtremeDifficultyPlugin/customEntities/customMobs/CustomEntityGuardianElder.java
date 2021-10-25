@@ -90,12 +90,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                 this.setGoalTarget(player);
             }
         }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
     }
 
     @Override
@@ -110,7 +104,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
@@ -119,7 +113,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
 
                 if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -204,30 +198,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                     if (this.isElder) {
                         f += 2.0F;
                     }
-
-                    /*ArrayList<Block> blocks = (ArrayList<Block>)((LivingEntity)this.entity.getBukkitEntity()).getLineOfSight(null, 20); //gets all blocks in elder guardian's line of sight up to 20 blocks away including all transparent blocks
-                    Random rand = new Random();
-
-                    for (Block b : blocks) { /**elder guardians break all blocks in a 3 by 3 by 3 in its line of sight when the laser fires*/
-                        /*Location locBase = b.getLocation();
-                        Location loc = locBase;
-
-                        for (int x = -1; x <= 1; x++) {
-                            for (int y = -1; y <= 1; y++) {
-                                for (int z = -1; z <= 1; z++) {
-                                    loc = new Location(this.entity.getWorld().getWorld(), locBase.getX() + x, locBase.getY() + y, locBase.getZ() + z);
-
-                                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.CRYING_OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.END_STONE && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
-                                        loc.getBlock().setType(org.bukkit.Material.AIR);
-                                    } else if (loc.getBlock().getType() == org.bukkit.Material.OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.CRYING_OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.ANCIENT_DEBRIS || loc.getBlock().getType() == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to break these blocks
-                                        if (rand.nextDouble() < 0.5) {
-                                            loc.getBlock().setType(org.bukkit.Material.AIR);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }*/
 
                     entityliving.damageEntity(DamageSource.c(this.entity, this.entity), f);
                     entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));

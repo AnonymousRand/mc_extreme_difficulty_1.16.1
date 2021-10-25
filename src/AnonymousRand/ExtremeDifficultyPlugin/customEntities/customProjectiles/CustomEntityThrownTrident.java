@@ -24,7 +24,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         }
     }
 
-    Field ap;
+    protected Field ap;
 
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
@@ -41,8 +41,8 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         DamageSource damagesource = DamageSource.a((net.minecraft.server.v1_16_R1.Entity)this, (net.minecraft.server.v1_16_R1.Entity)(entity1 == null ? this : entity1));
 
         try {
-            ap = EntityThrownTrident.class.getDeclaredField("ap");
-            ap.setAccessible(true);
+            this.ap = EntityThrownTrident.class.getDeclaredField("ap");
+            this.ap.setAccessible(true);
             this.ap.setBoolean(this, true);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();

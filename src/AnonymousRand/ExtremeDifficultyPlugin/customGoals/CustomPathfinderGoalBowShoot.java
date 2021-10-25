@@ -46,7 +46,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
                 --this.f;
             }
 
-            if (d0 <= (double) this.d && this.f >= 20) {
+            if (d0 <= (double)this.d && this.f >= 20) {
                 this.a.getNavigation().o();
                 ++this.i;
             } else {
@@ -55,11 +55,11 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
             }
 
             if (this.i >= 20) {
-                if ((double) this.a.getRandom().nextFloat() < 0.3D) {
+                if ((double)this.a.getRandom().nextFloat() < 0.3D) {
                     this.g = !this.g;
                 }
 
-                if ((double) this.a.getRandom().nextFloat() < 0.3D) {
+                if ((double)this.a.getRandom().nextFloat() < 0.3D) {
                     this.h = !this.h;
                 }
 
@@ -67,9 +67,9 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
             }
 
             if (this.i > -1) {
-                if (d0 > (double) (this.d * 0.75F)) {
+                if (d0 > (double)(this.d * 0.75F)) {
                     this.h = false;
-                } else if (d0 < (double) (this.d * 0.25F)) {
+                } else if (d0 < (double)(this.d * 0.25F)) {
                     this.h = true;
                 }
 

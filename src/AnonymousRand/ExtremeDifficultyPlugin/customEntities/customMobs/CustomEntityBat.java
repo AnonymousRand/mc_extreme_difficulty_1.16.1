@@ -1,22 +1,15 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalPassiveMeleeAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalPassiveMoveTowardsTarget;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.EnumSet;
 import java.util.Map;
 
 public class CustomEntityBat extends EntityBat {
@@ -80,10 +73,10 @@ public class CustomEntityBat extends EntityBat {
     protected void mobTick() {
 
         try { //reflection to get EntityBat.c
-            c1 = EntityBat.class.getDeclaredField("c");
-            c1.setAccessible(true);
+            this.c1 = EntityBat.class.getDeclaredField("c");
+            this.c1.setAccessible(true);
             try {
-                c = (PathfinderTargetCondition)c1.get(bat);
+                this.c = (PathfinderTargetCondition)c1.get(bat);
             } catch (IllegalAccessException e1) {
                 e1.printStackTrace();
             }
@@ -172,16 +165,16 @@ public class CustomEntityBat extends EntityBat {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

@@ -74,9 +74,9 @@ public class CustomEntityDrowned extends EntityDrowned {
             this.getWorld().addEntity(elderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
-        if (this.ticksLived == 10) { /**drowned only have 14 health*/
-            this.setHealth(14.0f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14.0);
+        if (this.ticksLived == 10) { /**drowned only have 13.5 health*/
+            this.setHealth(13.5f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
@@ -118,16 +118,16 @@ public class CustomEntityDrowned extends EntityDrowned {
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double) j && this.isTypeNotPersistent(d0)) {
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
                     this.die();
                 }
 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
-                } else if (d0 < (double) l) {
+                } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -184,7 +184,7 @@ public class CustomEntityDrowned extends EntityDrowned {
 
         @Override
         public boolean a() {
-            return super.a() && !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() >= (double) (this.drowned.world.getSeaLevel() - 3);
+            return super.a() && !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() >= (double)(this.drowned.world.getSeaLevel() - 3);
         }
 
         @Override
@@ -304,7 +304,7 @@ public class CustomEntityDrowned extends EntityDrowned {
 
         @Override
         public boolean a() {
-            return !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() < (double) (this.c - 2);
+            return !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() < (double)(this.c - 2);
         }
 
         @Override
@@ -314,8 +314,8 @@ public class CustomEntityDrowned extends EntityDrowned {
 
         @Override
         public void e() {
-            if (this.drowned.locY() < (double) (this.c - 1) && (this.drowned.getNavigation().m() || this.drowned.eP())) {
-                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8, new Vec3D(this.drowned.locX(), (double) (this.c - 1), this.drowned.locZ()));
+            if (this.drowned.locY() < (double)(this.c - 1) && (this.drowned.getNavigation().m() || this.drowned.eP())) {
+                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8, new Vec3D(this.drowned.locX(), (double)(this.c - 1), this.drowned.locZ()));
 
                 if (vec3d == null) {
                     this.d = true;

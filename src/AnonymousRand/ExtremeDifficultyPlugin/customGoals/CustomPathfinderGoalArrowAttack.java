@@ -72,7 +72,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
             this.f = 0;
         }
 
-        if (d0 <= (double) this.j && this.f >= 5) {
+        if (d0 <= (double)this.j && this.f >= 5) {
             this.drowned.getNavigation().o();
         } else {
             this.drowned.getNavigation().a((Entity) this.attackTarget, this.e);

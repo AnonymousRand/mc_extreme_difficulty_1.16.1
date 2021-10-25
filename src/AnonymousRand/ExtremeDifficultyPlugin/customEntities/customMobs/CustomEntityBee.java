@@ -12,9 +12,6 @@ public class CustomEntityBee extends EntityBee {
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
-        for (Field f : EntityBee.class.getDeclaredFields()) {
-            f.setAccessible(true);
-        }
     }
 
     @Override
