@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
@@ -49,6 +51,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
         super.tick();
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, silverfish gain speed 3*/
+            this.a40 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
         }
 

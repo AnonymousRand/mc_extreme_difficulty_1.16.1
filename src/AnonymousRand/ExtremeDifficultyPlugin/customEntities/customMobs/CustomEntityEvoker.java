@@ -110,8 +110,16 @@ public class CustomEntityEvoker extends EntityEvoker {
 
         if (this.ticksLived % 40 == 10) { /**evokers have 22 block detection range (setting attribute doesn't work)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 
@@ -214,14 +222,14 @@ public class CustomEntityEvoker extends EntityEvoker {
 
             for (int i = 0; i < 6; ++i) { /**summons 6 vexes at a time instead of 3*/
                 BlockPosition blockposition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.this.random.nextInt(5), 1, -2 + CustomEntityEvoker.this.random.nextInt(5));
-                EntityVex entityvex = (EntityVex)EntityTypes.VEX.a(CustomEntityEvoker.this.world);
+                EntityVex newVex = (EntityVex)EntityTypes.VEX.a(CustomEntityEvoker.this.world);
 
-                entityvex.setPositionRotation(blockposition, 0.0F, 0.0F);
-                entityvex.prepare(CustomEntityEvoker.this.world, CustomEntityEvoker.this.world.getDamageScaler(blockposition), EnumMobSpawn.MOB_SUMMONED, (GroupDataEntity)null, (NBTTagCompound)null);
-                entityvex.a((EntityInsentient) CustomEntityEvoker.this);
-                entityvex.g(blockposition);
-                entityvex.a(20 * (30 + CustomEntityEvoker.this.random.nextInt(90)));
-                CustomEntityEvoker.this.world.addEntity(entityvex);
+                newVex.setPositionRotation(blockposition, 0.0F, 0.0F);
+                newVex.prepare(CustomEntityEvoker.this.world, CustomEntityEvoker.this.world.getDamageScaler(blockposition), EnumMobSpawn.MOB_SUMMONED, (GroupDataEntity)null, (NBTTagCompound)null);
+                newVex.a((EntityInsentient) CustomEntityEvoker.this);
+                newVex.g(blockposition);
+                newVex.a(20 * (30 + CustomEntityEvoker.this.random.nextInt(90)));
+                CustomEntityEvoker.this.world.addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
 
                 //todo: also summon a random other illager besides ravager and evoker
             }
@@ -409,7 +417,7 @@ public class CustomEntityEvoker extends EntityEvoker {
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 6 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
-                CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(entitysheep.getWorld());
+                CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin);
                 newSheep.setPosition(loc.getX(), loc.getY(), loc.getZ());
                 ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
                 newSheep.setColor(EnumColor.PINK);

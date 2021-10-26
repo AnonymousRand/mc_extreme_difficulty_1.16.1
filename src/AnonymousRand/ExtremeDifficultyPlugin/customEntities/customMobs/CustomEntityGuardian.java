@@ -52,14 +52,26 @@ public class CustomEntityGuardian extends EntityGuardian {
         return super.damageEntity(damagesource, f);
     }
 
+    private double getFollowRange() {
+        return 24.0;
+    }
+
     @Override
     public void tick() {
         super.tick();
 
         if (this.ticksLived % 40 == 10) { /**guardians have 24 block detection range (setting attribute doesn't work)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(24.0, 128.0, 24.0)); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 

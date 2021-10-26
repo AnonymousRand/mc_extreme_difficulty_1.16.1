@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
@@ -12,8 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -22,34 +25,66 @@ import static org.bukkit.entity.EntityType.*;
 
 public class PlayerDamageListeners implements Listener {
 
-    protected Random rand = new Random();
+    private JavaPlugin plugin;
     private static HashMap<EntityPlayer, Boolean> blazeHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> ghastHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> llamaHit = new HashMap<>();
+    protected Random rand = new Random();
+
+    public PlayerDamageListeners(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects etc. if it is hard to do in game
         if (event.getEntityType() == PLAYER) {
-            Player player = (Player)event.getEntity();
+            Player bukkitPlayer = (Player)event.getEntity();
+            Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
 
             switch (event.getDamager().getType()) {
                 case CAVE_SPIDER:
-                    ((CustomEntitySpiderCave)(((CraftEntity)event.getDamager()).getHandle())).attacks++; //increase attack count by 1
+                    ((CustomEntitySpiderCave)(nmsDamager)).attacks++; //increase attack count by 1
                     break;
                 case CHICKEN:
-                    ((CustomEntityChickenAggressive)(((CraftEntity)event.getDamager()).getHandle())).attacks++;
+                    ((CustomEntityChickenAggressive)(nmsDamager)).attacks++;
                     break;
                 case ENDERMAN:
-                    ((CustomEntityEnderman)(((CraftEntity)event.getDamager()).getHandle())).attacks++;
+                    ((CustomEntityEnderman)(nmsDamager)).attacks++;
                     break;
                 case ENDERMITE:
-                    ((CustomEntityEndermite)(((CraftEntity)event.getDamager()).getHandle())).attacks++;
+                    ((CustomEntityEndermite)(nmsDamager)).attacks++;
+                    break;
+                case RABBIT:
+                    ((CustomEntityRabbit)(nmsDamager)).attacks++;
+                    break;
+                case RAVAGER:
+                    CustomEntityRavager ravager = (CustomEntityRavager)(nmsDamager);
+                    ravager.attacks++;
+                    Vector origin = bukkitPlayer.getVelocity();
+
+                    if (ravager.launchHigh) {
+                        Bukkit.broadcastMessage("You really thought you could get away with that?");
+                        ravager.launchHigh = false;
+                        event.setDamage(10.0);
+                        bukkitPlayer.setVelocity(new Vector(0.0, 5.0, 0.0));
+                    }
+
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                    {
+                        public void run()
+                        {
+                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.15) { /**if the player has traveled 3 blocks or less in the span of 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 10*/
+                                ravager.launchHigh = true;
+                            }
+                        }
+                    }, 5L);
+
                     break;
                 case SHEEP:
-                    ((CustomEntitySheepAggressive)(((CraftEntity)event.getDamager()).getHandle())).attacks++;
+                    ((CustomEntitySheepAggressive)(nmsDamager)).attacks++;
                     break;
                 case SILVERFISH:
-                    CustomEntitySilverfish silverfish = ((CustomEntitySilverfish)(((CraftEntity)event.getDamager()).getHandle()));
+                    CustomEntitySilverfish silverfish = ((CustomEntitySilverfish)(nmsDamager));
                     silverfish.attacks++;
 
                     if (silverfish.attacks > 80 && rand.nextDouble() < 0.25) { /**silverfish hava a 25% chance to duplicate when hitting a player after 80 attacks*/
@@ -59,13 +94,13 @@ public class PlayerDamageListeners implements Listener {
                     }
                     break;
                 case SPIDER:
-                    CustomEntitySpider spider = (CustomEntitySpider)(((CraftEntity)event.getDamager()).getHandle());
+                    CustomEntitySpider spider = (CustomEntitySpider)(nmsDamager);
                     spider.attacks++;
 
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /**spiders inflict slowness 1 for 1 second on hit*/
+                    bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /**spiders inflict slowness 1 for 1.5 secondS on hit*/
 
-                    if ((spider).attacks >= 30) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 30 times*/
+                    if ((spider).attacks >= 35) {
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 35 times*/
                     }
                     break;
             }
@@ -124,6 +159,10 @@ public class PlayerDamageListeners implements Listener {
                     piglin.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
+            }
+
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.CONTACT)) {
+                event.setDamage(20.0); //cactus does 20 damage per tick
             }
         }
     }

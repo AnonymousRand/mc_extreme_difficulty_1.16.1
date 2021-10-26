@@ -111,6 +111,14 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         }
     }
 
+    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
+        double d0 = vec3dt.getX() - vec3d1.getX(); //skeletons generally still include vertical distance for performance reasons
+        double d1 = vec3dt.getY() - vec3d1.getY();
+        double d2 = vec3dt.getZ() - vec3d1.getZ();
+
+        return d0 * d0 + d1 * d1 + d2 * d2;
+    }
+
     private double getFollowRange() {
         return 22.0;
     }
@@ -122,14 +130,14 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 100 && !this.a100) { /**summons 8 vanilla skeletons on the 100th shot*/
+        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, strays summon 6 vanilla skeletons*/
             this.a100 = true;
 
-            for (int i = 0; i < 8; i++) {
-                EntitySkeleton skeleton = new EntitySkeleton(EntityTypes.SKELETON, this.getWorld());
-                skeleton.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                skeleton.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-                this.getWorld().addEntity(skeleton, CreatureSpawnEvent.SpawnReason.DROWNED);
+            for (int i = 0; i < 6; i++) {
+                EntitySkeleton newSkeleton = new EntitySkeleton(EntityTypes.SKELETON, this.getWorld());
+                newSkeleton.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newSkeleton.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
+                this.getWorld().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.DROWNED);
             }
         }
 
@@ -139,9 +147,17 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         }
 
         if (this.ticksLived % 40 == 10) { /**strays have 22 block detection range (setting attribute doesn't work)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 
@@ -157,9 +173,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             this.teleportToPlayer = 0;
         }
 
-        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+11 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
             if (random.nextDouble() < 0.005) {
-                this.initiateTeleport(random.nextDouble() * 13.0 + this.getFollowRange() - 2.0);
+                this.initiateTeleport(random.nextDouble() * 15.0 + this.getFollowRange() - 2.0);
             }
         }
 

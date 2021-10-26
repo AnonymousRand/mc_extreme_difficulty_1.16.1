@@ -23,9 +23,9 @@ import java.util.List;
 
 public class PlayerDeathAndRespawnListeners implements Listener {
 
+    private JavaPlugin plugin;
     private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
     private static HashMap<Player, Integer> respawnCount = new HashMap<>();
-    private JavaPlugin plugin;
 
     public PlayerDeathAndRespawnListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -58,6 +58,6 @@ public class PlayerDeathAndRespawnListeners implements Listener {
                     player.getWorld().createExplosion(event.getRespawnLocation(), 1.5f);
                 }
             }
-        }, 1);
+        }, 1L);
     }
 }

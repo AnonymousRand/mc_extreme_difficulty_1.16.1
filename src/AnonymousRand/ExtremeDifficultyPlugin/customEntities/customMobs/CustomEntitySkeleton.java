@@ -77,7 +77,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                     entityarrow.setPierceLevel((byte)1);
                 }
 
-                if (this.attacks >= 20) { /**starting from the 20th attack, arrows are on fire and do not lose y level*/
+                if (this.attacks >= 20) { /**after the 20th attack, arrows are on fire and do not lose y level*/
                     entityarrow.setOnFire(50);
                     entityarrow.setNoGravity(true);
                 }
@@ -105,6 +105,14 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
     }
 
+    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
+        double d0 = vec3dt.getX() - vec3d1.getX(); //skeletons generally still include vertical distance for performance reasons
+        double d1 = vec3dt.getY() - vec3d1.getY();
+        double d2 = vec3dt.getZ() - vec3d1.getZ();
+
+        return d0 * d0 + d1 * d1 + d2 * d2;
+    }
+
     //todo: copy all from this point onwards to all applicable mobs
     private double getFollowRange() {
         return this.attacks < 75 ? 22.0 : 32.0;
@@ -117,10 +125,10 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, skeletons get 50 max health*/
+        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, skeletons get 30 max health*/
             this.a75 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
-            this.setHealth(50.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
+            this.setHealth(30.0f);
         }
 
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, skeletons summon an iron golem*/ //todo: custom mob?
@@ -143,9 +151,17 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
 
         if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 75 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 
@@ -161,9 +177,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             this.teleportToPlayer = 0;
         }
 
-        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+11 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
             if (random.nextDouble() < 0.005) {
-                this.initiateTeleport(random.nextDouble() * 13.0 + this.getFollowRange() - 2.0);
+                this.initiateTeleport(random.nextDouble() * 15.0 + this.getFollowRange() - 2.0);
             }
         }
 
@@ -217,22 +233,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         } else {
             this.ticksFarFromPlayer = 0;
         }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
-        double d5 = this.locZ() - d2;
-
-        return d3 * d3 + d5 * d5;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
-        double d2 = this.locZ() - vec3d.z;
-
-        return d0 * d0 + d2 * d2;
     }
 
     protected void initiateTeleport(double h) {

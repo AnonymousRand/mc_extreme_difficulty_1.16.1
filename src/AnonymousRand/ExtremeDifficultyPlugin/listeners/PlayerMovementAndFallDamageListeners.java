@@ -74,7 +74,7 @@ public class PlayerMovementAndFallDamageListeners implements Listener { /**fall 
             }
 
             if (level <= 7) {                                                       //if the current block is a solid block/air or a liquid source block or a non-falling liquid block
-                if (fallHeightTemp >= 2.0 && !MLGTemp) {                            //if player fell for more than 2 blocks onto ground or already existing water (fall damage calculated starting at 2 blocks' fall instead of 4)
+                if (fallHeightTemp >= 2.1 && !MLGTemp) {                            //if player fell for more than 2 blocks onto ground or already existing water (fall damage calculated starting at 2 blocks' fall instead of 4)
                     double damage = 0.0;
 
                     Material m = player.getLocation().getBlock().getType();

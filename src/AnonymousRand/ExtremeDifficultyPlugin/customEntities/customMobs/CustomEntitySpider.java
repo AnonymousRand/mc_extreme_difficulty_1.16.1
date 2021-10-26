@@ -15,24 +15,29 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntitySpider extends EntitySpider {
 
     public int attacks;
-    private boolean a25, a50, a70, a100;
+    private boolean a30, a50, a70, a100;
 
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
         this.teleportToPlayer = 0;
         this.attacks = 0;
-        this.a25 = false;
+        this.a30 = false;
         this.a50 = false;
         this.a70 = false;
         this.a100 = false;
     }
 
     @Override
-    protected void initPathfinder() {
-        super.initPathfinder();
-        this.goalSelector.a(3, new CustomPathfinderGoalMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/ //false for the long memory parameter allows the spider to continue attacking instead of only hitting you once
+    protected void initPathfinder() { /**no longer targets iron golems*/
+        this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
+        this.goalSelector.a(4, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
+        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
+        this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, new Class[0]));
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
     protected int teleportToPlayer;
@@ -42,63 +47,65 @@ public class CustomEntitySpider extends EntitySpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**spiders have +70% movement speed but only 1 damage and 12 health*/
+        if (this.ticksLived == 10) { /**spiders have +70% movement speed but only 1 damage and 12.5 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(12.0f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
+            this.setHealth(12.5f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
         }
 
-        if (this.attacks % 24 == 0 && this.a25) { //reset right before the next cycle
-            this.a25 = false;
+        if (this.attacks % 29 == 0 && this.a30) { //reset right before the next cycle
+            this.a30 = false;
         }
 
-        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) {
-            this.a25 = true;
+        if (this.attacks % 30 == 0 && this.attacks != 0 && !this.a30) { /**every 30 attacks, spiders lay down cobwebs that last 5 seconds in a 5 by 5 cube around itself*/
+            this.a30 = true;
 
             Location loc;
             for (int x = -2; x <= 2; x++) {
                 for (int y = -2; y <= 2; y++) {
                     for (int z = -2; z <= 2; z++) {
                         loc = new Location(this.getWorld().getWorld(), Math.floor(this.locX()) + x, Math.floor(this.locY()) + y, Math.floor(this.locZ()) + z);
-                        if (loc.getBlock().getType() == org.bukkit.Material.AIR) { /**every 25 attacks, spiders lay down cobwebs that last 10 seconds in a 5 by 5 cube around itself*/
+                        if (loc.getBlock().getType() == org.bukkit.Material.AIR) {
                             loc.getBlock().setType(org.bukkit.Material.COBWEB);
-                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(loc.getBlock(), loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 10 seconds
+                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(loc.getBlock(), loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
                         }
                     }
                 }
             }
         }
 
-        if (this.attacks == 50 && !this.a50) { /**summons 3 vanilla cave spiders on the 50th attack*/
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders gain speed 1*/
             this.a50 = true;
-            EntityCaveSpider caveSpider;
-            for (int i = 0; i < 3; i++) {
-                caveSpider = new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld());
-                caveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(caveSpider, CreatureSpawnEvent.SpawnReason.DROWNED);
-            }
-        }
-
-        if (this.attacks == 70 && !this.a70) { /**gains speed 1 after the 70th attack*/
-            this.a70 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**summons 5 cave spiders on the 100th attack*/
+        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, spiders summon 3 vanilla cave spiders*/
+            this.a70 = true;
+            EntityCaveSpider newCaveSpider;
+
+            for (int i = 0; i < 3; i++) {
+                newCaveSpider = new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld());
+                newCaveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.DROWNED);
+            }
+        }
+
+        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, spiders summon 5 cave spiders*/
             this.a100 = true;
-            CustomEntitySpiderCave caveSpider;
+            CustomEntitySpiderCave newCaveSpider;
+
             for (int i = 0; i < 6; i++) {
-                caveSpider = new CustomEntitySpiderCave(this.getWorld());
-                caveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(caveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
+                newCaveSpider = new CustomEntitySpiderCave(this.getWorld());
+                newCaveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**spiders lay down cobwebs that last 10 seconds on itself as long as it is inside an air block*/ //cobwebs also indirectly prevent players from shooting arrows onto the spider as the arrows are blocked by the web hitbox
+        if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**spiders lay down cobwebs that last 4 seconds on itself as long as it is inside an air block*/ //cobwebs also indirectly prevent players from shooting arrows onto the spider as the arrows are blocked by the web hitbox
             thisLoc.getBlock().setType(org.bukkit.Material.COBWEB);
-            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 10 seconds
+            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
         }
 
         if (this.getGoalTarget() == null) { //does not see a target within follow range
@@ -107,9 +114,9 @@ public class CustomEntitySpider extends EntitySpider {
             this.teleportToPlayer = 0;
         }
 
-        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+11 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
             if (random.nextDouble() < 0.005) {
-                this.initiateTeleport(random.nextDouble() * 13.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2.0);
+                this.initiateTeleport(random.nextDouble() * 15.0 + this.b(GenericAttributes.FOLLOW_RANGE) - 2.0);
             }
         }
     }

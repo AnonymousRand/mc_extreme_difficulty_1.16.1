@@ -54,12 +54,12 @@ public class CustomEntityCreeper extends EntityCreeper {
     public void explode() {
         if (this.getGoalTarget() != null) {
             if (this.isPowered()) {
-                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0) { //charged creepers still only explode within 5 blocks of player
+                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) { //charged creepers still only explode within 5 blocks of player
                     this.world.explode(this, this.locX(), this.locY(), this.locZ(), 15.0f, Explosion.Effect.DESTROY); /**charged creepers explode with power 15*/
                     super.explode();
                 }
             } else {
-                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 18.0) { //still only explodes within 3 blocks of player
+                if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 9.0) { //still only explodes within 3 blocks of player
                     super.explode();
                 }
             }
@@ -86,7 +86,7 @@ public class CustomEntityCreeper extends EntityCreeper {
     }
 
     private double getFollowRange() {
-        return this.isPowered() ? 40.0 : 28.0;
+        return this.isPowered() ? 40.0 : 244.0;
     }
 
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
@@ -96,19 +96,23 @@ public class CustomEntityCreeper extends EntityCreeper {
         super.tick();
 
         if (this.isPowered() && this.getGoalTarget() != null && !this.isIgnited()) { /**charged creepers detonate starting 5 blocks away*/
-            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 50.0 && this.d(this.getGoalTarget().getPositionVector()) <= 25.0) {
+            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
                 this.ignite();
             }
         }
 
         if (this.getGoalTarget() instanceof EntityPlayer) {
             if (!this.isPowered()) {
-                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.002) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.2% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
-                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 2.5 && random.nextDouble() < 0.0015) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+                    this.initiateTeleport(random.nextDouble() * 10.0 + this.getFollowRange() - 1.0, true);
+
+                    if (this.d(this.getGoalTarget().getPositionVector()) >= Math.pow(this.getFollowRange(), 2)) { /**reset goal target if too far*/
+                        this.setGoalTarget(null);
+                    }
                 }
             } else {
                 if (Math.abs(this.getGoalTarget().locY() - this.locY()) > 8.5 && random.nextDouble() < 0.005) { /**every tick the charged creeper is more than 8.5 blocks of elevation different from its target, it has a 0.5% chance to teleport near or onto the target onto a block that is within 9 y levels of the player*/
-                    this.initiateTeleport(random.nextDouble() * 3.0 + 12.0, true);
+                    this.initiateTeleport(random.nextDouble() * 3.0 + 16.0, true);
                 }
             }
         }
@@ -123,10 +127,18 @@ public class CustomEntityCreeper extends EntityCreeper {
             }
         }
 
-        if (this.ticksLived % 40 == 10) { /**creepers have 28 block detection range (40 for charged creeper; setting attribute doesn't work)*/
+        if (this.ticksLived % 40 == 10) { /**creepers have 24 block detection range (40 for charged creeper; setting attribute doesn't work)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 

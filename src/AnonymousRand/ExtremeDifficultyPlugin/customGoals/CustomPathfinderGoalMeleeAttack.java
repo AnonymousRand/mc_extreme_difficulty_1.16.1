@@ -25,6 +25,35 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
+    public boolean a() { //copied in because first two attacks are rapidfire otherwise
+        long i = this.a.world.getTime();
+
+        if (i - this.k < 20L) {
+            return false;
+        } else {
+            this.k = i;
+            EntityLiving entityliving = this.a.getGoalTarget();
+
+            if (entityliving == null) {
+                return false;
+            } else if (!entityliving.isAlive()) {
+                return false;
+            } else {
+                this.d = this.a.getNavigation().a((Entity) entityliving, 0);
+                return this.d != null ? true : this.a(entityliving) >= this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
+            }
+        }
+    }
+
+    @Override
+    public void c() { //copied in because mobs doesn't attack regularly otherwise
+        this.a.getNavigation().a(this.d, this.b);
+        this.a.setAggressive(true);
+        this.h = 0;
+        this.i = 0;
+    }
+
+    @Override
     public void e() {
         EntityLiving entityliving = this.entity.getGoalTarget();
 
@@ -56,8 +85,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         this.a(entityliving, d0);
     }
 
-    @Override
-    public void a(EntityLiving entityliving, double d0) {
+    protected void a(EntityLiving entityliving, double d0) { //these four methods copied in as mobs hit multiple times per attack otherwise
         double d1 = this.a(entityliving);
 
         if (d0 <= d1 && this.i <= 0) {
@@ -65,5 +93,17 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
             this.a.swingHand(EnumHand.MAIN_HAND);
             this.a.attackEntity(entityliving);
         }
+    }
+
+    protected void g() {
+        this.i = 20;
+    }
+
+    protected boolean h() {
+        return this.i <= 0;
+    }
+
+    protected int j() {
+        return this.i;
     }
 }

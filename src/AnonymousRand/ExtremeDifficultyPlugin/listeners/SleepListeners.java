@@ -37,8 +37,8 @@ public class SleepListeners implements Listener {
             event.setCancelled(true);
         }
 
-        if (closestMonster != null && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) <= 900.0) && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) >= 64.0)) { //player within 30 blocks horizontally of closestMonster but out of the default 8 block range
-            if (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locY() - player.locY(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) < 1800.0) { //player within 30 blocks including vertical distance of closestMonster
+        if (closestMonster != null && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) <= 900.0) && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) > 64.0)) { //player within 30 blocks horizontally of closestMonster but out of the default 8 block range
+            if (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locY() - player.locY(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) <= 900.0) { //player within 30 blocks including vertical distance of closestMonster
                 Bukkit.broadcastMessage("There are still monsters nearby");
                 event.setCancelled(true);
             } else if (closestMonster.locY() < player.locY()){ //player not within 30 blocks if counting vertical distance and is above mobs

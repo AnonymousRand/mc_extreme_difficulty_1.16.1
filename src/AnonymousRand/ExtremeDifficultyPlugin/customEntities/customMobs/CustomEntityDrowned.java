@@ -58,20 +58,20 @@ public class CustomEntityDrowned extends EntityDrowned {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 60 && !this.a60) { /**summons 2 guardians on the 60th attack*/
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, drowned summon 2 guardians*/
             this.a60 = true;
             for (int i = 0; i < 2; i++) {
-                CustomEntityGuardian guardian = new CustomEntityGuardian(this.getWorld());
-                guardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(guardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+                CustomEntityGuardian newGuardian = new CustomEntityGuardian(this.getWorld());
+                newGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
 
-        if (this.attacks == 100 && !this.a100) { /**summons an elder guardian on the 100th attack*/
+        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, drowned summon an elder guardian*/
             this.a100 = true;
-            CustomEntityGuardianElder elderGuardian = new CustomEntityGuardianElder(this.getWorld());
-            elderGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-            this.getWorld().addEntity(elderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+            CustomEntityGuardianElder newElderGuardian = new CustomEntityGuardianElder(this.getWorld());
+            newElderGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            this.getWorld().addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
         if (this.ticksLived == 10) { /**drowned only have 13.5 health*/

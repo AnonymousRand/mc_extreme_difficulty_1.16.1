@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ public class CustomEntityEndermite extends EntityEndermite {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
@@ -46,12 +48,14 @@ public class CustomEntityEndermite extends EntityEndermite {
         super.tick();
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermites get more knockback*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            this.a40 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
         }
 
-        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, endemites get even more knockback, 14.9 max health and regen 1*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14.9);
+        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, endemites get even more knockback, 14 max health and regen 1*/
+            this.a70 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
@@ -64,14 +68,13 @@ public class CustomEntityEndermite extends EntityEndermite {
         if (this.getGoalTarget() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)this.getGoalTarget();
 
-            if (Math.abs(player.locY() - this.locY()) > 1 && random.nextDouble() < 0.01) { /**every tick the silverfish is more than 1 block of elevation different from its target, it has a 1% chance to teleport onto the player*/
+            if (Math.abs(player.locY() - this.locY()) > 1 && random.nextDouble() < 0.005) { /**every tick the endermite is more than 1 block of elevation different from its target, it has a 0.5% chance to teleport onto the player*/
                 this.teleportTo(new BlockPosition(Math.floor(player.locX()), Math.floor(player.locY()), Math.floor(player.locZ())));
             }
         }
 
-        if (this.ticksLived == 10) { /**endermites move 60% faster, have extra knockback, and have 10.5 health, but only do 1 damage*/
+        if (this.ticksLived == 10) { /**endermites move 60% faster and have 10.5 health, but only do 1 damage*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.5);
             this.setHealth(10.5f);

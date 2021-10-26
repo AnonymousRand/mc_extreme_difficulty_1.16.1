@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
+
     @Override
     public void onLoad() {
         BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
@@ -27,16 +28,17 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(this), this);  //registers the listeners
         getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
+        getServer().getPluginManager().registerEvents(new MobDeathListeners(this),this);
         getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(this), this);
-        getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerDamageListeners(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerEatListeners(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new ProjectileListeners(), this);
         getServer().getPluginManager().registerEvents(new RaidAndVillageListeners(),this);
-        getServer().getPluginManager().registerEvents(new SheepDyeListeners(), this);
+        getServer().getPluginManager().registerEvents(new SheepDyeListeners(this), this);
         getServer().getPluginManager().registerEvents(new SleepListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);

@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -15,10 +17,13 @@ import java.util.Map;
 public class CustomEntityChickenAggressive extends EntityChicken { //can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
     public int attacks;
+    private boolean a30, a70;
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
         this.attacks = 0;
+        this.a30 = false;
+        this.a70 = false;
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -40,6 +45,7 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**targets hostile mobs before players*/
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false)); /**targets players before other non-aggressive chickens*/
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class, false)); /**targets non-aggressive chickens before other aggressive chickens*/
+        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class, false)); /**targets aggressive chickens before other exploding chickens*/
     }
 
     //registers new attributes via reflection; code from Spigot forums
@@ -63,8 +69,35 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
     }
 
     @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.attacks >= 70) { /**after 70 attacks, aggressive chickens create a power 1 explosion on their location when hit and not killed*/
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0f, false, Explosion.Effect.DESTROY);
+
+            if (this.attacks >= 100) { /**after 100 attacks, aggressive chickens also duplicate into a custom aggressive chicken that explodes after 20 seconds or when killed*/
+                CustomEntityChickenAggressiveExploding newChicken = new CustomEntityChickenAggressiveExploding(this.getWorld());
+                newChicken.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
+            }
+        }
+
+        return super.damageEntity(damagesource, f);
+    }
+
+    @Override
     public void tick() {
         super.tick();
+
+        if (this.attacks == 30 && !this.a30) { /**after 30 attacks, aggressive chicken get 6 damage and regen 1*/
+            this.a30 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(6.0);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0));
+        }
+
+        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, aggressive chickens get 9.5 health*/
+            this.a70 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.5);
+            this.setHealth(9.5f);
+        }
 
         if (this.ticksLived == 10) { /**aggressive chickens move twice as fast and do 3 damage*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);

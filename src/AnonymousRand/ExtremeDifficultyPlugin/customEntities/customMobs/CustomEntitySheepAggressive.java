@@ -8,6 +8,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -16,12 +18,17 @@ import java.util.stream.Collectors;
 
 public class CustomEntitySheepAggressive extends EntitySheep {
 
+    private JavaPlugin plugin;
     public int attacks;
+    private boolean a60, a100;
 
-    public CustomEntitySheepAggressive(World world) {
+    public CustomEntitySheepAggressive(World world, JavaPlugin plugin) {
         super(EntityTypes.SHEEP, world);
+        this.plugin = plugin;
         this.a(PathType.LAVA, 1.0F); //no longer avoids lava
         this.attacks = 0;
+        this.a60 = false;
+        this.a100 = false;
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -60,8 +67,23 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         map.put(attributeBase, attributeModifiable);
     }
 
+    @Override
+    public void die() {
+        super.die();
+
+        if (this.attacks >= 30) { /**after 30 attacks, aggressive sheep create a power 2 explosion on their location when killed*/
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0f, false, Explosion.Effect.DESTROY);
+
+            if (this.attacks >= 100) { /**after 100 attacks, aggressive sheep also summon an evoker on death*/
+                CustomEntityEvoker newEvoker = new CustomEntityEvoker(this.getWorld(), this.plugin);
+                newEvoker.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
+            }
+        }
+    }
+
     private double getFollowRange() {
-        return this.attacks < 50 ? 64.0 : 128.0;
+        return this.attacks < 60 ? 64.0 : 128.0;
     }
 
     @Override
@@ -70,19 +92,37 @@ public class CustomEntitySheepAggressive extends EntitySheep {
 
         //todo: leave behind 3 by 3 area effect clouds wherever it goes
 
-        if (this.ticksLived == 10) { /**aggressive sheep move 2.1x as fast, do 10 damage, have extra knockback, have 100 health, and have regeneration 2*/
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, aggressive sheep gain speed 1*/
+            this.a100 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+        }
+
+        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, aggressive sheep get extra knockback*/
+            this.a100 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
+        }
+
+        if (this.ticksLived == 10) { /**aggressive sheep move 2.1x as fast, do 8 damage, have extra knockback, have 100 health, and have regeneration 2*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(8.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
             this.setHealth(100.0f);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.ticksLived % 40 == 10) { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 50 attacks)*/
+        if (this.ticksLived % 40 == 10) { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && this.getGoalTarget() == null) {
+            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
+            }
+
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                    this.setGoalTarget(null);
+                }
             }
         }
 

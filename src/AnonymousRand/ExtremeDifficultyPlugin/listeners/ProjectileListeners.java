@@ -129,18 +129,25 @@ public class ProjectileListeners implements Listener {
 
         if (event.getHitBlock() != null) {
             Block hitBlock = event.getHitBlock();
+            Material type = hitBlock.getType();
+
+            boolean checkType = type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB;
+
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof CraftPlayer)) { /**arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything*/
-                if (hitBlock.getType() != Material.BEDROCK && hitBlock.getType() != Material.END_GATEWAY && hitBlock.getType() != Material.END_PORTAL && hitBlock.getType() != Material.END_PORTAL_FRAME && hitBlock.getType() != Material.NETHER_PORTAL && hitBlock.getType() != Material.OBSIDIAN && hitBlock.getType() != Material.CRYING_OBSIDIAN && hitBlock.getType() != Material.COMMAND_BLOCK  && hitBlock.getType() != Material.COMMAND_BLOCK_MINECART && hitBlock.getType() != Material.STRUCTURE_BLOCK && hitBlock.getType() != Material.JIGSAW && hitBlock.getType() != Material.BARRIER && hitBlock.getType() != Material.END_STONE && hitBlock.getType() != Material.SPAWNER && hitBlock.getType() != Material.COBWEB) { //as long as it isn't one of these blocks
+                if (checkType) { //as long as it isn't one of these blocks
                     Random rand = new Random();
                     if (rand.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping
-                        nmsProjectile.die();
                     }
+                }
+
+                if (type != Material.COBWEB) {
+                    nmsProjectile.die(); /**arrows die on block hit as long as it isn't a cobweb*/
                 }
             }
 
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /**tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything*/
-                if (hitBlock.getType() != Material.BEDROCK && hitBlock.getType() != Material.END_GATEWAY && hitBlock.getType() != Material.END_PORTAL && hitBlock.getType() != Material.END_PORTAL_FRAME && hitBlock.getType() != Material.NETHER_PORTAL && hitBlock.getType() != Material.OBSIDIAN && hitBlock.getType() != Material.CRYING_OBSIDIAN && hitBlock.getType() != Material.COMMAND_BLOCK  && hitBlock.getType() != Material.COMMAND_BLOCK_MINECART && hitBlock.getType() != Material.STRUCTURE_BLOCK && hitBlock.getType() != Material.JIGSAW && hitBlock.getType() != Material.BARRIER && hitBlock.getType() != Material.END_STONE && hitBlock.getType() != Material.SPAWNER && hitBlock.getType() != Material.COBWEB) { //as long as it isn't one of these blocks
+                if (checkType) { //as long as it isn't one of these blocks
                     Random rand = new Random();
                     if (rand.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);

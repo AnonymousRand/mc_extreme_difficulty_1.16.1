@@ -16,7 +16,7 @@ public class CustomEntityEnderman extends EntityEnderman {
 
     public EntityPlayer playerWhoLooked;
     public int attacks;
-    private boolean a12, a50, a100;
+    private boolean a15, a60, a100;
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
@@ -24,8 +24,8 @@ public class CustomEntityEnderman extends EntityEnderman {
         this.a(PathType.WATER, 0.0F); //no longer avoids water
         this.a(PathType.LAVA, 0.0F); //no longer avoids lava
         this.attacks = 0;
-        this.a12 = false;
-        this.a50 = false;
+        this.a15 = false;
+        this.a60 = false;
         this.a100 = false;
     }
 
@@ -33,7 +33,7 @@ public class CustomEntityEnderman extends EntityEnderman {
     protected void initPathfinder() { /**no longer targets endermites, avoids water and stops if stared at*/
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, false));  /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
@@ -58,7 +58,6 @@ public class CustomEntityEnderman extends EntityEnderman {
 
     protected boolean shouldAttackPlayer(EntityHuman entityhuman) {
         /**carved pumpkins no longer work*/
-
         Vec3D vec3d = entityhuman.f(1.0F).d();
         Vec3D vec3d1 = new Vec3D(this.locX() - entityhuman.locX(), this.getHeadY() - entityhuman.getHeadY(), this.locZ() - entityhuman.locZ());
         double d0 = vec3d1.f();
@@ -76,7 +75,7 @@ public class CustomEntityEnderman extends EntityEnderman {
     @Override
     protected boolean eM() { //teleportRandomly()
         if (!this.world.s_() && this.isAlive()) {
-            double d0 = this.locX() + (this.random.nextDouble() - 0.5D) * 24.0D; /**random teleportation range decreased to 12 blocks so that if it teleports away due to fire etc. it is still in range of the player*/
+            double d0 = this.locX() + (this.random.nextDouble() - 0.5D) * 20.0D; /**random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player*/
             double d1 = this.locY() + (double)(this.random.nextInt(64) - 32);
             double d2 = this.locZ() + (this.random.nextDouble() - 0.5D) * 24.0D;
 
@@ -131,11 +130,11 @@ public class CustomEntityEnderman extends EntityEnderman {
         } else {
             boolean flag = super.damageEntity(damagesource, f);
 
-            if (flag) {
-                if (this.attacks >= 100) { /**after 100 attacks, endermen summon an endermite on damage tick*/
-                    CustomEntityEndermite endermite = new CustomEntityEndermite(this.getWorld());
-                    endermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                    this.getWorld().addEntity(endermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+            if (flag && damagesource.getEntity() instanceof EntityPlayer) {
+                if (this.attacks >= 100) { /**after 100 attacks, endermen summon an endermite when hit and not killed*/
+                    CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld());
+                    newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
             }
 
@@ -151,13 +150,13 @@ public class CustomEntityEnderman extends EntityEnderman {
     public void die() {
         super.die();
 
-        if (this.attacks >= 100) { /**after 100 attacks, endermen summon 8 endermites on death*/
-            CustomEntityEndermite endermite;
+        if (this.attacks >= 100) { /**after 100 attacks, endermen summon 6 endermites on death*/
+            CustomEntityEndermite newEndermite;
 
-            for (int i = 0; i < 8; i++) {
-                endermite = new CustomEntityEndermite(this.getWorld());
-                endermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(endermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+            for (int i = 0; i < 6; i++) {
+                newEndermite = new CustomEntityEndermite(this.getWorld());
+                newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
     }
@@ -166,25 +165,25 @@ public class CustomEntityEnderman extends EntityEnderman {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, endermen gain speed 1*/
-            this.a12 = true;
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, endermen gain speed 1*/
+            this.a15 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
-        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, endermen gain 30 max health and regen 2*/
-            this.a50 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, endermen get 30 max health and regen 2*/
+            this.a60 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0));
         }
 
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, endermen summon 5 endermites*/
             this.a100 = true;
-            CustomEntityEndermite endermite;
+            CustomEntityEndermite newEndermite;
 
             for (int i = 0; i < 5; i++) {
-                endermite = new CustomEntityEndermite(this.getWorld());
-                endermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(endermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+                newEndermite = new CustomEntityEndermite(this.getWorld());
+                newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
 
@@ -199,25 +198,31 @@ public class CustomEntityEnderman extends EntityEnderman {
                 if (this.d(target.getPositionVector()) > 144.0) { /**teleports to player if player is more than 12 blocks horizontally but less than 20 blocks away*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    CustomEntityEndermite endermite = new CustomEntityEndermite(this.getWorld()); /**summons an endermite where it teleports to*/
-                    endermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                    this.getWorld().addEntity(endermite);
+                    if (random.nextDouble() < 0.25) {
+                        Bukkit.broadcastMessage("summon");
+                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**25% chance to summon an endermite where it teleports to*/
+                        newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                        this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    }
                 }
 
                 if (!this.getEntitySenses().a(target)) { /**teleports to player if player can't be seen (includes when the player is towering up to avoid enderman)*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    CustomEntityEndermite endermite = new CustomEntityEndermite(this.getWorld()); /**summons an endermite where it teleports to*/
-                    endermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                    this.getWorld().addEntity(endermite);
+                    if (random.nextDouble() < 0.25) {
+                        Bukkit.broadcastMessage("summon");
+                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**25% chance to summon an endermite where it teleports to*/
+                        newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                        this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    }
                 }
             }
         }
 
-        if (this.ticksLived == 10) { /**endermen only have 26 health and 2 damage*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
-            this.setHealth(26.0f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(26.0);
+        if (this.ticksLived == 10) { /**endermen only have 25 health and 2.5 damage*/
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.5);
+            this.setHealth(25.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
