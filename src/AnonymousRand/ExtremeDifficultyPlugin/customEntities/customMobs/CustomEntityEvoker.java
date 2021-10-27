@@ -3,14 +3,12 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Sheep;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,15 +24,15 @@ public class CustomEntityEvoker extends EntityEvoker {
     private JavaPlugin plugin;
     private EntitySheep wololoTarget;
     public int attacks;
-    private boolean a35, a55, a75;
+    private boolean a25, a36, a60;
 
     public CustomEntityEvoker(World world, JavaPlugin plugin) {
         super(EntityTypes.EVOKER, world);
         this.plugin = plugin;
         this.attacks = 0;
-        this.a35 = false;
-        this.a55 = false;
-        this.a75 = false;
+        this.a25 = false;
+        this.a36 = false;
+        this.a60 = false;
     }
 
     @Override
@@ -45,6 +43,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         this.goalSelector.a(5, new c(this));
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(1, new CastingSpellGoal());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /**custom goal that breaks blocks around the mob periodically*/
@@ -63,7 +62,7 @@ public class CustomEntityEvoker extends EntityEvoker {
     public void die() {
         super.die();
 
-        if (this.attacks >= 100) { /**after 100 attacks, evokers summon 8 vexes on death*/
+        if (this.attacks >= 60) { /**after 60 attacks, evokers summon 8 vexes on death*/
             EntityVex vex;
 
             for (int i = 0; i < 8; i++) {
@@ -74,16 +73,16 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
-    private double getFollowRange() {
-        return this.attacks < 90 ? 22.0 : 30.0;
+    public double getFollowRange() {
+        return this.attacks < 36 ? 22.0 : 30.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, evokers spawn 3 vexes*/ //todo: replace with custom vex
-            this.a35 = true;
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers spawn 3 vexes*/ //todo: replace with custom vex
+            this.a25 = true;
             EntityVex vex;
 
             for (int i = 0; i < 3; i++) {
@@ -93,14 +92,15 @@ public class CustomEntityEvoker extends EntityEvoker {
             }
         }
 
-        if (this.attacks == 55 && !this.a55) { /**after 55 attacks, evokers gain regen 2*/ //todo: replace with custom vex
-            this.a55 = true;
+        if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/ //todo: replace with custom vex
+            this.a36 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, evokers gain speed 1*/ //todo: replace with custom vex
-            this.a75 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex
+            this.a60 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
         if (this.ticksLived == 10) { /**evokers only have 20 health*/
@@ -108,7 +108,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         }
 
-        if (this.ticksLived % 40 == 10) { /**evokers have 22 block detection range (setting attribute doesn't work)*/
+        if (this.ticksLived % 40 == 10) { /**evokers have 22 block detection range (setting attribute doesn't work) (30 after 36 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
@@ -121,12 +121,6 @@ public class CustomEntityEvoker extends EntityEvoker {
                     this.setGoalTarget(null);
                 }
             }
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

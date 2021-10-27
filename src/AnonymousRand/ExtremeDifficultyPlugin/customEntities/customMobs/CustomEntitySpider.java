@@ -15,16 +15,16 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntitySpider extends EntitySpider {
 
     public int attacks;
-    private boolean a30, a50, a70, a100;
+    private boolean a25, a20, a50, a80;
 
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
         this.teleportToPlayer = 0;
         this.attacks = 0;
-        this.a30 = false;
+        this.a25 = false;
+        this.a20 = false;
         this.a50 = false;
-        this.a70 = false;
-        this.a100 = false;
+        this.a80 = false;
     }
 
     @Override
@@ -47,19 +47,19 @@ public class CustomEntitySpider extends EntitySpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**spiders have +70% movement speed but only 1 damage and 12.5 health*/
+        if (this.ticksLived == 10) { /**spiders move 70% faster but only do 1 damage and 12.5 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.setHealth(12.5f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
         }
 
-        if (this.attacks % 29 == 0 && this.a30) { //reset right before the next cycle
-            this.a30 = false;
+        if (this.attacks % 24 == 0 && this.a25) { //reset right before the next cycle
+            this.a25 = false;
         }
 
-        if (this.attacks % 30 == 0 && this.attacks != 0 && !this.a30) { /**every 30 attacks, spiders lay down cobwebs that last 5 seconds in a 5 by 5 cube around itself*/
-            this.a30 = true;
+        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) { /**every 25 attacks, spiders lay down cobwebs that last 5 seconds in a 5 by 5 cube around itself*/
+            this.a25 = true;
 
             Location loc;
             for (int x = -2; x <= 2; x++) {
@@ -75,13 +75,13 @@ public class CustomEntitySpider extends EntitySpider {
             }
         }
 
-        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders gain speed 1*/
-            this.a50 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, spiders gain speed 1*/
+            this.a20 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
-        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, spiders summon 3 vanilla cave spiders*/
-            this.a70 = true;
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders summon 3 vanilla cave spiders*/
+            this.a50 = true;
             EntityCaveSpider newCaveSpider;
 
             for (int i = 0; i < 3; i++) {
@@ -91,8 +91,8 @@ public class CustomEntitySpider extends EntitySpider {
             }
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, spiders summon 5 cave spiders*/
-            this.a100 = true;
+        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, spiders summon 5 cave spiders*/
+            this.a80 = true;
             CustomEntitySpiderCave newCaveSpider;
 
             for (int i = 0; i < 6; i++) {

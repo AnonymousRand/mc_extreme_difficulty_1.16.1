@@ -1,32 +1,30 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntitySilverfish extends EntitySilverfish {
 
     public int attacks;
-    private boolean a40, a100;
+    private boolean a15, a90;
 
     public CustomEntitySilverfish(World world) {
         super(EntityTypes.SILVERFISH, world);
         this.attacks = 0;
-        this.a40 = false;
-        this.a100 = false;
+        this.a15 = false;
+        this.a90 = false;
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -50,13 +48,13 @@ public class CustomEntitySilverfish extends EntitySilverfish {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, silverfish gain speed 3*/
-            this.a40 = true;
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, silverfish gain speed 3*/
+            this.a15 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, silverfish spawns a 5 by 5 block of invested stone around it and dies*/
-            this.a100 = true;
+        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, silverfish spawns a 5 by 5 block of invested stone around it and dies*/
+            this.a90 = true;
 
             Location loc;
             for (int x = -2; x <= 2; x++) {
@@ -85,11 +83,6 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
             this.setHealth(9.0f);
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

@@ -1,13 +1,22 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityMushroomCow extends EntityMushroomCow {
 
     public CustomEntityMushroomCow(World world) {
         super(EntityTypes.MOOSHROOM, world);
+    }
+
+    @Override
+    public void initPathfinder() {
+        super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
     }
 
     @Override

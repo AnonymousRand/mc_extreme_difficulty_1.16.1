@@ -15,14 +15,14 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     public int attacks;
-    private boolean a60, a100;
+    private boolean a25, a80;
 
     public CustomEntitySpiderCave(World world) {
         super(EntityTypes.CAVE_SPIDER, world);
         this.teleportToPlayer = 0;
         this.attacks = 0;
-        this.a60 = false;
-        this.a100 = false;
+        this.a25 = false;
+        this.a80 = false;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**cave spiders have +70% movement speed but only 1 damage and 8 health*/
+        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and 8 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.setHealth(8.0f);
@@ -58,13 +58,13 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
             this.getWorld().addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
-        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, cave spiders gain speed 2*/
-            this.a60 = true;
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, cave spiders gain speed 2*/
+            this.a25 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs*/
-            this.a100 = true;
+        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs*/
+            this.a80 = true;
             //todo: custom area effect cloud
         }
 

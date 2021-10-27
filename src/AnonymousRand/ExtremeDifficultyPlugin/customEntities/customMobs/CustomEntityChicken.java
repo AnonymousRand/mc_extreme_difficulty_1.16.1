@@ -1,5 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +12,12 @@ public class CustomEntityChicken extends EntityChicken {
     
     public CustomEntityChicken(World world) {
         super(EntityTypes.CHICKEN, world);
+    }
+
+    @Override
+    public void initPathfinder() {
+        super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
     }
 
     @Override
@@ -26,11 +33,6 @@ public class CustomEntityChicken extends EntityChicken {
                 this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
                 this.die();
             }
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 }

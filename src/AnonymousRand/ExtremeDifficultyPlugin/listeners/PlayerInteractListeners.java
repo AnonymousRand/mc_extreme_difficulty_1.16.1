@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
 
-    protected Random rand = new Random();
+    private final Random rand = new Random();
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {

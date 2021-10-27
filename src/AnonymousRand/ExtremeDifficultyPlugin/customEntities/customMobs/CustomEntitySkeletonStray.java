@@ -1,9 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalBowShoot;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -15,7 +12,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
     public boolean spawnMob, spawnExplodingArrow;
     public int attacks;
-    private boolean a100;
+    private boolean a60;
 
 
     public CustomEntitySkeletonStray(World world) {
@@ -25,11 +22,13 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         this.spawnMob = false;
         this.spawnExplodingArrow = false;
         this.attacks = 0;
-        this.a100 = false;
+        this.a60 = false;
     }
 
     @Override
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -40,11 +39,11 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     @Override
     public void a(EntityLiving entityliving, float f) {
-        this.attacks+=5;
+        this.attacks++;
         double rand = random.nextDouble();
 
-        if (rand < (this.attacks < 30 ? 0.9 : this.attacks < 50 ? 0.85 : this.attacks < 75 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 20 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 20 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
-            boolean fire = random.nextDouble() < (this.attacks < 20 ? 0.222222222 : 0.444444444);
+        if (rand < (this.attacks < 20 ? 0.9 : this.attacks < 30 ? 0.85 : this.attacks < 40 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 10 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 10 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
+            boolean fire = random.nextDouble() < (this.attacks < 10 ? 0.222222222 : 0.444444444);
             this.spawnMob = false;
             this.spawnExplodingArrow = false;
 
@@ -68,7 +67,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
-        } else if (rand < (this.attacks < 50 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
+        } else if (rand < (this.attacks < 30 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
             for (int i = 0; i < 10; i++) {
                 this.spawnExplodingArrow = true;
                 this.spawnMob = false;
@@ -119,8 +118,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
-    private double getFollowRange() {
-        return 22.0;
+    public double getFollowRange() {
+        return this.attacks < 20 ? 22.0 : 32.0;
     }
 
     protected int teleportToPlayer;
@@ -130,8 +129,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, strays summon 6 vanilla skeletons*/
-            this.a100 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, strays summon 6 vanilla skeletons*/
+            this.a60 = true;
 
             for (int i = 0; i < 6; i++) {
                 EntitySkeleton newSkeleton = new EntitySkeleton(EntityTypes.SKELETON, this.getWorld());
@@ -146,7 +145,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
-        if (this.ticksLived % 40 == 10) { /**strays have 22 block detection range (setting attribute doesn't work)*/
+        if (this.ticksLived % 40 == 10) { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
@@ -161,12 +160,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             }
         }
 
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
-
         if (this.getGoalTarget() == null) { //does not see a target within follow range
             this.teleportToPlayer++;
         } else {
@@ -176,26 +169,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
             if (random.nextDouble() < 0.005) {
                 this.initiateTeleport(random.nextDouble() * 15.0 + this.getFollowRange() - 2.0);
-            }
-        }
-
-        if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (random.nextDouble() < 0.0003) {
-                double hypo = random.nextDouble() * 40;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos).getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
-        } else {
-            if (random.nextDouble() < 0.000025) {
-                double hypo = random.nextDouble() * 50;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), pos.getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
             }
         }
     }

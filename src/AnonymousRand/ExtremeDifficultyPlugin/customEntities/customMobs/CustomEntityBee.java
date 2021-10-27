@@ -1,6 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -12,6 +13,12 @@ public class CustomEntityBee extends EntityBee {
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
+    }
+
+    @Override
+    public void initPathfinder() {
+        super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
     }
 
     @Override
@@ -28,12 +35,6 @@ public class CustomEntityBee extends EntityBee {
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
             this.setHealth(5.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
 
         if (this.hasStung()) {

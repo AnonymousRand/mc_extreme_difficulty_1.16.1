@@ -1,10 +1,8 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -13,19 +11,20 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntityEndermite extends EntityEndermite {
 
     public int attacks;
-    private boolean a40, a70, a100;
+    private boolean a35, a60, a75;
 
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
         this.attacks = 0;
-        this.a40 = false;
-        this.a70 = false;
-        this.a100 = false;
+        this.a35 = false;
+        this.a60 = false;
+        this.a75 = false;
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -47,20 +46,20 @@ public class CustomEntityEndermite extends EntityEndermite {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermites get more knockback*/
-            this.a40 = true;
+        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, endermites get more knockback*/
+            this.a35 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
         }
 
-        if (this.attacks == 70 && !this.a70) { /**after 70 attacks, endemites get even more knockback, 14 max health and regen 1*/
-            this.a70 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, endemites get even more knockback, 14 max health and regen 2*/
+            this.a60 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, endermites explode and die*/
-            this.a100 = true;
+        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, endermites explode and die*/
+            this.a75 = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0f, false, Explosion.Effect.DESTROY);
             this.die();
         }
@@ -78,11 +77,6 @@ public class CustomEntityEndermite extends EntityEndermite {
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.5);
             this.setHealth(10.5f);
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

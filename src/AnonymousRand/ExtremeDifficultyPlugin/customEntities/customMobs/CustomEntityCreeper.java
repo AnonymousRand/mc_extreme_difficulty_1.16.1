@@ -1,18 +1,14 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalSummonLightningRandomly;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
-import io.netty.handler.codec.redis.BulkStringHeaderRedisMessage;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-
-import java.lang.reflect.Field;
-import java.util.Random;
 
 public class CustomEntityCreeper extends EntityCreeper {
 
@@ -24,6 +20,8 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     @Override
     protected void initPathfinder() { /**creeper is no longer scared of cats and ocelots*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
@@ -79,13 +77,13 @@ public class CustomEntityCreeper extends EntityCreeper {
     @Override
     public void onLightningStrike(EntityLightning entitylightning) {
         super.onLightningStrike(entitylightning);
-        this.maxFuseTicks = 30; /**charged creepers have +60% movement speed and 100 health, but a longer fuse*/
+        this.maxFuseTicks = 30; /**charged creepers move 60% faster and have 100 health, but a longer fuse*/
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
         this.setHealth(100.0f);
     }
 
-    private double getFollowRange() {
+    public double getFollowRange() {
         return this.isPowered() ? 40.0 : 244.0;
     }
 
@@ -117,7 +115,7 @@ public class CustomEntityCreeper extends EntityCreeper {
             }
         }
 
-        if (this.ticksLived == 10) { /**creepers have +40% movement speed but only 12.75 health*/
+        if (this.ticksLived == 10) { /**creepers move 40% faster but only have 12.75 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
             this.setHealth(12.75f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
@@ -139,32 +137,6 @@ public class CustomEntityCreeper extends EntityCreeper {
                 if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
                     this.setGoalTarget(null);
                 }
-            }
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
-
-        if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (random.nextDouble() < 0.0003) {
-                double hypo = random.nextDouble() * 40;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos).getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
-        } else {
-            if (random.nextDouble() < 0.000025) {
-                double hypo = random.nextDouble() * 50;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), pos.getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
             }
         }
     }

@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -28,6 +29,7 @@ public class CustomEntityBlaze extends EntityBlaze {
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(3, new CustomPathfinderGoalBlazeFireball(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -43,12 +45,6 @@ public class CustomEntityBlaze extends EntityBlaze {
         if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.setHealth(6.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 
@@ -174,7 +170,7 @@ public class CustomEntityBlaze extends EntityBlaze {
                                 world.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
                             }
 
-                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.shotTracker < 350) {
+                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.shotTracker < 400) {
                                 if (this.blaze.shotTracker % 160 == 0 && this.blaze.shotTracker != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 2);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
@@ -206,8 +202,8 @@ public class CustomEntityBlaze extends EntityBlaze {
                                     }
                                 }
 
-                            } else { /**rapid fire phase for 50 shots after 350 normal shots*/
-                                if (this.blaze.shotTracker >= 350) { /**first entering rapid fire phase*/
+                            } else { /**rapid fire phase for 50 shots after 400 normal shots*/
+                                if (this.blaze.shotTracker >= 400) { /**first entering rapid fire phase*/
                                     this.blaze.shotTracker = 0;
                                     this.blaze.rapidFireTracker = 50;
                                 } else {

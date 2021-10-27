@@ -38,7 +38,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 Bukkit.broadcastMessage("You have reached the build height limit of 128 blocks :tf:");
             }
         } else {
-            if (bukkitBlock.getType() == Material.COBWEB) { /**spider-placed cobwebs are deleted after 4 seconds*/
+            if (bukkitBlock.getType() == Material.COBWEB || bukkitBlock.getType() == Material.LAVA) { /**spider-placed cobwebs and hoglin-placed lava is deleted after 4 seconds*/
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 10 seconds
                 {
                     public void run()

@@ -1,7 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
-import com.google.common.collect.Maps;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -12,23 +11,25 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CustomEntitySheepAggressive extends EntitySheep {
 
     private JavaPlugin plugin;
     public int attacks;
-    private boolean a60, a100;
+    private boolean a20, a40, a65, die;
+    public boolean launchHigh;
 
     public CustomEntitySheepAggressive(World world, JavaPlugin plugin) {
         super(EntityTypes.SHEEP, world);
         this.plugin = plugin;
         this.a(PathType.LAVA, 1.0F); //no longer avoids lava
         this.attacks = 0;
-        this.a60 = false;
-        this.a100 = false;
+        this.a20 = false;
+        this.a40 = false;
+        this.a65 = false;
+        this.die = false;
+        this.launchHigh = false;
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -43,6 +44,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         super.initPathfinder();
         this.goalSelector.a(0, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 64.0f)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(3, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
@@ -68,44 +70,52 @@ public class CustomEntitySheepAggressive extends EntitySheep {
     }
 
     @Override
-    public void die() {
-        super.die();
-
-        if (this.attacks >= 30) { /**after 30 attacks, aggressive sheep create a power 2 explosion on their location when killed*/
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0f, false, Explosion.Effect.DESTROY);
-
-            if (this.attacks >= 100) { /**after 100 attacks, aggressive sheep also summon an evoker on death*/
-                CustomEntityEvoker newEvoker = new CustomEntityEvoker(this.getWorld(), this.plugin);
-                newEvoker.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-                this.getWorld().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
-            }
-        }
+    protected void f(EntityLiving entityliving) { /**sheep heals when its attack is blocked by a shield*/
+        this.heal(this.attacks < 15 ? 15.0f : 25.0f);
     }
 
-    private double getFollowRange() {
-        return this.attacks < 60 ? 64.0 : 128.0;
+    public double getFollowRange() {
+        return this.attacks < 20 ? 64.0 : 128.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        //todo: leave behind 3 by 3 area effect clouds wherever it goes
-
-        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, aggressive sheep gain speed 1*/
-            this.a100 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, aggressive sheep gain speed 1*/
+            this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, aggressive sheep get extra knockback*/
-            this.a100 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 3*/
+            this.a40 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
-        if (this.ticksLived == 10) { /**aggressive sheep move 2.1x as fast, do 8 damage, have extra knockback, have 100 health, and have regeneration 2*/
+        if (this.attacks == 65 && !this.a65) { /**after 65 attacks, aggressive sheep get extra knockback*/
+            this.a65 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
+        }
+
+        if (this.getHealth() <= 0.0 && !this.die) {
+            this.die = true;
+
+            if (this.attacks >= 20) { /**after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed*/
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0f, false, Explosion.Effect.DESTROY);
+
+                if (this.attacks >= 65) { /**after 65 attacks, aggressive sheep also summon an evoker on death*/
+                    CustomEntityEvoker newEvoker = new CustomEntityEvoker(this.getWorld(), this.plugin);
+                    newEvoker.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    this.getWorld().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
+                }
+            }
+        }
+
+        if (this.ticksLived == 10) { /**aggressive sheep move 2.1x as fast, do 7 damage, have extra knockback, have 100 health, and have regen 2*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(8.0);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.0);
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
             this.setHealth(100.0f);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
@@ -124,11 +134,6 @@ public class CustomEntitySheepAggressive extends EntitySheep {
                     this.setGoalTarget(null);
                 }
             }
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

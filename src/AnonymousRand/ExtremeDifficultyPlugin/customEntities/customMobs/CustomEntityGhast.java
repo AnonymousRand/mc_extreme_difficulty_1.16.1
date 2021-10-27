@@ -3,9 +3,8 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,18 +16,19 @@ public class CustomEntityGhast extends EntityGhast {
 
     private JavaPlugin plugin;
     public int attacks;
-    private boolean a30, deathFireballs;
+    private boolean a15, deathFireballs;
 
     public CustomEntityGhast(World world, JavaPlugin plugin) {
         super(EntityTypes.GHAST, world);
         this.plugin = plugin;
         this.attacks = 0;
-        this.a30 = false;
+        this.a15 = false;
         this.deathFireballs = false;
     }
 
     @Override
     protected void initPathfinder() {
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new CustomEntityGhast.CustomPathfinderGoalGhastAttackTarget(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
@@ -50,15 +50,15 @@ public class CustomEntityGhast extends EntityGhast {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 30 && !this.a30) { /**after 30 attacks, ghasts get 16 max health*/
-            this.a30 = true;
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, ghasts get 16 max health*/
+            this.a15 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
             this.setHealth(16.0f);
         }
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new DeathFireballs(this, this.attacks < 100 ? 4 : 2).runTaskTimer(this.plugin, 0L, this.attacks < 100 ? 18L : 30L); /**on death, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 100 attacks*/
+            new DeathFireballs(this, this.attacks < 50 ? 3 : 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 18L : 30L); /**on death, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 
@@ -149,7 +149,7 @@ public class CustomEntityGhast extends EntityGhast {
                 this.ghast.t(this.a > 2); //shooting animation only plays for 2 ticks
 
                 if (this.a == 5) { /**shoots a fireball every 5 ticks*/
-                    if (++this.attackNum == 12) { //attacks only count every 3 seconds, or 12 shots
+                    if (++this.attackNum == 6) { //attacks only count every 1.5 seconds, or 6 shots
                         this.ghast.attacks++;
                         this.attackNum = 0;
                     }
@@ -163,11 +163,11 @@ public class CustomEntityGhast extends EntityGhast {
                         world.a((EntityHuman)null, 1016, this.ghast.getChunkCoordinates(), 0);
                     }
 
-                    CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.attacks < 50 ? this.ghast.getPower() : (this.ghast.attacks - 50) % 4 == 0 ? 3 : this.ghast.getPower()); /**after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds*/
+                    CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.attacks < 50 ? this.ghast.getPower() : (this.ghast.attacks - 50) % 8 == 0 ? 3 : this.ghast.getPower()); /**after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds*/
                     entitylargefireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entitylargefireball.locZ() + vec3d.z * 4.0D);
                     world.addEntity(entitylargefireball);
 
-                    if (this.ghast.attacks >= 70 && (this.ghast.attacks - 70) % 3 == 0) { /**after 70 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
+                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
                         new DeathFireballs(this.ghast, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
                     }
 

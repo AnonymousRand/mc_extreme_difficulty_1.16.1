@@ -5,6 +5,7 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.Cu
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityMonster;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
+import net.minecraft.server.v1_16_R1.EntityProjectile;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.*;
@@ -24,7 +25,9 @@ public class MobDamageListeners implements Listener {
         EntityDamageEvent.DamageCause cause = event.getCause();
         
         switch (entityType) { //natural damage immunities by specific mobs
-            case CHICKEN: /**chickens don't take fire, lava, or explosion damage*/
+            case CHICKEN:
+            case HOGLIN:
+            case ZOGLIN: /**chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
                 break;
             case DROWNED:
@@ -38,12 +41,16 @@ public class MobDamageListeners implements Listener {
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
                 break;
             case ENDERMITE:
-            case SILVERFISH: /**silverfish and endermites don't take fire and lava damage*/
+            case SILVERFISH: /**endermites and silverfish don't take fire and lava damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA);
                 break;
             case GHAST: /**ghasts don't take explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
                 break;
+        }
+
+        if (event.isCancelled()) {
+            return;
         }
 
         boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT);
@@ -75,7 +82,7 @@ public class MobDamageListeners implements Listener {
     public void entityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
         Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
-        
+
         if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /**hostile mobs can't damage each other except aggressive chickens*/ //gettype doesn't seem to work so I'm using instanceof
             event.setCancelled(true);
         }

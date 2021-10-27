@@ -14,7 +14,7 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
     private int delayTimer;
     private int radX, radY, radZ, yOffset;
     private boolean removeFluids;
-    protected Random rand = new Random();
+    private final Random rand = new Random();
 
     public NewPathfinderGoalBreakBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
         this.entity = entity;
@@ -26,10 +26,12 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
         this.removeFluids = removeFluids;
     }
 
+    @Override
     public boolean a() { //should execute
         return this.entity.getGoalTarget() != null ? !this.entity.getGoalTarget().isInvulnerable() : true;
     }
 
+    @Override
     public boolean b() { //should continue executing
         return this.entity.getGoalTarget() != null ? !this.entity.getGoalTarget().isInvulnerable() : true;
     }
@@ -42,16 +44,16 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
             int Z = (int)Math.floor(this.entity.getPositionVector().getZ());
             World world = this.entity.getWorld().getWorld();
 
+            if (this.entity.getGoalTarget() != null) {
+                if (this.entity.getGoalTarget().locY() < this.entity.locY()) { //move downwards if player is below entity
+                    Y--;
+                }
+            }
+
             for (int x = -this.radX; x <= this.radX; x++) {
                 for (int y = -this.radY; y <= this.radY; y++) {
                     for (int z = -this.radZ; z <= this.radZ; z++) {
                         int x1 = X + x, y1 = Y + y, z1 = Z + z;
-
-                        if (this.entity.getGoalTarget() != null) {
-                            if (this.entity.getGoalTarget().locY() < this.entity.locY()) { //move downwards if player is below entity
-                                y1--;
-                            }
-                        }
 
                         if (world.getBlockAt(x1, y1, z1).getType() != Material.BEDROCK && world.getBlockAt(x1, y1, z1).getType() != Material.END_GATEWAY && world.getBlockAt(x1, y1, z1).getType() != Material.END_PORTAL && world.getBlockAt(x1, y1, z1).getType() != Material.END_PORTAL_FRAME && world.getBlockAt(x1, y1, z1).getType() != Material.NETHER_PORTAL && world.getBlockAt(x1, y1, z1).getType() != Material.COMMAND_BLOCK  && world.getBlockAt(x1, y1, z1).getType() != Material.COMMAND_BLOCK_MINECART && world.getBlockAt(x1, y1, z1).getType() != Material.STRUCTURE_BLOCK && world.getBlockAt(x1, y1, z1).getType() != Material.JIGSAW && world.getBlockAt(x1, y1, z1).getType() != Material.BARRIER && world.getBlockAt(x1, y1, z1).getType() != Material.SPAWNER && world.getBlockAt(x1, y1, z1).getType() != Material.COBWEB && (this.removeFluids ? true : (world.getBlockAt(x1, y1, z1).getType() != Material.WATER && world.getBlockAt(x1, y1, z1).getType() != Material.LAVA))) { //as long as it isn't one of these blocks
                             world.getBlockAt(x1, y1, z1).setType(Material.AIR);

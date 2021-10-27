@@ -1,60 +1,63 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityRavager extends EntityRavager {
 
     public int attacks;
-    private boolean a45, a100;
+    private boolean a20, a60, a90;
     public boolean launchHigh;
 
     public CustomEntityRavager(World world) {
         super(EntityTypes.RAVAGER, world);
         this.attacks = 0;
-        this.a45 = false;
-        this.a100 = false;
+        this.a20 = false;
+        this.a60 = false;
+        this.a90 = false;
         this.launchHigh = false;
     }
 
     @Override
-    protected void initPathfinder() { /**increased attack reach*/
+    protected void initPathfinder() {
         super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
-        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, true)); /**still uses the default (super), line-of-sight-requiring goal for iron golems*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)); /**still uses the default (super), line-of-sight-requiring goal for iron golems*/
     }
 
     @Override
     protected void f(EntityLiving entityliving) { /**ravager can't get stunned and instead heals when its attack is blocked by a shield*/
-        this.heal(this.attacks < 60 ? 20.0f : 30.0f);
+        this.heal(this.attacks < 30 ? 20.0f : 30.0f);
     }
 
-    private double getFollowRange() {
-        return this.attacks < 45 ? 40.0 : 80.0;
+    public double getFollowRange() {
+        return this.attacks < 20 ? 40.0 : 80.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.attacks == 45 && !this.a45) { /**after 45 attacks, ravagers gain speed 5 and 1 damage*/
-            this.a45 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, ravagers gain speed 5 and 1 damage*/
+            this.a20 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, ravagers get insane knockback*/
-            this.a100 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, ravagers get extra knockback*/
+            this.a60 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0);
+        }
+
+        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, ravagers get regen 3*/
+            this.a90 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
         if (this.ticksLived == 10) { /**ravagers have 400 health and extra knockback, but only 0.25 damage*/
@@ -64,7 +67,7 @@ public class CustomEntityRavager extends EntityRavager {
             this.setHealth(400.0f);
         }
 
-        if (this.ticksLived % 40 == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 45 attacks)*/
+        if (this.ticksLived % 40 == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
@@ -77,12 +80,6 @@ public class CustomEntityRavager extends EntityRavager {
                     this.setGoalTarget(null);
                 }
             }
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
         }
     }
 

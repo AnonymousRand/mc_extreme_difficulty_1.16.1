@@ -1,12 +1,9 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalBowShoot;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -21,7 +18,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
     public boolean spawnExplodingArrow;
     public int attacks;
-    private boolean a75, a100;
+    private boolean a20, a90;
 
     public CustomEntitySkeleton(World world, JavaPlugin plugin) {
         super(EntityTypes.SKELETON, world);
@@ -30,12 +27,15 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         this.teleportToPlayer = 0;
         this.spawnExplodingArrow = false;
         this.attacks = 0;
-        this.a75 = false;
-        this.a100 = false;
+        this.a20 = false;
+        this.a90 = false;
     }
 
     @Override
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange())); /**custom goal that gives mob a 0.25% chance every tick to teleport to within initial follow_range-2 to follow_range+14 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -48,7 +48,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void a(EntityLiving entityliving, float f) { //shoot
         this.attacks++;
 
-        if (this.attacks >= 30 && this.attacks <= 55 && this.attacks % 8 == 0) { /**between these attack counts, shoot an exploding arrow every 8 shots*/
+        if (this.attacks >= 20 && this.attacks <= 55 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
             for (int i = 0; i < 10; i++) {
                 this.spawnExplodingArrow = true;
                 ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
@@ -62,7 +62,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
-        } else if (this.attacks < 40) {
+        } else if (this.attacks < 20) {
             this.spawnExplodingArrow = false;
 
             for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
@@ -77,7 +77,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                     entityarrow.setPierceLevel((byte)1);
                 }
 
-                if (this.attacks >= 20) { /**after the 20th attack, arrows are on fire and do not lose y level*/
+                if (this.attacks >= 10) { /**after the 10th attack, arrows are on fire and do not lose y level*/
                     entityarrow.setOnFire(50);
                     entityarrow.setNoGravity(true);
                 }
@@ -86,10 +86,10 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
-        } else { /**if more than 40 attacks, rapidfire; if more than 55, even faster rapidfire*/
+        } else { /**if more than 20 attacks, rapidfire; if more than 35, even faster rapidfire*/
             this.spawnExplodingArrow = false;
 
-            new ShootArrowRepeating(this, entityliving, this.attacks >= 55 ? 40 : 8, f).runTaskTimer(this.plugin, 0L, this.attacks >= 55 ? 1L : 5L); //custom repeating runnable class
+            new ShootArrowRepeating(this, entityliving, this.attacks >= 35 ? 40 : 8, f).runTaskTimer(this.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
         }
     }
 
@@ -114,8 +114,8 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
-    private double getFollowRange() {
-        return this.attacks < 75 ? 22.0 : 32.0;
+    public double getFollowRange() {
+        return this.attacks < 20 ? 22.0 : 32.0;
     }
 
     protected int teleportToPlayer;
@@ -125,14 +125,14 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, skeletons get 30 max health*/
-            this.a75 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, skeletons get 30 max health and health*/
+            this.a20 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0f);
         }
 
-        if (this.attacks == 100 && !this.a100) { /**after 100 attacks, skeletons summon an iron golem*/ //todo: custom mob?
-            this.a100 = true;
+        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/ //todo: custom mob
+            this.a90 = true;
             EntityIronGolem golem = new EntityIronGolem(EntityTypes.IRON_GOLEM, this.getWorld());
             golem.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
             this.getWorld().addEntity(golem, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -150,7 +150,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             }
         }
 
-        if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 75 attacks)*/
+        if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
@@ -165,42 +165,10 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             }
         }
 
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
-
         if (this.getGoalTarget() == null) { //does not see a target within follow range
             this.teleportToPlayer++;
         } else {
             this.teleportToPlayer = 0;
-        }
-
-        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (random.nextDouble() < 0.005) {
-                this.initiateTeleport(random.nextDouble() * 15.0 + this.getFollowRange() - 2.0);
-            }
-        }
-
-        if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (random.nextDouble() < 0.0003) {
-                double hypo = random.nextDouble() * 40;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos).getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
-        } else {
-            if (random.nextDouble() < 0.000025) {
-                double hypo = random.nextDouble() * 50;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), pos.getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
         }
     }
 
@@ -235,126 +203,13 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         }
     }
 
-    protected void initiateTeleport(double h) {
-        double hypo = h;
-        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this
-
-        if (player != null) {
-            BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-            BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
-
-            if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
-                this.teleportTo(pos2);
-            } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
-                this.initiateTeleportBreakBlocks(pos);
-            }
-
-            this.teleportToPlayer = 0;
-        }
-    }
-
-    protected void initiateTeleportBreakBlocks(BlockPosition pos) {
-        Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
-
-        double initX = loc.getX();
-        double initY = loc.getY();
-        double initZ = loc.getZ();
-
-        for (int x = -2; x < 3; x++) {
-            for (int y = -2; y < 3; y++) {
-                for (int z = -2; z < 3; z++) {
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
-                        loc.setX(initX + x);
-                        loc.setY(initY + y);
-                        loc.setZ(initZ + z);
-                        loc.getBlock().setType(org.bukkit.Material.AIR);
-                    }
-                }
-            }
-        }
-
-        this.teleportTo(pos);
-    }
-
-    protected boolean teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
-
-        while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
-        }
-
-        IBlockData iblockdata = this.world.getType(blockposition_mutableblockposition);
-
-        if (iblockdata.getMaterial().isSolid()) {
-            boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
-
-            if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
-
-            return flag2;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean a(double d0, double d1, double d2, boolean flag) {
-        double d3 = this.locX();
-        double d4 = this.locY();
-        double d5 = this.locZ();
-        double d6 = d1;
-        boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
-        World world = this.world;
-
-        if (world.isLoaded(blockposition)) {
-            boolean flag2 = false;
-
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
-
-                if (iblockdata.getMaterial().isSolid()) {
-                    flag2 = true;
-                } else {
-                    --d6;
-                    blockposition = blockposition1;
-                }
-            }
-
-            if (flag2) {
-                this.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this)) { /**can teleport onto fluids*/
-                    flag1 = true;
-                }
-            }
-        }
-
-        if (!flag1) {
-            this.enderTeleportTo(d3, d4, d5);
-            return false;
-        } else {
-            if (flag) {
-                world.broadcastEntityEffect(this, (byte) 46);
-            }
-
-            if (this instanceof EntityCreature) {
-                ((EntityCreature)this).getNavigation().o();
-            }
-
-            return true;
-        }
-    }
-
     static class ShootArrowRepeating extends BukkitRunnable {
 
         private CustomEntitySkeleton skeleton;
         private EntityLiving target;
         private int cycles, maxCycles;
         private float f;
-        private Random rand = new Random();
+        private final Random rand = new Random();
 
         public ShootArrowRepeating(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float f) {
             this.skeleton = skeleton;
@@ -369,7 +224,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 this.cancel();
             }
 
-            for (int i = 0; i < (skeleton.attacks < 55 ? 10 : 1); i++) {
+            for (int i = 0; i < (skeleton.attacks < 35 ? 10 : 1); i++) {
                 ItemStack itemstack = skeleton.f(skeleton.b(ProjectileHelper.a(skeleton, Items.BOW)));
                 EntityArrow entityarrow = skeleton.b(itemstack, f);
                 double d0 = target.locX() - skeleton.locX();
@@ -380,13 +235,13 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                     entityarrow.setPierceLevel((byte)1);
                 }
 
-                if (this.skeleton.attacks >= 55) { /**starting from the 55th attack, arrows do not lose y level*/
+                if (this.skeleton.attacks >= 35) { /**starting from the 35th attack, arrows do not lose y level*/
                     entityarrow.setNoGravity(true);
                 }
 
                 entityarrow.setOnFire(50);
 
-                entityarrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 55 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 55 attacks*/
+                entityarrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
                 skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.getRandom().nextFloat() * 0.4F + 0.8F));
                 skeleton.world.addEntity(entityarrow);
             }

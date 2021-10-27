@@ -29,7 +29,7 @@ public class PlayerDamageListeners implements Listener {
     private static HashMap<EntityPlayer, Boolean> blazeHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> ghastHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> llamaHit = new HashMap<>();
-    protected Random rand = new Random();
+    private final Random rand = new Random();
 
     public PlayerDamageListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -60,7 +60,6 @@ public class PlayerDamageListeners implements Listener {
                 case RAVAGER:
                     CustomEntityRavager ravager = (CustomEntityRavager)(nmsDamager);
                     ravager.attacks++;
-                    Vector origin = bukkitPlayer.getVelocity();
 
                     if (ravager.launchHigh) {
                         Bukkit.broadcastMessage("You really thought you could get away with that?");
@@ -73,12 +72,11 @@ public class PlayerDamageListeners implements Listener {
                     {
                         public void run()
                         {
-                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.15) { /**if the player has traveled 3 blocks or less in the span of 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 10*/
+                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.15) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 10*/
                                 ravager.launchHigh = true;
                             }
                         }
                     }, 5L);
-
                     break;
                 case SHEEP:
                     ((CustomEntitySheepAggressive)(nmsDamager)).attacks++;
@@ -87,7 +85,7 @@ public class PlayerDamageListeners implements Listener {
                     CustomEntitySilverfish silverfish = ((CustomEntitySilverfish)(nmsDamager));
                     silverfish.attacks++;
 
-                    if (silverfish.attacks > 80 && rand.nextDouble() < 0.25) { /**silverfish hava a 25% chance to duplicate when hitting a player after 80 attacks*/
+                    if (silverfish.attacks > 60 && rand.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
                         CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(silverfish.getWorld());
                         newSilverfish.setPositionRotation(silverfish.locX(), silverfish.locY(), silverfish.locZ(), silverfish.yaw, silverfish.pitch);
                         silverfish.getWorld().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -99,8 +97,8 @@ public class PlayerDamageListeners implements Listener {
 
                     bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /**spiders inflict slowness 1 for 1.5 secondS on hit*/
 
-                    if ((spider).attacks >= 35) {
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 35 times*/
+                    if ((spider).attacks >= 25) {
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times*/
                     }
                     break;
             }

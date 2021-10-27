@@ -27,7 +27,7 @@ import static org.bukkit.entity.EntityType.VILLAGER;
 
 public class RaidAndVillageListeners implements Listener {
 
-    protected Random rand = new Random();
+    private final Random rand = new Random();
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {

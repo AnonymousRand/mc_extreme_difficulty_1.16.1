@@ -25,7 +25,7 @@ import static org.bukkit.entity.EntityType.*;
 public class MobDeathListeners implements Listener {
 
     private JavaPlugin plugin;
-    Random rand = new Random();
+    private final Random rand = new Random();
 
     public MobDeathListeners(JavaPlugin plugin) {
         this.plugin = plugin;

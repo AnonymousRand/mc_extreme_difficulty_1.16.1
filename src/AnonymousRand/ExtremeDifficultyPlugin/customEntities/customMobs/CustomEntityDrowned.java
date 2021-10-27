@@ -1,20 +1,13 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalArrowAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalZombieAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Random;
@@ -22,20 +15,22 @@ import java.util.Random;
 public class CustomEntityDrowned extends EntityDrowned {
 
     public int attacks;
-    private boolean a60, a100;
+    private boolean a50, a100;
 
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT)); /**drowned always spawn with tridents*/
         this.attacks = 0;
-        this.a60 = false;
+        this.a50 = false;
         this.a100 = false;
     }
 
     @Override
     public void m() { /**drowned no longer target iron golems*/
-        this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
+        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks*/
+        this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
         this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.world.getSeaLevel()));
@@ -58,8 +53,8 @@ public class CustomEntityDrowned extends EntityDrowned {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, drowned summon 2 guardians*/
-            this.a60 = true;
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, drowned summon a guardian*/
+            this.a50 = true;
             for (int i = 0; i < 2; i++) {
                 CustomEntityGuardian newGuardian = new CustomEntityGuardian(this.getWorld());
                 newGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
@@ -77,32 +72,6 @@ public class CustomEntityDrowned extends EntityDrowned {
         if (this.ticksLived == 10) { /**drowned only have 13.5 health*/
             this.setHealth(13.5f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
-        }
-
-        Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-        Location thisLoc2 = new Location(this.getWorld().getWorld(), this.locX(), this.locY() + 1.0, this.locZ());
-        if (thisLoc.getBlock().getType() == org.bukkit.Material.COBWEB || thisLoc2.getBlock().getType() == org.bukkit.Material.COBWEB) { /**non-player mobs gain Speed 11 while in a cobweb (approx original speed)*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 2, 10));
-        }
-
-        if (this.world.isRainingAt(new BlockPosition(this.locX(), this.locY(), this.locZ()))) { /**chance to summon lightning within 50 blocks of it every tick, increased chance if raining and in 40 block radius*/
-            if (random.nextDouble() < 0.0003) {
-                double hypo = random.nextDouble() * 40;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos).getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
-        } else {
-            if (random.nextDouble() < 0.000025) {
-                double hypo = random.nextDouble() * 50;
-                BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.locX(), this.locY(), this.locZ()),  hypo, this.locY(), 361.0));
-
-                CustomEntityLightning lightning = new CustomEntityLightning(this.getWorld());
-                lightning.setLocation(pos.getX(), pos.getY(), pos.getZ(), 0.0f, 0.0f);
-                this.world.addEntity(lightning);
-            }
         }
     }
 
@@ -371,11 +340,11 @@ public class CustomEntityDrowned extends EntityDrowned {
 
         @Override
         public void e() {
-            for (int i = 0; i <= (this.drowned.attacks < 30 ? 0 : this.drowned.attacks < 80 ? 2 : 5); i++) { /**shoots 1, 3 or 6 tridents at a time depending on attack count*/
+            for (int i = 0; i < (this.drowned.attacks < 30 ? 1 : this.drowned.attacks < 70 ? 3 : 6); i++) { /**shoots 1, 3 or 6 tridents at a time depending on attack count*/
                 super.e();
             }
 
-            if (++this.attackCount == 40) { //attack count only goes up every 2 seconds
+            if (++this.attackCount == 20) { //attack count only goes up every second
                 this.attackCount = 0;
                 this.drowned.attacks++;
             }
