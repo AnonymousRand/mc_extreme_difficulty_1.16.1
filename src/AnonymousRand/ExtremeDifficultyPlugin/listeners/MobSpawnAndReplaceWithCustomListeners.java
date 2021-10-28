@@ -458,7 +458,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                         return;
                                     }
 
-                                    for (int i = 0; i < 6; i++) { /**all rabbits are spawned in as 6 killer bunnies instead*/
+                                    for (int i = 0; i < 15; i++) { /**all rabbits are spawned in as 15 killer bunnies instead*/
                                         newRabbit = new CustomEntityRabbit(nmsWorld);
                                         newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                                         newRabbit.setRabbitType(99);

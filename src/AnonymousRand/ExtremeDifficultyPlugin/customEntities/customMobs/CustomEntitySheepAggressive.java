@@ -121,7 +121,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.ticksLived % 40 == 10) { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks)*/
+        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
@@ -130,7 +130,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
                     this.setGoalTarget(null);
                 }
             }

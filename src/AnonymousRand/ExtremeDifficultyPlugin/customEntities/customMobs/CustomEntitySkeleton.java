@@ -24,7 +24,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         super(EntityTypes.SKELETON, world);
         this.plugin = plugin;
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-        this.teleportToPlayer = 0;
         this.spawnExplodingArrow = false;
         this.attacks = 0;
         this.a20 = false;
@@ -35,7 +34,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange())); /**custom goal that gives mob a 0.25% chance every tick to teleport to within initial follow_range-2 to follow_range+14 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -118,7 +117,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         return this.attacks < 20 ? 22.0 : 32.0;
     }
 
-    protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
@@ -150,7 +148,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             }
         }
 
-        if (this.ticksLived % 40 == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
+        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
@@ -159,16 +157,10 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
                     this.setGoalTarget(null);
                 }
             }
-        }
-
-        if (this.getGoalTarget() == null) { //does not see a target within follow range
-            this.teleportToPlayer++;
-        } else {
-            this.teleportToPlayer = 0;
         }
     }
 

@@ -1,6 +1,5 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
-import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.PathfinderTargetCondition;
 import org.bukkit.Bukkit;
@@ -11,7 +10,7 @@ import java.util.function.Predicate;
 
 public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { //used to be called EntityPredicate in Bukkit/non-Spigot source code 1.16.1
     public static final CustomPathfinderTargetCondition a = new CustomPathfinderTargetCondition();
-    private double b = -1.0D;
+    private double followRange = -1.0D;
     private boolean c;
     private boolean d;
     private boolean e;
@@ -21,8 +20,8 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
     protected Field c1, d1, e1, f1;
 
-    public CustomPathfinderTargetCondition a(double d0) {
-        this.b = d0;
+    public CustomPathfinderTargetCondition a(double followRange) {
+        this.followRange = followRange;
 
         try { //get booleans via reflection
             this.c1 = PathfinderTargetCondition.class.getDeclaredField("c");
@@ -51,6 +50,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
     @Override
     public boolean a(@Nullable EntityLiving entityliving, EntityLiving entityliving1) { //turn off line of sight requirement for initially finding target player using nearestAttackableTarget goal which uses getClosestEntity/Player in CustomIEntityAccess which uses this function CustomPathfinderTargetCondition.a (canTarget) which no longer requires EntitySenses.a (canSee) to be true
+
         if (entityliving == entityliving1) {
             return false;
         } else if (entityliving1.isSpectator()) {
@@ -77,12 +77,10 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
                     return false;
                 }
 
-                if (this.b > 0.0D) {
-                    double d0 = this.g ? entityliving1.A(entityliving) : 1.0D;
-                    double d1 = this.b * d0;
-                    double d2 = entityliving.g(entityliving1.locX(), entityliving1.locY(), entityliving1.locZ());
+                if (this.followRange > 0.0D) { /**skulls and invis potions no longer do anything against detection range*/
+                    double entityDistanceSq = entityliving.g(entityliving1.locX(), entityliving1.locY(), entityliving1.locZ());
 
-                    if (d2 > d1 * d1) {
+                    if (entityDistanceSq > this.followRange * this.followRange) {
                         return false;
                     }
                 }

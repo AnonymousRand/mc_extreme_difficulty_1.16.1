@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftProjectile;
+import org.bukkit.entity.Hoglin;
 import org.bukkit.entity.LlamaSpit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,6 +55,28 @@ public class PlayerDamageListeners implements Listener {
                 case ENDERMITE:
                     ((CustomEntityEndermite)(nmsDamager)).attacks++;
                     break;
+                case HOGLIN:
+                    CustomEntityHoglin hoglin = (CustomEntityHoglin)(nmsDamager);
+                    hoglin.attacks++;
+
+                    if (hoglin.attacks >= 25 && hoglin.attacks < 59 && (hoglin.attacks - 25) % 3 == 0) { /**from 25 to 59 attacks, hoglins gain 4 max health every 3 attacks*/
+                        hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, (hoglin.attacks - 25) / 3));
+                    } else if (hoglin.attacks >= 59 && hoglin.attacks < 70) { /**from 59 to 70 attacks, hoglin loses 4 max health but gains 1.2 damage per attack*/
+                        int amp = hoglin.getEffect(MobEffects.HEALTH_BOOST).getAmplifier();
+                        hoglin.removeEffect(MobEffects.HEALTH_BOOST);
+                        hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, amp - 1));
+
+                        hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + 1.2);
+                    }
+
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                    {
+                        public void run()
+                        {
+                            bukkitPlayer.setVelocity(new Vector(0.0, (hoglin.attacks < 25 ? 0.75 : 1.0) * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, more after 40 attacks and doubled if baby*/
+                        }
+                    }, 2L);
+                    break;
                 case RABBIT:
                     ((CustomEntityRabbit)(nmsDamager)).attacks++;
                     break;
@@ -64,22 +87,52 @@ public class PlayerDamageListeners implements Listener {
                     if (ravager.launchHigh) {
                         Bukkit.broadcastMessage("You really thought you could get away with that?");
                         ravager.launchHigh = false;
-                        event.setDamage(10.0);
-                        bukkitPlayer.setVelocity(new Vector(0.0, 5.0, 0.0));
+                        event.setDamage(6.0);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                        {
+                            public void run()
+                            {
+                                bukkitPlayer.setVelocity(new Vector(0.0, 1.0, 0.0));
+                            }
+                        }, 2L);
                     }
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
                     {
                         public void run()
                         {
-                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.15 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.15) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 10*/
+                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6*/
                                 ravager.launchHigh = true;
                             }
                         }
                     }, 5L);
                     break;
                 case SHEEP:
-                    ((CustomEntitySheepAggressive)(nmsDamager)).attacks++;
+                    CustomEntitySheepAggressive sheep = (CustomEntitySheepAggressive)(nmsDamager);
+                    sheep.attacks++;
+
+                    if (sheep.launchHigh) {
+                        Bukkit.broadcastMessage("You really thought you could get away with that?");
+                        sheep.launchHigh = false;
+                        event.setDamage(9.0);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                        {
+                            public void run()
+                            {
+                                bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0));
+                            }
+                        }, 2L);
+                    }
+
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                    {
+                        public void run()
+                        {
+                            if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 9*/
+                                sheep.launchHigh = true;
+                            }
+                        }
+                    }, 5L);
                     break;
                 case SILVERFISH:
                     CustomEntitySilverfish silverfish = ((CustomEntitySilverfish)(nmsDamager));

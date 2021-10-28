@@ -4,6 +4,7 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +33,7 @@ public class ProjectileListeners implements Listener {
         Entity nmsShooter = ((CraftEntity)bukkitProjectile.getShooter()).getHandle();
         World nmsWorld = ((CraftWorld)bukkitProjectile.getWorld()).getHandle();
 
-        if (bukkitProjectile instanceof Arrow && !(nmsProjectile instanceof CustomEntityArrowSpawnMob) && !(nmsProjectile instanceof CustomEntityArrowExploding)) {
+        if (bukkitProjectile instanceof Arrow && !(nmsProjectile instanceof CustomEntityArrow)) {
             Arrow bukkitArrow = (Arrow)bukkitProjectile;
             Location loc = bukkitArrow.getLocation();
 

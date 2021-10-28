@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalTeleportToPlayerAdjustY;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.0075)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -69,14 +71,6 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             }
 
             this.die();
-        }
-
-        if (this.getGoalTarget() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer)this.getGoalTarget();
-
-            if (Math.abs(player.locY() - this.locY()) > 1 && random.nextDouble() < 0.01) { /**every tick the silverfish is more than 1 block of elevation different from its target, it has a 1% chance to teleport onto the player*/
-                this.teleportTo(new BlockPosition(Math.floor(player.locX()), Math.floor(player.locY()), Math.floor(player.locZ())));
-            }
         }
 
         if (this.ticksLived == 10) { /**silverfish move 50% faster and have 9 health*/
@@ -131,77 +125,5 @@ public class CustomEntitySilverfish extends EntitySilverfish {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
-    }
-
-    protected boolean teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
-
-        while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
-        }
-
-        IBlockData iblockdata = this.world.getType(blockposition_mutableblockposition);
-
-        if (iblockdata.getMaterial().isSolid()) {
-            boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
-
-            if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
-
-            return flag2;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean a(double d0, double d1, double d2, boolean flag) {
-        double d3 = this.locX();
-        double d4 = this.locY();
-        double d5 = this.locZ();
-        double d6 = d1;
-        boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
-        World world = this.world;
-
-        if (world.isLoaded(blockposition)) {
-            boolean flag2 = false;
-
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
-
-                if (iblockdata.getMaterial().isSolid()) {
-                    flag2 = true;
-                } else {
-                    --d6;
-                    blockposition = blockposition1;
-                }
-            }
-
-            if (flag2) {
-                this.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this)) { /**can teleport onto fluids*/
-                    flag1 = true;
-                }
-            }
-        }
-
-        if (!flag1) {
-            this.enderTeleportTo(d3, d4, d5);
-            return false;
-        } else {
-            if (flag) {
-                world.broadcastEntityEffect(this, (byte) 46);
-            }
-
-            if (this instanceof EntityCreature) {
-                ((EntityCreature)this).getNavigation().o();
-            }
-
-            return true;
-        }
     }
 }

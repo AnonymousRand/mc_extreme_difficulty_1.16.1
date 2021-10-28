@@ -108,7 +108,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         }
 
-        if (this.ticksLived % 40 == 10) { /**evokers have 22 block detection range (setting attribute doesn't work) (30 after 36 attacks)*/
+        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**evokers have 22 block detection range (setting attribute doesn't work) (30 after 36 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
@@ -117,7 +117,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
                     this.setGoalTarget(null);
                 }
             }

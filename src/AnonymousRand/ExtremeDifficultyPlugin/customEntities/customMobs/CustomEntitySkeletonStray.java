@@ -18,7 +18,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     public CustomEntitySkeletonStray(World world) {
         super(EntityTypes.STRAY, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
-        this.teleportToPlayer = 0;
         this.spawnMob = false;
         this.spawnExplodingArrow = false;
         this.attacks = 0;
@@ -29,6 +28,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -122,7 +122,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         return this.attacks < 20 ? 22.0 : 32.0;
     }
 
-    protected int teleportToPlayer;
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
@@ -145,7 +144,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
-        if (this.ticksLived % 40 == 10) { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
+        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
                 this.setGoalTarget(player);
@@ -154,21 +153,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
                     this.setGoalTarget(null);
                 }
-            }
-        }
-
-        if (this.getGoalTarget() == null) { //does not see a target within follow range
-            this.teleportToPlayer++;
-        } else {
-            this.teleportToPlayer = 0;
-        }
-
-        if (this.teleportToPlayer > 300) { /**has a 0.5% chance every tick to teleport to within follow_range-2 to follow_range+15 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-            if (random.nextDouble() < 0.005) {
-                this.initiateTeleport(random.nextDouble() * 15.0 + this.getFollowRange() - 2.0);
             }
         }
     }
@@ -218,118 +205,5 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
-    }
-
-    protected void initiateTeleport(double h) {
-        double hypo = h;
-        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this
-
-        if (player != null) {
-            BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-            BlockPosition pos2 = this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
-
-            if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
-                this.teleportTo(pos2);
-            } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
-                this.initiateTeleportBreakBlocks(pos);
-            }
-
-            this.teleportToPlayer = 0;
-        }
-    }
-
-    protected void initiateTeleportBreakBlocks(BlockPosition pos) {
-        Location loc = new Location (this.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
-
-        double initX = loc.getX();
-        double initY = loc.getY();
-        double initZ = loc.getZ();
-
-        for (int x = -2; x < 3; x++) {
-            for (int y = -2; y < 3; y++) {
-                for (int z = -2; z < 3; z++) {
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
-                        loc.setX(initX + x);
-                        loc.setY(initY + y);
-                        loc.setZ(initZ + z);
-                        loc.getBlock().setType(org.bukkit.Material.AIR);
-                    }
-                }
-            }
-        }
-
-        this.teleportTo(pos);
-    }
-
-    protected boolean teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
-
-        while (blockposition_mutableblockposition.getY() > 0 && !this.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
-        }
-
-        IBlockData iblockdata = this.world.getType(blockposition_mutableblockposition);
-
-        if (iblockdata.getMaterial().isSolid()) {
-            boolean flag2 = this.a(pos.getX(), pos.getY(), pos.getZ(), true);
-
-            if (flag2 && !this.isSilent()) {
-                this.world.playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
-
-            return flag2;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean a(double d0, double d1, double d2, boolean flag) {
-        double d3 = this.locX();
-        double d4 = this.locY();
-        double d5 = this.locZ();
-        double d6 = d1;
-        boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
-        World world = this.world;
-
-        if (world.isLoaded(blockposition)) {
-            boolean flag2 = false;
-
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
-
-                if (iblockdata.getMaterial().isSolid()) {
-                    flag2 = true;
-                } else {
-                    --d6;
-                    blockposition = blockposition1;
-                }
-            }
-
-            if (flag2) {
-                this.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this)) { /**can teleport onto fluids*/
-                    flag1 = true;
-                }
-            }
-        }
-
-        if (!flag1) {
-            this.enderTeleportTo(d3, d4, d5);
-            return false;
-        } else {
-            if (flag) {
-                world.broadcastEntityEffect(this, (byte) 46);
-            }
-
-            if (this instanceof EntityCreature) {
-                ((EntityCreature)this).getNavigation().o();
-            }
-
-            return true;
-        }
     }
 }

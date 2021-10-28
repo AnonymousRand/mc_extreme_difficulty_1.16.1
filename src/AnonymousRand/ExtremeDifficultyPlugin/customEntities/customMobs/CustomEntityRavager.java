@@ -52,7 +52,7 @@ public class CustomEntityRavager extends EntityRavager {
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, ravagers get extra knockback*/
             this.a60 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0);
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.5);
         }
 
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, ravagers get regen 3*/
@@ -67,7 +67,7 @@ public class CustomEntityRavager extends EntityRavager {
             this.setHealth(400.0f);
         }
 
-        if (this.ticksLived % 40 == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
+        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
             if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
                 this.setGoalTarget(player);
@@ -76,7 +76,7 @@ public class CustomEntityRavager extends EntityRavager {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) {
+                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
                     this.setGoalTarget(null);
                 }
             }
