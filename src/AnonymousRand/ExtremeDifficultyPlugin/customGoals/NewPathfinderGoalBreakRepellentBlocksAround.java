@@ -5,9 +5,9 @@ import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-public class NewPathfinderGoalBreakSpecificBlocksAround extends NewPathfinderGoalBreakBlocksAround {
+public class NewPathfinderGoalBreakRepellentBlocksAround extends NewPathfinderGoalBreakBlocksAround {
 
-    public NewPathfinderGoalBreakSpecificBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
+    public NewPathfinderGoalBreakRepellentBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
         super(entity, delayTimer, radX, radY, radZ, yOffset, removeFluids);
     }
 

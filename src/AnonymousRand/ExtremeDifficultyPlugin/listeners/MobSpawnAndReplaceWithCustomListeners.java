@@ -63,18 +63,33 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntitySkeleton ||
                 nmsEntity instanceof CustomEntitySkeletonStray ||
                 nmsEntity instanceof CustomEntitySpider ||
+                nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
                 nmsEntity instanceof CustomEntityZombieHusk)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
             org.bukkit.inventory.ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
-            boots.addUnsafeEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 6 to avoid loopholes such as using water flow to keep them back*/
+            boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
             boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
             switch (event.getEntityType()) {
+                case BAT:
+                    Bat bat = (Bat)bukkitEntity;
+                    CustomEntityBat newBat = new CustomEntityBat(nmsWorld);
+                    newBat.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                    nmsWorld.addEntity(newBat, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    bat.remove();
+                    break;
+                case BEE:
+                    Bee bee = (Bee)bukkitEntity;
+                    CustomEntityBee newBee = new CustomEntityBee(nmsWorld);
+                    newBee.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                    nmsWorld.addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    bee.remove();
+                    break;
                 case BLAZE:
                     Blaze blaze = (Blaze)bukkitEntity;
                     CustomEntityBlaze newBlaze = new CustomEntityBlaze(nmsWorld);
-                    newBlaze.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newBlaze.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newBlaze, CreatureSpawnEvent.SpawnReason.NATURAL);
                     blaze.remove();
                     break;
@@ -82,7 +97,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
                         CaveSpider caveSpider = (CaveSpider)bukkitEntity;
                         CustomEntitySpiderCave newCaveSpider = new CustomEntitySpiderCave(nmsWorld);
-                        newCaveSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        newCaveSpider.setPosition(loc.getX(), loc.getY(), loc.getZ());
                         ((LivingEntity)newCaveSpider.getBukkitEntity()).getEquipment().setBoots(boots);
                         nmsWorld.addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                         caveSpider.remove();
@@ -91,7 +106,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case CHICKEN:
                     Chicken chicken = (Chicken)bukkitEntity;
                     CustomEntityChicken newChicken = new CustomEntityChicken(nmsWorld);
-                    newChicken.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newChicken.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newChicken.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
                     chicken.remove();
@@ -99,7 +114,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case COW:
                     Cow cow = (Cow)bukkitEntity;
                     CustomEntityCow newCow = new CustomEntityCow(nmsWorld);
-                    newCow.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newCow.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newCow.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newCow, CreatureSpawnEvent.SpawnReason.NATURAL);
                     cow.remove();
@@ -107,7 +122,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case CREEPER:
                     Creeper creeper = (Creeper)bukkitEntity;
                     CustomEntityCreeper newCreeper = new CustomEntityCreeper(nmsWorld, 15);
-                    newCreeper.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newCreeper.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newCreeper.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
                     creeper.remove();
@@ -115,7 +130,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case DROWNED:
                     Drowned drowned = (Drowned)bukkitEntity;
                     CustomEntityDrowned newDrowned = new CustomEntityDrowned(nmsWorld);
-                    newDrowned.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newDrowned.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newDrowned.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newDrowned, CreatureSpawnEvent.SpawnReason.NATURAL);
                     drowned.remove();
@@ -123,14 +138,14 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case ELDER_GUARDIAN:
                     ElderGuardian elderGuardian = (ElderGuardian)bukkitEntity;
                     CustomEntityGuardianElder newElderGuardian = new CustomEntityGuardianElder(nmsWorld);
-                    newElderGuardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newElderGuardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
                     elderGuardian.remove();
                     break;
                 case ENDERMAN:
                     Enderman enderman = (Enderman)bukkitEntity;
                     CustomEntityEnderman newEnderman = new CustomEntityEnderman(nmsWorld);
-                    newEnderman.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newEnderman.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newEnderman.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newEnderman, CreatureSpawnEvent.SpawnReason.NATURAL);
                     enderman.remove();
@@ -138,7 +153,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case ENDERMITE:
                     Endermite endermite = (Endermite)bukkitEntity;
                     CustomEntityEndermite newEndermite = new CustomEntityEndermite(nmsWorld);
-                    newEndermite.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newEndermite.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newEndermite.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     endermite.remove();
@@ -146,7 +161,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case EVOKER:
                     Evoker evoker = (Evoker)bukkitEntity;
                     CustomEntityEvoker newEvoker = new CustomEntityEvoker(nmsWorld, plugin);
-                    newEvoker.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newEvoker.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newEvoker.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
                     evoker.remove();
@@ -154,28 +169,28 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case GHAST:
                     Ghast ghast = (Ghast)bukkitEntity;
                     CustomEntityGhast newGhast = new CustomEntityGhast(nmsWorld, plugin);
-                    newGhast.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newGhast.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newGhast, CreatureSpawnEvent.SpawnReason.NATURAL);
                     ghast.remove();
                     break;
                 case GUARDIAN:
                     Guardian guardian = (Guardian)bukkitEntity;
                     CustomEntityGuardian newGuardian = new CustomEntityGuardian(nmsWorld);
-                    newGuardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newGuardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
                     guardian.remove();
                     break;
                 case HOGLIN:
                     Hoglin hoglin = (Hoglin)bukkitEntity;
                     CustomEntityHoglin newHoglin = new CustomEntityHoglin(nmsWorld);
-                    newHoglin.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newHoglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     nmsWorld.addEntity(newHoglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                     hoglin.remove();
                     break;
                 case HUSK:
                     Husk husk = (Husk)bukkitEntity;
                     CustomEntityZombieHusk newHusk = new CustomEntityZombieHusk(nmsWorld);
-                    newHusk.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newHusk.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newHusk.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newHusk, CreatureSpawnEvent.SpawnReason.NATURAL);
                     husk.remove();
@@ -183,7 +198,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case LLAMA:
                     Llama llama = (Llama)bukkitEntity;
                     CustomEntityLlama newLlama = new CustomEntityLlama(nmsWorld);
-                    newLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newLlama.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newLlama.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
                     llama.remove();
@@ -191,7 +206,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case MUSHROOM_COW:
                     MushroomCow mooshroom = (MushroomCow)bukkitEntity;
                     CustomEntityMushroomCow newMooshroom = new CustomEntityMushroomCow(nmsWorld);
-                    newMooshroom.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newMooshroom.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newMooshroom.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newMooshroom, CreatureSpawnEvent.SpawnReason.NATURAL);
                     mooshroom.remove();
@@ -202,7 +217,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
                     for (int i = 0; i < 6; i++) { /**all rabbits are spawned in as 6 killer bunnies instead*/
                         newRabbit = new CustomEntityRabbit(nmsWorld);
-                        newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        newRabbit.setPosition(loc.getX(), loc.getY(), loc.getZ());
                         newRabbit.setRabbitType(99);
                         ((LivingEntity)newRabbit.getBukkitEntity()).getEquipment().setBoots(boots);
                         nmsWorld.addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -214,7 +229,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case RAVAGER:
                     Ravager ravager = (Ravager)bukkitEntity;
                     CustomEntityRavager newRavager = new CustomEntityRavager(nmsWorld);
-                    newRavager.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newRavager.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newRavager.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newRavager, CreatureSpawnEvent.SpawnReason.NATURAL);
                     newRavager.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /**changing attributes don't work on ravagers so ravagers have speed 3*/
@@ -225,7 +240,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
                     if (sheep.getColor() == DyeColor.PINK) {
                         CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld, plugin);
-                        newSheep.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        newSheep.setPosition(loc.getX(), loc.getY(), loc.getZ());
                         ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
                         newSheep.setColor(EnumColor.PINK);
                         nmsWorld.addEntity(newSheep, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -235,7 +250,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case SILVERFISH:
                     Silverfish silverfish = (Silverfish)bukkitEntity;
                     CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(nmsWorld);
-                    newSilverfish.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newSilverfish.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newSilverfish.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
                     silverfish.remove();
@@ -244,7 +259,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.DROWNED) {
                         Skeleton skeleton = (Skeleton)bukkitEntity;
                         CustomEntitySkeleton newSkeleton = new CustomEntitySkeleton(nmsWorld, plugin);
-                        newSkeleton.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                        newSkeleton.setPosition(loc.getX(), loc.getY(), loc.getZ());
                         ((LivingEntity)newSkeleton.getBukkitEntity()).getEquipment().setBoots(boots);
                         nmsWorld.addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.NATURAL);
                         skeleton.remove();
@@ -253,7 +268,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case SPIDER:
                     Spider spider = (Spider)bukkitEntity;
                     CustomEntitySpider newSpider = new CustomEntitySpider(nmsWorld);
-                    newSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newSpider.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newSpider.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                     spider.remove();
@@ -261,7 +276,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case STRAY:
                     Stray stray = (Stray)bukkitEntity;
                     CustomEntitySkeletonStray newStray = new CustomEntitySkeletonStray(nmsWorld);
-                    newStray.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newStray.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newStray.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newStray, CreatureSpawnEvent.SpawnReason.NATURAL);
                     stray.remove();
@@ -269,15 +284,23 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case TRADER_LLAMA:
                     TraderLlama traderLlama = (TraderLlama)bukkitEntity;
                     CustomEntityLlamaTrader newTraderLlama = new CustomEntityLlamaTrader(nmsWorld);
-                    newTraderLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newTraderLlama.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newTraderLlama.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newTraderLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
                     traderLlama.remove();
                     break;
+                case ZOGLIN:
+                    Zoglin zoglin = (Zoglin)bukkitEntity;
+                    CustomEntityZoglin newZoglin = new CustomEntityZoglin(nmsWorld);
+                    newZoglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                    ((LivingEntity)newZoglin.getBukkitEntity()).getEquipment().setBoots(boots);
+                    nmsWorld.addEntity(newZoglin, CreatureSpawnEvent.SpawnReason.NATURAL);
+                    zoglin.remove();
+                    break;
                 case ZOMBIE:
                     Zombie zombie = (Zombie)bukkitEntity;
                     CustomEntityZombie newZombie = new CustomEntityZombie(nmsWorld);
-                    newZombie.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    newZombie.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((LivingEntity)newZombie.getBukkitEntity()).getEquipment().setBoots(boots);
                     nmsWorld.addEntity(newZombie, CreatureSpawnEvent.SpawnReason.NATURAL);
                     zombie.remove();
@@ -327,6 +350,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 nmsEntity instanceof EntitySkeleton ||
                                 nmsEntity instanceof CustomEntitySkeletonStray ||
                                 nmsEntity instanceof CustomEntitySpider ||
+                                nmsEntity instanceof CustomEntityZoglin ||
                                 nmsEntity instanceof CustomEntityZombie ||
                                 nmsEntity instanceof CustomEntityZombieHusk)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
@@ -335,17 +359,31 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                             boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
                             switch (type) {
+                                case BAT:
+                                    Bat bat = (Bat)bukkitEntity;
+                                    CustomEntityBat newBat = new CustomEntityBat(nmsWorld);
+                                    newBat.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                                    nmsWorld.addEntity(newBat, CreatureSpawnEvent.SpawnReason.NATURAL);
+                                    bat.remove();
+                                    break;
+                                case BEE:
+                                    Bee bee = (Bee)bukkitEntity;
+                                    CustomEntityBee newBee = new CustomEntityBee(nmsWorld);
+                                    newBee.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                                    nmsWorld.addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);
+                                    bee.remove();
+                                    break;
                                 case BLAZE:
                                     Blaze blaze = (Blaze)bukkitEntity;
                                     CustomEntityBlaze newBlaze = new CustomEntityBlaze(nmsWorld);
-                                    newBlaze.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newBlaze.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     nmsWorld.addEntity(newBlaze, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     blaze.remove();
                                     break;
                                 case CHICKEN:
                                     Chicken chicken = (Chicken)bukkitEntity;
                                     CustomEntityChicken newChicken = new CustomEntityChicken(nmsWorld);
-                                    newChicken.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newChicken.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newChicken.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     chicken.remove();
@@ -353,7 +391,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case COW:
                                     Cow cow = (Cow)bukkitEntity;
                                     CustomEntityCow newCow = new CustomEntityCow(nmsWorld);
-                                    newCow.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newCow.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newCow.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newCow, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     cow.remove();
@@ -361,7 +399,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case CREEPER:
                                     Creeper creeper = (Creeper)bukkitEntity;
                                     CustomEntityCreeper newCreeper = new CustomEntityCreeper(nmsWorld, 15);
-                                    newCreeper.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newCreeper.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newCreeper.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newCreeper, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     creeper.remove();
@@ -369,7 +407,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case DROWNED:
                                     Drowned drowned = (Drowned)bukkitEntity;
                                     CustomEntityDrowned newDrowned = new CustomEntityDrowned(nmsWorld);
-                                    newDrowned.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newDrowned.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newDrowned.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newDrowned, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     drowned.remove();
@@ -377,14 +415,14 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case ELDER_GUARDIAN:
                                     ElderGuardian elderGuardian = (ElderGuardian)bukkitEntity;
                                     CustomEntityGuardianElder newElderGuardian = new CustomEntityGuardianElder(nmsWorld);
-                                    newElderGuardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newElderGuardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     nmsWorld.addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     elderGuardian.remove();
                                     break;
                                 case ENDERMAN:
                                     Enderman enderman = (Enderman)bukkitEntity;
                                     CustomEntityEnderman newEnderman = new CustomEntityEnderman(nmsWorld);
-                                    newEnderman.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newEnderman.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newEnderman.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newEnderman, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     enderman.remove();
@@ -392,7 +430,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case ENDERMITE:
                                     Endermite endermite = (Endermite)bukkitEntity;
                                     CustomEntityEndermite newEndermite = new CustomEntityEndermite(nmsWorld);
-                                    newEndermite.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newEndermite.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newEndermite.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     endermite.remove();
@@ -400,7 +438,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case EVOKER:
                                     Evoker evoker = (Evoker)bukkitEntity;
                                     CustomEntityEvoker newEvoker = new CustomEntityEvoker(nmsWorld, plugin);
-                                    newEvoker.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newEvoker.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newEvoker.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     evoker.remove();
@@ -408,28 +446,28 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case GHAST:
                                     Ghast ghast = (Ghast)bukkitEntity;
                                     CustomEntityGhast newGhast = new CustomEntityGhast(nmsWorld, plugin);
-                                    newGhast.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newGhast.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     nmsWorld.addEntity(newGhast, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     ghast.remove();
                                     break;
                                 case GUARDIAN:
                                     Guardian guardian = (Guardian)bukkitEntity;
                                     CustomEntityGuardian newGuardian = new CustomEntityGuardian(nmsWorld);
-                                    newGuardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newGuardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     nmsWorld.addEntity(newGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     guardian.remove();
                                     break;
                                 case HOGLIN:
                                     Hoglin hoglin = (Hoglin)bukkitEntity;
                                     CustomEntityHoglin newHoglin = new CustomEntityHoglin(nmsWorld);
-                                    newHoglin.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newHoglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     nmsWorld.addEntity(newHoglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     hoglin.remove();
                                     break;
                                 case HUSK:
                                     Husk husk = (Husk)bukkitEntity;
                                     CustomEntityZombieHusk newHusk = new CustomEntityZombieHusk(nmsWorld);
-                                    newHusk.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newHusk.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newHusk.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newHusk, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     husk.remove();
@@ -437,7 +475,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case LLAMA:
                                     Llama llama = (Llama)bukkitEntity;
                                     CustomEntityLlama newLlama = new CustomEntityLlama(nmsWorld);
-                                    newLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newLlama.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newLlama.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     llama.remove();
@@ -445,7 +483,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case MUSHROOM_COW:
                                     MushroomCow mooshroom = (MushroomCow)bukkitEntity;
                                     CustomEntityMushroomCow newMooshroom = new CustomEntityMushroomCow(nmsWorld);
-                                    newMooshroom.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newMooshroom.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newMooshroom.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newMooshroom, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     mooshroom.remove();
@@ -460,7 +498,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
                                     for (int i = 0; i < 15; i++) { /**all rabbits are spawned in as 15 killer bunnies instead*/
                                         newRabbit = new CustomEntityRabbit(nmsWorld);
-                                        newRabbit.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                        newRabbit.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                         newRabbit.setRabbitType(99);
                                         ((LivingEntity)newRabbit.getBukkitEntity()).getEquipment().setBoots(boots);
                                         nmsWorld.addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -472,7 +510,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case RAVAGER:
                                     Ravager ravager = (Ravager)bukkitEntity;
                                     CustomEntityRavager newRavager = new CustomEntityRavager(nmsWorld);
-                                    newRavager.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newRavager.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newRavager.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newRavager, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     newRavager.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /**changing attributes don't work on ravagers so ravagers have speed 3*/
@@ -483,7 +521,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
                                     if (sheep.getColor() == DyeColor.PINK) {
                                         CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld, plugin);
-                                        newSheep.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                        newSheep.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                         ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
                                         newSheep.setColor(EnumColor.PINK);
                                         nmsWorld.addEntity(newSheep, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -493,7 +531,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case SILVERFISH:
                                     Silverfish silverfish = (Silverfish)bukkitEntity;
                                     CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(nmsWorld);
-                                    newSilverfish.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newSilverfish.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newSilverfish.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     silverfish.remove();
@@ -501,7 +539,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case SPIDER:
                                     Spider spider = (Spider)bukkitEntity;
                                     CustomEntitySpider newSpider = new CustomEntitySpider(nmsWorld);
-                                    newSpider.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newSpider.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newSpider.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     spider.remove();
@@ -509,7 +547,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case STRAY:
                                     Stray stray = (Stray)bukkitEntity;
                                     CustomEntitySkeletonStray newStray = new CustomEntitySkeletonStray(nmsWorld);
-                                    newStray.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newStray.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newStray.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newStray, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     stray.remove();
@@ -517,15 +555,23 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 case TRADER_LLAMA:
                                     TraderLlama traderLlama = (TraderLlama)bukkitEntity;
                                     CustomEntityLlamaTrader newTraderLlama = new CustomEntityLlamaTrader(nmsWorld);
-                                    newTraderLlama.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newTraderLlama.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newTraderLlama.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newTraderLlama, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     traderLlama.remove();
                                     break;
+                                case ZOGLIN:
+                                    Zoglin zoglin = (Zoglin)bukkitEntity;
+                                    CustomEntityZoglin newZoglin = new CustomEntityZoglin(nmsWorld);
+                                    newZoglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                                    ((LivingEntity)newZoglin.getBukkitEntity()).getEquipment().setBoots(boots);
+                                    nmsWorld.addEntity(newZoglin, CreatureSpawnEvent.SpawnReason.NATURAL);
+                                    zoglin.remove();
+                                    break;
                                 case ZOMBIE:
                                     Zombie zombie = (Zombie)bukkitEntity;
                                     CustomEntityZombie newZombie = new CustomEntityZombie(nmsWorld);
-                                    newZombie.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                                    newZombie.setPosition(loc.getX(), loc.getY(), loc.getZ());
                                     ((LivingEntity)newZombie.getBukkitEntity()).getEquipment().setBoots(boots);
                                     nmsWorld.addEntity(newZombie, CreatureSpawnEvent.SpawnReason.NATURAL);
                                     zombie.remove();

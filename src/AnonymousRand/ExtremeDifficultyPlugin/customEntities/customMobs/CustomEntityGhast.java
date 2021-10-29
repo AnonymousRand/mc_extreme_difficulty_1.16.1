@@ -50,7 +50,7 @@ public class CustomEntityGhast extends EntityGhast {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, ghasts get 16 max health*/
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, ghasts get 16 max health and health*/
             this.a15 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
             this.setHealth(16.0f);
@@ -70,7 +70,7 @@ public class CustomEntityGhast extends EntityGhast {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -271,7 +271,7 @@ public class CustomEntityGhast extends EntityGhast {
         }
 
         public void run() {
-            if (++this.cycles >= maxCycles) {
+            if (++this.cycles >= this.maxCycles) {
                 this.cancel();
             }
 

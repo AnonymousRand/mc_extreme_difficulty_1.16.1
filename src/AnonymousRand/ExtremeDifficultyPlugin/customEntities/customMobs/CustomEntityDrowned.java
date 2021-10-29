@@ -29,7 +29,7 @@ public class CustomEntityDrowned extends EntityDrowned {
     public void m() { /**drowned no longer target iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks*/
+        this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks and continues shooting even when line of sight is broken*/
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
         this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
@@ -46,7 +46,10 @@ public class CustomEntityDrowned extends EntityDrowned {
         return true; /**always attacks even in the day*/
     }
 
-    //todo: copy all from this point onwards to all applicable mobs
+    public double getFollowRange() { /**drowned have 40 block detection range (setting attribute doesn't work)*/
+        return 40.0;
+    }
+
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     @Override
@@ -57,7 +60,7 @@ public class CustomEntityDrowned extends EntityDrowned {
             this.a50 = true;
             for (int i = 0; i < 2; i++) {
                 CustomEntityGuardian newGuardian = new CustomEntityGuardian(this.getWorld());
-                newGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newGuardian.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
@@ -65,13 +68,23 @@ public class CustomEntityDrowned extends EntityDrowned {
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, drowned summon an elder guardian*/
             this.a100 = true;
             CustomEntityGuardianElder newElderGuardian = new CustomEntityGuardianElder(this.getWorld());
-            newElderGuardian.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            newElderGuardian.setPosition(this.locX(), this.locY(), this.locZ());
             this.getWorld().addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
         if (this.ticksLived == 10) { /**drowned only have 13.5 health*/
             this.setHealth(13.5f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 
@@ -83,7 +96,7 @@ public class CustomEntityDrowned extends EntityDrowned {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

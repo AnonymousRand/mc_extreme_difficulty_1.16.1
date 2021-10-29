@@ -1,4 +1,4 @@
-package AnonymousRand.ExtremeDifficultyPlugin.customEntities;
+package AnonymousRand.ExtremeDifficultyPlugin.customEntities.misc;
 
 import net.minecraft.server.v1_16_R1.*;
 

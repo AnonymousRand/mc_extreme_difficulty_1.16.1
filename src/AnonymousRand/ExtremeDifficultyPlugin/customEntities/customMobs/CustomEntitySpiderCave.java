@@ -35,7 +35,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
-    public double getFollowRange() {
+    public double getFollowRange() { /**cave spiders have 16 block detection range (setting attribute doesn't work)*/
         return 16.0;
     }
 
@@ -45,16 +45,9 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and 8 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(8.0f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
-        }
-
         if (this.ticksLived == 400) { /**duplicates if it has been alive for 20 seconds*/
             CustomEntitySpiderCave newSpider = new CustomEntitySpiderCave(this.getWorld());
-            newSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            newSpider.setPosition(this.locX(), this.locY(), this.locZ());
             this.getWorld().addEntity(newSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
@@ -73,6 +66,23 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
             thisLoc.getBlock().setType(org.bukkit.Material.COBWEB);
             Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
         }
+
+        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and have 8 health*/
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.setHealth(8.0f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -83,7 +93,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

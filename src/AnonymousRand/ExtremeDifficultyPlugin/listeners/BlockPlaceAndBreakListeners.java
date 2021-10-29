@@ -1,9 +1,11 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityGuardian;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntitySilverfish;
 import net.minecraft.server.v1_16_R1.BlockWeb;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -18,10 +20,11 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public BlockPlaceAndBreakListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -30,12 +33,18 @@ public class BlockPlaceAndBreakListeners implements Listener {
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
         Block bukkitBlock = event.getBlock();
+        World nmsWorld = ((CraftWorld)event.getBlock().getWorld()).getHandle();
         
         if (event.getPlayer() != null) {
             if (event.getPlayer().getLocation().getY() >= 129.0) { /**can't build above y level 128 in all dimensions to prevent towering up etc. to avoid mobs*/
                 event.setCancelled(true);
                 Bukkit.broadcastMessage("Not so fast, smartypants");
                 Bukkit.broadcastMessage("You have reached the build height limit of 128 blocks :tf:");
+            }
+
+            if (bukkitBlock.getType() == Material.CONDUIT) { /**conduits spawn guardians every 5 seconds for 50 seconds*/
+                Location loc = bukkitBlock.getLocation();
+                new ConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(this.plugin, 0L, 100L);
             }
         } else {
             if (bukkitBlock.getType() == Material.COBWEB || bukkitBlock.getType() == Material.LAVA) { /**spider-placed cobwebs and hoglin-placed lava is deleted after 4 seconds*/
@@ -55,10 +64,10 @@ public class BlockPlaceAndBreakListeners implements Listener {
         Block bukkitBlock = event.getBlock();
         Material type = bukkitBlock.getType();
 
-        if (type == Material.SPAWNER || type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
+        if (type == Material.SPAWNER || type == Material.CONDUIT || type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
             World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
 
-            for (int i = 0; i < (type == Material.SPAWNER ? 5 : 1); i++) { /**breaking a spawner spawns 5 silverfish*/
+            for (int i = 0; i < (type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1)); i++) { /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
                 CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(nmsWorld);
                 newSilverfish.setPosition(bukkitBlock.getX(), bukkitBlock.getY(), bukkitBlock.getZ());
                 nmsWorld.addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.INFECTION);
@@ -99,6 +108,32 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 newSilverfish.setPosition(block.getX(), block.getY(), block.getZ());
                 nmsWorld.addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.INFECTION);
             }
+        }
+    }
+
+    static class ConduitSummonGuardian extends BukkitRunnable {
+
+        private CustomEntityGuardian newGuardian;
+        private final World nmsWorld;
+        private final Location loc;
+        private int cycles, maxCycles;
+
+        public ConduitSummonGuardian(World nmsWorld, Location loc, int maxCycles) {
+            this.nmsWorld = nmsWorld;
+            this.loc = loc;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        @Override
+        public void run() {
+            if (++this.cycles >= this.maxCycles) {
+                this.cancel();
+            }
+
+            this.newGuardian = new CustomEntityGuardian(this.nmsWorld);
+            this.newGuardian.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());
+            this.nmsWorld.addEntity(this.newGuardian);
         }
     }
 }

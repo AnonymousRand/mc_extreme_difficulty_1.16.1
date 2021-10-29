@@ -12,12 +12,12 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntitySpider extends EntitySpider {
 
     public int attacks;
-    private boolean a25, a20, a50, a80;
+    private boolean a18, a20, a50, a80;
 
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
         this.attacks = 0;
-        this.a25 = false;
+        this.a18 = false;
         this.a20 = false;
         this.a50 = false;
         this.a80 = false;
@@ -37,7 +37,7 @@ public class CustomEntitySpider extends EntitySpider {
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
-    public double getFollowRange() {
+    public double getFollowRange() { /**spiders have 16 block detection range (setting attribute doesn't work)*/
         return 16.0;
     }
 
@@ -47,24 +47,17 @@ public class CustomEntitySpider extends EntitySpider {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**spiders move 70% faster but only do 1 damage and 12.5 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(12.5f);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
+        if (this.attacks % 19 == 0 && this.a20) { //reset right before the next cycle
+            this.a20 = false;
         }
 
-        if (this.attacks % 24 == 0 && this.a25) { //reset right before the next cycle
-            this.a25 = false;
-        }
-
-        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) { /**every 25 attacks, spiders lay down cobwebs that last 5 seconds in a 5 by 5 cube around itself*/
-            this.a25 = true;
+        if (this.attacks % 20 == 0 && this.attacks != 0 && !this.a20) { /**every 20 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself*/
+            this.a20 = true;
 
             Location loc;
-            for (int x = -2; x <= 2; x++) {
-                for (int y = -2; y <= 2; y++) {
-                    for (int z = -2; z <= 2; z++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int z = -1; z <= 1; z++) {
                         loc = new Location(this.getWorld().getWorld(), Math.floor(this.locX()) + x, Math.floor(this.locY()) + y, Math.floor(this.locZ()) + z);
                         if (loc.getBlock().getType() == org.bukkit.Material.AIR) {
                             loc.getBlock().setType(org.bukkit.Material.COBWEB);
@@ -75,8 +68,8 @@ public class CustomEntitySpider extends EntitySpider {
             }
         }
 
-        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, spiders gain speed 1*/
-            this.a20 = true;
+        if (this.attacks == 18 && !this.a18) { /**after 18 attacks, spiders gain speed 1*/
+            this.a18 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
@@ -86,7 +79,7 @@ public class CustomEntitySpider extends EntitySpider {
 
             for (int i = 0; i < 3; i++) {
                 newCaveSpider = new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld());
-                newCaveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newCaveSpider.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.DROWNED);
             }
         }
@@ -97,7 +90,7 @@ public class CustomEntitySpider extends EntitySpider {
 
             for (int i = 0; i < 6; i++) {
                 newCaveSpider = new CustomEntitySpiderCave(this.getWorld());
-                newCaveSpider.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newCaveSpider.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newCaveSpider, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
@@ -106,6 +99,23 @@ public class CustomEntitySpider extends EntitySpider {
         if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**spiders lay down cobwebs that last 4 seconds on itself as long as it is inside an air block*/ //cobwebs also indirectly prevent players from shooting arrows onto the spider as the arrows are blocked by the web hitbox
             thisLoc.getBlock().setType(org.bukkit.Material.COBWEB);
             Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
+        }
+
+        if (this.ticksLived == 10) { /**spiders move 70% faster but only do 1 damage and have 12.5 health*/
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.setHealth(12.5f);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 
@@ -117,7 +127,7 @@ public class CustomEntitySpider extends EntitySpider {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

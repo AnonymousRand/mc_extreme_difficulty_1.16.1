@@ -1,6 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityBoat;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.misc.CustomEntityBoat;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftVehicle;

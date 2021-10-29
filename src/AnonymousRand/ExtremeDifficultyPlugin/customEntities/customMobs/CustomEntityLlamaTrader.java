@@ -27,13 +27,27 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader {
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
+    public double getFollowRange() { /**trader llamas have 24 block detection range (setting attribute doesn't work)*/
+        return 24.0;
+    }
+
     @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**llamas have 40 health*/
-            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
-            this.setHealth(40.0f);
+        if (this.ticksLived == 10) { /**trader llamas have 30 health*/
+            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
+            this.setHealth(30.0f);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 }

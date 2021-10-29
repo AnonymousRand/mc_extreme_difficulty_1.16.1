@@ -23,7 +23,7 @@ import java.util.List;
 
 public class PlayerDeathAndRespawnListeners implements Listener {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
     private static HashMap<Player, Integer> respawnCount = new HashMap<>();
 

@@ -37,11 +37,15 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             CustomEntitySilverfish newSilverfish;
 
             newSilverfish = new CustomEntitySilverfish(this.getWorld());
-            newSilverfish.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            newSilverfish.setPosition(this.locX(), this.locY(), this.locZ());
             this.getWorld().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
 
         return super.damageEntity(damagesource, f);
+    }
+
+    public double getFollowRange() { /**silverfish have 20 block detection range (setting attribute doesn't work)*/
+        return 20.0;
     }
 
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
@@ -78,6 +82,16 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
             this.setHealth(9.0f);
         }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -88,7 +102,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

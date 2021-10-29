@@ -2,7 +2,6 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -126,7 +125,7 @@ public class CustomEntityEnderman extends EntityEnderman {
             if (flag && damagesource.getEntity() instanceof EntityPlayer) {
                 if (this.attacks >= 40) { /**after 40 attacks, endermen summon an endermite when hit and not killed*/
                     CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld());
-                    newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    newEndermite.setPosition(this.locX(), this.locY(), this.locZ());
                     this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
             }
@@ -148,14 +147,14 @@ public class CustomEntityEnderman extends EntityEnderman {
 
             for (int i = 0; i < 5; i++) {
                 newEndermite = new CustomEntityEndermite(this.getWorld());
-                newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newEndermite.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
     }
 
-    public double getFollowRange() { /**endermen have a 20 block detection range (28 after 12 attacks, 36 after 25 attacks)*/
-        return this.attacks < 12 ? 20.0 : this.attacks < 25 ? 28.0 : 36.0;
+    public double getFollowRange() { /**endermen have 20 block detection range (setting attribute doesn't work) (30 after 12 attacks, 40 after 25 attacks and already detected a target)*/
+        return this.attacks < 12 ? 20.0 : this.attacks < 25 ? 30.0 : 40.0;
     }
 
     @Override
@@ -165,12 +164,14 @@ public class CustomEntityEnderman extends EntityEnderman {
         if (this.attacks == 12 && !this.a12) { /**after 12 attacks, endermen gain speed 1*/
             this.a12 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, endermen get 40 max health and regen 3*/
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermen summon 5 endermites*/
@@ -179,23 +180,8 @@ public class CustomEntityEnderman extends EntityEnderman {
 
             for (int i = 0; i < 5; i++) {
                 newEndermite = new CustomEntityEndermite(this.getWorld());
-                newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newEndermite.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
-            }
-        }
-
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**endermen have 20 block detection range (setting attribute doesn't work) (28 after 12 attacks, 36 after 25 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                this.setGoalTarget(player);
-            }
-
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
-                }
             }
         }
 
@@ -207,17 +193,12 @@ public class CustomEntityEnderman extends EntityEnderman {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
-                    return;
-                }
-
                 if (this.d(target.getPositionVector()) > 144.0) { /**teleports to player if player is more than 12 blocks horizontally but less than 20 blocks away*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (random.nextDouble() < 0.25) {
-                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**25% chance to summon an endermite where it teleports to*/
-                        newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    if (this.random.nextDouble() < 0.3) {
+                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**30% chance to summon an endermite where it teleports to*/
+                        newEndermite.setPosition(this.locX(), this.locY(), this.locZ());
                         this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     }
                 }
@@ -225,9 +206,9 @@ public class CustomEntityEnderman extends EntityEnderman {
                 if (!this.getEntitySenses().a(target)) { /**teleports to player if player can't be seen (includes when the player is towering up to avoid enderman)*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (random.nextDouble() < 0.25) {
-                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**25% chance to summon an endermite where it teleports to*/
-                        newEndermite.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    if (this.random.nextDouble() < 0.3) {
+                        CustomEntityEndermite newEndermite = new CustomEntityEndermite(this.getWorld()); /**30% chance to summon an endermite where it teleports to*/
+                        newEndermite.setPosition(this.locX(), this.locY(), this.locZ());
                         this.getWorld().addEntity(newEndermite, CreatureSpawnEvent.SpawnReason.NATURAL);
                     }
                 }
@@ -249,7 +230,7 @@ public class CustomEntityEnderman extends EntityEnderman {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -383,7 +364,7 @@ public class CustomEntityEnderman extends EntityEnderman {
                     return true;
                 }
             } else {
-                return this.c != null && this.n.a(this.entity, this.c) ? true : super.b();
+                return this.nearestTarget != null && this.n.a(this.entity, this.nearestTarget) ? true : super.b();
             }
         }
 
@@ -395,17 +376,17 @@ public class CustomEntityEnderman extends EntityEnderman {
 
             if (this.target != null) {
                 if (--this.k <= 0) {
-                    this.c = this.target;
+                    this.nearestTarget = this.target;
                     this.target = null;
                     super.c();
                 }
             } else {
-                if (this.c != null && !this.entity.isPassenger()) {
-                    if (this.entity.shouldAttackPlayer((EntityHuman)this.c)) {
+                if (this.nearestTarget != null && !this.entity.isPassenger()) {
+                    if (this.entity.shouldAttackPlayer((EntityHuman)this.nearestTarget)) {
                         //no longer teleports randomly if player is less than 4 blocks away
 
                         this.l = 0;
-                    } else if (this.c.h((Entity)this.entity) > 256.0D && this.l++ >= 30 && this.entity.a((Entity)this.c)) {
+                    } else if (this.nearestTarget.h((Entity)this.entity) > 256.0D && this.l++ >= 30 && this.entity.a((Entity)this.nearestTarget)) {
                         this.l = 0;
                     }
                 }

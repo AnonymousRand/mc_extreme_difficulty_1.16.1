@@ -3,7 +3,6 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -12,7 +11,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 20, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
     public boolean spawnMob, spawnExplodingArrow;
     public int attacks;
-    private boolean a60;
+    private boolean a25, a60;
 
 
     public CustomEntitySkeletonStray(World world) {
@@ -21,6 +20,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         this.spawnMob = false;
         this.spawnExplodingArrow = false;
         this.attacks = 0;
+        this.a25 = false;
         this.a60 = false;
     }
 
@@ -42,8 +42,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         this.attacks++;
         double rand = random.nextDouble();
 
-        if (rand < (this.attacks < 20 ? 0.9 : this.attacks < 30 ? 0.85 : this.attacks < 40 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 10 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 10 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
-            boolean fire = random.nextDouble() < (this.attacks < 10 ? 0.222222222 : 0.444444444);
+        if (rand < (this.attacks < 25 ? 0.9 : this.attacks < 35 ? 0.85 : this.attacks < 45 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 15 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 15 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
+            boolean fire = random.nextDouble() < (this.attacks < 15 ? 0.222222222 : 0.444444444);
             this.spawnMob = false;
             this.spawnExplodingArrow = false;
 
@@ -55,7 +55,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 double d2 = entityliving.locZ() - this.locZ();
                 double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-                if (random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
+                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                     entityarrow.setPierceLevel((byte)1);
                 }
 
@@ -67,7 +67,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
-        } else if (rand < (this.attacks < 30 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
+        } else if (rand < (this.attacks < 35 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
             for (int i = 0; i < 10; i++) {
                 this.spawnExplodingArrow = true;
                 this.spawnMob = false;
@@ -118,8 +118,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
-    public double getFollowRange() {
-        return this.attacks < 20 ? 22.0 : 32.0;
+    public double getFollowRange() { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks and already detected a target)*/
+        return this.attacks < 25 ? 22.0 : 32.0;
     }
 
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
@@ -128,12 +128,17 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     public void tick() {
         super.tick();
 
+        if (this.attacks == 25 && !this.a25) {
+            this.a25 = true;
+            this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+        }
+
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, strays summon 6 vanilla skeletons*/
             this.a60 = true;
 
             for (int i = 0; i < 6; i++) {
                 EntitySkeleton newSkeleton = new EntitySkeleton(EntityTypes.SKELETON, this.getWorld());
-                newSkeleton.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newSkeleton.setPosition(this.locX(), this.locY(), this.locZ());
                 newSkeleton.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
                 this.getWorld().addEntity(newSkeleton, CreatureSpawnEvent.SpawnReason.DROWNED);
             }
@@ -144,17 +149,20 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), this.getFollowRange() / 2.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null && this.normalGetDistanceSq(this.getPositionVector(), player.getPositionVector()) <= Math.pow(this.getFollowRange(), 2)) {
-                this.setGoalTarget(player);
-            }
-
+        if (this.ticksLived % 5 == 2) {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                if (this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggro if player out of y-level-included sphere for performance reasons
                     this.setGoalTarget(null);
+                }
+            }
+
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
                 }
             }
         }
@@ -168,7 +176,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

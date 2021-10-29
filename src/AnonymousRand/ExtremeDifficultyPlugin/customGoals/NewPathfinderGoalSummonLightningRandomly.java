@@ -1,6 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customEntities.CustomEntityLightning;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.misc.CustomEntityLightning;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
 

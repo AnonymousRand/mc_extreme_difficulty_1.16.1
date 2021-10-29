@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SheepDyeListeners implements Listener {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public SheepDyeListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -37,7 +37,7 @@ public class SheepDyeListeners implements Listener {
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
         CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld, this.plugin);
-        newSheep.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        newSheep.setPosition(loc.getX(), loc.getY(), loc.getZ());
         ((LivingEntity)newSheep.getBukkitEntity()).getEquipment().setBoots(boots);
         newSheep.setColor(EnumColor.PINK);
         nmsWorld.addEntity(newSheep, CreatureSpawnEvent.SpawnReason.NATURAL);

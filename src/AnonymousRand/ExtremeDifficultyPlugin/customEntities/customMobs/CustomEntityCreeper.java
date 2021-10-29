@@ -34,8 +34,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300.0, 0.0025)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00025)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.goalSelector.a(0, new PathfinderGoalMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); //todo: wonky pathfinding, twisting and turning, not detanotaing when its supposed to; possuibly other code besides this that allows creeper to move to target?
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.0002)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
@@ -50,7 +49,7 @@ public class CustomEntityCreeper extends EntityCreeper {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < 0.5) { /**creeper has a 50% chance to duplicate when hit by player and not killed (extra fuse on new creeper)*/
             CustomEntityCreeper newCreeper = new CustomEntityCreeper(this.getWorld(), 20);
-            newCreeper.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            newCreeper.setPosition(this.locX(), this.locY(), this.locZ());
 
             if (this.isPowered()) {
                 newCreeper.setPowered(true);
@@ -102,10 +101,12 @@ public class CustomEntityCreeper extends EntityCreeper {
     @Override
     public void onLightningStrike(EntityLightning entitylightning) {
         super.onLightningStrike(entitylightning);
-        this.maxFuseTicks = 30; /**charged creepers move 60% faster and have 100 health, but a longer fuse*/
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
+
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /**charged creepers move 60% faster and have 100 health, but a longer fuse*/
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
         this.setHealth(100.0f);
+        this.maxFuseTicks = 30;
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
     }
 
     private void createEffectCloud() {
@@ -131,8 +132,8 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     }
 
-    public double getFollowRange() {
-        return this.isPowered() ? 40.0 : 24.0;
+    public double getFollowRange() { /**creepers have 28 block detection range (64 if powered and already detected a target)*/
+        return this.isPowered() ? 64.0 : 28.0;
     }
 
     protected CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
@@ -140,10 +141,6 @@ public class CustomEntityCreeper extends EntityCreeper {
     @Override
     public void tick() {
         super.tick();
-
-        if (this.getGoalTarget() != null) {
-            Bukkit.broadcastMessage(this.getGoalTarget().getName());
-        }
 
         if (this.isPowered() && this.getGoalTarget() != null && !this.isIgnited()) { /**charged creepers detonate starting 5 blocks away*/
             if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
@@ -156,6 +153,16 @@ public class CustomEntityCreeper extends EntityCreeper {
             this.setHealth(12.75f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
         }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -166,7 +173,7 @@ public class CustomEntityCreeper extends EntityCreeper {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

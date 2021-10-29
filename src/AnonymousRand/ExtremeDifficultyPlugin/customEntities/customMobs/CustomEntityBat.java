@@ -62,7 +62,7 @@ public class CustomEntityBat extends EntityBat {
 
             for (int i = 0; i < 25; i++) {
                 newBat = new EntityBat(EntityTypes.BAT, this.getWorld());
-                newBat.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newBat.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newBat, CreatureSpawnEvent.SpawnReason.DROWNED);
             }
         }
@@ -143,13 +143,27 @@ public class CustomEntityBat extends EntityBat {
         }
     }
 
+    public double getFollowRange() { /**bats have 16 block detection range (setting attribute doesn't work)*/
+        return 16.0;
+    }
+
     @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**bats do 1 damage and do even more knockback than a vanilla ravager*/
+        if (this.ticksLived == 10) { /**bats do 1 damage and have extra knockback*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 
@@ -161,7 +175,7 @@ public class CustomEntityBat extends EntityBat {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

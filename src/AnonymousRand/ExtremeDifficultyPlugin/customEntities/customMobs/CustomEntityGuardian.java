@@ -1,13 +1,10 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -16,8 +13,15 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardian extends EntityGuardian {
 
+    public int attacks;
+    private boolean a10, a20, a75;
+
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
+        this.attacks = 0;
+        this.a10 = false;
+        this.a20 = false;
+        this.a75 = false;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class CustomEntityGuardian extends EntityGuardian {
 
             if (!damagesource.isExplosion()) {
                 entityliving.damageEntity(DamageSource.a(this), 4.0F); /**thorns damage increased from 2 to 4*/
-                entityliving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, 0)); /**guardians give players that hit them mining fatigue 1 for 20 seconds*/
+                entityliving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.attacks < 55 ? 0 : 1)); /**guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds*/
             }
         }
 
@@ -54,25 +58,38 @@ public class CustomEntityGuardian extends EntityGuardian {
         return super.damageEntity(damagesource, f);
     }
 
-    public double getFollowRange() {
-        return 24.0;
+    public double getFollowRange() { /**guardians have 24 block detection range (setting attribute doesn't work) (32 after 10 attacks)*/
+        return this.attacks < 10 ? 24.0 : 32.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**guardians have 24 block detection range (setting attribute doesn't work)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                this.setGoalTarget(player);
-            }
+        if (this.attacks == 10 && !this.a10) {
+            this.a10 = true;
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+        }
 
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, guardians gain regen 3 and 45 max health*/
+            this.a20 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(45.0);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+        }
 
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
+        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, guardians summon an elder guardian*/
+            this.a75 = true;
+            CustomEntityGuardianElder newElderGuardian = new CustomEntityGuardianElder(this.getWorld());
+            newElderGuardian.setPosition(this.locX(), this.locY(), this.locZ());
+            this.getWorld().addEntity(newElderGuardian, CreatureSpawnEvent.SpawnReason.NATURAL);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
                 }
             }
         }
@@ -86,7 +103,7 @@ public class CustomEntityGuardian extends EntityGuardian {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -127,19 +144,19 @@ public class CustomEntityGuardian extends EntityGuardian {
 
     static class CustomPathfinderGoalGuardianAttack extends PathfinderGoal { /**guardian no longer stops attacking if player is too close*/
 
-        private final CustomEntityGuardian entity;
+        private final CustomEntityGuardian guardian;
         private int b;
         private final boolean isElder;
 
         public CustomPathfinderGoalGuardianAttack(CustomEntityGuardian entityguardian) {
-            this.entity = entityguardian;
+            this.guardian = entityguardian;
             this.isElder = false; //todo: copy class to elder guardian and change to true
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         }
 
         @Override
         public boolean a() {
-            EntityLiving entityliving = this.entity.getGoalTarget();
+            EntityLiving entityliving = this.guardian.getGoalTarget();
 
             return entityliving != null && entityliving.isAlive();
         }
@@ -147,37 +164,37 @@ public class CustomEntityGuardian extends EntityGuardian {
         @Override
         public void c() {
             this.b = -10;
-            this.entity.getNavigation().o();
-            this.entity.getControllerLook().a(this.entity.getGoalTarget(), 90.0F, 90.0F);
-            this.entity.impulse = true;
+            this.guardian.getNavigation().o();
+            this.guardian.getControllerLook().a(this.guardian.getGoalTarget(), 90.0F, 90.0F);
+            this.guardian.impulse = true;
         }
 
         @Override
         public void d() {
-            this.entity.a(0);
-            this.entity.setGoalTarget((EntityLiving) null);
-            this.entity.goalRandomStroll.h();
+            this.guardian.a(0);
+            this.guardian.setGoalTarget((EntityLiving) null);
+            this.guardian.goalRandomStroll.h();
         }
 
         @Override
         public void e() {
-            EntityLiving entityliving = this.entity.getGoalTarget();
+            EntityLiving entityliving = this.guardian.getGoalTarget();
 
-            this.entity.getNavigation().o();
-            this.entity.getControllerLook().a(entityliving, 90.0F, 90.0F);
+            this.guardian.getNavigation().o();
+            this.guardian.getControllerLook().a(entityliving, 90.0F, 90.0F);
 
             if (entityliving != null) {
                 ++this.b; /**laser no longer disengages when there is a block between guardian and player*/
 
                 if (this.b == 0) {
-                    this.entity.a(this.entity.getGoalTarget().getId());
-                    if (!this.entity.isSilent()) {
-                        this.entity.world.broadcastEntityEffect(this.entity, (byte) 21);
+                    this.guardian.a(this.guardian.getGoalTarget().getId());
+                    if (!this.guardian.isSilent()) {
+                        this.guardian.world.broadcastEntityEffect(this.guardian, (byte) 21);
                     }
-                } else if (this.b >= this.entity.eL()) {
+                } else if (this.b >= this.guardian.eL()) {
                     float f = 1.0F;
 
-                    if (this.entity.world.getDifficulty() == EnumDifficulty.HARD) {
+                    if (this.guardian.world.getDifficulty() == EnumDifficulty.HARD) {
                         f += 2.0F;
                     }
 
@@ -185,14 +202,24 @@ public class CustomEntityGuardian extends EntityGuardian {
                         f += 2.0F;
                     }
 
-                    entityliving.damageEntity(DamageSource.c(this.entity, this.entity), f);
-                    entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
-                    this.entity.setGoalTarget((EntityLiving)null);
+                    this.guardian.attacks++;
+                    entityliving.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
+                    entityliving.damageEntity(DamageSource.mobAttack(this.guardian), (float)this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
+                    this.guardian.setGoalTarget((EntityLiving)null);
                 }
 
-                if (this.b >= this.entity.eL() / 2.5 && this.entity.ticksLived % 3 == 0) { /**tractor beam-like effect every 3 ticks for the latter 60% of the laser charging period*/
+                if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.attacks < 10 ? 4 : 3) == 0) { /**tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period*/
                     LivingEntity bukkitEntity = (LivingEntity)entityliving.getBukkitEntity();
-                    bukkitEntity.setVelocity(new Vector((this.entity.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.entity.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.entity.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
+                    bukkitEntity.setVelocity(new Vector((this.guardian.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.guardian.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.guardian.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
+
+                    if (this.guardian.attacks >= 35) { /**after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged*/
+                        if (this.guardian.attacks >= 55) { /**after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged*/
+                            entityliving.addEffect(new MobEffect(MobEffects.HUNGER, 51, 0));
+                            entityliving.addEffect(new MobEffect(MobEffects.WEAKNESS, 51, 0));
+                        }
+
+                        entityliving.addEffect(new MobEffect(MobEffects.POISON, 51, 0));
+                    }
                 }
             }
 

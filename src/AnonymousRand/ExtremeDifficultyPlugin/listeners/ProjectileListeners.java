@@ -76,18 +76,23 @@ public class ProjectileListeners implements Listener {
                     }
                 } else if (((CustomEntitySkeletonStray)nmsShooter).spawnMob){ //replace stray arrows with the mob spawning ones
                     this.rand = new Random();
-                    double rand2 = rand.nextDouble();
+                    int rand2 = rand.nextInt(4);
                     CustomEntityArrowSpawnMob newArrow;
 
                     //todo: replace with custom mobs
-                    if (rand2 < 0.25) {
-                        newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntityCreeper(nmsWorld, 40));
-                    } else if (rand2 < 0.5) {
-                        newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new EntityVex(EntityTypes.VEX, nmsWorld));
-                    } else if (rand2 < 0.75) {
-                        newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new EntityRabbit(EntityTypes.RABBIT, nmsWorld)); //todo: a single killer rabbit instead (summon custom, set type)
-                    } else {
-                        newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntitySilverfish(nmsWorld));
+                    switch (rand2) {
+                        case 0 -> {
+                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntityCreeper(nmsWorld, 40));
+                        }
+                        case 1 -> {
+                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new EntityVex(EntityTypes.VEX, nmsWorld));
+                        }
+                        case 2 -> {
+                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new EntityRabbit(EntityTypes.RABBIT, nmsWorld)); //todo: a single killer rabbit instead (summon custom, set type)
+                        }
+                        default -> {
+                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntitySilverfish(nmsWorld));
+                        }
                     }
 
                     newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
@@ -113,7 +118,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsShooter instanceof CustomEntityDrowned) {
                 if (((CustomEntityDrowned)nmsShooter).attacks >= 30) {
-                    if (rand.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
+                    if (this.rand.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
                         newTrident.setNoGravity(true);
                     }
                 }
@@ -131,13 +136,12 @@ public class ProjectileListeners implements Listener {
         if (event.getHitBlock() != null) {
             Block hitBlock = event.getHitBlock();
             Material type = hitBlock.getType();
-
             boolean checkType = type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB;
 
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof CraftPlayer)) { /**arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything*/
                 if (checkType) { //as long as it isn't one of these blocks
                     this.rand = new Random();
-                    if (rand.nextDouble() <= 0.2) {
+                    if (this.rand.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping
                     }
                 }
@@ -150,7 +154,7 @@ public class ProjectileListeners implements Listener {
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /**tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything*/
                 if (checkType) { //as long as it isn't one of these blocks
                     this.rand = new Random();
-                    if (rand.nextDouble() <= 0.1) {
+                    if (this.rand.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);
                     }
                 }

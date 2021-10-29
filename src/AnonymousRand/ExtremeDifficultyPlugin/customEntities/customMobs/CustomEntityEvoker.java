@@ -67,14 +67,14 @@ public class CustomEntityEvoker extends EntityEvoker {
 
             for (int i = 0; i < 8; i++) {
                 vex = new EntityVex(EntityTypes.VEX, this.getWorld());
-                vex.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                vex.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(vex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
     }
 
-    public double getFollowRange() {
-        return this.attacks < 36 ? 22.0 : 30.0;
+    public double getFollowRange() { /**evokers have 24 block detection range (setting attribute doesn't work) (36 after 36 attacks and already detected a target)*/
+        return this.attacks < 36 ? 24.0 : 36.0;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class CustomEntityEvoker extends EntityEvoker {
 
             for (int i = 0; i < 3; i++) {
                 vex = new EntityVex(EntityTypes.VEX, this.getWorld());
-                vex.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                vex.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(vex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
@@ -95,6 +95,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/ //todo: replace with custom vex
             this.a36 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex
@@ -108,17 +109,12 @@ public class CustomEntityEvoker extends EntityEvoker {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         }
 
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**evokers have 22 block detection range (setting attribute doesn't work) (30 after 36 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                this.setGoalTarget(player);
-            }
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
 
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
                 }
             }
         }
@@ -132,7 +128,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -624,7 +620,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
 
         public void run() {
-            if (++this.cycles >= maxCycles) {
+            if (++this.cycles >= this.maxCycles) {
                 this.cancel();
             }
 

@@ -74,7 +74,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         this.heal(this.attacks < 15 ? 15.0f : 25.0f);
     }
 
-    public double getFollowRange() {
+    public double getFollowRange() { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks and already detected a target)*/
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 
@@ -85,6 +85,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         if (this.attacks == 20 && !this.a20) { /**after 20 attacks, aggressive sheep gain speed 1*/
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 3*/
@@ -106,7 +107,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
 
                 if (this.attacks >= 65) { /**after 65 attacks, aggressive sheep also summon an evoker on death*/
                     CustomEntityEvoker newEvoker = new CustomEntityEvoker(this.getWorld(), this.plugin);
-                    newEvoker.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                    newEvoker.setPosition(this.locX(), this.locY(), this.locZ());
                     this.getWorld().addEntity(newEvoker, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
             }
@@ -116,22 +117,17 @@ public class CustomEntitySheepAggressive extends EntitySheep {
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
             this.setHealth(100.0f);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                this.setGoalTarget(player);
-            }
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
 
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
                 }
             }
         }
@@ -145,7 +141,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

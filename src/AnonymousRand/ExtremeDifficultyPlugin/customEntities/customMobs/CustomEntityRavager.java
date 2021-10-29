@@ -4,7 +4,10 @@ import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
+
+import java.util.Iterator;
 
 public class CustomEntityRavager extends EntityRavager {
 
@@ -36,7 +39,7 @@ public class CustomEntityRavager extends EntityRavager {
         this.heal(this.attacks < 30 ? 20.0f : 30.0f);
     }
 
-    public double getFollowRange() {
+    public double getFollowRange() { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks and already detected a target)*/
         return this.attacks < 20 ? 40.0 : 80.0;
     }
 
@@ -48,6 +51,7 @@ public class CustomEntityRavager extends EntityRavager {
             this.a20 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+            this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, ravagers get extra knockback*/
@@ -67,17 +71,12 @@ public class CustomEntityRavager extends EntityRavager {
             this.setHealth(400.0f);
         }
 
-        if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-            if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                this.setGoalTarget(player);
-            }
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
 
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setGoalTarget(null);
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
                 }
             }
         }
@@ -91,7 +90,7 @@ public class CustomEntityRavager extends EntityRavager {
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

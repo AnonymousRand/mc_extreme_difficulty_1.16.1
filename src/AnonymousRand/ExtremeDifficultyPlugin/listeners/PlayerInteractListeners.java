@@ -7,6 +7,7 @@ import net.minecraft.server.v1_16_R1.Items;
 import net.minecraft.server.v1_16_R1.PiglinAI;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,25 +26,36 @@ public class PlayerInteractListeners implements Listener {
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
-        if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
-            if (event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.BARREL || event.getClickedBlock().getType() == Material.DISPENSER || event.getClickedBlock().getType() == Material.DROPPER || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.HOPPER || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.HOPPER_MINECART || event.getClickedBlock().getType() == Material.SHULKER_BOX || event.getClickedBlock().getType() == Material.TRAPPED_CHEST) {
-                Player player = event.getPlayer();
-                Location loc = player.getLocation();
-                CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld)player.getWorld()).getHandle());
-                piglin.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                piglin.setSlot(EnumItemSlot.MAINHAND, this.rand.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
-                PiglinAI.a(piglin); //code from onInitialSpawn
-                ((CraftWorld)player.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
-            }
-        }
+        if (event.hasBlock()) {
+            Material type = event.getClickedBlock().getType();
+            Player bukkitPlayer = event.getPlayer();
+            Location loc = bukkitPlayer.getLocation();
+            boolean containerBlock = type == Material.CHEST || type == Material.BARREL || type == Material.DISPENSER || type == Material.DROPPER || type == Material.ENDER_CHEST || type == Material.HOPPER || type == Material.CHEST_MINECART || type == Material.HOPPER_MINECART || type == Material.SHULKER_BOX || type == Material.TRAPPED_CHEST;
 
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.hasBlock()) {
-            if (event.getClickedBlock().getType() == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 2 for 7.5 seconds*/
-                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 150, 2));
-            }
+            if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 2 for 7.5 seconds*/
+                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 150, 2));
+                }
 
-            if (event.getClickedBlock().getType() == Material.OBSIDIAN || event.getClickedBlock().getType() == Material.CRYING_OBSIDIAN || event.getClickedBlock().getType() == Material.ANCIENT_DEBRIS || event.getClickedBlock().getType() == Material.NETHERITE_BLOCK) { /**attempting to mine these blocks gives the player mining fatigue 1 for 30 seconds*/
-                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 600, 0));
+                if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { /**attempting to mine these blocks gives the player mining fatigue 1 for 30 seconds*/
+                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 600, 0));
+                }
+
+                if (containerBlock) { /**mining or right-clicking these blocks spawns a piglin*/
+                    CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld) bukkitPlayer.getWorld()).getHandle());
+                    piglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                    piglin.setSlot(EnumItemSlot.MAINHAND, this.rand.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                    PiglinAI.a(piglin); //code from onInitialSpawn
+                    ((CraftWorld) bukkitPlayer.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
+                }
+            } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                if (containerBlock) { /**mining or right-clicking these blocks spawns a piglin*/
+                    CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld) bukkitPlayer.getWorld()).getHandle());
+                    piglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
+                    piglin.setSlot(EnumItemSlot.MAINHAND, this.rand.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                    PiglinAI.a(piglin); //code from onInitialSpawn
+                    ((CraftWorld) bukkitPlayer.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
+                }
             }
         }
     }

@@ -26,7 +26,7 @@ import static org.bukkit.entity.EntityType.*;
 
 public class PlayerDamageListeners implements Listener {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     private static HashMap<EntityPlayer, Boolean> blazeHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> ghastHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> llamaHit = new HashMap<>();
@@ -197,17 +197,17 @@ public class PlayerDamageListeners implements Listener {
                 Player player = (Player)event.getEntity();
                 Location loc = player.getLocation();
 
-                if (rand.nextDouble() < 0.25) {
+                if (this.rand.nextDouble() < 0.25) {
                     CustomEntityGuardian guardian = new CustomEntityGuardian(((CraftWorld)player.getWorld()).getHandle());
-                    guardian.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    guardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(guardian, CreatureSpawnEvent.SpawnReason.NATURAL);
-                } else if (rand.nextDouble() < 0.05) {
+                } else if (this.rand.nextDouble() < 0.05) {
                     CustomEntityZombie zombie = new CustomEntityZombie(((CraftWorld)player.getWorld()).getHandle()); //todo change to elder guardian
-                    zombie.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    zombie.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(zombie, CreatureSpawnEvent.SpawnReason.NATURAL);
                 } else {
                     CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld)player.getWorld()).getHandle()); //todo change to pufferfish
-                    piglin.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    piglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
             }
@@ -220,8 +220,8 @@ public class PlayerDamageListeners implements Listener {
 
     @EventHandler
     public void entityAirChange(EntityAirChangeEvent event) {
-        if (event.getEntityType() == PLAYER && event.getAmount() >= 2) { /**player air goes down 3 times as fast*/
-            event.setAmount(event.getAmount() - 2);
+        if (event.getEntityType() == PLAYER && event.getAmount() >= 2) { /**player air goes down 2 times as fast*/
+            event.setAmount(event.getAmount() - 1);
         }
     }
 }

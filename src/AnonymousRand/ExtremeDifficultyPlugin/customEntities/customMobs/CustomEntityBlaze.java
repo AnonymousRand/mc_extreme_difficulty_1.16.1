@@ -39,12 +39,26 @@ public class CustomEntityBlaze extends EntityBlaze {
         return false;
     } /**no longer damaged by water*/
 
+    public double getFollowRange() { /**blazes have 48 block detection range (setting attribute doesn't work)*/
+        return 48.0;
+    }
+
     @Override
     public void tick() {
         super.tick();
         if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.setHealth(6.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 

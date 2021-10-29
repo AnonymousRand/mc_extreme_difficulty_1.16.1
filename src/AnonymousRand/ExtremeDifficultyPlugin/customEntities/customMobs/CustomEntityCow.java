@@ -28,9 +28,9 @@ public class CustomEntityCow extends EntityCow {
             this.setHealth(20.0f);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
 
-            if (random.nextDouble() < 0.04) { /**cows have a 1 in 25 chance to spawn as a mooshroom*/
+            if (this.random.nextDouble() < 0.04) { /**cows have a 1 in 25 chance to spawn as a mooshroom*/
                 CustomEntityMushroomCow newMooshroom = new CustomEntityMushroomCow(this.getWorld());
-                newMooshroom.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newMooshroom.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newMooshroom, CreatureSpawnEvent.SpawnReason.NATURAL);
                 this.die();
             }

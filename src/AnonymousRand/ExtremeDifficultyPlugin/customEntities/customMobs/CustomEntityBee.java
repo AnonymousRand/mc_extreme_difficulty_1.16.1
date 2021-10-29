@@ -1,5 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
@@ -11,25 +12,27 @@ import java.lang.reflect.*;
 
 public class CustomEntityBee extends EntityBee {
 
+    private boolean firstSting;
+
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
+        this.firstSting = false;
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**bees are always aggro*/
+    }
+
+    public double getFollowRange() { /**bees have 16 block detection range (setting attribute doesn't work)*/
+        return 16.0;
     }
 
     @Override
     public void tick() {
         super.tick();
-
-        /**always aggro at players within 12 blocks*/
-        EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(12.0, 128.0, 12.0));
-        if (player != null && this.getGoalTarget() != null) {
-            this.setGoalTarget(player);
-        }
 
         if (this.ticksLived == 10) { /**bees do 1000 damage but only have 5 health*/
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
@@ -40,9 +43,22 @@ public class CustomEntityBee extends EntityBee {
         if (this.hasStung()) {
             this.setHasStung(false); /**bees don't die from stinging*/
 
-            CustomEntityBee newBee = new CustomEntityBee(this.getWorld()); /**duplicates when stinging*/
-            newBee.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
-            this.getWorld().addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);
+            if (!this.firstSting) {
+                this.firstSting = true;
+                CustomEntityBee newBee = new CustomEntityBee(this.getWorld()); /**duplicates after the first time stinging*/
+                newBee.setPosition(this.locX(), this.locY(), this.locZ());
+                this.getWorld().addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);
+            }
+        }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
         }
     }
 

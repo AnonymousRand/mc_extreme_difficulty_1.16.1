@@ -1,22 +1,21 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntityRabbit extends EntityRabbit {
 
     public int attacks;
-    private boolean a8, a15, a25, die;
+    private boolean a5, a15, a25, die;
 
     public CustomEntityRabbit(World world) {
         super(EntityTypes.RABBIT, world);
         this.attacks = 0;
-        this.a8 = false;
+        this.a5 = false;
         this.a15 = false;
         this.a25 = false;
         this.die = false;
@@ -34,8 +33,8 @@ public class CustomEntityRabbit extends EntityRabbit {
 
         if (i == 99) {
             this.goalSelector.a(4, new CustomPathfinderGoalKillerRabbitMeleeAttack(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-            this.targetSelector.a(0, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
-            this.targetSelector.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false));
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false));
         }
     }
 
@@ -43,7 +42,7 @@ public class CustomEntityRabbit extends EntityRabbit {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.attacks >= 40) { /**after 40 attacks, killer bunnies duplicate when hit and not killed*/
             CustomEntityRabbit newRabbit = new CustomEntityRabbit(this.getWorld());
-            newRabbit.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+            newRabbit.setPosition(this.locX(), this.locY(), this.locZ());
             newRabbit.setRabbitType(99);
             this.getWorld().addEntity(newRabbit, CreatureSpawnEvent.SpawnReason.NATURAL);
         }
@@ -51,8 +50,8 @@ public class CustomEntityRabbit extends EntityRabbit {
         return super.damageEntity(damagesource, f);
     }
 
-    public double getFollowRange() {
-        return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 24.0 : 36.0;
+    public double getFollowRange() { /**killer bunnies have 16 block detection range (setting attribute doesn't work) (28 after 5 attacks, 40 after 15 attacks and already detected a target)*/
+        return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 28.0 : 40.0;
     }
 
     @Override
@@ -60,21 +59,23 @@ public class CustomEntityRabbit extends EntityRabbit {
         super.tick();
 
         if (this.getRabbitType() == 99) {
-            if (this.attacks == 8 && !this.a8) { /**after 8 attacks, killer bunnies gain speed 3*/
-                this.a8 = true;
+            if (this.attacks == 5 && !this.a5) { /**after 5 attacks, killer bunnies gain speed 3*/
+                this.a5 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
             }
 
             if (this.attacks == 15 && !this.a15) { /**after 15 attacks, killer bunnies gain speed 4*/
                 this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
             }
 
-            if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 5 and 10 max health*/
+            if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 5 and 10 max health and health*/
                 this.a25 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.setHealth(9.0f);
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
+                this.setHealth(10.0f);
             }
 
             if (this.getHealth() <= 0.0 && !this.die) {
@@ -85,12 +86,7 @@ public class CustomEntityRabbit extends EntityRabbit {
                 }
             }
 
-            if (this.ticksLived % (random.nextInt(100) + 50) == 10) { /**killer bunnies have 16 block detection range (setting attribute doesn't work) (24 after 5 attacks, 36 after 15 attacks)*/
-                EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(this.getFollowRange(), 128.0, this.getFollowRange())); //get closest player within bounding box
-                if (player != null && !player.isInvulnerable() && this.getGoalTarget() == null) {
-                    this.setGoalTarget(player);
-                }
-
+            if (this.ticksLived % 5 == 2) {
                 if (this.getGoalTarget() != null) {
                     EntityLiving target = this.getGoalTarget();
 

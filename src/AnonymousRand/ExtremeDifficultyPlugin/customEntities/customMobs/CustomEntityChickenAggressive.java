@@ -77,12 +77,16 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
 
             if (this.attacks >= 60) { /**after 60 attacks, aggressive chickens also duplicate into a custom exploding aggressive chicken when hit and not killed*/
                 CustomEntityChickenAggressiveExploding newChicken = new CustomEntityChickenAggressiveExploding(this.getWorld());
-                newChicken.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+                newChicken.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
 
         return super.damageEntity(damagesource, f);
+    }
+
+    public double getFollowRange() { /**aggressive chickens have 16 block detection range (setting attribute doesn't work)*/
+        return 16.0;
     }
 
     @Override
@@ -106,6 +110,16 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
         }
+
+        if (this.ticksLived % 5 == 2) {
+            if (this.getLastDamager() != null) {
+                EntityLiving target = this.getLastDamager();
+
+                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
+                    this.setLastDamager(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -116,7 +130,7 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
             EntityHuman entityhuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); //mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class PlayerEatListeners implements Listener {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public PlayerEatListeners(JavaPlugin plugin) {
         this.plugin = plugin;

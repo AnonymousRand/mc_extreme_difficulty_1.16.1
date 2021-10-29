@@ -1,11 +1,10 @@
 package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityChickenAggressive;
+import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityArrow;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntityLargeFireball;
+import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
-import net.minecraft.server.v1_16_R1.EntityMonster;
-import net.minecraft.server.v1_16_R1.EntityPlayer;
-import net.minecraft.server.v1_16_R1.EntityProjectile;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.*;
@@ -82,6 +81,12 @@ public class MobDamageListeners implements Listener {
     public void entityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
         Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
+
+        if (nmsDamager instanceof EntityArrow) {
+            if (((EntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) { /**player-shot arrows still do damage*/
+                return;
+            }
+        }
 
         if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /**hostile mobs can't damage each other except aggressive chickens*/ //gettype doesn't seem to work so I'm using instanceof
             event.setCancelled(true);

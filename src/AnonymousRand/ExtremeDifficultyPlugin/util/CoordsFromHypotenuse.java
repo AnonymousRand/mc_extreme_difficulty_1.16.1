@@ -15,7 +15,7 @@ public class CoordsFromHypotenuse {
 
     public BlockPosition CoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(rand.nextDouble() * 360);
+            angle = Math.toRadians(this.rand.nextDouble() * 360);
         } else {
             angle = Math.toRadians(angle);
         }
@@ -36,7 +36,7 @@ public class CoordsFromHypotenuse {
 
     public Location CoordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(rand.nextDouble() * 360);
+            angle = Math.toRadians(this.rand.nextDouble() * 360);
         } else {
             angle = Math.toRadians(angle);
         }

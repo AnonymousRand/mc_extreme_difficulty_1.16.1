@@ -41,8 +41,8 @@ public class NewPathfinderGoalTeleportToPlayer extends PathfinderGoal {
     @Override
     public void e() {
         if (++this.teleportToPlayer >= this.delayBeforeStarting) {
-            if (rand.nextDouble() < this.chancePerTick) {
-                this.initiateTeleport(rand.nextDouble() * 13.0 + this.followRange - 2.0);
+            if (this.rand.nextDouble() < this.chancePerTick) {
+                this.initiateTeleport(this.rand.nextDouble() * 13.0 + this.followRange - 2.0);
             }
         }
     }
