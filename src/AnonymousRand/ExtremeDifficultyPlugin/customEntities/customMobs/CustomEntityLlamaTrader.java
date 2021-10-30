@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -16,6 +17,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader {
     protected void initPathfinder() { /**llamas won't panic anymore, are always aggro towards players, don't stop attacking after spitting once, and no longer defend wolves*/
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
         this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); //why is this here???
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));

@@ -1,9 +1,7 @@
 package AnonymousRand.ExtremeDifficultyPlugin.util;
 import net.minecraft.server.v1_16_R1.BlockPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 
 import java.util.Random;
 
@@ -11,11 +9,11 @@ import static java.lang.Math.PI;
 
 public class CoordsFromHypotenuse {
 
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public BlockPosition CoordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(this.rand.nextDouble() * 360);
+            angle = Math.toRadians(this.random.nextDouble() * 360);
         } else {
             angle = Math.toRadians(angle);
         }
@@ -36,7 +34,7 @@ public class CoordsFromHypotenuse {
 
     public Location CoordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(this.rand.nextDouble() * 360);
+            angle = Math.toRadians(this.random.nextDouble() * 360);
         } else {
             angle = Math.toRadians(angle);
         }

@@ -4,6 +4,7 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.Cu
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -30,6 +31,7 @@ public class CustomEntityBlaze extends EntityBlaze {
     protected void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(3, new CustomPathfinderGoalBlazeFireball(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }

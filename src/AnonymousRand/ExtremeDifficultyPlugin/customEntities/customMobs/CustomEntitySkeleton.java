@@ -13,11 +13,12 @@ import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton {
 
-    private JavaPlugin plugin;
-    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+    private final JavaPlugin plugin;
     public boolean spawnExplodingArrow;
     public int attacks;
     private boolean a25, a90;
+
+    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
 
     public CustomEntitySkeleton(World world, JavaPlugin plugin) {
         super(EntityTypes.SKELETON, world);
@@ -32,6 +33,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     @Override
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
@@ -53,11 +55,11 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 EntityArrow entityarrow = this.b(itemstack, f);
 
                 double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.locY() - this.locY();
+                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
                 double d2 = entityliving.locZ() - this.locZ();
 
                 entityarrow.shoot(d0, d1, d2, 1.6F, (float)(50 - this.world.getDifficulty().a() * 4)); //more inaccuracy
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
         } else if (this.attacks < 30) {
@@ -67,7 +69,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
                 EntityArrow entityarrow = this.b(itemstack, f);
                 double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.locY() - this.locY();
+                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
                 double d2 = entityliving.locZ() - this.locZ();
                 double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
@@ -81,7 +83,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 }
 
                 entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(40 - this.world.getDifficulty().a() * 4));
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
                 this.world.addEntity(entityarrow);
             }
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
@@ -112,7 +114,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     //todo: copy all from this point onwards to all applicable mobs
-    public double getFollowRange() { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks and already detected a target)*/
+    public double getFollowRange() { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks)*/
         return this.attacks < 25 ? 22.0 : 32.0;
     }
 
@@ -200,11 +202,12 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
     static class ShootArrowRepeating extends BukkitRunnable {
 
-        private CustomEntitySkeleton skeleton;
-        private EntityLiving target;
-        private int cycles, maxCycles;
-        private float f;
-        private final Random rand = new Random();
+        private final CustomEntitySkeleton skeleton;
+        private final EntityLiving target;
+        private int cycles;
+        private final int maxCycles;
+        private final float f;
+        private final Random random = new Random();
 
         public ShootArrowRepeating(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float f) {
             this.skeleton = skeleton;
@@ -226,7 +229,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 double d1 = target.locY() - skeleton.locY();
                 double d2 = target.locZ() - skeleton.locZ();
 
-                if (this.rand.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
+                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                     entityarrow.setPierceLevel((byte)1);
                 }
 
@@ -237,7 +240,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 entityarrow.setOnFire(50);
 
                 entityarrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
-                skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.getRandom().nextFloat() * 0.4F + 0.8F));
+                skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.random.nextFloat() * 0.4F + 0.8F));
                 skeleton.world.addEntity(entityarrow);
             }
         }

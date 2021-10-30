@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalTarget implements CustomIEntityAccess {
     protected final Class<T> targetClass;
     protected final int targetChance;
-    protected EntityLiving nearestTarget;
+    public EntityLiving nearestTarget;
     protected CustomPathfinderTargetCondition targetCondition;
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean checkSight) {

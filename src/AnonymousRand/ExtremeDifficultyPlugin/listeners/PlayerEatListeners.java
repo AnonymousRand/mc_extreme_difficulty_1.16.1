@@ -22,8 +22,9 @@ public class PlayerEatListeners implements Listener {
     public void playerItemConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         
-        if (event.getItem().getType() == Material.POISONOUS_POTATO) { /**poisonous potatoes do 5 mintues of poison 256*/
+        if (event.getItem().getType() == Material.POISONOUS_POTATO) { /**poisonous potatoes give 5 mintues of poison 256 and 2 seconds of hunger 256*/
             player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 6000, 255));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 40, 255));
         }
 
         if (event.getItem().getType() == Material.CHICKEN || event.getItem().getType() == Material.COOKED_CHICKEN) { /**eating chicken meat gives you hunger for 20 seconds*/

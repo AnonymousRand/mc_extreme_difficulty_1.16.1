@@ -2,18 +2,17 @@ package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.Random;
 
 public class NewPathfinderGoalTeleportToPlayer extends PathfinderGoal {
 
-    protected EntityInsentient entity;
+    public EntityInsentient entity;
     private final double followRange, delayBeforeStarting, chancePerTick;
     private int teleportToPlayer;
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public NewPathfinderGoalTeleportToPlayer(EntityInsentient entity, double initialFollowRange, double delayBeforeStarting, double chancePerTick) {
         this.entity = entity;
@@ -41,8 +40,8 @@ public class NewPathfinderGoalTeleportToPlayer extends PathfinderGoal {
     @Override
     public void e() {
         if (++this.teleportToPlayer >= this.delayBeforeStarting) {
-            if (this.rand.nextDouble() < this.chancePerTick) {
-                this.initiateTeleport(this.rand.nextDouble() * 13.0 + this.followRange - 2.0);
+            if (this.random.nextDouble() < this.chancePerTick) {
+                this.initiateTeleport(this.random.nextDouble() * 13.0 + this.followRange - 2.0);
             }
         }
     }

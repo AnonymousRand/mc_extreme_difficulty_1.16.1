@@ -24,9 +24,10 @@ public class MobDamageListeners implements Listener {
         EntityDamageEvent.DamageCause cause = event.getCause();
         
         switch (entityType) { //natural damage immunities by specific mobs
+            case BAT:
             case CHICKEN:
             case HOGLIN:
-            case ZOGLIN: /**chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
+            case ZOGLIN: /**bats, chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
                 break;
             case DROWNED:

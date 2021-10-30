@@ -4,6 +4,7 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.Cu
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.CustomEntitySmallFireball;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,7 +15,7 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     public int attacks;
     private boolean a15, deathFireballs;
 
@@ -29,6 +30,7 @@ public class CustomEntityGhast extends EntityGhast {
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new CustomEntityGhast.CustomPathfinderGoalGhastAttackTarget(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/

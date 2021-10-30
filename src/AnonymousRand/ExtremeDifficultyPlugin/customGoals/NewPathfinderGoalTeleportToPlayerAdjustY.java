@@ -3,18 +3,15 @@ package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.CustomEntityCreeper;
 import AnonymousRand.ExtremeDifficultyPlugin.util.CoordsFromHypotenuse;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 
 import java.util.Random;
 
 public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
 
-    protected EntityInsentient entity;
+    public EntityInsentient entity;
     private final double yLevelDifferenceToActivate, initialRange, chancePerTick;
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public NewPathfinderGoalTeleportToPlayerAdjustY(EntityInsentient entity, double yLevelDifferenceToActivate, double initialRange, double chancePerTick) {
         this.entity = entity;
@@ -26,7 +23,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
     @Override
     public boolean a() {
         if (this.entity.getGoalTarget() instanceof EntityPlayer) {
-            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && rand.nextDouble() < this.chancePerTick) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < this.chancePerTick) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
                 return true;
             }
         }
@@ -37,7 +34,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
     @Override
     public boolean b() {
         if (this.entity.getGoalTarget() instanceof EntityPlayer) {
-            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && rand.nextDouble() < (this.entity instanceof CustomEntityCreeper ? ((((CustomEntityCreeper)this.entity).isPowered() ? this.chancePerTick * 4.0 : this.chancePerTick)) : this.chancePerTick)) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < (this.entity instanceof CustomEntityCreeper ? ((((CustomEntityCreeper)this.entity).isPowered() ? this.chancePerTick * 4.0 : this.chancePerTick)) : this.chancePerTick)) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
                 return true;
             }
         }

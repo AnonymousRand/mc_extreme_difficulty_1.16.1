@@ -30,6 +30,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case BEE -> {
                 return ((CustomEntityBee)nmsEntity).getFollowRange();
             }
+            case BLAZE -> {
+                return ((CustomEntityBlaze)nmsEntity).getFollowRange();
+            }
             case CAVE_SPIDER -> {
                 return ((CustomEntitySpiderCave)nmsEntity).getFollowRange();
             }
@@ -60,6 +63,12 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case HOGLIN -> {
                 return ((CustomEntityHoglin)nmsEntity).getFollowRange();
             }
+            case LLAMA -> {
+                return ((CustomEntityLlama)nmsEntity).getFollowRange();
+            }
+            case RABBIT -> {
+                return ((CustomEntityRabbit)nmsEntity).getFollowRange();
+            }
             case RAVAGER -> {
                 return ((CustomEntityRavager)nmsEntity).getFollowRange();
             }
@@ -77,6 +86,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             }
             case SPIDER -> {
                 return ((CustomEntitySpider)nmsEntity).getFollowRange();
+            }
+            case TRADER_LLAMA -> {
+                return ((CustomEntityLlamaTrader)nmsEntity).getFollowRange();
             }
             case ZOGLIN -> {
                 return ((CustomEntityZoglin)nmsEntity).getFollowRange();

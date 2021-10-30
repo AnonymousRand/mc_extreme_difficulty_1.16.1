@@ -21,7 +21,7 @@ public class LightningStrikeListeners implements Listener {
     
     private final JavaPlugin plugin;
     private static boolean storm;
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public LightningStrikeListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -50,9 +50,9 @@ public class LightningStrikeListeners implements Listener {
             }
         }
 
-        if (!storm && rand.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
+        if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
             storm = true;
-            new LightningStorm(nmsWorld, bukkitWorld, loc, rand.nextInt(20) + 40).runTaskTimer(this.plugin, 0L, rand.nextInt(5) + 3);
+            new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(20) + 40).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
             storm = false;
         }
     }
@@ -80,9 +80,9 @@ public class LightningStrikeListeners implements Listener {
                 }
             }
 
-            if (!storm && rand.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
+            if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
                 storm = true;
-                new LightningStorm(nmsWorld, bukkitWorld, loc, rand.nextInt(20) + 40).runTaskTimer(this.plugin, 0L, rand.nextInt(5) + 3);
+                new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(20) + 40).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
             }
         }
     }
@@ -95,7 +95,7 @@ public class LightningStrikeListeners implements Listener {
         private Location loc2;
         private int cycles, maxCycles;
         private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-        private final Random rand = new Random();
+        private final Random random = new Random();
 
         public LightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, World bukkitWorld, Location loc, int maxCycles) {
             this.nmsWorld = nmsWorld;
@@ -108,7 +108,7 @@ public class LightningStrikeListeners implements Listener {
         public void run()
         {
             if (++this.cycles < this.maxCycles) {
-                this.loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), rand.nextInt(101), this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
+                this.loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), random.nextInt(101), this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
                 this.lightning = new CustomEntityLightning(this.nmsWorld);
                 this.lightning.setPosition(this.loc2.getX(), this.loc2.getY(), this.loc2.getZ());
                 this.nmsWorld.addEntity(this.lightning);

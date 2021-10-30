@@ -1,9 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -21,7 +18,7 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     private EntitySheep wololoTarget;
     public int attacks;
     private boolean a25, a36, a60;
@@ -44,6 +41,7 @@ public class CustomEntityEvoker extends EntityEvoker {
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CastingSpellGoal());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /**custom goal that breaks blocks around the mob periodically*/
@@ -73,7 +71,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
-    public double getFollowRange() { /**evokers have 24 block detection range (setting attribute doesn't work) (36 after 36 attacks and already detected a target)*/
+    public double getFollowRange() { /**evokers have 24 block detection range (setting attribute doesn't work) (36 after 36 attacks)*/
         return this.attacks < 36 ? 24.0 : 36.0;
     }
 
@@ -318,7 +316,7 @@ public class CustomEntityEvoker extends EntityEvoker {
                 while (iterator.hasNext()) { /**every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks*/
                     Location locBase = iterator.next().getLocation();
                     Location loc;
-                    Random rand = new Random();
+                    Random random = new Random();
 
                     for (int x = -1; x <= 1; x++) {
                         for (int y = -1; y <= 1; y++) {
@@ -328,7 +326,7 @@ public class CustomEntityEvoker extends EntityEvoker {
                                 if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.CRYING_OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.END_STONE && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { //as long as it isn't one of these blocks
                                     loc.getBlock().setType(org.bukkit.Material.AIR);
                                 } else if (loc.getBlock().getType() == org.bukkit.Material.OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.CRYING_OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.ANCIENT_DEBRIS || loc.getBlock().getType() == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to break these blocks
-                                    if (rand.nextDouble() < 0.5) {
+                                    if (random.nextDouble() < 0.5) {
                                         loc.getBlock().setType(org.bukkit.Material.AIR);
                                     }
                                 }

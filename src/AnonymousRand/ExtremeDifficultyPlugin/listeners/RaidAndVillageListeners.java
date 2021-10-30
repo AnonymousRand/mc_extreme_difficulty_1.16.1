@@ -25,7 +25,7 @@ import static org.bukkit.entity.EntityType.VILLAGER;
 
 public class RaidAndVillageListeners implements Listener {
 
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {
@@ -41,7 +41,7 @@ public class RaidAndVillageListeners implements Listener {
 
     @EventHandler
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
-        summonRaidMeteor(event.getWinners().get(this.rand.nextInt(event.getWinners().size())));
+        summonRaidMeteor(event.getWinners().get(this.random.nextInt(event.getWinners().size())));
     }
 
     //temp, todo end: delete
@@ -62,8 +62,8 @@ public class RaidAndVillageListeners implements Listener {
         Location loc2;
 
         for (int i = 0; i < 650; i++) {
-            hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
-            loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
+            hypo = random.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
+            loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + random.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
 
             CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player, 1.0f); //10% of arrows are piercing 1
             explodingArrow.setPosition(loc2.getX(), loc2.getY(), loc2.getZ()); //summon arrow at random spot within 51 by 51 area around player and 20-40 blocks above player
@@ -71,8 +71,8 @@ public class RaidAndVillageListeners implements Listener {
         }
 
         for (int i = 0; i < 200; i++) {
-            hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
-            loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 40.0 + 15.0, 361.0);
+            hypo = random.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
+            loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
 
             CustomEntityLargeFireball meteorFireball = new CustomEntityLargeFireball(EntityTypes.FIREBALL, ((CraftWorld)player.getWorld()).getHandle(), 2, new Vec3D(0.0, -2.9, 0.0), loc2.getX(), loc2.getY(), loc2.getZ());
             meteorFireball.getWorld().addEntity(meteorFireball);
@@ -95,8 +95,8 @@ public class RaidAndVillageListeners implements Listener {
         Location pos;
 
         for (int i = 0; i < 650; i++) {
-            hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
-            pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
+            hypo = random.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
+            pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + random.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
 
             CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(((CraftWorld)player.getWorld()).getHandle(), new Vector(0.0, -1, 0.0), (byte)(hypo < 12.75 ? 1 : 0), player, 1.0f); //10% of arrows are piercing 1
             explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ()); //summon arrow at random spot within 51 by 51 area around player and 20-40 blocks above player
@@ -104,8 +104,8 @@ public class RaidAndVillageListeners implements Listener {
         }
 
         for (int i = 0; i < 200; i++) {
-            hypo = rand.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
-            pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + rand.nextDouble() * 40.0 + 15.0, 361.0);
+            hypo = random.nextDouble() * 71; //projectiles summoned on an 71 by 71 area around player
+            pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(player.getWorld(), new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), hypo, loc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
 
             CustomEntityLargeFireball meteorFireball = new CustomEntityLargeFireball(EntityTypes.FIREBALL, ((CraftWorld)player.getWorld()).getHandle(), 2, new Vec3D(0.0, -2.9, 0.0), pos.getX(), pos.getY(), pos.getZ());
             meteorFireball.getWorld().addEntity(meteorFireball);

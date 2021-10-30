@@ -53,6 +53,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     }
 
+    public JavaPlugin getInstance() {
+        return this;
+    }
+
     public void addEyeOfEnderRecipe() {
         Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
         NamespacedKey key = new NamespacedKey(this, "eye_of_ender");

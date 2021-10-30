@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class NewPathfinderGoalCobweb extends PathfinderGoal {
 
-    protected EntityInsentient entity;
+    public EntityInsentient entity;
 
     public NewPathfinderGoalCobweb(EntityInsentient entity) {
         this.entity = entity;

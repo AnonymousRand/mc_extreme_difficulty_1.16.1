@@ -2,12 +2,10 @@ package AnonymousRand.ExtremeDifficultyPlugin.listeners;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
 import net.minecraft.server.v1_16_R1.*;
-import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -20,12 +18,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 
-import static org.bukkit.entity.EntityType.*;
-
 public class MobDeathListeners implements Listener {
 
     private final JavaPlugin plugin;
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public MobDeathListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -41,14 +37,17 @@ public class MobDeathListeners implements Listener {
         Location loc = event.getEntity().getLocation();
 
         switch (bukkitEntityType) { //stuff that happens when mobs die regardless of attack count
+            case BAT: /**bats explode with power 0.5 upon death*/
+                bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 0.5f, false);
+                break;
             case CHICKEN: /**chickens drop 20 eggs on death*/
                 bukkitWorld.dropItem(loc, new ItemStack(Material.EGG, 20));
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
-                    if (this.rand.nextDouble() < 0.2) { /**aggressive chickens have a 20% chance to explode into 12-18 chickens*/
+                    if (this.random.nextDouble() < 0.2) { /**aggressive chickens have a 20% chance to explode into 12-18 chickens*/
                         CustomEntityChicken newChicken;
 
-                        for (int i = rand.nextInt(7); i <= 18; i++) {
+                        for (int i = random.nextInt(7); i <= 18; i++) {
                             newChicken = new CustomEntityChicken(nmsWorld);
                             newChicken.setPosition(loc.getX(), loc.getY(), loc.getZ());
                             nmsWorld.addEntity(newChicken, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -61,7 +60,7 @@ public class MobDeathListeners implements Listener {
                 break;
             case ENDERMAN:
                 if (event.getDrops().size() != 0) {
-                    if (this.rand.nextDouble() < 0.98) { /**enderman have a 1% chance to drop a pearl without looting, and only slightly more with looting*/
+                    if (this.random.nextDouble() < 0.98) { /**enderman have a 1% chance to drop a pearl without looting, and only slightly more with looting*/
                         event.getDrops().clear();
                     }
                 }

@@ -7,9 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftProjectile;
-import org.bukkit.entity.Hoglin;
-import org.bukkit.entity.LlamaSpit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,19 +27,22 @@ public class PlayerDamageListeners implements Listener {
     private static HashMap<EntityPlayer, Boolean> blazeHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> ghastHit = new HashMap<>();
     private static HashMap<EntityPlayer, Boolean> llamaHit = new HashMap<>();
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public PlayerDamageListeners(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects etc. if it is hard to do in game
+    public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects and attack counts etc. if it is hard to do in their custom entity classes
         if (event.getEntityType() == PLAYER) {
             Player bukkitPlayer = (Player)event.getEntity();
             Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
 
             switch (event.getDamager().getType()) {
+                case BAT:
+                    ((CustomEntityBat)(nmsDamager)).attacks++;
+                    break;
                 case CAVE_SPIDER:
                     ((CustomEntitySpiderCave)(nmsDamager)).attacks++; //increase attack count by 1
                     break;
@@ -138,7 +138,7 @@ public class PlayerDamageListeners implements Listener {
                     CustomEntitySilverfish silverfish = ((CustomEntitySilverfish)(nmsDamager));
                     silverfish.attacks++;
 
-                    if (silverfish.attacks > 60 && rand.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
+                    if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
                         CustomEntitySilverfish newSilverfish = new CustomEntitySilverfish(silverfish.getWorld());
                         newSilverfish.setPositionRotation(silverfish.locX(), silverfish.locY(), silverfish.locZ(), silverfish.yaw, silverfish.pitch);
                         silverfish.getWorld().addEntity(newSilverfish, CreatureSpawnEvent.SpawnReason.NATURAL);
@@ -153,6 +153,9 @@ public class PlayerDamageListeners implements Listener {
                     if ((spider).attacks >= 25) {
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times*/
                     }
+                    break;
+                case ZOGLIN:
+                    ((CustomEntityZoglin)(nmsDamager)).attacks++;
                     break;
             }
         }
@@ -197,11 +200,11 @@ public class PlayerDamageListeners implements Listener {
                 Player player = (Player)event.getEntity();
                 Location loc = player.getLocation();
 
-                if (this.rand.nextDouble() < 0.25) {
+                if (this.random.nextDouble() < 0.25) {
                     CustomEntityGuardian guardian = new CustomEntityGuardian(((CraftWorld)player.getWorld()).getHandle());
                     guardian.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(guardian, CreatureSpawnEvent.SpawnReason.NATURAL);
-                } else if (this.rand.nextDouble() < 0.05) {
+                } else if (this.random.nextDouble() < 0.05) {
                     CustomEntityZombie zombie = new CustomEntityZombie(((CraftWorld)player.getWorld()).getHandle()); //todo change to elder guardian
                     zombie.setPosition(loc.getX(), loc.getY(), loc.getZ());
                     ((CraftWorld)player.getWorld()).getHandle().addEntity(zombie, CreatureSpawnEvent.SpawnReason.NATURAL);

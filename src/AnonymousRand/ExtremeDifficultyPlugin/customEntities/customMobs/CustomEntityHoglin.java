@@ -23,6 +23,7 @@ public class CustomEntityHoglin extends EntityHoglin {
     protected void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /**custom goal that breaks repellant blocks around the mob periodically*/
         this.goalSelector.a(3, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /**custom goal that breaks blocks around the mob periodically*/
@@ -40,7 +41,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         }
     }
 
-    public double getFollowRange() { /**hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks and already detected a target)*/
+    public double getFollowRange() { /**hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks)*/
         return this.attacks < 10 ? 40.0 : 64.0;
     }
 

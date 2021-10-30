@@ -3,6 +3,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderTargetCondition;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -16,13 +17,14 @@ public class CustomEntityBee extends EntityBee {
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
-        this.firstSting = false;
+        this.firstSting = true;
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**bees are always aggro*/
     }
 
@@ -43,8 +45,8 @@ public class CustomEntityBee extends EntityBee {
         if (this.hasStung()) {
             this.setHasStung(false); /**bees don't die from stinging*/
 
-            if (!this.firstSting) {
-                this.firstSting = true;
+            if (this.firstSting) {
+                this.firstSting = false;
                 CustomEntityBee newBee = new CustomEntityBee(this.getWorld()); /**duplicates after the first time stinging*/
                 newBee.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newBee, CreatureSpawnEvent.SpawnReason.NATURAL);

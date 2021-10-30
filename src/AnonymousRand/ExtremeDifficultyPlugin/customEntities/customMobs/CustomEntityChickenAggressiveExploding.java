@@ -11,12 +11,6 @@ public class CustomEntityChickenAggressiveExploding extends CustomEntityChickenA
     }
 
     @Override
-    public void initPathfinder() {
-        super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-    }
-
-    @Override
     public void tick() {
         super.tick();
 

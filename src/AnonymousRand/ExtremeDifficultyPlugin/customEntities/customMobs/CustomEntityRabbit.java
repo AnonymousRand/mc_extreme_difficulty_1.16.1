@@ -3,7 +3,9 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -25,6 +27,7 @@ public class CustomEntityRabbit extends EntityRabbit {
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
     }
 
     @Override
@@ -50,7 +53,7 @@ public class CustomEntityRabbit extends EntityRabbit {
         return super.damageEntity(damagesource, f);
     }
 
-    public double getFollowRange() { /**killer bunnies have 16 block detection range (setting attribute doesn't work) (28 after 5 attacks, 40 after 15 attacks and already detected a target)*/
+    public double getFollowRange() { /**killer bunnies have 16 block detection range (setting attribute doesn't work) (28 after 5 attacks, 40 after 15 attacks)*/
         return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 28.0 : 40.0;
     }
 
@@ -59,21 +62,21 @@ public class CustomEntityRabbit extends EntityRabbit {
         super.tick();
 
         if (this.getRabbitType() == 99) {
-            if (this.attacks == 5 && !this.a5) { /**after 5 attacks, killer bunnies gain speed 3*/
+            if (this.attacks == 5 && !this.a5) { /**after 5 attacks, killer bunnies gain speed 4*/
                 this.a5 = true;
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
-            }
-
-            if (this.attacks == 15 && !this.a15) { /**after 15 attacks, killer bunnies gain speed 4*/
-                this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
             }
 
-            if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 5 and 10 max health and health*/
-                this.a25 = true;
+            if (this.attacks == 15 && !this.a15) { /**after 15 attacks, killer bunnies gain speed 5*/
+                this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            }
+
+            if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 6 and 10 max health and health*/
+                this.a25 = true;
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 5));
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
                 this.setHealth(10.0f);
             }

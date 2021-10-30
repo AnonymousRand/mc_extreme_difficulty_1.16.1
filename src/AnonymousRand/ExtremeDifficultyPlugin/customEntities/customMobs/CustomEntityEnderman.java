@@ -27,6 +27,7 @@ public class CustomEntityEnderman extends EntityEnderman {
     @Override
     protected void initPathfinder() { /**no longer targets endermites, avoids water and stops if stared at*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
@@ -153,7 +154,7 @@ public class CustomEntityEnderman extends EntityEnderman {
         }
     }
 
-    public double getFollowRange() { /**endermen have 20 block detection range (setting attribute doesn't work) (30 after 12 attacks, 40 after 25 attacks and already detected a target)*/
+    public double getFollowRange() { /**endermen have 20 block detection range (setting attribute doesn't work) (30 after 12 attacks, 40 after 25 attacks)*/
         return this.attacks < 12 ? 20.0 : this.attacks < 25 ? 30.0 : 40.0;
     }
 

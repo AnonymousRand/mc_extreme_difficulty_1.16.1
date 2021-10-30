@@ -1,9 +1,6 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalPassiveMeleeAttack;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
-import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalPassiveMoveTowardsTarget;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -38,6 +35,7 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
     protected void initPathfinder() { /**chicken can't panic/breed/follow parent/be tempted with seeds*/
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 16.0f)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));

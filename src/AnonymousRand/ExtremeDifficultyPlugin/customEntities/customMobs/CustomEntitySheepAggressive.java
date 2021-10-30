@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class CustomEntitySheepAggressive extends EntitySheep {
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     public int attacks;
     private boolean a20, a40, a65, die;
     public boolean launchHigh;
@@ -42,9 +42,10 @@ public class CustomEntitySheepAggressive extends EntitySheep {
     @Override
     protected void initPathfinder() { /**sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority)*/
         super.initPathfinder();
-        this.goalSelector.a(0, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 64.0f)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 64.0f)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
+        this.goalSelector.a(0, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(3, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
@@ -74,7 +75,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         this.heal(this.attacks < 15 ? 15.0f : 25.0f);
     }
 
-    public double getFollowRange() { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks and already detected a target)*/
+    public double getFollowRange() { /**aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks)*/
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 

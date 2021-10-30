@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,5 +60,20 @@ public class PlayerDeathAndRespawnListeners implements Listener {
                 }
             }
         }, 1L);
+    }
+
+    @EventHandler
+    public void totemUse(EntityResurrectEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+            {
+                public void run()
+                {
+                    for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /**totems leave the player at 1 heart without any status effects*/
+                        event.getEntity().removePotionEffect(effect.getType());
+                    }
+                }
+            }, 4L);
+        }
     }
 }

@@ -2,6 +2,7 @@ package AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs;
 
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalCobweb;
+import AnonymousRand.ExtremeDifficultyPlugin.customGoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -14,13 +15,13 @@ import java.util.function.Predicate;
 public class CustomEntityGuardian extends EntityGuardian {
 
     public int attacks;
-    private boolean a10, a20, a75;
+    private boolean a10, a25, a75;
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
         this.attacks = 0;
         this.a10 = false;
-        this.a20 = false;
+        this.a25 = false;
         this.a75 = false;
     }
 
@@ -29,6 +30,7 @@ public class CustomEntityGuardian extends EntityGuardian {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(4, new CustomEntityGuardian.CustomPathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);
@@ -71,9 +73,9 @@ public class CustomEntityGuardian extends EntityGuardian {
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
         }
 
-        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, guardians gain regen 3 and 45 max health*/
-            this.a20 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(45.0);
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, guardians gain regen 3 and 40 max health*/
+            this.a25 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 

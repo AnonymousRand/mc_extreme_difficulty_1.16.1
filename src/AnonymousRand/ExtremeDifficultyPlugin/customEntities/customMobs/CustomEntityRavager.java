@@ -28,6 +28,7 @@ public class CustomEntityRavager extends EntityRavager {
     protected void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(2, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
@@ -39,7 +40,7 @@ public class CustomEntityRavager extends EntityRavager {
         this.heal(this.attacks < 30 ? 20.0f : 30.0f);
     }
 
-    public double getFollowRange() { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks and already detected a target)*/
+    public double getFollowRange() { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
         return this.attacks < 20 ? 40.0 : 80.0;
     }
 

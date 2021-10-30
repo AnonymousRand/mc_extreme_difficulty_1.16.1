@@ -4,7 +4,6 @@ import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customMobs.*;
 import AnonymousRand.ExtremeDifficultyPlugin.customEntities.customProjectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,15 +15,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Random;
 
 public class ProjectileListeners implements Listener {
 
-    private Random rand = new Random();
+    private final Random random = new Random();
 
     @EventHandler
     public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
@@ -75,8 +72,7 @@ public class ProjectileListeners implements Listener {
                         newArrow.setNoGravity(true);
                     }
                 } else if (((CustomEntitySkeletonStray)nmsShooter).spawnMob){ //replace stray arrows with the mob spawning ones
-                    this.rand = new Random();
-                    int rand2 = rand.nextInt(4);
+                    int rand2 = random.nextInt(4);
                     CustomEntityArrowSpawnMob newArrow;
 
                     //todo: replace with custom mobs
@@ -118,7 +114,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsShooter instanceof CustomEntityDrowned) {
                 if (((CustomEntityDrowned)nmsShooter).attacks >= 30) {
-                    if (this.rand.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
+                    if (this.random.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
                         newTrident.setNoGravity(true);
                     }
                 }
@@ -140,8 +136,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof CraftPlayer)) { /**arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything*/
                 if (checkType) { //as long as it isn't one of these blocks
-                    this.rand = new Random();
-                    if (this.rand.nextDouble() <= 0.2) {
+                    if (this.random.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping
                     }
                 }
@@ -153,8 +148,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /**tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything*/
                 if (checkType) { //as long as it isn't one of these blocks
-                    this.rand = new Random();
-                    if (this.rand.nextDouble() <= 0.1) {
+                    if (this.random.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);
                     }
                 }

@@ -7,7 +7,6 @@ import net.minecraft.server.v1_16_R1.Items;
 import net.minecraft.server.v1_16_R1.PiglinAI;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,7 @@ import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
 
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
@@ -44,7 +43,7 @@ public class PlayerInteractListeners implements Listener {
                 if (containerBlock) { /**mining or right-clicking these blocks spawns a piglin*/
                     CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld) bukkitPlayer.getWorld()).getHandle());
                     piglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                    piglin.setSlot(EnumItemSlot.MAINHAND, this.rand.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                    piglin.setSlot(EnumItemSlot.MAINHAND, this.random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
                     PiglinAI.a(piglin); //code from onInitialSpawn
                     ((CraftWorld) bukkitPlayer.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }
@@ -52,7 +51,7 @@ public class PlayerInteractListeners implements Listener {
                 if (containerBlock) { /**mining or right-clicking these blocks spawns a piglin*/
                     CustomEntityPiglin piglin = new CustomEntityPiglin(((CraftWorld) bukkitPlayer.getWorld()).getHandle());
                     piglin.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                    piglin.setSlot(EnumItemSlot.MAINHAND, this.rand.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                    piglin.setSlot(EnumItemSlot.MAINHAND, this.random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
                     PiglinAI.a(piglin); //code from onInitialSpawn
                     ((CraftWorld) bukkitPlayer.getWorld()).getHandle().addEntity(piglin, CreatureSpawnEvent.SpawnReason.NATURAL);
                 }

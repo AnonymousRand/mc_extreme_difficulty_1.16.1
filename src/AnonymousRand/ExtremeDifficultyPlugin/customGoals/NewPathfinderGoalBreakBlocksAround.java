@@ -1,19 +1,17 @@
 package AnonymousRand.ExtremeDifficultyPlugin.customGoals;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 
 import java.util.Random;
 
 public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custom goal to break blocks around a mob
 
-    protected EntityInsentient entity;
+    public EntityInsentient entity;
     protected final int delayTimer, radX, radY, radZ, yOffset;
     private final boolean removeFluids;
-    protected final Random rand = new Random();
+    protected final Random random = new Random();
 
     public NewPathfinderGoalBreakBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
         this.entity = entity;
@@ -57,7 +55,7 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
                         if (world.getBlockAt(x1, y1, z1).getType() != Material.BEDROCK && world.getBlockAt(x1, y1, z1).getType() != Material.END_GATEWAY && world.getBlockAt(x1, y1, z1).getType() != Material.END_PORTAL && world.getBlockAt(x1, y1, z1).getType() != Material.END_PORTAL_FRAME && world.getBlockAt(x1, y1, z1).getType() != Material.NETHER_PORTAL && world.getBlockAt(x1, y1, z1).getType() != Material.COMMAND_BLOCK  && world.getBlockAt(x1, y1, z1).getType() != Material.COMMAND_BLOCK_MINECART && world.getBlockAt(x1, y1, z1).getType() != Material.STRUCTURE_BLOCK && world.getBlockAt(x1, y1, z1).getType() != Material.JIGSAW && world.getBlockAt(x1, y1, z1).getType() != Material.BARRIER && world.getBlockAt(x1, y1, z1).getType() != Material.SPAWNER && world.getBlockAt(x1, y1, z1).getType() != Material.COBWEB && (this.removeFluids ? true : (world.getBlockAt(x1, y1, z1).getType() != Material.WATER && world.getBlockAt(x1, y1, z1).getType() != Material.LAVA))) { //as long as it isn't one of these blocks
                             world.getBlockAt(x1, y1, z1).setType(Material.AIR);
                         } else if (world.getBlockAt(x1, y1, z1).getType() == Material.OBSIDIAN || world.getBlockAt(x1, y1, z1).getType() == Material.CRYING_OBSIDIAN || world.getBlockAt(x1, y1, z1).getType() == Material.ANCIENT_DEBRIS || world.getBlockAt(x1, y1, z1).getType() == Material.NETHERITE_BLOCK) { //50% chance to break these blocks
-                            if (this.rand.nextDouble() < 0.5) {
+                            if (this.random.nextDouble() < 0.5) {
                                 world.getBlockAt(x1, y1, z1).setType(Material.AIR);
                             }
                         }

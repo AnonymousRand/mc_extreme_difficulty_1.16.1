@@ -8,7 +8,7 @@ import java.util.EnumSet;
 public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
     protected final EntityInsentient entity;
-    protected EntityLiving targetEntity;
+    public EntityLiving targetEntity;
     private final float maxFollowDistance;
 
     public NewPathfinderGoalPassiveMoveTowardsTarget(EntityInsentient entitycreature, double d0, float maxFollowDistance) {
