@@ -1,15 +1,13 @@
 package AnonymousRand.ExtremeDifficultyPlugin;
 
-import AnonymousRand.ExtremeDifficultyPlugin.listeners.*;
+import AnonymousRand.ExtremeDifficultyPlugin.Listeners.*;
 import AnonymousRand.ExtremeDifficultyPlugin.util.BlockOverride;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
@@ -17,10 +15,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
-        endStone.set("durability", 16.0f);
+        endStone.set("durability", 16.0F);
 
         BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /**spawners are now indestructible by explosions and twice as hard to break as obsidian*/
-        spawner.set("durability", 3600000.0f);
+        spawner.set("durability", 3600000.0F);
     }
 
     @Override
@@ -38,8 +36,8 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new PotionEffectListeners(), this);
-        getServer().getPluginManager().registerEvents(new ProjectileListeners(), this);
-        getServer().getPluginManager().registerEvents(new RaidAndVillageListeners(),this);
+        getServer().getPluginManager().registerEvents(new ProjectileListeners(this), this);
+        getServer().getPluginManager().registerEvents(new RaidAndVillageListeners(this),this);
         getServer().getPluginManager().registerEvents(new SheepDyeListeners(this), this);
         getServer().getPluginManager().registerEvents(new SleepListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
@@ -51,10 +49,6 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
 
-    }
-
-    public JavaPlugin getInstance() {
-        return this;
     }
 
     public void addEyeOfEnderRecipe() {
