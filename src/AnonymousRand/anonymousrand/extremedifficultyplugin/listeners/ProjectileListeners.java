@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +35,7 @@ public class ProjectileListeners implements Listener {
         Projectile bukkitProjectile = event.getEntity();
         Entity nmsProjectile = ((CraftEntity)bukkitProjectile).getHandle();
 
-        if (nmsProjectile instanceof CustomEntityArrow || nmsProjectile instanceof CustomEntityThrownTrident || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntitySmallFireball) { //reduce lag and null pointers
+        if (nmsProjectile instanceof CustomEntityArrow || nmsProjectile instanceof CustomEntityLlamaSpit || nmsProjectile instanceof CustomEntitySmallFireball || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityThrownTrident) { //reduce lag and null pointers
             return;
         }
 
@@ -138,13 +139,17 @@ public class ProjectileListeners implements Listener {
         Projectile bukkitProjectile = event.getEntity();
         Entity nmsProjectile = ((CraftEntity)bukkitProjectile).getHandle();
 
-        if (nmsProjectile instanceof CustomEntityLargeFireball) { //reduce lag and null pointers
+        if (nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityLlamaSpit) { //reduce lag and null pointers
             return;
         }
 
         World nmsWorld = nmsProjectile.getWorld();
         ProjectileSource bukkitShooter = bukkitProjectile.getShooter();
-        Entity nmsShooter = ((CraftEntity)bukkitShooter).getHandle();
+        Entity nmsShooter = null;
+
+        if (bukkitShooter != null) {
+            nmsShooter = ((CraftEntity)bukkitShooter).getHandle();
+        }
 
         if (event.getHitBlock() != null) {
             Block hitBlock = event.getHitBlock();

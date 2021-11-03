@@ -30,6 +30,8 @@ public class MobDamageListeners implements Listener {
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA);
             case GHAST -> /**ghasts don't take explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+            case LLAMA, TRADER_LLAMA -> /**llamas and trader llamas don't take fire or explosion damage*/
+                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
         }
 
         if (event.isCancelled()) {

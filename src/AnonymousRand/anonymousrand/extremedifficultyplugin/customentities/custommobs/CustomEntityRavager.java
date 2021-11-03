@@ -31,7 +31,7 @@ public class CustomEntityRavager extends EntityRavager {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)); /**still uses the default (super), line-of-sight-requiring goal for iron golems*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -70,16 +70,6 @@ public class CustomEntityRavager extends EntityRavager {
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
             this.setHealth(400.0F);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -128,5 +118,16 @@ public class CustomEntityRavager extends EntityRavager {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 }

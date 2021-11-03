@@ -40,12 +40,14 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false)); /**targets players before other non-aggressive chickens*/
-        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class, false)); /**targets non-aggressive chickens before other aggressive chickens*/
-        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class, false)); /**targets aggressive chickens before other exploding chickens*/
-        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**targets hostile mobs before players*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class, false)); /**attack priority: silverfish, endermite, other monsters, players, chickens, aggressive chickens, exploding aggressive chickens*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, false));
+        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false));
+        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class, false));
+        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class, false));
+        this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false));
     }
 
     //registers new attributes via reflection; code from Spigot forums
@@ -106,16 +108,6 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
         }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
-        }
     }
 
     @Override
@@ -163,5 +155,16 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 }

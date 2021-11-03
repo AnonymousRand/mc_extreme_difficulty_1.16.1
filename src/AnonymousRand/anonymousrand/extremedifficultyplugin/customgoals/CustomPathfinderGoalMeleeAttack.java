@@ -4,16 +4,16 @@ import net.minecraft.server.v1_16_R1.*;
 
 public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
-    private final EntityCreature entity;
-    private final double b;
-    private final boolean c;
-    private PathEntity d;
-    private double e;
-    private double f;
-    private double g;
-    private int h;
-    private int i;
-    private long k;
+    protected final EntityCreature entity;
+    protected final double b;
+    protected final boolean c;
+    protected PathEntity d;
+    protected double e;
+    protected double f;
+    protected double g;
+    protected int h;
+    protected int i;
+    protected long k;
 
     public CustomPathfinderGoalMeleeAttack(EntityCreature entitycreature, double speedTowardsTarget, boolean useLongMemory) {
         super(entitycreature, speedTowardsTarget, useLongMemory);

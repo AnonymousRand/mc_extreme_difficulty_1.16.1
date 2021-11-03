@@ -1,13 +1,30 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLlamaSpit;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
+
+import java.lang.reflect.Field;
 
 public class CustomEntityLlama extends EntityLlama {
 
+    public int attacks;
+    private boolean a15;
+    private Field bH;
+
     public CustomEntityLlama(World world) {
         super(EntityTypes.LLAMA, world);
+        this.attacks = 0;
+        this.a15 = false;
+
+        try {
+            this.bH = EntityLlama.class.getDeclaredField("bH");
+            this.bH.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -23,7 +40,30 @@ public class CustomEntityLlama extends EntityLlama {
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+    }
+
+    public void a(EntityLiving entityliving, float f) { //shoots custom spit instead of vanilla
+        this.attacks++;
+
+        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 14.0 : 20.0); /**after 6 attacks, llamas do 20 damage*/
+        double d0 = entityliving.locX() - this.locX();
+        double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
+        double d2 = entityliving.locZ() - this.locZ();
+        f = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
+
+        entityllamaspit.shoot(d0, d1 + (double) f, d2, 1.5F, 10.0F);
+        if (!this.isSilent()) {
+            this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+        }
+
+        this.world.addEntity(entityllamaspit);
+
+        try {
+            this.bH.setBoolean(this, true);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public double getFollowRange() { /**llamas have 24 block detection range (setting attribute doesn't work)*/
@@ -34,19 +74,16 @@ public class CustomEntityLlama extends EntityLlama {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 10) { /**llamas have 30 health*/
-            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
-            this.setHealth(30.0F);
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, llamas get 40 max health*/
+            this.a15 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+            this.setHealth(50.0F);
         }
 
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
+        if (this.ticksLived == 10) { /**llamas have 30 health*/
+            this.setStrength(1); /**makes sure zombies etc. don't run away from llamas*/
+            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
+            this.setHealth(30.0F);
         }
     }
 }

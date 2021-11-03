@@ -13,9 +13,10 @@ import java.util.EnumSet;
 public class CustomEntityBlaze extends EntityBlaze {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    private static final DataWatcherObject<Byte> d = DataWatcher.a(CustomEntityBlaze.class, DataWatcherRegistry.a);
-    private int shotTracker;
+    public int attacks;
     private int rapidFireTracker;
+
+    private static final DataWatcherObject<Byte> d = DataWatcher.a(CustomEntityBlaze.class, DataWatcherRegistry.a);
 
     public CustomEntityBlaze(World world) {
         super(EntityTypes.BLAZE, world);
@@ -24,7 +25,7 @@ public class CustomEntityBlaze extends EntityBlaze {
         this.a(PathType.LAVA, 8.0F);
         this.a(PathType.DANGER_FIRE, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
-        this.shotTracker = 0;
+        this.attacks = 0;
         this.rapidFireTracker = 0;
     }
 
@@ -34,7 +35,7 @@ public class CustomEntityBlaze extends EntityBlaze {
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(3, new CustomEntityBlaze.CustomPathfinderGoalBlazeFireball(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -52,16 +53,6 @@ public class CustomEntityBlaze extends EntityBlaze {
         if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.setHealth(6.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -112,6 +103,17 @@ public class CustomEntityBlaze extends EntityBlaze {
         return d0 * d0 + d2 * d2;
     }
 
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
+    }
+
     public static class CustomPathfinderGoalBlazeFireball extends PathfinderGoal { //new attack goal
 
         private final CustomEntityBlaze blaze;
@@ -127,7 +129,6 @@ public class CustomEntityBlaze extends EntityBlaze {
         @Override
         public boolean a() {
             EntityLiving entityliving = this.blaze.getGoalTarget();
-
             return entityliving != null && entityliving.isAlive() && this.blaze.d(entityliving);
         }
 
@@ -187,25 +188,25 @@ public class CustomEntityBlaze extends EntityBlaze {
                                 world.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
                             }
 
-                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.shotTracker < 400) {
-                                if (this.blaze.shotTracker % 160 == 0 && this.blaze.shotTracker != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
+                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 400) {
+                                if (this.blaze.attacks % 160 == 0 && this.blaze.attacks != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 2);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                     world.addEntity(entityLargeFireball);
-                                    this.blaze.shotTracker++;
-                                } else if (this.blaze.shotTracker % 60 == 0 && this.blaze.shotTracker != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
+                                    this.blaze.attacks++;
+                                } else if (this.blaze.attacks % 60 == 0 && this.blaze.attacks != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(world, this.blaze, d1, d2, d3, 1);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                     world.addEntity(entityLargeFireball);
-                                    this.blaze.shotTracker++;
+                                    this.blaze.attacks++;
                                 } else {
                                     CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(world, this.blaze, d1, d2, d3); /**blaze has no inaccuracy*/
                                     entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                                     world.addEntity(entitySmallFireball);
-                                    this.blaze.shotTracker++;
+                                    this.blaze.attacks++;
                                 }
 
-                                if (this.blaze.shotTracker % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
+                                if (this.blaze.attacks % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
                                     CustomEntitySmallFireball entitySmallFireball;
 
                                     for (double x = -1.0; x <= 1.0; x += 0.4) {
@@ -220,8 +221,8 @@ public class CustomEntityBlaze extends EntityBlaze {
                                 }
 
                             } else { /**rapid fire phase for 50 shots after 400 normal shots*/
-                                if (this.blaze.shotTracker >= 400) { /**first entering rapid fire phase*/
-                                    this.blaze.shotTracker = 0;
+                                if (this.blaze.attacks >= 400) { /**first entering rapid fire phase*/
+                                    this.blaze.attacks = 0;
                                     this.blaze.rapidFireTracker = 50;
                                 } else {
                                     for (int i = 0; i < 8; i++) { /**shoots 8 fireballs at a time during this phase*/

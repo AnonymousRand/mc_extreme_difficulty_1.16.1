@@ -21,11 +21,25 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     protected void a(MovingObjectPosition movingobjectposition) { //in order for the new yield value to register
         super.a(movingobjectposition);
 
-        if (!this.world.isClientSide) {
+        if (!this.world.isClientSide && this.yield != 1) {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
 
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
             this.die();
+        }
+    }
+
+    @Override
+    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+        if (!this.world.isClientSide) {
+            Entity entity = movingobjectpositionentity.getEntity();
+            Entity entity1 = this.getShooter();
+
+            entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /**large fireballs only do 1 direct damage*/
+            if (entity1 instanceof EntityLiving) {
+                this.a((EntityLiving) entity1, entity);
+            }
+
         }
     }
 

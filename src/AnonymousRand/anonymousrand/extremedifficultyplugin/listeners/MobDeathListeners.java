@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables.SpiderSummonCobwebBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSummonCobwebBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEvoker;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChicken;
@@ -65,8 +65,8 @@ public class MobDeathListeners implements Listener {
                 EntitySpider spider = (EntitySpider)(nmsEntity);
                 new SpiderSummonCobwebBlock(spider).run();
             }
-            case WANDERING_TRADER -> { /**wandering traders spawn 10 evokers and illusioners when killed*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 10, null, null, nmsEntity, false, true).run();
+            case WANDERING_TRADER -> { /**wandering traders spawn 5 evokers and illusioners when killed*/
+                new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 5, null, null, nmsEntity, false, true).run();
             }//todo: change to custom mobs
         }
     }

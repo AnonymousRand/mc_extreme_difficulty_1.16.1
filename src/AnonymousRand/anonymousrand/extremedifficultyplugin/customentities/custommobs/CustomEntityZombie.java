@@ -1,11 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.UtilMeteorRain;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalZombieAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -46,6 +43,8 @@ public class CustomEntityZombie extends EntityZombie {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
@@ -167,9 +166,9 @@ public class CustomEntityZombie extends EntityZombie {
         if (this.getHealth() <= 0.0 && this.attacks >= 45 && !this.a45) { /**after 45 attacks, zombies summon a small meteor rain when it dies*/
             this.a45 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
-            new UtilMeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
-            new UtilMeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
-            new UtilMeteorRain(this, 3, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
+            new MeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
+            new MeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
+            new MeteorRain(this, 3, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
         }
 
         if (this.ticksLived == 10) { /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/
@@ -178,16 +177,6 @@ public class CustomEntityZombie extends EntityZombie {
             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);
             this.setHealth(12.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -236,5 +225,16 @@ public class CustomEntityZombie extends EntityZombie {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 }

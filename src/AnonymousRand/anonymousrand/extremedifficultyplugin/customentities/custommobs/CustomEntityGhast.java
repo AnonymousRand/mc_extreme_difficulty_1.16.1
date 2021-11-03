@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables.GhastDeathFireballs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
@@ -9,6 +9,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfi
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -35,7 +36,7 @@ public class CustomEntityGhast extends EntityGhast {
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new CustomEntityGhast.CustomPathfinderGoalGhastAttackTarget(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -110,6 +111,17 @@ public class CustomEntityGhast extends EntityGhast {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 
     static class CustomPathfinderGoalGhastAttackTarget extends PathfinderGoal {
@@ -257,6 +269,40 @@ public class CustomEntityGhast extends EntityGhast {
             double d2 = this.a.locZ() + (double)((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
 
             this.a.getControllerMove().a(d0, d1, d2, 1.0D);
+        }
+    }
+
+    static class GhastDeathFireballs extends BukkitRunnable {
+
+        private CustomEntityGhast ghast;
+        private int cycles, maxCycles;
+        private double x, y, z;
+        private CustomEntitySmallFireball entitySmallFireball;
+
+        public GhastDeathFireballs(CustomEntityGhast ghast, int maxCycles) {
+            this.ghast = ghast;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        public void run() {
+            if (++this.cycles > this.maxCycles) {
+                this.cancel();
+            }
+
+            if (this.ghast.attacks < 100) {
+                for (double x = -1.0; x <= 1.0; x += 0.4) {
+                    for (double y = -1.0; y <= 1.0; y += 0.4) {
+                        for (double z = -1.0; z <= 1.0; z += 0.4) {
+                            entitySmallFireball = new CustomEntitySmallFireball(this.ghast.getWorld(), this.ghast, x, y, z);
+                            entitySmallFireball.setPosition(entitySmallFireball.locX(), this.ghast.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                            this.ghast.getWorld().addEntity(entitySmallFireball);
+                        }
+                    }
+                }
+            } else {
+                //todo: summon wither skulls instead
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables.ConduitSummonGuardian;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityGuardian;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import net.minecraft.server.v1_16_R1.Explosion;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,6 +18,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
@@ -57,12 +59,17 @@ public class BlockPlaceAndBreakListeners implements Listener {
 
     @EventHandler
     public void blockBreak(BlockBreakEvent event) {
+        World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
         Block bukkitBlock = event.getBlock();
+        Location loc = bukkitBlock.getLocation();
         Material type = bukkitBlock.getType();
 
         if (type == Material.SPAWNER || type == Material.CONDUIT || type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
-            World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
-            new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, bukkitBlock.getLocation(), true).run(); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
+            new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true).run(); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
+        }
+
+        if (type == Material.DEAD_BUSH) { /**dead bushes explode when broken by hand*/
+            nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.DESTROY);
         }
     }
 
@@ -95,6 +102,30 @@ public class BlockPlaceAndBreakListeners implements Listener {
             if (type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
                 new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, block.getLocation(), true).run();
             }
+        }
+    }
+
+    static class ConduitSummonGuardian extends BukkitRunnable {
+
+        private final World nmsWorld;
+        private final Location loc;
+        private int cycles;
+        private final int maxCycles;
+
+        public ConduitSummonGuardian(World nmsWorld, Location loc, int maxCycles) {
+            this.nmsWorld = nmsWorld;
+            this.loc = loc;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        @Override
+        public void run() {
+            if (++this.cycles >= this.maxCycles) {
+                this.cancel();
+            }
+
+            new SpawnLivingEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true).run();
         }
     }
 }

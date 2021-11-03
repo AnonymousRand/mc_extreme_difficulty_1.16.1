@@ -40,7 +40,7 @@ public class CustomEntityRabbit extends EntityRabbit {
         if (i == 99) {
             this.goalSelector.a(4, new CustomPathfinderGoalKillerRabbitMeleeAttack(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
 
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /**changing attributes don't work on rabbits so killer bunnies have speed 3 and jump boost 1*/
             this.addEffect(new MobEffect(MobEffects.JUMP, Integer.MAX_VALUE, 1));
@@ -89,16 +89,6 @@ public class CustomEntityRabbit extends EntityRabbit {
 
                 if (this.attacks >= 25) { /**after 25 attacks, killer bunnies explode when killed*/
                     this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
-                }
-            }
-
-            if (this.ticksLived % 5 == 2) {
-                if (this.getGoalTarget() != null) {
-                    EntityLiving target = this.getGoalTarget();
-
-                    if (!(target instanceof EntityPlayer) || target.isInvulnerable() || this.d(target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                        this.setGoalTarget(null);
-                    }
                 }
             }
         }

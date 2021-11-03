@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.UtilMeteorRain;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChickenAggressive;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
@@ -58,9 +58,9 @@ public class RaidAndVillagerListeners implements Listener {
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
         Player player = event.getWinners().get(this.random.nextInt(event.getWinners().size()));
 
-        new UtilMeteorRain(player, 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new UtilMeteorRain(player, 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new UtilMeteorRain(player, 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+        new MeteorRain(player, 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+        new MeteorRain(player, 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+        new MeteorRain(player, 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
     }
 
     //temp, todo end: delete
@@ -68,9 +68,9 @@ public class RaidAndVillagerListeners implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
             if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new UtilMeteorRain(event.getPlayer(), 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new UtilMeteorRain(event.getPlayer(), 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new UtilMeteorRain(event.getPlayer(), 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+                new MeteorRain(event.getPlayer(), 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+                new MeteorRain(event.getPlayer(), 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+                new MeteorRain(event.getPlayer(), 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
             }
         }
     }

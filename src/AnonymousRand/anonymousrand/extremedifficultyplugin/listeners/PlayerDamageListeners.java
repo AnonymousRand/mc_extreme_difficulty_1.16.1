@@ -23,9 +23,6 @@ import static org.bukkit.entity.EntityType.*;
 public class PlayerDamageListeners implements Listener {
 
     private final JavaPlugin plugin;
-    private static HashMap<EntityPlayer, Boolean> blazeHit = new HashMap<>();
-    private static HashMap<EntityPlayer, Boolean> ghastHit = new HashMap<>();
-    private static HashMap<EntityPlayer, Boolean> llamaHit = new HashMap<>();
     private final Random random = new Random();
 
     public PlayerDamageListeners(JavaPlugin plugin) {
@@ -40,13 +37,13 @@ public class PlayerDamageListeners implements Listener {
             World nmsWorld = nmsDamager.getWorld();
 
             switch (event.getDamager().getType()) {
-                case BAT -> ((CustomEntityBat) (nmsDamager)).attacks++; //increase attack count by 1
-                case CAVE_SPIDER -> ((CustomEntitySpiderCave) (nmsDamager)).attacks++;
-                case CHICKEN -> ((CustomEntityChickenAggressive) (nmsDamager)).attacks++;
-                case ENDERMAN -> ((CustomEntityEnderman) (nmsDamager)).attacks++;
-                case ENDERMITE -> ((CustomEntityEndermite) (nmsDamager)).attacks++;
+                case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
+                case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
+                case CHICKEN -> ((CustomEntityChickenAggressive)nmsDamager).attacks++;
+                case ENDERMAN -> ((CustomEntityEnderman)nmsDamager).attacks++;
+                case ENDERMITE -> ((CustomEntityEndermite)nmsDamager).attacks++;
                 case HOGLIN -> {
-                    CustomEntityHoglin hoglin = (CustomEntityHoglin) (nmsDamager);
+                    CustomEntityHoglin hoglin = (CustomEntityHoglin)nmsDamager;
                     hoglin.attacks++;
 
                     if (hoglin.attacks >= 25 && hoglin.attacks < 59 && (hoglin.attacks - 25) % 3 == 0) { /**from 25 to 59 attacks, hoglins gain 4 max health every 3 attacks*/
@@ -61,13 +58,13 @@ public class PlayerDamageListeners implements Listener {
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
                         public void run() {
-                            bukkitPlayer.setVelocity(new Vector(0.0, (hoglin.attacks < 25 ? 0.75 : 1.0) * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, more after 40 attacks and doubled if baby*/
+                            bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, doubled if baby*/
                         }
                     }, 2L);
                 }
-                case RABBIT -> ((CustomEntityRabbit) (nmsDamager)).attacks++;
+                case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
-                    CustomEntityRavager ravager = (CustomEntityRavager) (nmsDamager);
+                    CustomEntityRavager ravager = (CustomEntityRavager)nmsDamager;
                     ravager.attacks++;
 
                     if (ravager.launchHigh) {
@@ -90,7 +87,7 @@ public class PlayerDamageListeners implements Listener {
                     }, 5L);
                 }
                 case SHEEP -> {
-                    CustomEntitySheepAggressive sheep = (CustomEntitySheepAggressive) (nmsDamager);
+                    CustomEntitySheepAggressive sheep = (CustomEntitySheepAggressive)nmsDamager;
                     sheep.attacks++;
 
                     if (sheep.launchHigh) {
@@ -113,7 +110,7 @@ public class PlayerDamageListeners implements Listener {
                     }, 5L);
                 }
                 case SILVERFISH -> {
-                    CustomEntitySilverfish silverfish = ((CustomEntitySilverfish) (nmsDamager));
+                    CustomEntitySilverfish silverfish = (CustomEntitySilverfish)nmsDamager;
                     silverfish.attacks++;
 
                     if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
@@ -121,7 +118,7 @@ public class PlayerDamageListeners implements Listener {
                     }
                 }
                 case SPIDER -> {
-                    CustomEntitySpider spider = (CustomEntitySpider)(nmsDamager);
+                    CustomEntitySpider spider = (CustomEntitySpider)nmsDamager;
                     spider.attacks++;
                     bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /**spiders inflict slowness 1 for 1.5 secondS on hit*/
 
@@ -129,9 +126,20 @@ public class PlayerDamageListeners implements Listener {
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times*/
                     }
                 }
-                case ZOGLIN -> ((CustomEntityZoglin) (nmsDamager)).attacks++;
+                case ZOGLIN -> {
+                    CustomEntityZoglin zoglin = (CustomEntityZoglin)nmsDamager;
+                    zoglin.attacks++;
+
+                    if (zoglin.attacks >= 40) {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                            public void run() {
+                                bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)); /**after 40 attacks, zoglins throw players into the air when it hits the player*/
+                            }
+                        }, 2L);
+                    }
+                }
                 case ZOMBIE -> {
-                    CustomEntityZombie zombie = (CustomEntityZombie)(nmsDamager);
+                    CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
                     zombie.attacks++;
 
                     if (zombie.attacks >= 35) { /**after 35 attacks, zombies summon vanilla lightning on the player when it hits the player*/
@@ -143,41 +151,11 @@ public class PlayerDamageListeners implements Listener {
     }
 
     @EventHandler
-    public void playerHitByProjectile(ProjectileHitEvent event) {
-        Entity nmsProjectile = ((CraftEntity)event.getEntity()).getHandle();
-
-        if (event.getHitEntity() instanceof Player) {
-            EntityPlayer nmsPlayer = (((CraftPlayer)event.getHitEntity()).getHandle());
-
-            if (nmsProjectile instanceof EntitySmallFireball) { /**blaze fireballs only do 1 damage on impact*/
-                blazeHit.put(nmsPlayer, true);
-            } else if (nmsProjectile instanceof EntityLlamaSpit) { /**llama spit does 15 damage on impact*/
-                llamaHit.put(nmsPlayer, true);
-            } else if (nmsProjectile instanceof EntityLargeFireball) {
-                ghastHit.put(nmsPlayer, true);
-            }
-        }
-    }
-
-    @EventHandler
     public void playerDamage(EntityDamageEvent event) {
         EntityDamageEvent.DamageCause cause = event.getCause();
         
         if (event.getEntityType() == PLAYER) {
             EntityPlayer nmsPlayer = (EntityPlayer)((CraftEntity) event.getEntity()).getHandle();
-
-            if (cause.equals(EntityDamageEvent.DamageCause.PROJECTILE)) { //not perfect in terms of sync but the listeners are usually 0-1 tick apart
-                if (llamaHit.getOrDefault(nmsPlayer, false)) { /**llama spit does 14 damage on impact*/
-                    llamaHit.replace(nmsPlayer, false);
-                    event.setDamage(14.0);
-                } else if (blazeHit.getOrDefault(nmsPlayer, false)) { /**blaze fireballs only do 1 damage on impact*/
-                    blazeHit.replace(nmsPlayer, false);
-                    event.setDamage(1.0);
-                } else if (ghastHit.getOrDefault(nmsPlayer, false)) { /**ghast fireballs only do 1 damage on impact*/
-                    ghastHit.replace(nmsPlayer, false);
-                    event.setDamage(1.0);
-                }
-            }
 
             if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning spawns a pufferfish per damage tick, with 20% chance to also spawn a guardian and a 2.5% chance to spawn an elder guardian*/
                 World nmsWorld = nmsPlayer.getWorld();

@@ -15,7 +15,7 @@ public class DropItemListeners implements Listener {
         Item item = event.getEntity();
         Material type = item.getItemStack().getType();
 
-        if (type.toString().contains("_BED")) {  /**delete bed items immediately when they are spawned (eg. broken or thrown out)*/
+        if (type.toString().contains("_BED") || type.toString().contains("VINE")) {  /**delete bed and vine items immediately when they are spawned (eg. broken or thrown out)*/
             item.remove();
         }
 

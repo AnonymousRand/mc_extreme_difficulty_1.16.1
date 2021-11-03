@@ -1,4 +1,4 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import net.minecraft.server.v1_16_R1.EntitySpider;
 import org.bukkit.Bukkit;

@@ -11,6 +11,27 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     }
 
     @Override
+    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+        if (!this.world.isClientSide) {
+            Entity entity = movingobjectpositionentity.getEntity();
+
+            if (!entity.isFireProof()) {
+                Entity entity1 = this.getShooter();
+                int i = entity.getFireTicks();
+
+                entity.setOnFire(4);
+                boolean flag = entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /**small fireballs only do 1 direct damage and do 1 less fire tick damage*/
+
+                if (!flag) {
+                    entity.setFireTicks(i);
+                } else if (entity1 instanceof EntityLiving) {
+                    this.a((EntityLiving) entity1, entity);
+                }
+            }
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
 

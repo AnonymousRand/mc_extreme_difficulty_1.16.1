@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.UtilLightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -49,7 +49,7 @@ public class LightningStrikeListeners implements Listener {
 
         if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
             storm = true;
-            new UtilLightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
+            new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
         }
     }
 
@@ -78,7 +78,7 @@ public class LightningStrikeListeners implements Listener {
 
             if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
                 storm = true;
-                new UtilLightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
+                new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
             }
         }
     }

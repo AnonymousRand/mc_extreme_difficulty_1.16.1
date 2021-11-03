@@ -1,6 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables.EvokerStopPlayer;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import com.google.common.collect.Lists;
@@ -11,6 +10,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -19,7 +19,7 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker {
 
-    private final JavaPlugin plugin;
+    public final JavaPlugin plugin;
     private EntitySheep wololoTarget;
     public int attacks;
     private boolean a25, a36, a60;
@@ -54,7 +54,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(1, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).a(300));
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)).a(300)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)).a(300)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -93,16 +93,6 @@ public class CustomEntityEvoker extends EntityEvoker {
         if (this.ticksLived == 10) { /**evokers only have 20 health*/
             this.setHealth(20.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -151,6 +141,17 @@ public class CustomEntityEvoker extends EntityEvoker {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 
     private void a(@Nullable EntitySheep entitysheep) { //private setWololoTarget()
@@ -586,6 +587,29 @@ public class CustomEntityEvoker extends EntityEvoker {
             }
 
             super.e();
+        }
+    }
+
+    static class EvokerStopPlayer extends BukkitRunnable {
+
+        private CustomEntityEvoker evoker;
+        private EntityLiving target;
+        private int cycles, maxCycles;
+
+        public EvokerStopPlayer(CustomEntityEvoker evoker, EntityLiving target, int maxCycles) {
+            this.evoker = evoker;
+            this.target = target;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        public void run() {
+            if (++this.cycles > this.maxCycles) {
+                this.cancel();
+            }
+
+            LivingEntity bukkitEntity = (LivingEntity)target.getBukkitEntity();
+            bukkitEntity.setVelocity(new Vector(0.0, 0.0, 0.0));
         }
     }
 }

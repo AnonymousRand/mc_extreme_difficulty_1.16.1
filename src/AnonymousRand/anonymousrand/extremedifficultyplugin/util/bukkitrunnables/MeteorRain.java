@@ -1,4 +1,4 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrowExploding;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
-public class UtilMeteorRain extends BukkitRunnable {
+public class MeteorRain extends BukkitRunnable {
 
     private final LivingEntity bukkitShooter;
     private final int type;
@@ -31,7 +31,7 @@ public class UtilMeteorRain extends BukkitRunnable {
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
     private final Random random = new Random();
 
-    public UtilMeteorRain(Player player, int type, double maxRadius, int maxCycles) {
+    public MeteorRain(Player player, int type, double maxRadius, int maxCycles) {
         this.bukkitShooter = player;
         this.playerLoc = player.getLocation();
         this.type = type;
@@ -42,7 +42,7 @@ public class UtilMeteorRain extends BukkitRunnable {
         this.vec = new Vector(0.0, -1.0, 0.0); //todo: delete if no need for wither skulls
     }
 
-    public UtilMeteorRain(EntityLiving nmsEntity, int type, double maxRadius, int maxCycles) {
+    public MeteorRain(EntityLiving nmsEntity, int type, double maxRadius, int maxCycles) {
         this.bukkitShooter = (LivingEntity)nmsEntity.getBukkitEntity();
         this.type = type;
         this.maxRadius = maxRadius;

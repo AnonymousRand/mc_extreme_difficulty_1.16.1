@@ -27,7 +27,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.0075)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -52,12 +52,12 @@ public class CustomEntitySilverfish extends EntitySilverfish {
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
         }
 
-        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, silverfish spawns a 5 by 5 block of invested stone around it and dies*/
+        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, silverfish spawns a 5 by 3 by 5 block of invested stone around it and dies*/
             this.a90 = true;
 
             Location loc;
             for (int x = -2; x <= 2; x++) {
-                for (int y = -2; y <= 2; y++) {
+                for (int y = 0; y <= 2; y++) {
                     for (int z = -2; z <= 2; z++) {
                         loc = new Location(this.getWorld().getWorld(), Math.floor(this.locX()) + x, Math.floor(this.locY()) + y, Math.floor(this.locZ()) + z);
                         if (loc.getBlock().getType() == org.bukkit.Material.AIR) {
@@ -72,18 +72,8 @@ public class CustomEntitySilverfish extends EntitySilverfish {
 
         if (this.ticksLived == 10) { /**silverfish move 50% faster and have 9 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
+            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(9.0);
             this.setHealth(9.0F);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -132,5 +122,16 @@ public class CustomEntitySilverfish extends EntitySilverfish {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
     }
 }

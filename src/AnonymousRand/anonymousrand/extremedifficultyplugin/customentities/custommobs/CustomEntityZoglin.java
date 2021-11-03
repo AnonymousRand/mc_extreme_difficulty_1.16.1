@@ -1,34 +1,46 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 public class CustomEntityZoglin extends EntityZoglin {
 
+    private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
+    private boolean a8, a40;
 
-    public CustomEntityZoglin(World world) {
+    public CustomEntityZoglin(World world, JavaPlugin plugin) {
         super(EntityTypes.ZOGLIN, world);
+        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); //no longer avoids lava
         this.attacks = 0;
+        this.a8 = false;
+        this.a40 = false;
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(1, new CustomEntityZoglin.CustomPathfinderGoalZoglinAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); //instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -55,19 +67,29 @@ public class CustomEntityZoglin extends EntityZoglin {
         return this.cJ().a(dynamic);
     }
 
-    public double getFollowRange() { /**zoglins have 64 block detection range (setting attribute doesn't work)*/
-        return 64.0;
+    public double getFollowRange() { /**zoglins have 128 block detection range (setting attribute doesn't work)*/
+        return 128.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
+        if (this.attacks == 8 && !this.a8) { /**after 8 attacks, zoglins gain regen 2*/
+            this.a8 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        }
+
+        if (this.attacks == 40 &&!this.a40) { /**after 40 attacks, zoglins gain speed 5*/
+            this.a40 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+        }
+
         if (this.ticksLived % 6 == 0 && this.getGoalTarget() != null) {
             Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
 
             if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**zoglins create a path of power 1 tnt on itself as long as it is inside an air block*/
-                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, 1.0F);
+                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /**after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds*/
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newTNT);
             }
@@ -76,16 +98,6 @@ public class CustomEntityZoglin extends EntityZoglin {
         if (this.ticksLived == 10) { /**zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies)*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
-        }
-
-        if (this.ticksLived % 5 == 2) {
-            if (this.getLastDamager() != null) {
-                EntityLiving target = this.getLastDamager();
-
-                if (!(target instanceof EntityPlayer)) { /**mobs only target players (in case mob damage listener doesn't register)*/
-                    this.setLastDamager(null);
-                }
-            }
         }
     }
 
@@ -134,5 +146,83 @@ public class CustomEntityZoglin extends EntityZoglin {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() { //getMaxFallHeight
+        if (this.getGoalTarget() == null) {
+            return 3;
+        } else {
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+
+            return i + 3;
+        }
+    }
+
+    public class CustomPathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
+
+        protected final CustomEntityZoglin zoglin;
+        private boolean moveEverywhere;
+
+        public CustomPathfinderGoalZoglinAttack(CustomEntityZoglin zoglin, double speedTowardsTarget, boolean useLongMemory) {
+            super(zoglin, speedTowardsTarget, useLongMemory);
+            this.zoglin = zoglin;
+            this.moveEverywhere = false;
+        }
+
+        @Override
+        public void e() {
+            super.e();
+
+            EntityLiving entityliving = this.zoglin.getGoalTarget();
+
+            if (entityliving == null) {
+                return;
+            }
+
+            if (this.zoglin.attacks >= 8) {
+                if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /**after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking*/
+                    this.moveEverywhere = true;
+                    new ZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(this.zoglin.plugin, 0L, 5L);
+                }
+
+                if (this.zoglin.ticksLived % 100 == 0) { /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
+                    Vec3D vec3d = this.zoglin.f(1.0F);
+                    double d2 = entityliving.locX() - (this.zoglin.locX() + vec3d.x * 4.0D);
+                    double d3 = entityliving.e(0.5D) - (0.5D + this.zoglin.e(0.5D));
+                    double d4 = entityliving.locZ() - (this.zoglin.locZ() + vec3d.z * 4.0D);
+
+                    CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(this.zoglin.getWorld(), this.zoglin, d2, d3, d4, 1);
+                    entitylargefireball.setPosition(this.zoglin.locX() + vec3d.x * 4.0D, this.zoglin.e(0.5D) + 0.5D, entitylargefireball.locZ() + vec3d.z * 4.0D);
+                    this.zoglin.getWorld().addEntity(entitylargefireball);
+                }
+            }
+        }
+    }
+
+    static class ZoglinThrowPlayerAround extends BukkitRunnable {
+
+        private final CustomEntityZoglin zoglin;
+        private final EntityLiving target;
+        private int cycles;
+        private final int maxCycles;
+        private final Random random = new Random();
+
+        public ZoglinThrowPlayerAround(CustomEntityZoglin zoglin, EntityLiving target, int maxCycles) {
+            this.zoglin = zoglin;
+            this.target = target;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        public void run() {
+            if (++this.cycles <= this.maxCycles) {
+                LivingEntity bukkitEntity = (LivingEntity)this.target.getBukkitEntity();
+                bukkitEntity.setVelocity(new Vector(random.nextDouble() * 6 - random.nextDouble() * 3, random.nextDouble() * 3 - random.nextDouble() * 1.5, random.nextDouble() * 6 - random.nextDouble() * 3));
+            } else if (++this.cycles - 32 >= this.maxCycles) {
+                this.cancel();
+                this.zoglin.setPosition(this.target.locX(), this.target.locY(), this.target.locZ()); //zoglin teleports to player after 8 seconds so that it can continue attacking
+            }
+        }
     }
 }

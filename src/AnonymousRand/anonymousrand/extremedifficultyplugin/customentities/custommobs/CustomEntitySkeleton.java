@@ -1,12 +1,14 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.bukkitrunnables.entityrunnables.SkeletonRapidFire;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton {
 
@@ -38,7 +40,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start shooting at players (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -182,6 +184,52 @@ public class CustomEntitySkeleton extends EntitySkeleton {
 
         } else {
             this.ticksFarFromPlayer = 0;
+        }
+    }
+
+    static class SkeletonRapidFire extends BukkitRunnable {
+
+        private final CustomEntitySkeleton skeleton;
+        private final EntityLiving target;
+        private int cycles;
+        private final int maxCycles;
+        private final float f;
+        private final Random random = new Random();
+
+        public SkeletonRapidFire(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float f) {
+            this.skeleton = skeleton;
+            this.target = target;
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+            this.f = f;
+        }
+
+        public void run() {
+            if (++this.cycles > this.maxCycles) {
+                this.cancel();
+            }
+
+            for (int i = 0; i < (skeleton.attacks < 35 ? 10 : 1); i++) {
+                ItemStack itemstack = skeleton.f(skeleton.b(ProjectileHelper.a(skeleton, Items.BOW)));
+                EntityArrow entityarrow = skeleton.b(itemstack, f);
+                double d0 = target.locX() - skeleton.locX();
+                double d1 = target.locY() - skeleton.locY();
+                double d2 = target.locZ() - skeleton.locZ();
+
+                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
+                    entityarrow.setPierceLevel((byte)1);
+                }
+
+                if (this.skeleton.attacks >= 35) { /**starting from the 35th attack, arrows do not lose y level*/
+                    entityarrow.setNoGravity(true);
+                }
+
+                entityarrow.setOnFire(50);
+
+                entityarrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
+                skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.getRandom().nextFloat() * 0.4F + 0.8F));
+                skeleton.world.addEntity(entityarrow);
+            }
         }
     }
 }
