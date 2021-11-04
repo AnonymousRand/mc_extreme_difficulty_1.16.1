@@ -6,7 +6,7 @@ import java.util.EnumSet;
 
 public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
-    private final EntityInsentient drowned;
+    private final EntityInsentient entity;
     private final IRangedEntity entityButIRangedEntity;
     private EntityLiving attackTarget;
     private int d;
@@ -27,7 +27,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
             throw new IllegalArgumentException("ArrowAttackGoal requires Mob implements RangedAttackMob");
         } else {
             this.entityButIRangedEntity = irangedentity;
-            this.drowned = (EntityInsentient) irangedentity;
+            this.entity = (EntityInsentient) irangedentity;
             this.e = d0;
             this.g = i;
             this.h = j;
@@ -39,7 +39,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        EntityLiving entityliving = this.drowned.getGoalTarget();
+        EntityLiving entityliving = this.entity.getGoalTarget();
 
         if (entityliving != null && entityliving.isAlive()) {
             this.attackTarget = entityliving;
@@ -51,7 +51,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public boolean b() {
-        return this.a() || !this.drowned.getNavigation().m();
+        return this.a() || !this.entity.getNavigation().m();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public void e() {
-        double d0 = this.drowned.g(this.attackTarget.locX(), this.attackTarget.locY(), this.attackTarget.locZ());
+        double d0 = this.entity.g(this.attackTarget.locX(), this.attackTarget.locY(), this.attackTarget.locZ());
         boolean flag = true; /***breaking line of sight does not stop the mob from attacking*/
 
         if (flag) {
@@ -73,12 +73,12 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
         }
 
         if (d0 <= (double)this.j && this.f >= 5) {
-            this.drowned.getNavigation().o();
+            this.entity.getNavigation().o();
         } else {
-            this.drowned.getNavigation().a((Entity) this.attackTarget, this.e);
+            this.entity.getNavigation().a((Entity) this.attackTarget, this.e);
         }
 
-        this.drowned.getControllerLook().a(this.attackTarget, 30.0F, 30.0F);
+        this.entity.getControllerLook().a(this.attackTarget, 30.0F, 30.0F);
         float f;
 
         if (--this.d == 0) {

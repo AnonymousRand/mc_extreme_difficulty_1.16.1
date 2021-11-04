@@ -47,9 +47,8 @@ public class LightningStrikeListeners implements Listener {
             }
         }
 
-        if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-            storm = true;
-            new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
+        if (!storm && random.nextDouble() < 0.04) { /**non-storm lightning has a 4% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
+            new LightningStorm(nmsWorld, loc, this.random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, this.random.nextInt(5) + 3);
         }
     }
 
@@ -76,9 +75,8 @@ public class LightningStrikeListeners implements Listener {
                 }
             }
 
-            if (!storm && random.nextDouble() < 0.1) { /**non-storm lightning has a 10% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-                storm = true;
-                new LightningStorm(nmsWorld, bukkitWorld, loc, random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, random.nextInt(5) + 3);
+            if (!storm && random.nextDouble() < 0.04) { /**non-storm lightning has a 4% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
+                new LightningStorm(nmsWorld, loc, this.random.nextInt(25) + 35).runTaskTimer(this.plugin, 0L, this.random.nextInt(5) + 3);
             }
         }
     }

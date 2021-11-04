@@ -17,81 +17,87 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
     @Override
     protected double k() { //getFollowDistance from attribute; change this method instead of changing attribute as this method is called in super() of contructor (?), and takes the value of follow_range from that time only
         Entity bukkitEntity = this.e.getBukkitEntity();
-        net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity)bukkitEntity).getHandle();
         EntityType type = bukkitEntity.getType();
 
         switch (type) {
             case BAT -> {
-                return ((CustomEntityBat)nmsEntity).getFollowRange();
+                return ((CustomEntityBat)this.e).getFollowRange();
             }
             case BEE -> {
-                return ((CustomEntityBee)nmsEntity).getFollowRange();
+                return ((CustomEntityBee)this.e).getFollowRange();
             }
             case BLAZE -> {
-                return ((CustomEntityBlaze)nmsEntity).getFollowRange();
+                return ((CustomEntityBlaze)this.e).getFollowRange();
             }
             case CAVE_SPIDER -> {
-                return ((CustomEntitySpiderCave)nmsEntity).getFollowRange();
+                return ((CustomEntitySpiderCave)this.e).getFollowRange();
             }
             case CHICKEN -> {
-                return ((CustomEntityChickenAggressive)nmsEntity).getFollowRange();
+                return ((CustomEntityChickenAggressive)this.e).getFollowRange();
             }
             case CREEPER -> {
-                return ((CustomEntityCreeper)nmsEntity).getFollowRange();
+                return ((CustomEntityCreeper)this.e).getFollowRange();
             }
             case DROWNED -> {
-                return ((CustomEntityDrowned)nmsEntity).getFollowRange();
+                return ((CustomEntityDrowned)this.e).getFollowRange();
             }
             case ENDERMAN -> {
-                return ((CustomEntityEnderman)nmsEntity).getFollowRange();
+                return ((CustomEntityEnderman)this.e).getFollowRange();
             }
             case ENDERMITE -> {
-                return ((CustomEntityEndermite)nmsEntity).getFollowRange();
+                return ((CustomEntityEndermite)this.e).getFollowRange();
             }
             case EVOKER -> {
-                return ((CustomEntityEvoker)nmsEntity).getFollowRange();
+                return ((CustomEntityEvoker)this.e).getFollowRange();
             }
             case GUARDIAN -> {
-                return ((CustomEntityGuardian)nmsEntity).getFollowRange();
+                return ((CustomEntityGuardian)this.e).getFollowRange();
             }
             case ELDER_GUARDIAN -> {
-                return ((CustomEntityGuardianElder) nmsEntity).getFollowRange();
+                return ((CustomEntityGuardianElder)this.e).getFollowRange();
             }
             case HOGLIN -> {
-                return ((CustomEntityHoglin)nmsEntity).getFollowRange();
+                return ((CustomEntityHoglin)this.e).getFollowRange();
             }
             case LLAMA -> {
-                return ((CustomEntityLlama)nmsEntity).getFollowRange();
+                return ((CustomEntityLlama)this.e).getFollowRange();
             }
             case RABBIT -> {
-                return ((CustomEntityRabbit)nmsEntity).getFollowRange();
+                return ((CustomEntityRabbit)this.e).getFollowRange();
             }
             case RAVAGER -> {
-                return ((CustomEntityRavager)nmsEntity).getFollowRange();
+                return ((CustomEntityRavager)this.e).getFollowRange();
             }
             case SHEEP -> {
-                return ((CustomEntitySheepAggressive)nmsEntity).getFollowRange();
+                return ((CustomEntitySheepAggressive)this.e).getFollowRange();
             }
             case SILVERFISH -> {
-                return ((CustomEntitySilverfish)nmsEntity).getFollowRange();
+                return ((CustomEntitySilverfish)this.e).getFollowRange();
             }
             case SKELETON -> {
-                return ((CustomEntitySkeleton)nmsEntity).getFollowRange();
+                return ((CustomEntitySkeleton)this.e).getFollowRange();
             }
             case STRAY -> {
-                return ((CustomEntitySkeletonStray)nmsEntity).getFollowRange();
+                return ((CustomEntitySkeletonStray)this.e).getFollowRange();
             }
             case SPIDER -> {
-                return ((CustomEntitySpider)nmsEntity).getFollowRange();
+                return ((CustomEntitySpider)this.e).getFollowRange();
             }
             case TRADER_LLAMA -> {
-                return ((CustomEntityLlamaTrader)nmsEntity).getFollowRange();
+                return ((CustomEntityLlamaTrader)this.e).getFollowRange();
             }
             case ZOGLIN -> {
-                return ((CustomEntityZoglin)nmsEntity).getFollowRange();
+                return ((CustomEntityZoglin)this.e).getFollowRange();
             }
             case ZOMBIE -> {
-                return ((CustomEntityZombie)nmsEntity).getFollowRange();
+                if (this.e instanceof CustomEntityZombieThor) {
+                    return ((CustomEntityZombieThor)this.e).getFollowRange();
+                } else {
+                    return ((CustomEntityZombie)this.e).getFollowRange();
+                }
+            }
+            case ZOMBIE_VILLAGER -> {
+                return ((CustomEntityZombieVillager)this.e).getFollowRange();
             }
         }
 

@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChickenAggressive;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieVillager;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
@@ -22,8 +23,8 @@ public class MobDamageListeners implements Listener {
         switch (entityType) { //natural damage immunities by specific mobs
             case BAT, CHICKEN, HOGLIN, ZOGLIN -> /**bats, chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case DROWNED, SKELETON, STRAY, ZOMBIE -> /**drowned, skeletons, strays and zombies are immune to fire and lightning damage*/
-                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING);
+            case DROWNED, HUSK, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, zombies, and zombie villagers are immune to fire, lightning, or explosion damage*/
+                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case ENDERMAN, SHEEP ->/**endermen and sheep don't take fire, lava, or fall damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
             case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take fire and lava damage*/
@@ -32,6 +33,8 @@ public class MobDamageListeners implements Listener {
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case LLAMA, TRADER_LLAMA -> /**llamas and trader llamas don't take fire or explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+            case SKELETON, STRAY -> /**skeletons and strays are immune to fire and lightning damage*/
+                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING);
         }
 
         if (event.isCancelled()) {
@@ -77,6 +80,18 @@ public class MobDamageListeners implements Listener {
 
         if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsEntity instanceof EntityVillagerAbstract) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /**hostile mobs can't damage each other except aggressive chickens and villagers/traders*/ //gettype doesn't seem to work so I'm using instanceof
             event.setCancelled(true);
+        }
+
+        if (nmsEntity instanceof EntityVillagerAbstract && nmsDamager instanceof CustomEntityZombieVillager) { /**up to 60 max health (80 after 12 attacks), zombie villagers gain 3 max health and health when hitting a villager*/
+            CustomEntityZombieVillager nmsZombieVillager = (CustomEntityZombieVillager)nmsDamager;
+            LivingEntity bukkitDamager = ((LivingEntity)nmsDamager.getBukkitEntity());
+
+            nmsZombieVillager.attacks++; /**zombie villagers' attack counts increase when attacking villagers as well*/
+
+            if (bukkitDamager.getMaxHealth() <= (nmsZombieVillager.attacks < 12 ? 57.0 : 77.0)) {
+                bukkitDamager.setMaxHealth(bukkitDamager.getMaxHealth() + 3.0);
+                bukkitDamager.setHealth(bukkitDamager.getHealth() + 3.0F);
+            }
         }
     }
 }

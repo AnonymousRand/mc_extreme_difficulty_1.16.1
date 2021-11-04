@@ -68,13 +68,13 @@ public class CustomEntityRabbit extends EntityRabbit {
             if (this.attacks == 5 && !this.a5) { /**after 5 attacks, killer bunnies gain speed 4*/
                 this.a5 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
             }
 
             if (this.attacks == 15 && !this.a15) { /**after 15 attacks, killer bunnies gain speed 5*/
                 this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
             }
 
             if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 6 and 10 max health and health*/

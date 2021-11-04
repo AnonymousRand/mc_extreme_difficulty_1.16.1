@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombie;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChickenAggressive;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
@@ -18,6 +19,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.raid.RaidFinishEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
@@ -34,13 +37,8 @@ public class RaidAndVillagerListeners implements Listener {
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {
-        if ((event.getEntityType() == VILLAGER)) {
-            EntityVillager villager = ((CraftVillager)event.getEntity()).getHandle();
-            EntityPlayer player = (villager.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), villager, villager.locX(), villager.locY(), villager.locZ(), villager.getBoundingBox().grow(128.0, 128.0, 128.0))); //get closest player within 128 sphere radius of villager
-
-            if (player != null) {
-                player.addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
-            }
+        if ((event.getEntityType() == VILLAGER) && event.getDamager() instanceof Player) { /**villagers give players bad omen if they are hit by a player*/
+            ((Player)event.getDamager()).addPotionEffect(new PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 255));
         }
     }
 
@@ -50,7 +48,7 @@ public class RaidAndVillagerListeners implements Listener {
             LivingEntity bukkitVillager = event.getEntity();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
 
-            new SpawnLivingEntity(nmsWorld, new CustomEntityChickenAggressive(nmsWorld), 5, null, bukkitVillager.getLocation(), true).run();  /**5 zombies are spawned when a villager dies*/
+            new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombie(nmsWorld, this.plugin), 5, null, bukkitVillager.getLocation(), true).run();  /**5 zombies are spawned when a villager dies*/
         }
     }
 

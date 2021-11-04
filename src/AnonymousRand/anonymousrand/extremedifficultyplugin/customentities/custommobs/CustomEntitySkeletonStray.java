@@ -129,7 +129,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
         if (this.attacks == 25 && !this.a25) {
             this.a25 = true;
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, strays summon 6 vanilla skeletons*/

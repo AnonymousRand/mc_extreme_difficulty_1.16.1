@@ -129,7 +129,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/ //todo

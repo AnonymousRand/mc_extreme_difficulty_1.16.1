@@ -139,13 +139,20 @@ public class PlayerDamageListeners implements Listener {
                     }
                 }
                 case ZOMBIE -> {
-                    CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
-                    zombie.attacks++;
+                    org.bukkit.World bukkitWorld = bukkitPlayer.getWorld();
 
-                    if (zombie.attacks >= 35) { /**after 35 attacks, zombies summon vanilla lightning on the player when it hits the player*/
-                        bukkitPlayer.getWorld().strikeLightning(bukkitPlayer.getLocation());
+                    if (nmsDamager instanceof CustomEntityZombieThor) {
+                        bukkitWorld.strikeLightning(bukkitPlayer.getLocation());
+                    } else {
+                        CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
+                        zombie.attacks++;
+
+                        if (zombie.attacks >= 35) { /**after 35 attacks, zombies summon vanilla lightning on the player when it hits the player*/
+                            bukkitWorld.strikeLightning(bukkitPlayer.getLocation());
+                        }
                     }
                 }
+                case ZOMBIE_VILLAGER -> ((CustomEntityZombieVillager)nmsDamager).attacks++;
             }
         }
     }

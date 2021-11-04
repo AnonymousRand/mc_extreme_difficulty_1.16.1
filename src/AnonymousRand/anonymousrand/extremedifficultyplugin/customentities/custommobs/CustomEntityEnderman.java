@@ -152,14 +152,14 @@ public class CustomEntityEnderman extends EntityEnderman {
         if (this.attacks == 12 && !this.a12) { /**after 12 attacks, endermen gain speed 1*/
             this.a12 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, endermen get 40 max health and regen 3*/
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermen summon 5 endermites*/

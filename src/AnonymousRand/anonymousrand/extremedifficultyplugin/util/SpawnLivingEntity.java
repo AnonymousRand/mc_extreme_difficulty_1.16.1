@@ -81,6 +81,18 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.pos = loc;
     }
 
+    public SpawnLivingEntity(JavaPlugin plugin, World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+        this.plugin = plugin;
+        this.nmsWorld = nmsWorld;
+        this.firstEntityToSpawn = firstEntityToSpawn;
+        this.numToSpawn = numToSpawn;
+        this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
+        this.bukkitOriginalEntity = null;
+        this.removeOriginal = false;
+        this.equipBoots = equipBoots;
+        this.pos = loc;
+    }
+
     public void run() {
         for (int i = 0; i < this.numToSpawn; i++) {
             if (i > 0) {

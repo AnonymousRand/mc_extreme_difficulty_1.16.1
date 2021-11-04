@@ -1,11 +1,23 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.LightningStrike;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CustomEntityLargeFireball extends EntityLargeFireball {
 
+    private final JavaPlugin plugin;
+    private boolean summonLightning = false;
+
     public CustomEntityLargeFireball(EntityTypes<? extends EntityLargeFireball> entitytypes, World world, int intYield, Vec3D vec, double x, double y, double z) {
         super(entitytypes, world);
+        this.plugin = null;
         this.yield = intYield;
         this.setPosition(x, y, z);
         this.setMot(vec);
@@ -13,7 +25,16 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
     public CustomEntityLargeFireball(World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield) {
         super(world, entityliving, d0, d1, d2);
+        this.plugin = null;
         this.yield = intYield;
+        this.setShooter(entityliving);
+    }
+
+    public CustomEntityLargeFireball(JavaPlugin plugin, World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield, boolean summonLightning) {
+        super(world, entityliving, d0, d1, d2);
+        this.plugin = plugin;
+        this.yield = intYield;
+        this.summonLightning = summonLightning;
         this.setShooter(entityliving);
     }
 
@@ -25,6 +46,11 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
 
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+
+            if (this.summonLightning && this.plugin != null) { //summon thor lightning
+                new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, this.random.nextInt(3) + 9, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(2) + 4);
+            }
+
             this.die();
         }
     }

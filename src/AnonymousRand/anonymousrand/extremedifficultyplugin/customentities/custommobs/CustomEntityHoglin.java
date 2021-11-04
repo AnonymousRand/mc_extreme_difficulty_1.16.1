@@ -58,7 +58,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         if (this.attacks == 10 && !this.a10) { /**after 10 attacks, hoglins get regen 2*/
             this.a10 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 32 && !this.a32) { /**after 32 attacks, hoglins get regen 3*/

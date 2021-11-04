@@ -81,7 +81,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
             this.a36 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**updates attack range; only happens if/when the mob has a target*/
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex

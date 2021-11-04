@@ -18,6 +18,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
 
 import java.util.Random;
 
@@ -47,17 +48,20 @@ public class ProjectileListeners implements Listener {
             Location loc = bukkitArrow.getLocation();
 
             if (!(nmsShooter instanceof CustomEntitySkeletonStray)) {
+                CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
+
                 if (nmsShooter instanceof CustomEntitySkeleton) {
                     if (((CustomEntitySkeleton)nmsShooter).spawnExplodingArrow) { //replace skeleton arrows with exploding ones
-                        CustomEntityArrowExploding newArrow = new CustomEntityArrowExploding(nmsWorld, bukkitArrow.getVelocity(), (byte)0, bukkitArrow.getShooter(), 1.0F);
+                        newArrow = new CustomEntityArrowExploding(nmsWorld, bukkitArrow.getVelocity(), (byte)0, bukkitArrow.getShooter(), 1.0F);
                         newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
                         nmsWorld.addEntity(newArrow);
                         bukkitArrow.remove();
                         return;
                     }
+                } else if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
+                    newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5,this.random.nextDouble() - 0.5)), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
                 }
 
-                CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
                 newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
                 nmsWorld.addEntity(newArrow);
                 bukkitArrow.remove();

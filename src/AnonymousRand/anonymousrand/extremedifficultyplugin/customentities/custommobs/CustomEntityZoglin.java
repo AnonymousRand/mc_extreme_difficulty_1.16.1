@@ -1,11 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,6 +76,7 @@ public class CustomEntityZoglin extends EntityZoglin {
         if (this.attacks == 8 && !this.a8) { /**after 8 attacks, zoglins gain regen 2*/
             this.a8 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 100, 1, false)); /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
         }
 
         if (this.attacks == 40 &&!this.a40) { /**after 40 attacks, zoglins gain speed 5*/
@@ -184,17 +183,6 @@ public class CustomEntityZoglin extends EntityZoglin {
                 if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /**after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking*/
                     this.moveEverywhere = true;
                     new ZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(this.zoglin.plugin, 0L, 5L);
-                }
-
-                if (this.zoglin.ticksLived % 100 == 0) { /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
-                    Vec3D vec3d = this.zoglin.f(1.0F);
-                    double d2 = entityliving.locX() - (this.zoglin.locX() + vec3d.x * 4.0D);
-                    double d3 = entityliving.e(0.5D) - (0.5D + this.zoglin.e(0.5D));
-                    double d4 = entityliving.locZ() - (this.zoglin.locZ() + vec3d.z * 4.0D);
-
-                    CustomEntityLargeFireball entitylargefireball = new CustomEntityLargeFireball(this.zoglin.getWorld(), this.zoglin, d2, d3, d4, 1);
-                    entitylargefireball.setPosition(this.zoglin.locX() + vec3d.x * 4.0D, this.zoglin.e(0.5D) + 0.5D, entitylargefireball.locZ() + vec3d.z * 4.0D);
-                    this.zoglin.getWorld().addEntity(entitylargefireball);
                 }
             }
         }

@@ -58,7 +58,9 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
-                nmsEntity instanceof CustomEntityZombieHusk)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+                nmsEntity instanceof CustomEntityZombieHusk ||
+                nmsEntity instanceof CustomEntityZombieThor ||
+                nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
             CreatureSpawnEvent.SpawnReason spawnReason = event.getSpawnReason();
 
@@ -85,7 +87,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case EVOKER -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case GHAST -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityGhast(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, false).run();
                 case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
-                case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                case HOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case MUSHROOM_COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
@@ -99,18 +101,19 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case SKELETON -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntitySkeleton(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                        new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntitySkeleton(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                     }
                 }
                 case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
-                case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                case ZOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case ZOMBIE -> {
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) { //todo temp
+                        new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombieThor(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                     }
                 }
+                case ZOMBIE_VILLAGER -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombieVillager(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
             }
         }
     }
@@ -151,7 +154,9 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntitySkeletonStray ||
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityZoglin ||
-                        nmsEntity instanceof EntityZombie)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+                        nmsEntity instanceof CustomEntityZombie ||
+                        nmsEntity instanceof CustomEntityZombieThor ||
+                        nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
                     switch (type) {
                         case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false).run();
@@ -166,7 +171,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case EVOKER -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                         case GHAST -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityGhast(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, false).run();
                         case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
-                        case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                        case HOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                         case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case MUSHROOM_COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
@@ -187,7 +192,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
-                        case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                        case ZOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                        case ZOMBIE_VILLAGER -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombieVillager(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                     }
                 }
             }
