@@ -59,6 +59,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case HOGLIN -> {
                 return ((CustomEntityHoglin)this.e).getFollowRange();
             }
+            case HUSK -> {
+                return ((CustomEntityZombieHusk)this.e).getFollowRange();
+            }
             case LLAMA -> {
                 return ((CustomEntityLlama)this.e).getFollowRange();
             }
@@ -92,6 +95,8 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case ZOMBIE -> {
                 if (this.e instanceof CustomEntityZombieThor) {
                     return ((CustomEntityZombieThor)this.e).getFollowRange();
+                } else if (this.e instanceof CustomEntityZombieSuper) {
+                    return ((CustomEntityZombieSuper)this.e).getFollowRange();
                 } else {
                     return ((CustomEntityZombie)this.e).getFollowRange();
                 }

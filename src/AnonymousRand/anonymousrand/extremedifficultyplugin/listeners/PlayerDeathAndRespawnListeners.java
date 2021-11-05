@@ -1,6 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieSuper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import net.minecraft.server.v1_16_R1.EntityZombie;
+import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -19,6 +26,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     private final JavaPlugin plugin;
     private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
     private static HashMap<Player, Integer> respawnCount = new HashMap<>();
+    public static ArrayList<EntityZombie> superZombies = new ArrayList<>();
 
     public PlayerDeathAndRespawnListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -26,9 +34,17 @@ public class PlayerDeathAndRespawnListeners implements Listener {
 
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
+        Player bukkitPlayer = event.getEntity();
 
-        collections.put(player, player.getActivePotionEffects()); /**negative status effects now last after respawning*/
+        collections.put(bukkitPlayer, bukkitPlayer.getActivePotionEffects()); /**negative status effects now last after respawning*/
+
+        if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /**when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc*/
+            World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
+            CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld, this.plugin);
+            newZombie.getBukkitEntity().setCustomName("Dinnerbone");
+            new SpawnLivingEntity(this.plugin, nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true).run();
+            superZombies.add(newZombie);
+        }
     }
 
     @EventHandler
@@ -37,8 +53,8 @@ public class PlayerDeathAndRespawnListeners implements Listener {
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
         {
-            public void run()
-            {
+            @Override
+            public void run() {
                 for (PotionEffect e : collections.getOrDefault(player, null)) { //only re-applies negative status effects
                     if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
                         player.addPotionEffect(e);
@@ -50,6 +66,11 @@ public class PlayerDeathAndRespawnListeners implements Listener {
                 if (respawnCount.get(player) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
                     player.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
                 }
+
+                if (superZombies.size() >= (3 * Bukkit.getServer().getOnlinePlayers().size())) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/
+                    superZombies.get(0).die();
+                    superZombies.remove(0);
+                }
             }
         }, 1L);
     }
@@ -59,8 +80,8 @@ public class PlayerDeathAndRespawnListeners implements Listener {
         if (event.getEntity() instanceof Player) {
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
             {
-                public void run()
-                {
+                @Override
+                public void run() {
                     for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /**totems leave the player at 1 heart without any status effects*/
                         event.getEntity().removePotionEffect(effect.getType());
                     }

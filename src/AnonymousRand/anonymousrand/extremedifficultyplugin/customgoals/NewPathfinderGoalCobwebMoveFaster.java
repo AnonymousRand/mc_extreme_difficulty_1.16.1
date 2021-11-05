@@ -2,11 +2,11 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import net.minecraft.server.v1_16_R1.*;
 
-public class NewPathfinderGoalCobweb extends PathfinderGoal {
+public class NewPathfinderGoalCobwebMoveFaster extends PathfinderGoal {
 
     public EntityInsentient entity;
 
-    public NewPathfinderGoalCobweb(EntityInsentient entity) {
+    public NewPathfinderGoalCobwebMoveFaster(EntityInsentient entity) {
         this.entity = entity;
     }
 

@@ -71,13 +71,16 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
                     case BLAZE -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityBlaze)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case ENDERMITE -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityEndermite)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case HOGLIN -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityHoglin)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
+                    case HUSK -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieHusk)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case RABBIT -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case RAVAGER -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityRavager)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case SILVERFISH -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntitySilverfish)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case ZOGLIN -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                     case ZOMBIE -> {
                         if (this.e instanceof CustomEntityZombieThor) {
-                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieThor)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
+                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set) goalSet.get(((CustomEntityZombieThor) this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
+                        } else if (this.e instanceof CustomEntityZombieSuper) {
+                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set) goalSet.get(((CustomEntityZombieSuper) this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                         } else {
                             goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombie)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
                         }

@@ -20,10 +20,10 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        if (this.entity.world.isRainingAt(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ())) && random.nextDouble() < 0.0003 * (this.chanceMultiplier)) {
+        if (this.entity.world.isRainingAt(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ())) && random.nextDouble() < 0.0002 * (this.chanceMultiplier)) {
             return true;
         } else {
-            return random.nextDouble() < 0.000025 * (this.chanceMultiplier);
+            return random.nextDouble() < 0.00004 * (this.chanceMultiplier);
         }
     }
 
@@ -34,7 +34,7 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     @Override
     public void e() {
-        double hypo = random.nextDouble() * 50;
+        double hypo = random.nextDouble() * 50.0;
         BlockPosition pos = new BlockPosition(coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ()),  hypo, this.entity.locY(), 361.0));
 
         CustomEntityLightning lightning = new CustomEntityLightning(this.entity.getWorld());

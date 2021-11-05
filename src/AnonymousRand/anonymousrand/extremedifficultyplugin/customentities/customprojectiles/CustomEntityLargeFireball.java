@@ -48,7 +48,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && this.plugin != null) { //summon thor lightning
-                new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, this.random.nextInt(3) + 9, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(2) + 4);
+                new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 12.0, this.random.nextInt(3) + 10, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 2);
             }
 
             this.die();

@@ -32,7 +32,7 @@ public class CustomEntityZoglin extends EntityZoglin {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomEntityZoglin.CustomPathfinderGoalZoglinAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); //instead of using behavior-controlled idle actions
@@ -203,6 +203,7 @@ public class CustomEntityZoglin extends EntityZoglin {
             this.maxCycles = maxCycles;
         }
 
+        @Override
         public void run() {
             if (++this.cycles <= this.maxCycles) {
                 LivingEntity bukkitEntity = (LivingEntity)this.target.getBukkitEntity();

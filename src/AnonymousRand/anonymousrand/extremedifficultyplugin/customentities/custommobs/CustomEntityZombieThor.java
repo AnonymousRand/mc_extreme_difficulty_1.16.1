@@ -1,12 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntityZombieThor extends EntityZombie {
@@ -21,16 +18,17 @@ public class CustomEntityZombieThor extends EntityZombie {
         this.getBukkitEntity().setCustomName("Thor");
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE));
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather rain"); /**thor causes rain*/
     }
 
     @Override
     public void initPathfinder() { /***no longer targets iron golems*/
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
@@ -49,14 +47,15 @@ public class CustomEntityZombieThor extends EntityZombie {
             this.drownedConversionTime = Integer.MAX_VALUE;
         }
 
-        if (this.ticksLived == 10) { /**thor zombies move 2.5x faster and have 50 health, but doesn't summon reinforcements*/
+        if (this.ticksLived == 10) { /**thor zombies move 2.5x faster and have 55 health, but doesn't summon reinforcements*/
             this.setBaby(false);
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575);
             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.0);
             this.addEffect(new MobEffect(MobEffects.WEAKNESS, Integer.MAX_VALUE, 1)); /**this allows the zombie to only do ~2 damage at a time instead of 6*/
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
-            this.setHealth(40.0F);
-            this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 90, 0, true)); /**custom goal that allows thor to shoot a power 1 ghast fireball every 4.5 seconds that summons lightning*/
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(55.0);
+            this.setHealth(55.0F);
+            this.goalSelector.a(0, new NewPathfinderGoalThorSummonLightning(this.plugin, this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every 1.25 seconds (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 8.33 seconds*/
+            this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 80, 0, true)); /**custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning*/
         }
     }
 
@@ -76,7 +75,7 @@ public class CustomEntityZombieThor extends EntityZombie {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 32; /**random despawn distance increased to 64 blocks*/
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {

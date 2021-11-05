@@ -59,6 +59,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
                 nmsEntity instanceof CustomEntityZombieHusk ||
+                nmsEntity instanceof CustomEntityZombieSuper ||
                 nmsEntity instanceof CustomEntityZombieThor ||
                 nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
@@ -109,8 +110,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case ZOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case ZOMBIE -> {
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) { //todo temp
-                        new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombieThor(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) {
+                        new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombie(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                     }
                 }
                 case ZOMBIE_VILLAGER -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombieVillager(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
@@ -155,6 +156,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityZoglin ||
                         nmsEntity instanceof CustomEntityZombie ||
+                        nmsEntity instanceof CustomEntityZombieHusk ||
+                        nmsEntity instanceof CustomEntityZombieSuper ||
                         nmsEntity instanceof CustomEntityZombieThor ||
                         nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 

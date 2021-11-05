@@ -1,6 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSummonCobwebBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -65,6 +68,29 @@ public class MobDeathListeners implements Listener {
             case WANDERING_TRADER -> { /**wandering traders spawn 5 evokers and illusioners when killed*/
                 new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 5, null, null, nmsEntity, false, true).run();
             }//todo: change to custom mobs
+            case ZOMBIE -> {
+                if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
+                    new LightningStorm(nmsWorld, loc, this.random.nextInt(21) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
+                    Location loc2;
+                    CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
+
+                    for (int i = 0; i < 8; i++) {
+                        loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 3.0, loc.getY(), i * 45.0);
+                        bukkitWorld.strikeLightning(loc2);
+                    }
+
+                    CustomEntityLightning newLightning;
+                    for (int i = 0; i < 20; i++) {
+                        loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 10.0, loc.getY(), i * 18.0);
+
+                        newLightning = new CustomEntityLightning(nmsWorld);
+                        newLightning.setPosition(loc2.getX(), loc2.getY(), loc2.getZ());
+                        nmsWorld.addEntity(newLightning);
+                    }
+                } else if (nmsEntity instanceof CustomEntityZombieSuper) {
+                    PlayerDeathAndRespawnListeners.superZombies.remove(nmsEntity);
+                }
+            }
         }
     }
 }

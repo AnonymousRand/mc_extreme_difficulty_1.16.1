@@ -26,7 +26,7 @@ public class CustomEntityDrowned extends EntityDrowned {
 
     @Override
     public void m() { /**drowned no longer target iron golems*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks and continues shooting even when line of sight is broken*/

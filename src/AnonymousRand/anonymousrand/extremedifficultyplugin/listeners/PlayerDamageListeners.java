@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +15,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import static org.bukkit.entity.EntityType.*;
@@ -37,6 +36,11 @@ public class PlayerDamageListeners implements Listener {
             World nmsWorld = nmsDamager.getWorld();
 
             switch (event.getDamager().getType()) {
+                case AREA_EFFECT_CLOUD -> {
+                    if (nmsDamager instanceof CustomEntityAreaEffectCloud) {
+                        event.setDamage(((CustomEntityAreaEffectCloud)nmsDamager).damage); //todo: check
+                    }
+                }
                 case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
                 case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
                 case CHICKEN -> ((CustomEntityChickenAggressive)nmsDamager).attacks++;
@@ -57,10 +61,21 @@ public class PlayerDamageListeners implements Listener {
                     }
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        @Override
                         public void run() {
                             bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, doubled if baby*/
                         }
                     }, 2L);
+                }
+                case HUSK -> {
+                    CustomEntityZombieHusk husk = (CustomEntityZombieHusk)nmsDamager;
+                    husk.attacks++;
+
+                    if (husk.attacks < 30) {
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /**husks apply hunger for 1 minute instead*/
+                    } else { /**after 30 attacks, husks apply hunger 100 for 5 seconds instead*/
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 100, 99));
+                    }
                 }
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
@@ -72,6 +87,7 @@ public class PlayerDamageListeners implements Listener {
                         ravager.launchHigh = false;
                         event.setDamage(6.0);
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                            @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 1.0, 0.0));
                             }
@@ -79,6 +95,7 @@ public class PlayerDamageListeners implements Listener {
                     }
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        @Override
                         public void run() {
                             if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6*/
                                 ravager.launchHigh = true;
@@ -95,6 +112,7 @@ public class PlayerDamageListeners implements Listener {
                         sheep.launchHigh = false;
                         event.setDamage(9.0);
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                            @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0));
                             }
@@ -102,6 +120,7 @@ public class PlayerDamageListeners implements Listener {
                     }
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        @Override
                         public void run() {
                             if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 9*/
                                 sheep.launchHigh = true;
@@ -132,6 +151,7 @@ public class PlayerDamageListeners implements Listener {
 
                     if (zoglin.attacks >= 40) {
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                            @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)); /**after 40 attacks, zoglins throw players into the air when it hits the player*/
                             }
@@ -147,7 +167,7 @@ public class PlayerDamageListeners implements Listener {
                         CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
                         zombie.attacks++;
 
-                        if (zombie.attacks >= 35) { /**after 35 attacks, zombies summon vanilla lightning on the player when it hits the player*/
+                        if (zombie.attacks >= 30) { /**after 30 attacks, zombies summon vanilla lightning on the player when it hits the player*/
                             bukkitWorld.strikeLightning(bukkitPlayer.getLocation());
                         }
                     }
@@ -180,8 +200,16 @@ public class PlayerDamageListeners implements Listener {
                 event.setDamage(15.0); /**cactus does 15 damage per tick*/
             }
 
+            if (cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) { /**anvils do 60% less damage*/
+                event.setDamage(event.getDamage() * 0.4);
+            }
+
             if (cause.equals(EntityDamageEvent.DamageCause.LIGHTNING)) {
                 event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
+            }
+
+            if (cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION)) {
+                event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
             }
         }
     }

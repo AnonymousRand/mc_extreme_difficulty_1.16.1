@@ -15,6 +15,7 @@ public class SpiderSummonCobwebBlock extends BukkitRunnable {
         this.spider = spider;
     }
 
+    @Override
     public void run() {
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {

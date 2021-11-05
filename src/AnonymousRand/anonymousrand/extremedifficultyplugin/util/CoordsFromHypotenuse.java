@@ -15,7 +15,7 @@ public class CoordsFromHypotenuse {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(this.random.nextDouble() * 360);
         } else {
-            angle = Math.toRadians(angle);
+            angle = Math.toRadians(angle % 360.0);
         }
 
         double x = Math.floor(Math.abs(hypotenuse * Math.cos(angle)));
@@ -36,7 +36,7 @@ public class CoordsFromHypotenuse {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(this.random.nextDouble() * 360);
         } else {
-            angle = Math.toRadians(angle);
+            angle = Math.toRadians(angle % 360.0);
         }
 
         double x = Math.abs(hypotenuse * Math.sin(angle));

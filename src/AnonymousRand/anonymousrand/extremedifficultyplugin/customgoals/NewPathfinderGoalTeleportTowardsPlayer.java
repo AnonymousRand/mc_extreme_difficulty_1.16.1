@@ -6,7 +6,7 @@ import org.bukkit.Location;
 
 import java.util.Random;
 
-public class NewPathfinderGoalTeleportToPlayer extends PathfinderGoal {
+public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
     public EntityInsentient entity;
     private final double followRange, delayBeforeStarting, chancePerTick;
@@ -14,7 +14,7 @@ public class NewPathfinderGoalTeleportToPlayer extends PathfinderGoal {
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
     private final Random random = new Random();
 
-    public NewPathfinderGoalTeleportToPlayer(EntityInsentient entity, double initialFollowRange, double delayBeforeStarting, double chancePerTick) {
+    public NewPathfinderGoalTeleportTowardsPlayer(EntityInsentient entity, double initialFollowRange, double delayBeforeStarting, double chancePerTick) {
         this.entity = entity;
         this.followRange = initialFollowRange;
         this.delayBeforeStarting = delayBeforeStarting;

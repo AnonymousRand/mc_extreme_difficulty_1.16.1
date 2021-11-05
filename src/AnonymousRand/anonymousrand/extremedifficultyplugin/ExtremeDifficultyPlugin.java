@@ -24,7 +24,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     @Override
     public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(this), this);  //registers the listeners
-        getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
+        getServer().getPluginManager().registerEvents(new DropItemListeners(this),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new MobDeathListeners(this),this);
         getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(this), this);
@@ -32,7 +32,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDamageListeners(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(this), this);
         getServer().getPluginManager().registerEvents(new PlayerEatListeners(this),this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(this),this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new PotionEffectListeners(), this);

@@ -5,7 +5,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,7 +16,7 @@ public class CustomEntityZombie extends EntityZombie {
     private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a7, a15, a25, a45;
+    private boolean a7, a15, a25, a40, a50;
     private Field bA;
 
     public CustomEntityZombie(World world, JavaPlugin plugin) {
@@ -28,7 +27,8 @@ public class CustomEntityZombie extends EntityZombie {
         this.a7 = false;
         this.a15 = false;
         this.a25 = false;
-        this.a45 = false;
+        this.a40 = false;
+        this.a50 = false;
 
         try {
             this.bA = EntityZombie.class.getDeclaredField("bA");
@@ -42,10 +42,10 @@ public class CustomEntityZombie extends EntityZombie {
     protected void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /**custom goal that allows the mob to break the block it is looking at every 3 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
@@ -65,7 +65,7 @@ public class CustomEntityZombie extends EntityZombie {
                 return true;
             }
 
-            if (this.attacks >= 35) { /**after 35 attacks, zombies summon vanilla lightning on the player when it is hit*/
+            if (this.attacks >= 30) { /**after 30 attacks, zombies summon vanilla lightning on the player when it is hit*/
                 this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityliving.locX(), entityliving.locY(), entityliving.locZ()));
             }
 
@@ -151,8 +151,13 @@ public class CustomEntityZombie extends EntityZombie {
             new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZombie(this.getWorld(), this.plugin), 2, null, null, this, false, true).run();
         }
 
-        if (this.getHealth() <= 0.0 && this.attacks >= 45 && !this.a45) { /**after 45 attacks, zombies summon a small meteor rain when it dies*/
-            this.a45 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, zombies summon thor*/
+            this.a50 = true;
+            new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZombieThor(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
+        }
+
+        if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/
+            this.a40 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
             new MeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
             new MeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);

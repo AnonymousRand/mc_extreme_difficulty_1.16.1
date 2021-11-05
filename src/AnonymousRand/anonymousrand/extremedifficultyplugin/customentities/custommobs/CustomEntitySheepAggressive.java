@@ -42,7 +42,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
     protected void initPathfinder() { /**sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority)*/
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobweb(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 64.0F)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
         this.goalSelector.a(0, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
@@ -137,7 +137,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 32; /**random despawn distance increased to 64 blocks*/
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {

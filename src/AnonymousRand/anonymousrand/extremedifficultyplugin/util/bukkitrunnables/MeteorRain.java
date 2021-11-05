@@ -53,6 +53,7 @@ public class MeteorRain extends BukkitRunnable {
         this.vec = new Vector(0.0, -1.0, 0.0); //todo: delete if no need for wither skulls
     }
 
+    @Override
     public void run() {
         if (++this.cycles >= this.maxCycles) {
             this.cancel();
