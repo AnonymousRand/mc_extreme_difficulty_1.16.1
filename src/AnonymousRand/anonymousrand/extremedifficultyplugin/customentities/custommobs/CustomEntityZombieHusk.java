@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
@@ -15,7 +16,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk {
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a10, a25;
-    private CustomEntityAreaEffectCloud newAEC;
+    private final CustomEntityAreaEffectCloud newAEC;
 
     public CustomEntityZombieHusk(World world) {
         super(EntityTypes.HUSK, world);
@@ -23,10 +24,17 @@ public class CustomEntityZombieHusk extends EntityZombieHusk {
         this.attacks = 0;
         this.a10 = false;
         this.a25 = false;
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F, 160, 0, 2.0);
-        this.newAEC.setColor(2); //todo: which color for nauseating green?
+
+        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F, 100, 0);
+        this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.WEAKNESS, 120, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 120, 1));
+
+        try {
+            this.newAEC.setColor(PotionUtil.a(PotionUtil.a((PotionRegistry)this.newAEC.potionRegistry.get(this.newAEC), this.newAEC.effects)));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -75,6 +83,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk {
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 160)); /**custom goal that allows husk to summon area effect clouds on itself every 8 seconds that also give the player weakness 1 and slowness 2 for 6 seconds*/
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

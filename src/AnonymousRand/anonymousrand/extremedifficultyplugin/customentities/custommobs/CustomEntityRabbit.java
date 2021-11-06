@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -68,13 +69,13 @@ public class CustomEntityRabbit extends EntityRabbit {
             if (this.attacks == 5 && !this.a5) { /**after 5 attacks, killer bunnies gain speed 4*/
                 this.a5 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
             }
 
             if (this.attacks == 15 && !this.a15) { /**after 15 attacks, killer bunnies gain speed 5*/
                 this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
             }
 
             if (this.attacks == 25 && !this.a25) { /**after 25 attacks, killer bunnies gain speed 6 and 10 max health and health*/
@@ -90,6 +91,10 @@ public class CustomEntityRabbit extends EntityRabbit {
                 if (this.attacks >= 25) { /**after 25 attacks, killer bunnies explode when killed*/
                     this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
                 }
+            }
+
+            if (this.ticksLived == 10) {
+                RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
             }
         }
     }

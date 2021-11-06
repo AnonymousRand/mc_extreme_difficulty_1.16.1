@@ -1,12 +1,14 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSummonCobwebBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -40,7 +42,7 @@ public class MobDeathListeners implements Listener {
 
         switch (bukkitEntityType) { //stuff that happens when mobs die regardless of attack count
             case BAT -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 0.5F, false); /**bats explode with power 0.5 when killed*/
-            case CHICKEN -> { /**chickens drop 20 eggs on death*/
+            case CHICKEN -> { /**chickens drop 20 eggs when killed*/
                 bukkitWorld.dropItem(loc, new ItemStack(Material.EGG, 20));
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
@@ -60,14 +62,16 @@ public class MobDeathListeners implements Listener {
                     }
                 }
             }
+            case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true).run(); /**iron golems summon 15 silverfish when killed*/
             case MUSHROOM_COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 15.0F, false); /**mooshrooms explode with power 15 when killed*/
             case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds when killed in a 3 by 3 cube around itself*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
-                new SpiderSummonCobwebBlock(spider).run();
+                new SpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1).run();
             }
-            case WANDERING_TRADER -> { /**wandering traders spawn 5 evokers and illusioners when killed*/
-                new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 5, null, null, nmsEntity, false, true).run();
-            }//todo: change to custom mobs
+            case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
+                new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true).run();
+                new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true).run();
+            }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
                     new LightningStorm(nmsWorld, loc, this.random.nextInt(21) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
@@ -89,6 +93,18 @@ public class MobDeathListeners implements Listener {
                     }
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     PlayerDeathAndRespawnListeners.superZombies.remove(nmsEntity);
+                } else { /**zombies summon an area effect cloud when killed*/
+                    CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 100, 20);
+                    newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
+
+                    try {
+                        newAEC.setColor(PotionUtil.a(PotionUtil.a((PotionRegistry)newAEC.potionRegistry.get(newAEC), newAEC.effects)));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    newAEC.setPosition(nmsEntity.locX(), nmsEntity.locY(), nmsEntity.locZ());
+                    nmsWorld.addEntity(newAEC);
                 }
             }
         }

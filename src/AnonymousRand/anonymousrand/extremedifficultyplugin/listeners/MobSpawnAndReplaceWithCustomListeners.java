@@ -46,6 +46,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityGuardian ||
                 nmsEntity instanceof CustomEntityGuardianElder ||
                 nmsEntity instanceof CustomEntityHoglin ||
+                nmsEntity instanceof CustomEntityIllagerIllusioner ||
+                nmsEntity instanceof CustomEntityIronGolem ||
                 nmsEntity instanceof CustomEntityLlama ||
                 nmsEntity instanceof CustomEntityLlamaTrader ||
                 nmsEntity instanceof CustomEntityMushroomCow ||
@@ -90,6 +92,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case HOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                case ILLUSIONER -> new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case MUSHROOM_COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case RABBIT -> new SpawnLivingEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true).run(); /**rabbits are spawned in as 5-10 killer bunnies instead*/
@@ -144,6 +148,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityGuardian ||
                         nmsEntity instanceof CustomEntityGuardianElder ||
                         nmsEntity instanceof CustomEntityHoglin ||
+                        nmsEntity instanceof CustomEntityIllagerIllusioner ||
+                        nmsEntity instanceof CustomEntityIronGolem ||
                         nmsEntity instanceof CustomEntityLlama ||
                         nmsEntity instanceof CustomEntityLlamaTrader ||
                         nmsEntity instanceof CustomEntityMushroomCow ||
@@ -176,6 +182,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case HOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                         case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                        case ILLUSIONER -> new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                        case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case MUSHROOM_COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/

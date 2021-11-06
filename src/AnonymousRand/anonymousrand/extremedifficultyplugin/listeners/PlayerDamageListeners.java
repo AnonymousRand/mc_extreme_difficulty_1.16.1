@@ -36,11 +36,6 @@ public class PlayerDamageListeners implements Listener {
             World nmsWorld = nmsDamager.getWorld();
 
             switch (event.getDamager().getType()) {
-                case AREA_EFFECT_CLOUD -> {
-                    if (nmsDamager instanceof CustomEntityAreaEffectCloud) {
-                        event.setDamage(((CustomEntityAreaEffectCloud)nmsDamager).damage); //todo: check
-                    }
-                }
                 case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
                 case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
                 case CHICKEN -> ((CustomEntityChickenAggressive)nmsDamager).attacks++;

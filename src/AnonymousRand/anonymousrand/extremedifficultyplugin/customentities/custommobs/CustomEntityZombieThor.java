@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -56,6 +57,7 @@ public class CustomEntityZombieThor extends EntityZombie {
             this.setHealth(55.0F);
             this.goalSelector.a(0, new NewPathfinderGoalThorSummonLightning(this.plugin, this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every 1.25 seconds (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 8.33 seconds*/
             this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 80, 0, true)); /**custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning*/
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

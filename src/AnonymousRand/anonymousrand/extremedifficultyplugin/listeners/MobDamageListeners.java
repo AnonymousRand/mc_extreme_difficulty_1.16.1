@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChickenAggressive;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieVillager;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
@@ -11,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.List;
+
 import static org.bukkit.entity.EntityType.*;
 
 public class MobDamageListeners implements Listener {
@@ -19,18 +22,21 @@ public class MobDamageListeners implements Listener {
     public void entityDamage(EntityDamageEvent event) {
         EntityType entityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
+        Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
 
         switch (entityType) { //natural damage immunities by specific mobs
             case BAT, CHICKEN, HOGLIN, ZOGLIN -> /**bats, chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case DROWNED, HUSK, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, zombies, and zombie villagers are immune to fire, lightning, suffocation, or explosion damage*/
+            case DROWNED, HUSK, IRON_GOLEM, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, iron golems, zombies, and zombie villagers are immune to fire, lightning, suffocation, or explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case ENDERMAN, SHEEP ->/**endermen and sheep don't take fire, lava, or fall damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
-            case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take fire and lava damage*/
-                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA);
+            case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take fire, lava, or suffocation damage*/
+                    event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
             case GHAST -> /**ghasts don't take explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+            case ILLUSIONER -> /**illusioners don't take explosion and projectile damage*/
+                    event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.PROJECTILE);
             case LLAMA, TRADER_LLAMA -> /**llamas and trader llamas don't take fire or explosion damage*/
                     event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case SKELETON, STRAY -> /**skeletons and strays are immune to fire and lightning damage*/
@@ -41,7 +47,7 @@ public class MobDamageListeners implements Listener {
             return;
         }
 
-        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT);
+        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING);
 
         if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /**all non-player mobs take 95% less damage from these sources*/
             if (checkCause) {
@@ -58,12 +64,22 @@ public class MobDamageListeners implements Listener {
             }
         }
 
-        if (cause.equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs on death don't cause an endless cycle*/
+        if (cause.equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs when killed don't cause an endless cycle*/
             event.setCancelled(true);
         }
 
-        if (cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds or falling anvils*/
+        if ((cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds or falling anvils*/
             event.setCancelled(true);
+        }
+
+        if (entityType != IRON_GOLEM && entityType != PLAYER) { /**golems within 40 block cube of damaged entity get a 15% stat boost*/
+            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(40.0));
+
+            for (Entity entity : nmsEntities) {
+                if (entity instanceof CustomEntityIronGolem) {
+                    ((CustomEntityIronGolem)entity).increaseStats(1.15);
+                }
+            }
         }
     }
 

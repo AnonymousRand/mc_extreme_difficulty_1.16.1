@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import net.minecraft.server.v1_16_R1.*;
@@ -40,6 +41,7 @@ public class CustomEntityBee extends EntityBee {
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
             this.setHealth(5.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
 
         if (this.hasStung()) {

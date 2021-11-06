@@ -1,13 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoal;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -48,61 +48,6 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
 
     protected AxisAlignedBB a(double d0) {
         return this.e.getBoundingBox().grow(d0, 4.0D, d0);
-    }
-
-    @Override
-    public void c() {
-        if (this.nearestTarget != null) {
-            this.e.setGoalTarget(this.nearestTarget);
-        }
-
-        if (this.firstTarget && this.targetClass.getName().toLowerCase().contains("human")) { //must put the one checking for human entites last in initPathfinder() to avoid modifying the target selector while this method is trying to remove a goal from it; custom version of this goal must also be higher priority than vanilla nearest attackable target goal so that this one always picks up the target first and does the thingy below
-            this.firstTarget = false; //remove original hurtByTargetGoal and replace with custom one
-
-            Field goalSet;
-            ArrayList<PathfinderGoal> goalsToRemove = new ArrayList<>();
-
-            try {
-                goalSet = PathfinderGoalSelector.class.getDeclaredField("d"); //get list of goals from original entity (not just running/active goals)
-                goalSet.setAccessible(true);
-
-                switch (this.e.getBukkitEntity().getType()) { //need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
-                    case BEE -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityBee)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case BLAZE -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityBlaze)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case ENDERMITE -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityEndermite)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case HOGLIN -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityHoglin)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case HUSK -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieHusk)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case RABBIT -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case RAVAGER -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityRavager)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case SILVERFISH -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntitySilverfish)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case ZOGLIN -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                    case ZOMBIE -> {
-                        if (this.e instanceof CustomEntityZombieThor) {
-                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set) goalSet.get(((CustomEntityZombieThor) this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                        } else if (this.e instanceof CustomEntityZombieSuper) {
-                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set) goalSet.get(((CustomEntityZombieSuper) this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                        } else {
-                            goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombie)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                        }
-                    }
-                    case ZOMBIE_VILLAGER -> goalsToRemove = (RemovePathfinderGoal.removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieVillager)this.e).targetSelectorVanilla), PathfinderGoalHurtByTarget.class));
-                }
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            if (goalsToRemove.size() > 0) {
-                for (PathfinderGoal goal : goalsToRemove) { //but somehow removing vanilla goals from custom target selectors still works
-                    if (!(goal instanceof CustomPathfinderGoalHurtByTarget)) {
-                        this.e.targetSelector.a(goal); //remove goal
-                    }
-                }
-
-                this.e.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)this.e, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-            }
-        }
-
-        super.c();
     }
 
     public void a(@Nullable EntityLiving entityliving) {

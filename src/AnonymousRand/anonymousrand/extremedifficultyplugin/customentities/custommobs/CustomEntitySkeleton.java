@@ -17,8 +17,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public int attacks;
     private boolean a25, a90;
 
-    private final CustomPathfinderGoalBowShoot<EntitySkeletonAbstract> b = new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 22.0F); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-
     public CustomEntitySkeleton(World world, JavaPlugin plugin) {
         super(EntityTypes.SKELETON, world);
         this.plugin = plugin;
@@ -35,6 +33,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
+        this.goalSelector.a(4, new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -56,8 +55,9 @@ public class CustomEntitySkeleton extends EntitySkeleton {
                 double d0 = entityliving.locX() - this.locX();
                 double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
                 double d2 = entityliving.locZ() - this.locZ();
+                double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-                entityarrow.shoot(d0, d1, d2, 1.6F, (float)(50 - this.getWorld().getDifficulty().a() * 4)); //more inaccuracy
+                entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(50 - this.getWorld().getDifficulty().a() * 4)); //more inaccuracy
                 this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
                 this.getWorld().addEntity(entityarrow);
             }
@@ -93,18 +93,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     }
 
     @Override
-    public void eM() { //"re-registers" the new field "b" since reflection doesn't seem to work
-        if (this.getWorld() != null && !this.getWorld().isClientSide) {
-            this.goalSelector.a((PathfinderGoal)this.b);
-            ItemStack itemstack = this.b(ProjectileHelper.a(this, Items.BOW));
-
-            if (itemstack.getItem() == Items.BOW) {
-                this.goalSelector.a(4, this.b);
-            }
-        }
-    }
-
-    @Override
     public EntityArrow b(ItemStack itemstack, float f) { //make it public
         return ProjectileHelper.a(this, itemstack, f);
     }
@@ -129,7 +117,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/ //todo

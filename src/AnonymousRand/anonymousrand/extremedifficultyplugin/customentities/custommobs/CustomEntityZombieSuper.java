@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -97,6 +98,7 @@ public class CustomEntityZombieSuper extends EntityZombie {
             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(1.0);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.setHealth(40.0F);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 }

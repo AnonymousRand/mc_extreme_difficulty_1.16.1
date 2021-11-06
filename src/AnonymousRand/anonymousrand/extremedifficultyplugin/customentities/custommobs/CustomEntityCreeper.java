@@ -87,7 +87,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
         this.setHealth(100.0F);
         this.maxFuseTicks = 30;
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
     }
 
     private void createEffectCloud() {

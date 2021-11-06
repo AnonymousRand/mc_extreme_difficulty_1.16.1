@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.GenericAttributes;
 import net.minecraft.server.v1_16_R1.PathfinderGoalTarget;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -61,6 +62,12 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             }
             case HUSK -> {
                 return ((CustomEntityZombieHusk)this.e).getFollowRange();
+            }
+            case ILLUSIONER -> {
+                return ((CustomEntityIllagerIllusioner)this.e).getFollowRange();
+            }
+            case IRON_GOLEM -> {
+                return ((CustomEntityIronGolem)this.e).getFollowRange();
             }
             case LLAMA -> {
                 return ((CustomEntityLlama)this.e).getFollowRange();

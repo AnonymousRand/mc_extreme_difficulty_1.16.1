@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
 import net.minecraft.server.v1_16_R1.*;
@@ -63,11 +64,12 @@ public class CustomEntityZombieVillager extends EntityZombieVillager {
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { //do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
             this.deathLightningStorm = true;
             LightningStrikeListeners.storm = true;
-            new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), this.random.nextInt(10) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm on death*/
+            new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), this.random.nextInt(10) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
         }
 
         if (this.ticksLived == 10) { /**zombie villgers move 3x faster*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

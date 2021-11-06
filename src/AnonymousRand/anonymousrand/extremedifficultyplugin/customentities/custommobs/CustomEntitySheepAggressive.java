@@ -85,7 +85,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         if (this.attacks == 20 && !this.a20) { /**after 20 attacks, aggressive sheep gain speed 1*/
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 3*/

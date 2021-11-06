@@ -62,7 +62,7 @@ public class CustomEntityGhast extends EntityGhast {
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new GhastDeathFireballs(this, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**on death, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new GhastDeathFireballs(this, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 

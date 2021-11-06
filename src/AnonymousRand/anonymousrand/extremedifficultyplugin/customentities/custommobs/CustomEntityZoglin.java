@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -97,6 +98,7 @@ public class CustomEntityZoglin extends EntityZoglin {
         if (this.ticksLived == 10) { /**zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies)*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -52,7 +53,7 @@ public class CustomEntityRavager extends EntityRavager {
             this.a20 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, ravagers get extra knockback*/
@@ -70,6 +71,7 @@ public class CustomEntityRavager extends EntityRavager {
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
             this.setHealth(400.0F);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

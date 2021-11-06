@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -8,13 +9,23 @@ import org.bukkit.entity.LivingEntity;
 public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     public int attacks;
-    private boolean a25, a80;
+    private boolean a25, a45;
+    private final CustomEntityAreaEffectCloud newAEC;
 
     public CustomEntitySpiderCave(World world) {
         super(EntityTypes.CAVE_SPIDER, world);
-        this.attacks = 0;
+        this.attacks = 45;
         this.a25 = false;
-        this.a80 = false;
+        this.a45 = false;
+
+        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,50, 40);
+        this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
+
+        try {
+            this.newAEC.setColor(PotionUtil.a(PotionUtil.a((PotionRegistry)this.newAEC.potionRegistry.get(this.newAEC), this.newAEC.effects)));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -43,6 +54,10 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
 
         if (this.ticksLived == 400) { /**duplicates if it has been alive for 20 seconds*/
             new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true).run();
+            this.getBukkitEntity().setCustomName("Haha good luck making me despawn"); //doesn't despawn and doesn't count towards mob cap
+        } else if (this.ticksLived == 6000) { /**explodes and dies after 5 minutes to reduce lag*/
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
+            this.die();
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, cave spiders gain speed 2*/
@@ -50,16 +65,16 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs*/
-            this.a80 = true;
-            //todo: custom area effect cloud
+        if (this.attacks == 45 && !this.a45) { /**after 45 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs*/
+            this.a45 = true;
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1));
         }
 
-        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and have 8 health*/
+        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and have 9 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(8.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
+            this.setHealth(9.0F);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
         }
     }
 

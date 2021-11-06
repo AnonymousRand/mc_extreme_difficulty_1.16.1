@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSummonCobwebBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -51,7 +51,7 @@ public class CustomEntitySpider extends EntitySpider {
 
         if (this.attacks % 20 == 0 && this.attacks != 0 && !this.a20) { /**every 20 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself*/
             this.a20 = true;
-            new SpiderSummonCobwebBlock(this).run();
+            new SpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.COBWEB, 1).run();
         }
 
         if (this.attacks == 18 && !this.a18) { /**after 18 attacks, spiders gain speed 1*/

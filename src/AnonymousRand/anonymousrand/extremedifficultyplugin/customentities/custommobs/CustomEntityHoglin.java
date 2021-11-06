@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -58,7 +59,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         if (this.attacks == 10 && !this.a10) { /**after 10 attacks, hoglins get regen 2*/
             this.a10 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 32 && !this.a32) { /**after 32 attacks, hoglins get regen 3*/
@@ -90,6 +91,7 @@ public class CustomEntityHoglin extends EntityHoglin {
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 6.0 : 3.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

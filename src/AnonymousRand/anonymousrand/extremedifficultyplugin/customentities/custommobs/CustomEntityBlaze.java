@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -53,6 +54,7 @@ public class CustomEntityBlaze extends EntityBlaze {
         if (this.ticksLived == 10) { /**blazes have 6 health*/
             this.setHealth(6.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
+            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

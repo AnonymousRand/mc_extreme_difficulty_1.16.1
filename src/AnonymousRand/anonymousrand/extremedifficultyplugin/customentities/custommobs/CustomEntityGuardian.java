@@ -70,7 +70,7 @@ public class CustomEntityGuardian extends EntityGuardian {
 
         if (this.attacks == 10 && !this.a10) {
             this.a10 = true;
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, guardians gain regen 3 and 40 max health*/

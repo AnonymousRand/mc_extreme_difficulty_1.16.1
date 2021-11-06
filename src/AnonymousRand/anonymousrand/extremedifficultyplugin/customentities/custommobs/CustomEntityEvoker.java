@@ -37,18 +37,18 @@ public class CustomEntityEvoker extends EntityEvoker {
     protected void initPathfinder() { /**no longer targets iron golems*/
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
-        this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
         this.goalSelector.a(5, new c(this));
+        this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CastingSpellGoal());
+        this.goalSelector.a(1, new CustomPathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
-        this.goalSelector.a(4, new SummonVexSpell());
-        this.goalSelector.a(5, new FangAttackSpell());
-        this.goalSelector.a(6, new WololoSpellGoal());
+        this.goalSelector.a(4, new CustomPathfinderGoalEvokerSummonVexSpell());
+        this.goalSelector.a(5, new CustomPathfinderGoalEvokerFangSpell());
+        this.goalSelector.a(6, new CustomPathfinderGoalEvokerWololoSpell());
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -61,7 +61,7 @@ public class CustomEntityEvoker extends EntityEvoker {
     public void die() {
         super.die();
 
-        if (this.attacks >= 60) { /**after 60 attacks, evokers summon 7 vexes on death*/ //todo
+        if (this.attacks >= 60) { /**after 60 attacks, evokers summon 7 vexes when killed*/ //todo
 
         }
     }
@@ -81,7 +81,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
             this.a36 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates attack range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex
@@ -163,11 +163,11 @@ public class CustomEntityEvoker extends EntityEvoker {
         return this.wololoTarget;
     }
 
-    class SummonVexSpell extends EntityIllagerWizard.c {
+    class CustomPathfinderGoalEvokerSummonVexSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e;
 
-        private SummonVexSpell() {
+        private CustomPathfinderGoalEvokerSummonVexSpell() {
             super();
             this.e = (new PathfinderTargetCondition()).a(16.0D).c().e().a().b();
         }
@@ -223,9 +223,9 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
-    class FangAttackSpell extends EntityIllagerWizard.c {
+    class CustomPathfinderGoalEvokerFangSpell extends EntityIllagerWizard.c {
 
-        private FangAttackSpell() {
+        private CustomPathfinderGoalEvokerFangSpell() {
             super();
         }
 
@@ -339,13 +339,13 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
-    public class WololoSpellGoal extends EntityIllagerWizard.c {
+    public class CustomPathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityliving) -> {
             return !((EntitySheep)entityliving).getColor().equals(EnumColor.PINK); /**can target all non-pink sheep now within 32 blocks and with line of sight*/
         });
 
-        public WololoSpellGoal() {
+        public CustomPathfinderGoalEvokerWololoSpell() {
             super();
         }
 
@@ -426,9 +426,9 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
-    class CastingSpellGoal extends EntityIllagerWizard.b {
+    class CustomPathfinderGoalEvokerCastSpell extends EntityIllagerWizard.b {
 
-        private CastingSpellGoal() {
+        private CustomPathfinderGoalEvokerCastSpell() {
             super();
         }
 
@@ -442,9 +442,51 @@ public class CustomEntityEvoker extends EntityEvoker {
         }
     }
 
+    public class c extends PathfinderGoal { //from EntityRaider.java
+
+        private final CustomEntityEvoker evoker;
+
+        public c(CustomEntityEvoker entityraider) {
+            this.evoker = entityraider;
+            this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
+        }
+
+        @Override
+        public boolean a() {
+            Raid raid = this.evoker.fb();
+
+            return this.evoker.isAlive() && this.evoker.getGoalTarget() == null && raid != null && raid.isLoss();
+        }
+
+        @Override
+        public void c() {
+            this.evoker.x(true);
+            super.c();
+        }
+
+        @Override
+        public void d() {
+            this.evoker.x(false);
+            super.d();
+        }
+
+        @Override
+        public void e() {
+            if (!this.evoker.isSilent() && this.evoker.getRandom().nextInt(100) == 0) {
+                CustomEntityEvoker.this.playSound(CustomEntityEvoker.this.eM(), CustomEntityEvoker.this.getSoundVolume(), CustomEntityEvoker.this.dG());
+            }
+
+            if (!this.evoker.isPassenger() && this.evoker.random.nextInt(50) == 0) {
+                this.evoker.getControllerJump().jump();
+            }
+
+            super.e();
+        }
+    }
+
     static class d extends PathfinderGoal { //from EntityRaider.java
 
-        private final EntityRaider a;
+        private final EntityRaider raider;
         private final double b;
         private BlockPosition c;
         private final List<BlockPosition> d = Lists.newArrayList();
@@ -452,7 +494,7 @@ public class CustomEntityEvoker extends EntityEvoker {
         private boolean f;
 
         public d(EntityRaider entityraider, double d0, int i) {
-            this.a = entityraider;
+            this.raider = entityraider;
             this.b = d0;
             this.e = i;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
@@ -461,19 +503,19 @@ public class CustomEntityEvoker extends EntityEvoker {
         @Override
         public boolean a() {
             this.j();
-            return this.g() && this.h() && this.a.getGoalTarget() == null;
+            return this.g() && this.h() && this.raider.getGoalTarget() == null;
         }
 
         private boolean g() {
-            return this.a.fc() && !this.a.fb().a();
+            return this.raider.fc() && !this.raider.fb().a();
         }
 
         private boolean h() {
-            WorldServer worldserver = (WorldServer) this.a.world;
-            BlockPosition blockposition = this.a.getChunkCoordinates();
+            WorldServer worldserver = (WorldServer) this.raider.world;
+            BlockPosition blockposition = this.raider.getChunkCoordinates();
             Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> {
                 return villageplacetype == VillagePlaceType.r;
-            }, this::a, VillagePlace.Occupancy.ANY, blockposition, 48, this.a.getRandom());
+            }, this::a, VillagePlace.Occupancy.ANY, blockposition, 48, this.raider.getRandom());
 
             if (!optional.isPresent()) {
                 return false;
@@ -485,12 +527,12 @@ public class CustomEntityEvoker extends EntityEvoker {
 
         @Override
         public boolean b() {
-            return this.a.getNavigation().m() ? false : this.a.getGoalTarget() == null && !this.c.a((IPosition) this.a.getPositionVector(), (double)(this.a.getWidth() + (float)this.e)) && !this.f;
+            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a((IPosition) this.raider.getPositionVector(), (double)(this.raider.getWidth() + (float)this.e)) && !this.f;
         }
 
         @Override
         public void d() {
-            if (this.c.a((IPosition) this.a.getPositionVector(), (double)this.e)) {
+            if (this.c.a((IPosition) this.raider.getPositionVector(), (double)this.e)) {
                 this.d.add(this.c);
             }
 
@@ -499,19 +541,19 @@ public class CustomEntityEvoker extends EntityEvoker {
         @Override
         public void c() {
             super.c();
-            this.a.n(0);
-            this.a.getNavigation().a((double)this.c.getX(), (double)this.c.getY(), (double)this.c.getZ(), this.b);
+            this.raider.n(0);
+            this.raider.getNavigation().a((double)this.c.getX(), (double)this.c.getY(), (double)this.c.getZ(), this.b);
             this.f = false;
         }
 
         @Override
         public void e() {
-            if (this.a.getNavigation().m()) {
+            if (this.raider.getNavigation().m()) {
                 Vec3D vec3d = Vec3D.c((BaseBlockPosition) this.c);
-                Vec3D vec3d1 = RandomPositionGenerator.a(this.a, 16, 7, vec3d, 0.3141592741012573D);
+                Vec3D vec3d1 = RandomPositionGenerator.a(this.raider, 16, 7, vec3d, 0.3141592741012573D);
 
                 if (vec3d1 == null) {
-                    vec3d1 = RandomPositionGenerator.b(this.a, 8, 7, vec3d);
+                    vec3d1 = RandomPositionGenerator.b(this.raider, 8, 7, vec3d);
                 }
 
                 if (vec3d1 == null) {
@@ -519,7 +561,7 @@ public class CustomEntityEvoker extends EntityEvoker {
                     return;
                 }
 
-                this.a.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
+                this.raider.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
             }
 
         }
@@ -545,48 +587,6 @@ public class CustomEntityEvoker extends EntityEvoker {
                 this.d.remove(0);
             }
 
-        }
-    }
-
-    public class c extends PathfinderGoal { //from EntityRaider.java
-
-        private final CustomEntityEvoker b;
-
-        c(CustomEntityEvoker entityraider) {
-            this.b = entityraider;
-            this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
-        }
-
-        @Override
-        public boolean a() {
-            Raid raid = this.b.fb();
-
-            return this.b.isAlive() && this.b.getGoalTarget() == null && raid != null && raid.isLoss();
-        }
-
-        @Override
-        public void c() {
-            this.b.x(true);
-            super.c();
-        }
-
-        @Override
-        public void d() {
-            this.b.x(false);
-            super.d();
-        }
-
-        @Override
-        public void e() {
-            if (!this.b.isSilent() && this.b.getRandom().nextInt(100) == 0) {
-                CustomEntityEvoker.this.playSound(CustomEntityEvoker.this.eM(), CustomEntityEvoker.this.getSoundVolume(), CustomEntityEvoker.this.dG());
-            }
-
-            if (!this.b.isPassenger() && this.b.random.nextInt(50) == 0) {
-                this.b.getControllerJump().jump();
-            }
-
-            super.e();
         }
     }
 

@@ -1,8 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombie;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.ThorLightningEffectStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
@@ -19,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.bukkit.entity.EntityType.VILLAGER;
@@ -34,8 +37,12 @@ public class RaidAndVillagerListeners implements Listener {
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {
-        if ((event.getEntityType() == VILLAGER) && event.getDamager() instanceof Player) { /**villagers give players bad omen if they are hit by a player*/
-            ((Player)event.getDamager()).addPotionEffect(new PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 255));
+        if ((event.getEntityType() == VILLAGER)) {
+            event.setDamage(event.getDamage() * 2.0); /**villagers take twice as much damage from everything*/
+
+            if (event.getDamager() instanceof Player) { /**villagers give players bad omen if they are hit by a player*/
+                ((Player)event.getDamager()).addPotionEffect(new PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 255));
+            }
         }
     }
 
@@ -43,9 +50,19 @@ public class RaidAndVillagerListeners implements Listener {
     public void villagerDeath(EntityDeathEvent event) {
         if (event.getEntityType() == VILLAGER) {
             LivingEntity bukkitVillager = event.getEntity();
+            EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
 
             new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityZombie(nmsWorld, this.plugin), 5, null, bukkitVillager.getLocation(), true).run();  /**5 zombies are spawned when a villager dies*/
+
+            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(64.0));
+
+            for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
+                if (entity instanceof CustomEntityIronGolem) {
+                    ((CustomEntityIronGolem)entity).increaseStats(1.25);
+                    new ThorLightningEffectStorm(entity, 100).runTaskTimer(this.plugin, 0L, 2L);
+                }
+            }
         }
     }
 
