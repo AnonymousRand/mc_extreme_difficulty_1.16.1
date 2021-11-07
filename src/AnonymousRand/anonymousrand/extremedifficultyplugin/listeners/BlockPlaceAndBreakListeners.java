@@ -46,14 +46,14 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 new ConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(this.plugin, 0L, 100L);
             }
         } else {
-            if (type == Material.COBWEB || type == Material.LAVA) { /**spider-placed cobwebs and hoglin-placed lava is deleted after 4 seconds*/
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 4 seconds
+            if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 2.5 seconds
                 {
                     @Override
                     public void run() {
                         bukkitBlock.setType(Material.AIR);
                     }
-                }, 80);
+                }, 50);
             }
         }
     }

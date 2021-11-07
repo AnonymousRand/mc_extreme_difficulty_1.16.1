@@ -84,7 +84,6 @@ public class CustomEntityHoglin extends EntityHoglin {
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
         if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**hoglins lay down fire trails on itself as long as it is inside an air block*/
             thisLoc.getBlock().setType(org.bukkit.Material.FIRE);
-            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(thisLoc.getBlock(), thisLoc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
         }
 
         if (this.ticksLived == 10) { /**hoglins move 75% faster (125% faster for babies), do 3 damage (6 for babies), and have extra knockback*/

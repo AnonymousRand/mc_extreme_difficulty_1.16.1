@@ -22,7 +22,6 @@ public class SpiderSilverfishSummonMaterialBlock extends BukkitRunnable {
 
     @Override
     public void run() {
-        Bukkit.broadcastMessage("run");
         for (int x = -this.radius; x <= this.radius; x++) {
             for (int y = -this.radius; y <= this.radius; y++) {
                 for (int z = -this.radius; z <= this.radius; z++) {

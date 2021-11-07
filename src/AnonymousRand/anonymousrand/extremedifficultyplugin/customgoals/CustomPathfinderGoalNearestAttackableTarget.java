@@ -46,6 +46,15 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         }
     }
 
+    @Override
+    public void c() {
+        super.c();
+
+        if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
+            this.e.setGoalTarget(this.nearestTarget); //must have this to work
+        }
+    }
+
     protected AxisAlignedBB a(double d0) {
         return this.e.getBoundingBox().grow(d0, 4.0D, d0);
     }

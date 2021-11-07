@@ -33,8 +33,7 @@ public class CustomEntityIronGolem extends EntityIronGolem {
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
-    public void increaseStats(double multipler) {
-        Bukkit.broadcastMessage("mulitplu");
+    public void increaseStatsMultiply(double multipler) {
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multipler);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multipler);
         this.setHealth((float)(this.getHealth() * multipler));
@@ -45,6 +44,17 @@ public class CustomEntityIronGolem extends EntityIronGolem {
         }
 
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); //updates follow range
+    }
+
+    public void increaseStatsAdd(double healthAdd, double damageAdd, double speedAdd) {
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + damageAdd);
+
+        if (this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() <= (0.65 - speedAdd)) {
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() + speedAdd);
+        }
+
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() + healthAdd);
+        this.setHealth((float)(this.getHealth() + healthAdd));
     }
 
     public double getFollowRange() { /**iron golems have 24 block detection range (setting attribute doesn't work)*/

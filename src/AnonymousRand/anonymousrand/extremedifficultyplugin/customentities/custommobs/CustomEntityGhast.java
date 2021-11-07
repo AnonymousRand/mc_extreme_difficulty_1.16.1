@@ -1,15 +1,14 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.FireballsInAllDirections;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -62,7 +61,7 @@ public class CustomEntityGhast extends EntityGhast {
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new GhastDeathFireballs(this, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new FireballsInAllDirections(this, 0.4, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 
@@ -183,7 +182,7 @@ public class CustomEntityGhast extends EntityGhast {
                     world.addEntity(entitylargefireball);
 
                     if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
-                        new GhastDeathFireballs(this.ghast, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
+                        new FireballsInAllDirections(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
                     }
 
                     this.a = 0;
@@ -269,41 +268,6 @@ public class CustomEntityGhast extends EntityGhast {
             double d2 = this.a.locZ() + (double)((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
 
             this.a.getControllerMove().a(d0, d1, d2, 1.0D);
-        }
-    }
-
-    static class GhastDeathFireballs extends BukkitRunnable {
-
-        private CustomEntityGhast ghast;
-        private int cycles, maxCycles;
-        private double x, y, z;
-        private CustomEntitySmallFireball entitySmallFireball;
-
-        public GhastDeathFireballs(CustomEntityGhast ghast, int maxCycles) {
-            this.ghast = ghast;
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
-        }
-
-        @Override
-        public void run() {
-            if (++this.cycles > this.maxCycles) {
-                this.cancel();
-            }
-
-            if (this.ghast.attacks < 100) {
-                for (double x = -1.0; x <= 1.0; x += 0.4) {
-                    for (double y = -1.0; y <= 1.0; y += 0.4) {
-                        for (double z = -1.0; z <= 1.0; z += 0.4) {
-                            entitySmallFireball = new CustomEntitySmallFireball(this.ghast.getWorld(), this.ghast, x, y, z);
-                            entitySmallFireball.setPosition(entitySmallFireball.locX(), this.ghast.e(0.5D) + 0.5D, entitySmallFireball.locZ());
-                            this.ghast.getWorld().addEntity(entitySmallFireball);
-                        }
-                    }
-                }
-            } else {
-                //todo: summon wither skulls instead
-            }
         }
     }
 }

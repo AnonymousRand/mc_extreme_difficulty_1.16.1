@@ -63,6 +63,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case HUSK -> {
                 return ((CustomEntityZombieHusk)this.e).getFollowRange();
             }
+            case MAGMA_CUBE -> {
+                return ((CustomEntitySlimeMagmaCube)this.e).getFollowRange();
+            }
             case ILLUSIONER -> {
                 return ((CustomEntityIllagerIllusioner)this.e).getFollowRange();
             }
@@ -87,11 +90,14 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case SKELETON -> {
                 return ((CustomEntitySkeleton)this.e).getFollowRange();
             }
-            case STRAY -> {
-                return ((CustomEntitySkeletonStray)this.e).getFollowRange();
+            case SLIME -> {
+                return ((CustomEntitySlime)this.e).getFollowRange();
             }
             case SPIDER -> {
                 return ((CustomEntitySpider)this.e).getFollowRange();
+            }
+            case STRAY -> {
+                return ((CustomEntitySkeletonStray)this.e).getFollowRange();
             }
             case TRADER_LLAMA -> {
                 return ((CustomEntityLlamaTrader)this.e).getFollowRange();

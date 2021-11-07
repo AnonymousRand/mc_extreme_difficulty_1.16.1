@@ -59,7 +59,7 @@ public class RaidAndVillagerListeners implements Listener {
 
             for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
                 if (entity instanceof CustomEntityIronGolem) {
-                    ((CustomEntityIronGolem)entity).increaseStats(1.25);
+                    ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
                     new ThorLightningEffectStorm(entity, 100).runTaskTimer(this.plugin, 0L, 2L);
                 }
             }

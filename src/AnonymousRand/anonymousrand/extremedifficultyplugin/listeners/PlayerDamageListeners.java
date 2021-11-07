@@ -1,6 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -55,7 +54,7 @@ public class PlayerDamageListeners implements Listener {
                         hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + 1.2);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() { //delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
                         @Override
                         public void run() {
                             bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, doubled if baby*/
@@ -70,6 +69,21 @@ public class PlayerDamageListeners implements Listener {
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /**husks apply hunger for 1 minute instead*/
                     } else { /**after 30 attacks, husks apply hunger 100 for 5 seconds instead*/
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 100, 99));
+                    }
+                }
+                case MAGMA_CUBE -> ((CustomEntitySlimeMagmaCube)nmsDamager).attacks++;
+                case IRON_GOLEM -> {
+                    CustomEntityIronGolem ironGolem = (CustomEntityIronGolem)nmsDamager;
+                    ironGolem.attacks++;
+                    ironGolem.increaseStatsAdd(1.0, 0.25, 0.015);
+
+                    if (ironGolem.attacks == 10 || ironGolem.attacks == 20 || ironGolem.attacks == 25 || ironGolem.attacks == 30 || ironGolem.attacks == 35 || ironGolem.attacks == 40 || ironGolem.attacks == 43 || ironGolem.attacks == 46 || ironGolem.attacks == 49 || ironGolem.attacks >= 50) { /**on these attacks, iron golems knock players high into the air*/
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0));
+                            }
+                        }, 2L);
                     }
                 }
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
@@ -131,6 +145,7 @@ public class PlayerDamageListeners implements Listener {
                         new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true).run();
                     }
                 }
+                case SLIME -> ((CustomEntitySlime)nmsDamager).attacks++;
                 case SPIDER -> {
                     CustomEntitySpider spider = (CustomEntitySpider)nmsDamager;
                     spider.attacks++;

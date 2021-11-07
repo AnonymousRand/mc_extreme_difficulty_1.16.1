@@ -46,6 +46,10 @@ public class RemovePathfinderGoals {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieHusk)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieHusk)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
+                case MAGMA_CUBE -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
                 case RABBIT -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
@@ -57,6 +61,10 @@ public class RemovePathfinderGoals {
                 case SILVERFISH -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySilverfish)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySilverfish)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
+                case SLIME -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
                 case ZOGLIN -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
@@ -85,13 +93,14 @@ public class RemovePathfinderGoals {
 
         if (goalsToRemove.size() > 0) {
             for (PathfinderGoal goal : goalsToRemove) { //but somehow removing vanilla goals from custom target selectors still works
-                if (!(goal instanceof CustomPathfinderGoalHurtByTarget) && !(goal instanceof CustomPathfinderGoalNearestAttackableTarget)) { //todo: mobs not attacking players anymore, seems like the player attacking goal got removed too
-                    Bukkit.broadcastMessage(goal.getClass().getName());
+                if (!(goal instanceof CustomPathfinderGoalHurtByTarget) && !(goal instanceof CustomPathfinderGoalNearestAttackableTarget)) {
                     entity.targetSelector.a(goal); //remove goal
                 }
             }
 
-            entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+            if (entity instanceof EntityCreature) {
+                entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+            }
         }
     }
 

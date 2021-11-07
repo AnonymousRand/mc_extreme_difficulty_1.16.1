@@ -17,7 +17,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
         endStone.set("durability", 16.0F);
 
-        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /**spawners are now indestructible by explosions and twice as hard to break as obsidian*/
+        BlockOverride obsidian = new BlockOverride(Blocks.OBSIDIAN); /**obsidian now has a blast resistance of 12*/
+        obsidian.set("durability", 12.0F);
+
+        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /**spawners are now indestructible by explosions*/
         spawner.set("durability", 3600000.0F);
     }
 

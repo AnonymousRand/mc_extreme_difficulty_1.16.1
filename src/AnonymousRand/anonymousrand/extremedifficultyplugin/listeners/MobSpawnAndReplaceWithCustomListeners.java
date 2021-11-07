@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.*;
@@ -48,6 +49,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityHoglin ||
                 nmsEntity instanceof CustomEntityIllagerIllusioner ||
                 nmsEntity instanceof CustomEntityIronGolem ||
+                nmsEntity instanceof CustomEntitySlimeMagmaCube ||
                 nmsEntity instanceof CustomEntityLlama ||
                 nmsEntity instanceof CustomEntityLlamaTrader ||
                 nmsEntity instanceof CustomEntityMushroomCow ||
@@ -57,6 +59,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntitySilverfish ||
                 nmsEntity instanceof CustomEntitySkeleton ||
                 nmsEntity instanceof CustomEntitySkeletonStray ||
+                nmsEntity instanceof CustomEntitySlime ||
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
@@ -74,7 +77,18 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     }
                 }
                 case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false).run();
-                case BLAZE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false).run();
+                case BLAZE -> {
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && this.random.nextDouble() < 0.1) { /**blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
+                        CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld); //todo copy to wither skeleton as well
+                        int i = this.random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
+                        int j = 1 << i;
+                        newMagmaCube.setSize(j, true);
+                        new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true).run();
+                        return;
+                    }
+
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false).run();
+                }
                 case CAVE_SPIDER -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
                         new SpawnLivingEntity(nmsWorld, new CustomEntitySpiderCave(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
@@ -92,6 +106,37 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case HOGLIN -> new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                 case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                case MAGMA_CUBE -> {
+                    CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
+
+                    if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && this.random.nextDouble() < 0.3) { /**naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead*/
+                        bukkitEntity.remove();
+
+                        /*if (this.random.nextDouble() < 0.666666666) { //todo
+                            new SpawnLivingEntity();
+                        } else {
+                            new SpawnLivingEntity();
+                        }*/
+
+                        return;
+                    }
+
+                    int i = this.random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
+                    int j = 1 << i;
+
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SLIME_SPLIT) {
+                        newMagmaCube.setSize(j, true);
+                    } else {
+                        newMagmaCube.setSize(((EntityMagmaCube)nmsEntity).getSize(), true);
+                    }
+
+                    if (newMagmaCube.getSize() < 2) { /**magma cubes can't exist at size 1 to prevent lag from too many cubes*/
+                        bukkitEntity.remove();
+                        return;
+                    }
+
+                    new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, null, bukkitEntity, null, true, true).run();
+                }
                 case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case ILLUSIONER -> new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
@@ -108,6 +153,20 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
                         new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntitySkeleton(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true).run();
                     }
+                }
+                case SLIME -> {
+                    CustomEntitySlime newSlime = new CustomEntitySlime(nmsWorld);
+
+                    int i = this.random.nextInt(3) + 1;  /**all slimes spawn one "size" larger from sizes 2, 4, and 8 compared to 1, 2, and 4 only*/
+                    int j = 1 << i;
+
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SLIME_SPLIT) {
+                        newSlime.setSize(j, true);
+                    } else {
+                        newSlime.setSize(((EntitySlime)nmsEntity).getSize(), true);
+                    }
+
+                    new SpawnLivingEntity(nmsWorld, newSlime, 1, null, bukkitEntity, null, true, true).run();
                 }
                 case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
@@ -159,6 +218,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntitySilverfish ||
                         nmsEntity instanceof EntitySkeleton ||
                         nmsEntity instanceof CustomEntitySkeletonStray ||
+                        nmsEntity instanceof EntitySlime ||
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityZoglin ||
                         nmsEntity instanceof CustomEntityZombie ||

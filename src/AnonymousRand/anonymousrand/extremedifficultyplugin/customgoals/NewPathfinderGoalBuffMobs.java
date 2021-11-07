@@ -66,8 +66,8 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
                 }
 
                 for (Map.Entry<Integer, ArrayList<MobEffect>> entry : this.attacksAndEffects.entrySet()) {
-                    if (attacksLocal >= entry.getKey()) {
-                        for (MobEffect effect : entry.getValue()) {
+                    if (attacksLocal >= entry.getKey()) { //entry.getKey is the integer in the hashmap entry
+                        for (MobEffect effect : entry.getValue()) { //entry.getValue is the arraylist of mobeffects in the hashmap entry
                             ((EntityLiving)targetEntity).addEffect(effect);
                         }
                     }
