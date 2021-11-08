@@ -20,6 +20,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
         this.attacks = 0;
         this.a15 = false;
         this.a90 = false;
+        this.getBukkitEntity().setCustomName("Having a good time?");
     }
 
     @Override

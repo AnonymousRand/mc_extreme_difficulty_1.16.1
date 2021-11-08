@@ -21,7 +21,7 @@ public interface CustomIEntityAccess {
         while (iterator.hasNext()) {
             EntityLiving potentialTarget = (EntityLiving)iterator.next();
 
-            if (pathfindertargetcondition.a(entityliving, potentialTarget)) { //uses the overriden a() function in the CustomPathfinderTargetCondition class which turns off line of sight requirement to initially find a target player
+            if (pathfindertargetcondition.a(entityliving, potentialTarget)) { //uses overriden a() method in CustomPathfinderTargetCondition which turns off line of sight requirement to initially find a target player
                 double d4 = potentialTarget.g(d0, d1, d2);
 
                 if (d3 == -1.0D || d4 < d3) {

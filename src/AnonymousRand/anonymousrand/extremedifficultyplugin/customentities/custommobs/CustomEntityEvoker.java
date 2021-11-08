@@ -388,15 +388,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             EntitySheep entitysheep = CustomEntityEvoker.this.fh();
 
             if (entitysheep != null && entitysheep.isAlive()) { /**instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep*/
-                Vec3D loc = entitysheep.getPositionVector();
-
-                org.bukkit.inventory.ItemStack boots = new ItemStack(org.bukkit.Material.LEATHER_BOOTS);
-                boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 6 to avoid loopholes such as using water flow to keep them back*/
-                boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin);
-                new SpawnLivingEntity(CustomEntityEvoker.this.plugin, entitysheep.getWorld(), newSheep, 1, null, null, entitysheep, true, true).run();
-                newSheep.setColor(EnumColor.PINK);
+                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin), 1, null, null, entitysheep, true, true).run();
             }
         }
 

@@ -23,6 +23,7 @@ public class CustomEntitySheepAggressive extends EntitySheep {
         super(EntityTypes.SHEEP, world);
         this.plugin = plugin;
         this.a(PathType.LAVA, 1.0F); //no longer avoids lava
+        this.setColor(EnumColor.PINK); //always pink
         this.attacks = 0;
         this.a20 = false;
         this.a40 = false;

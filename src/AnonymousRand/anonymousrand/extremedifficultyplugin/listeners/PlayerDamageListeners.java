@@ -86,6 +86,7 @@ public class PlayerDamageListeners implements Listener {
                         }, 2L);
                     }
                 }
+                case PHANTOM -> ((CustomEntityPhantom)nmsDamager).attacks++;
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
                     CustomEntityRavager ravager = (CustomEntityRavager)nmsDamager;

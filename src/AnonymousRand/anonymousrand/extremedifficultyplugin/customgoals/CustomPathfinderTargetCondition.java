@@ -49,7 +49,6 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
     @Override
     public boolean a(@Nullable EntityLiving entityliving, EntityLiving entityliving1) { //turn off line of sight requirement for initially finding target player using nearestAttackableTarget goal which uses getClosestEntity/Player in CustomIEntityAccess which uses this function CustomPathfinderTargetCondition.a (canTarget) which no longer requires EntitySenses.a (canSee) to be true
-
         if (entityliving == entityliving1) {
             return false;
         } else if (entityliving1.isSpectator()) {

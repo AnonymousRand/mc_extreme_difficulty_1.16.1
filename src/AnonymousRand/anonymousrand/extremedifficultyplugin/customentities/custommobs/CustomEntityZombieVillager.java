@@ -44,7 +44,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager {
 
     @Override
     public void startConversion(@Nullable UUID uuid, int i) { /**zombie villagers can't be converted and instead summon 10 more zombie villagers when fed a golden apple*/
-        new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZombieVillager(this.getWorld(), this.plugin), 10, null, null, this, false, true).run();
+        new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombieVillager(this.getWorld(), this.plugin), 10, null, null, this, false, true).run();
         this.world.broadcastEntityEffect(this, (byte) 16);
     }
 

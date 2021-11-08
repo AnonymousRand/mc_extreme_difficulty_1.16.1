@@ -64,12 +64,21 @@ public class MobDeathListeners implements Listener {
             }
             case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true).run(); /**iron golems summon 15 silverfish when killed*/
             case MUSHROOM_COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 15.0F, false); /**mooshrooms explode with power 15 when killed*/
+            case PIG -> {
+                if (this.random.nextDouble() < 0.14) {
+                    if (this.random.nextDouble() < 0.285714286) { /**pigs have a 4% chance to summon a hoglin on death and a 10% chance to summon a piglin on death*/
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, false, true).run();
+                    } else {
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, false, true).run();
+                    }
+                }
+            }
             case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds when killed in a 3 by 3 cube around itself*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
                 new SpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1).run();
             }
             case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
-                new SpawnLivingEntity(this.plugin, nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true).run();
+                new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true).run();
                 new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true).run();
             }
             case ZOMBIE -> {

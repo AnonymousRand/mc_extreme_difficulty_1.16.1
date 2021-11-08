@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 
-public class PlayerMovementAndFallDamageListeners implements Listener { /**fall damage starts counting at 2 blocks instead of 4 and water only negates 80% of fall damage*/
+public class PlayerMovementAndFallDamageListeners implements Listener { /**fall damage starts counting at 2 blocks instead of 4 and water only negates 80% of fall damage and feather falling does nothing if you MLG water*/
     public static HashMap<Player, double[]> arr = new HashMap<>(); //to keep track of fall heights: arr[0] y level of the previous tick, arr[1] is the y level of the current tick
     public static HashMap<Player, Double> fallHeight = new HashMap<>();
     public static HashMap<Player, Boolean> MLG = new HashMap<>();

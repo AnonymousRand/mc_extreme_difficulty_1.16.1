@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,12 +19,12 @@ import java.lang.reflect.InvocationTargetException;
 public class SpawnLivingEntity extends BukkitRunnable {
 
     private JavaPlugin plugin = null;
-    private int maxFuseTicks = 0;
+    private int maxFuseTicksOrPhantomSize = 0;
     private final EntityLiving firstEntityToSpawn;
     private final int numToSpawn;
     private final CreatureSpawnEvent.SpawnReason spawnReason;
     private org.bukkit.entity.Entity bukkitOriginalEntity;
-    private final boolean removeOriginal, equipBoots;
+    private final boolean phantomDuplicate,removeOriginal, equipBoots;
     private Entity entityToSpawn;
     private World nmsWorld;
     private Location pos;
@@ -41,30 +42,46 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.numToSpawn = numToSpawn;
         this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
         this.bukkitOriginalEntity = bukkitOriginalEntity == null ? nmsOriginalEntity.getBukkitEntity() : bukkitOriginalEntity;
+        this.phantomDuplicate = false;
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
     }
 
-    public SpawnLivingEntity(JavaPlugin plugin, World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+    public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
         this.plugin = plugin;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
         this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
         this.bukkitOriginalEntity = bukkitOriginalEntity == null ? nmsOriginalEntity.getBukkitEntity() : bukkitOriginalEntity;
+        this.phantomDuplicate = false;
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
     }
 
-    public SpawnLivingEntity(int maxFuseTicks, World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
-        this.maxFuseTicks = maxFuseTicks;
+    public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+        this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
         this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
         this.bukkitOriginalEntity = bukkitOriginalEntity == null ? nmsOriginalEntity.getBukkitEntity() : bukkitOriginalEntity;
+        this.phantomDuplicate = false;
+        this.removeOriginal = removeOriginal;
+        this.equipBoots = equipBoots;
+        this.pos = this.bukkitOriginalEntity.getLocation();
+    }
+
+    public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, boolean phantomDuplicate, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+        this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
+        this.nmsWorld = nmsWorld;
+        this.firstEntityToSpawn = firstEntityToSpawn;
+        this.numToSpawn = numToSpawn;
+        this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
+        this.bukkitOriginalEntity = bukkitOriginalEntity == null ? nmsOriginalEntity.getBukkitEntity() : bukkitOriginalEntity;
+        this.phantomDuplicate = phantomDuplicate;
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
@@ -76,18 +93,20 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.numToSpawn = numToSpawn;
         this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
         this.bukkitOriginalEntity = null;
+        this.phantomDuplicate = false;
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.pos = loc;
     }
 
-    public SpawnLivingEntity(JavaPlugin plugin, World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+    public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
         this.plugin = plugin;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
         this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
         this.bukkitOriginalEntity = null;
+        this.phantomDuplicate = false;
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.pos = loc;
@@ -98,8 +117,10 @@ public class SpawnLivingEntity extends BukkitRunnable {
         for (int i = 0; i < this.numToSpawn; i++) {
             if (i > 0) {
                 try {
-                    if (this.firstEntityToSpawn instanceof CustomEntityCreeper) {
-                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, int.class).newInstance(this.nmsWorld, this.maxFuseTicks);
+                    if (this.firstEntityToSpawn instanceof CustomEntityCreeper || (this.firstEntityToSpawn instanceof CustomEntityPhantom && !this.phantomDuplicate)) {
+                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, int.class).newInstance(this.nmsWorld, this.maxFuseTicksOrPhantomSize);
+                    } else if (this.firstEntityToSpawn instanceof CustomEntityPhantom) {
+                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, int.class, boolean.class).newInstance(this.nmsWorld, this.maxFuseTicksOrPhantomSize, this.phantomDuplicate);
                     } else if (this.firstEntityToSpawn.getClass().getName().toLowerCase().contains("custom")) {
                         try {
                             this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class).newInstance(this.nmsWorld); //create a new instance of the same class as the first entity if spawning multiple
@@ -119,10 +140,10 @@ public class SpawnLivingEntity extends BukkitRunnable {
             if (this.entityToSpawn != null) {
                 this.entityToSpawn.setPosition(this.pos.getX(), this.pos.getY(), this.pos.getZ());
                 this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
-            }
 
-            if (this.equipBoots) {
-                ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
+                if (this.equipBoots) {
+                    ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
+                }
             }
         }
 

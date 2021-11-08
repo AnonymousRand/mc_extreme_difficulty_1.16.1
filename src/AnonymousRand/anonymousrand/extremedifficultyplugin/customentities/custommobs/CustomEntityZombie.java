@@ -150,12 +150,12 @@ public class CustomEntityZombie extends EntityZombie {
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
             this.setHealth(25.0F);
-            new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZombie(this.getWorld(), this.plugin), 2, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombie(this.getWorld(), this.plugin), 2, null, null, this, false, true).run();
         }
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, zombies summon thor*/
             this.a50 = true;
-            new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZombieThor(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
         }
 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/

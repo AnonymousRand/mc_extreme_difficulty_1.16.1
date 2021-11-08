@@ -44,7 +44,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         super.die();
 
         if (this.random.nextDouble() < (this.attacks < 70 ? 0.3 : 1.0)) { /**hoglins have a 30% chance to spawn a zoglin after death (100% chance after 70 attacks)*/
-            new SpawnLivingEntity(this.plugin, this.getWorld(), new CustomEntityZoglin(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
         }
     }
 
@@ -70,14 +70,14 @@ public class CustomEntityHoglin extends EntityHoglin {
         if (this.attacks == 42 && !this.a42) { /**after 42 attacks, hoglins summon a baby hoglin*/
             this.a42 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
-            new SpawnLivingEntity(this.plugin, this.getWorld(), newHoglin, 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true).run();
             newHoglin.a(true);
         }
 
         if (this.attacks == 70 && !this.a70) { /**after 70 attacks, hoglins summon 2 baby hoglins*/
             this.a70 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
-            new SpawnLivingEntity(this.plugin, this.getWorld(), newHoglin, 2, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), this.plugin, newHoglin, 2, null, null, this, false, true).run();
             newHoglin.a(true);
         }
 

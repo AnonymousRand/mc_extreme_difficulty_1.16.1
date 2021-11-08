@@ -1,7 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import net.minecraft.server.v1_16_R1.EntityPhantom;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.EntityZombie;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
@@ -10,6 +13,7 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -42,29 +46,35 @@ public class PlayerDeathAndRespawnListeners implements Listener {
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
             CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld, this.plugin);
             newZombie.getBukkitEntity().setCustomName("Dinnerbone");
-            new SpawnLivingEntity(this.plugin, nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true).run();
+            new SpawnLivingEntity(nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true).run();
             superZombies.add(newZombie);
         }
     }
 
     @EventHandler
     public void playerRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        Player bukkitPlayer = event.getPlayer();
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
         {
             @Override
             public void run() {
-                for (PotionEffect e : collections.getOrDefault(player, null)) { //only re-applies negative status effects
+                for (PotionEffect e : collections.getOrDefault(bukkitPlayer, null)) { //only re-applies negative status effects
                     if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
-                        player.addPotionEffect(e);
+                        bukkitPlayer.addPotionEffect(e);
                     }
                 }
 
-                respawnCount.put(player, respawnCount.getOrDefault(player, 0) + 1);
+                respawnCount.put(bukkitPlayer, respawnCount.getOrDefault(bukkitPlayer, 0) + 1);
 
-                if (respawnCount.get(player) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
-                    player.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
+                if (respawnCount.get(bukkitPlayer) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
+                    bukkitPlayer.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
+                }
+
+                if (respawnCount.get(bukkitPlayer) % 5 == 0) { /**summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5*/
+                    World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
+                    MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Bukkit.getServer().getOnlinePlayers().size() * respawnCount.get(bukkitPlayer) / 5;
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int)MobSpawnAndReplaceWithCustomListeners.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false).run();
                 }
 
                 if (superZombies.size() >= (3 * Bukkit.getServer().getOnlinePlayers().size())) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/

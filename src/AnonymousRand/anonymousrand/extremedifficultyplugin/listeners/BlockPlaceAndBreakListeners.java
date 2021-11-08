@@ -70,7 +70,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
         }
 
         if (type == Material.DEAD_BUSH || type == Material.TORCH || type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**dead bushes, torches, anvils, and smithing tables explode when broken but don't break blocks*/
-            nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 1.5F, false, Explosion.Effect.NONE);
+            nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
         }
     }
 
@@ -91,7 +91,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
 
             if (type == Material.DEAD_BUSH || type == Material.TORCH) { /**dead bushes and torches explode when broken but don't break blocks*/
-                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 1.5F, false, Explosion.Effect.NONE);
+                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
             }
         }
     }
@@ -113,7 +113,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
 
             if (type == Material.DEAD_BUSH || type == Material.TORCH) { /**dead bushes and torches explode when broken but don't break blocks*/
-                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 1.5F, false, Explosion.Effect.NONE);
+                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
             }
         }
     }

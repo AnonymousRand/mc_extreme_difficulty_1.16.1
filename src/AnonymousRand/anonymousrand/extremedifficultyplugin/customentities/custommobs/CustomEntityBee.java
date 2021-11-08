@@ -23,7 +23,7 @@ public class CustomEntityBee extends EntityBee {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new CustomPathfinderGoalBeeAttack(this, 1.399999976158142D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**bees are always aggro*/
@@ -68,33 +68,5 @@ public class CustomEntityBee extends EntityBee {
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
-    }
-
-    @Override
-    public int bL() { //getMaxFallHeight
-        if (this.getGoalTarget() == null) {
-            return 3;
-        } else {
-            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
-
-            return i + 3;
-        }
-    }
-
-    class CustomPathfinderGoalBeeAttack extends CustomPathfinderGoalMeleeAttack {
-
-        CustomPathfinderGoalBeeAttack(EntityCreature entitycreature, double d0, boolean flag) {
-            super(entitycreature, d0, flag);
-        }
-
-        @Override
-        public boolean a() {
-            return super.a() && CustomEntityBee.this.isAngry() && !CustomEntityBee.this.hasStung();
-        }
-
-        @Override
-        public boolean b() {
-            return super.b() && CustomEntityBee.this.isAngry() && !CustomEntityBee.this.hasStung();
-        }
     }
 }

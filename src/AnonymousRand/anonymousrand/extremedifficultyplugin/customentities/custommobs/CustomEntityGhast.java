@@ -112,17 +112,6 @@ public class CustomEntityGhast extends EntityGhast {
         return d0 * d0 + d2 * d2;
     }
 
-    @Override
-    public int bL() { //getMaxFallHeight
-        if (this.getGoalTarget() == null) {
-            return 3;
-        } else {
-            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
-
-            return i + 3;
-        }
-    }
-
     static class CustomPathfinderGoalGhastAttackTarget extends PathfinderGoal {
 
         private final CustomEntityGhast ghast;

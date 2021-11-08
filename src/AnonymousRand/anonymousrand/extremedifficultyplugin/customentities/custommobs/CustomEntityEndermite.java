@@ -19,6 +19,7 @@ public class CustomEntityEndermite extends EntityEndermite {
         this.a35 = false;
         this.a60 = false;
         this.a75 = false;
+        this.getBukkitEntity().setCustomName("Insert name here");
     }
 
     @Override
