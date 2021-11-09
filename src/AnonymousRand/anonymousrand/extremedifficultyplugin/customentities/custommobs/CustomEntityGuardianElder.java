@@ -17,6 +17,8 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
 
     public CustomEntityGuardianElder(World world) {
         super(EntityTypes.ELDER_GUARDIAN, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

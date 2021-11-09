@@ -17,9 +17,9 @@ public class CustomEntityArrowSpawnMob extends CustomEntityArrow {
 
     private EntityLiving entityToSpawn;
 
-    public CustomEntityArrowSpawnMob(World world, Vector a, @Nullable ProjectileSource source, EntityLiving entityLiving) {
+    public CustomEntityArrowSpawnMob(World world, Vector a, @Nullable ProjectileSource source, EntityLiving entityToSpawn) {
         super(world);
-        this.entityToSpawn = entityLiving;
+        this.entityToSpawn = entityToSpawn;
 
         double x = a.getX(), y = a.getY(), z = a.getZ(); //similar code from projectile's shoot method; passing in a vec3d directly to this constructor doesn't seem to get the correct vector so must convert vector to vec3d instead
         Vec3D v = (new Vec3D(x, y, z).d());
@@ -32,6 +32,11 @@ public class CustomEntityArrowSpawnMob extends CustomEntityArrow {
         if (this.getShooter() instanceof CustomEntitySkeleton || this.getShooter() instanceof CustomEntitySkeletonStray) {
             this.setDamage(1.5); /**skeletons and strays do slightly less damage*/
         }
+    }
+
+    public CustomEntityArrowSpawnMob(World world, EntityLiving entityToSpawn) {
+        super(world);
+        this.entityToSpawn = entityToSpawn;
     }
 
     @Override

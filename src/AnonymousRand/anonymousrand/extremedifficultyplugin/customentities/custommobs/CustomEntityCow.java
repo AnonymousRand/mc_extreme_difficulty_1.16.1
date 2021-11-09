@@ -10,6 +10,8 @@ public class CustomEntityCow extends EntityCow {
 
     public CustomEntityCow(World world) {
         super(EntityTypes.COW, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

@@ -20,7 +20,8 @@ public class CustomEntityHoglin extends EntityHoglin {
         super(EntityTypes.HOGLIN, world);
         this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); //no longer avoids lava
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a10 = false;
         this.a32 = false;

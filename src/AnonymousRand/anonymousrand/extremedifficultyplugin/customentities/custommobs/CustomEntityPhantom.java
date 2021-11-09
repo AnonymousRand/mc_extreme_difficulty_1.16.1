@@ -33,6 +33,8 @@ public class CustomEntityPhantom extends EntityPhantom {
 
     public CustomEntityPhantom(World world) {
         super(EntityTypes.PHANTOM, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /**phantoms can fly through blocks*/

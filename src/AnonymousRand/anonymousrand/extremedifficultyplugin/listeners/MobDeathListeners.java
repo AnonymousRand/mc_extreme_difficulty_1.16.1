@@ -4,11 +4,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSilverfishSummonMaterialBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -75,7 +74,7 @@ public class MobDeathListeners implements Listener {
             }
             case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds when killed in a 3 by 3 cube around itself*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
-                new SpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1).run();
+                new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);
             }
             case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
                 new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true).run();
@@ -83,7 +82,7 @@ public class MobDeathListeners implements Listener {
             }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
-                    new LightningStorm(nmsWorld, loc, this.random.nextInt(21) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
+                    new RunnableLightningStorm(nmsWorld, loc, this.random.nextInt(21) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
                     Location loc2;
                     CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
@@ -103,7 +102,7 @@ public class MobDeathListeners implements Listener {
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     PlayerDeathAndRespawnListeners.superZombies.remove(nmsEntity);
                 } else { /**zombies summon an area effect cloud when killed*/
-                    CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 100, 20);
+                    CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 100, 30);
                     newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
 
                     try {

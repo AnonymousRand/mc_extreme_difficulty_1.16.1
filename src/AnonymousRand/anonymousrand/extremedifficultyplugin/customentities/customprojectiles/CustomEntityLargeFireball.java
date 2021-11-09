@@ -1,14 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.LightningStrike;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class CustomEntityLargeFireball extends EntityLargeFireball {
 
@@ -48,7 +43,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && this.plugin != null) { //summon thor lightning
-                new LightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 12.0, this.random.nextInt(3) + 10, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 2);
+                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, this.random.nextInt(3) + 8, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 2);
             }
 
             this.die();

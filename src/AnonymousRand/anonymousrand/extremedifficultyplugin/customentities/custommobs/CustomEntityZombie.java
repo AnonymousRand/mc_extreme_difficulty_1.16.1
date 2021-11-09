@@ -1,11 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -25,6 +24,8 @@ public class CustomEntityZombie extends EntityZombie {
         super(EntityTypes.ZOMBIE, world);
         this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a7 = false;
         this.a15 = false;
@@ -161,9 +162,9 @@ public class CustomEntityZombie extends EntityZombie {
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/
             this.a40 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
-            new MeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
-            new MeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
-            new MeteorRain(this, 3, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
         }
 
         if (this.ticksLived == 10) { /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/

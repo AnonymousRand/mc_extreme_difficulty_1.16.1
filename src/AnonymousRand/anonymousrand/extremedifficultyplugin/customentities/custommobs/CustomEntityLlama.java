@@ -15,6 +15,8 @@ public class CustomEntityLlama extends EntityLlama {
 
     public CustomEntityLlama(World world) {
         super(EntityTypes.LLAMA, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
 

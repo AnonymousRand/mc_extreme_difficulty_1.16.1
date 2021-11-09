@@ -17,6 +17,8 @@ public class CustomEntityIllagerIllusioner extends EntityIllagerIllusioner {
 
     public CustomEntityIllagerIllusioner(World world) {
         super(EntityTypes.ILLUSIONER, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.attacks = 54;
         this.a55 = false;

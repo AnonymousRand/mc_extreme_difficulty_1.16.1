@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -14,6 +15,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
 
     public CustomEntitySkeletonStray(World world) {
         super(EntityTypes.STRAY, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.spawnMob = false;
         this.spawnExplodingArrow = false;
@@ -26,7 +29,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning this.randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(4, new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
@@ -40,63 +43,15 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
     @Override
     public void a(EntityLiving entityliving, float f) {
         this.attacks++;
-        double rand = random.nextDouble();
+        double rand = this.random.nextDouble();
 
         if (rand < (this.attacks < 25 ? 0.9 : this.attacks < 35 ? 0.85 : this.attacks < 45 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 15 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 15 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
-            boolean fire = random.nextDouble() < (this.attacks < 15 ? 0.222222222 : 0.444444444);
-            this.spawnMob = false;
-            this.spawnExplodingArrow = false;
-
-            for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-                ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-                EntityArrow entityarrow = this.b(itemstack, f);
-                double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-                double d2 = entityliving.locZ() - this.locZ();
-                double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-
-                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
-                    entityarrow.setPierceLevel((byte)1);
-                }
-
-                if (fire) {
-                    entityarrow.setOnFire(50);
-                }
-
-                entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(40 - this.getWorld().getDifficulty().a() * 4));
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
-                this.getWorld().addEntity(entityarrow);
-            }
+            boolean fire = this.random.nextDouble() < (this.attacks < 15 ? 0.222222222 : 0.444444444);
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.02 ? 1 : 0, fire, false); /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone; 2% of arrows shot are piercing 1*/
         } else if (rand < (this.attacks < 35 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
-            for (int i = 0; i < 10; i++) {
-                this.spawnExplodingArrow = true;
-                this.spawnMob = false;
-                ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-                EntityArrow entityarrow = this.b(itemstack, f);
-
-                double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-                double d2 = entityliving.locZ() - this.locZ();
-                double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-
-                entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(50 - this.getWorld().getDifficulty().a() * 4)); //more inaccuracy
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
-                this.getWorld().addEntity(entityarrow);
-            }
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
         } else {
-            this.spawnMob = true;
-            this.spawnExplodingArrow = false;
-            ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-            EntityArrow entityarrow = this.b(itemstack, f);
-
-            double d0 = entityliving.locX() - this.locX();
-            double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-            double d2 = entityliving.locZ() - this.locZ();
-            double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-
-            entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0); /**no inaccuracy for this arrow*/
-            this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
-            this.getWorld().addEntity(entityarrow);
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 1, 3, 0.0, 0, false, true); /**no inaccuracy or less in y level for this arrow*/
         }
     }
 

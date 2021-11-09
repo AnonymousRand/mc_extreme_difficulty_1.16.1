@@ -24,7 +24,8 @@ public class CustomEntityZoglin extends EntityZoglin {
         super(EntityTypes.ZOGLIN, world);
         this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); //no longer avoids lava
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a8 = false;
         this.a40 = false;

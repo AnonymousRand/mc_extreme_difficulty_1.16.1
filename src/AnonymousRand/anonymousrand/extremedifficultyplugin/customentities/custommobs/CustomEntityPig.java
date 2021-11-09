@@ -1,14 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import net.minecraft.server.v1_16_R1.EntityPig;
-import net.minecraft.server.v1_16_R1.EntityTypes;
-import net.minecraft.server.v1_16_R1.GenericAttributes;
-import net.minecraft.server.v1_16_R1.World;
+import net.minecraft.server.v1_16_R1.*;
 
 public class CustomEntityPig extends EntityPig {
 
     public CustomEntityPig(World world) {
         super(EntityTypes.PIG, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

@@ -15,6 +15,8 @@ public class CustomEntityRavager extends EntityRavager {
     public CustomEntityRavager(World world) {
         super(EntityTypes.RAVAGER, world);
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a20 = false;
         this.a60 = false;

@@ -1,11 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Random;
 
 public class CustomEntityZombieThor extends EntityZombie {
 
@@ -16,6 +21,8 @@ public class CustomEntityZombieThor extends EntityZombie {
         super(EntityTypes.ZOMBIE, world);
         this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.getBukkitEntity().setCustomName("Thor");
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE));
@@ -55,9 +62,10 @@ public class CustomEntityZombieThor extends EntityZombie {
             this.addEffect(new MobEffect(MobEffects.WEAKNESS, Integer.MAX_VALUE, 1)); /**this allows the zombie to only do ~2 damage at a time instead of 6*/
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(55.0);
             this.setHealth(55.0F);
-            this.goalSelector.a(0, new NewPathfinderGoalThorSummonLightning(this.plugin, this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every 1.25 seconds (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 8.33 seconds*/
+            this.goalSelector.a(0, new CustomEntityZombieThor.PathfinderGoalThorSummonLightning(this.plugin, this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every 1.25 seconds (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 10 seconds*/
             this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 80, 0, true)); /**custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning*/
             RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+            new RunnableThorLightningEffectStorm(this, 20, true).runTaskTimer(this.plugin, 0L, 2L); /**thor summons a vanilla lightning storm around it when first spawned for 2 seconds*/
         }
     }
 
@@ -116,6 +124,52 @@ public class CustomEntityZombieThor extends EntityZombie {
             int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
 
             return i + 3;
+        }
+    }
+
+    public static class PathfinderGoalThorSummonLightning extends PathfinderGoal {
+
+        private final JavaPlugin plugin;
+        public final CustomEntityZombieThor thor;
+        public final org.bukkit.World bukkitWorld;
+        private final Location loc;
+        private Location loc2;
+        public boolean storm;
+        private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
+        private final Random random = new Random();
+
+        public PathfinderGoalThorSummonLightning(JavaPlugin plugin, CustomEntityZombieThor thor) {
+            this.plugin = plugin;
+            this.thor = thor;
+            this.bukkitWorld = thor.getWorld().getWorld();
+            this.loc = new Location(this.bukkitWorld, thor.locX(), thor.locY(), thor.locZ());
+            this.storm = false;
+        }
+
+        @Override
+        public boolean a() {
+            return this.thor.getGoalTarget() != null;
+        }
+
+        @Override
+        public boolean b() {
+            return this.a();
+        }
+
+        @Override
+        public void e() {
+            if (this.random.nextDouble() < 0.04) {
+                this.loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), 20.0, this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
+                if (this.random.nextDouble() < 0.25) {
+                    this.bukkitWorld.strikeLightning(this.loc2);
+                } else {
+                    this.bukkitWorld.strikeLightningEffect(this.loc2);
+                }
+            }
+
+            if (this.random.nextDouble() < 0.005 && !this.storm) {
+                new RunnableThorLightningEffectStorm(this, this.random.nextInt(11) + 30).runTaskTimer(this.plugin, 0L, 2L);
+            }
         }
     }
 }

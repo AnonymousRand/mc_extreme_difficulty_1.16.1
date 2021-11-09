@@ -12,7 +12,12 @@ public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget
     @Override
     public boolean a() {
         super.a();
-        return this.e.getLastDamager() instanceof EntityPlayer && !this.e.getLastDamager().isInvulnerable(); //only retaliates against players in surival
+
+        if (this.e.getLastDamager() instanceof EntityPlayer) { //only retaliates against players in survival
+            return !((EntityPlayer)this.e.getLastDamager()).abilities.isInvulnerable;
+        }
+
+        return false;
     }
 
     @Override

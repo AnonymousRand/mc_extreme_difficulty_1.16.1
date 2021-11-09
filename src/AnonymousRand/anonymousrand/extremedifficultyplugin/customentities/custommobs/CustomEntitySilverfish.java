@@ -3,9 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.SpiderSilverfishSummonMaterialBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
 public class CustomEntitySilverfish extends EntitySilverfish {
@@ -17,6 +16,8 @@ public class CustomEntitySilverfish extends EntitySilverfish {
     public CustomEntitySilverfish(World world) {
         super(EntityTypes.SILVERFISH, world);
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
         this.a90 = false;
@@ -57,7 +58,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
 
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, silverfish spawns a 5 by 5 by 5 block of invested stone around it and dies*/
             this.a90 = true;
-            new SpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.INFESTED_STONE, 2).run();
+            new RunnableSpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.INFESTED_STONE, 2);
             this.die();
         }
 

@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
-public class MeteorRain extends BukkitRunnable {
+public class RunnableMeteorRain extends BukkitRunnable {
 
     private final LivingEntity bukkitShooter;
     private final int type;
@@ -31,7 +31,7 @@ public class MeteorRain extends BukkitRunnable {
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
     private final Random random = new Random();
 
-    public MeteorRain(Player player, int type, double maxRadius, int maxCycles) {
+    public RunnableMeteorRain(Player player, int type, double maxRadius, int maxCycles) {
         this.bukkitShooter = player;
         this.playerLoc = player.getLocation();
         this.type = type;
@@ -42,7 +42,7 @@ public class MeteorRain extends BukkitRunnable {
         this.vec = new Vector(0.0, -1.0, 0.0); //todo: delete if no need for wither skulls
     }
 
-    public MeteorRain(EntityLiving nmsEntity, int type, double maxRadius, int maxCycles) {
+    public RunnableMeteorRain(EntityLiving nmsEntity, int type, double maxRadius, int maxCycles) {
         this.bukkitShooter = (LivingEntity)nmsEntity.getBukkitEntity();
         this.type = type;
         this.maxRadius = maxRadius;

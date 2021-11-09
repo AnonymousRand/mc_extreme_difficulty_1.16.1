@@ -7,17 +7,18 @@ import org.bukkit.Material;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class SpiderSilverfishSummonMaterialBlock extends BukkitRunnable {
+public class RunnableSpiderSilverfishSummonMaterialBlock extends BukkitRunnable {
 
     private final EntityInsentient entity;
     private final org.bukkit.Material material;
     private final int radius;
     private Location loc;
 
-    public SpiderSilverfishSummonMaterialBlock(EntityInsentient entity, Material material, int radius) {
+    public RunnableSpiderSilverfishSummonMaterialBlock(EntityInsentient entity, Material material, int radius) {
         this.entity = entity;
         this.material = material;
         this.radius = radius;
+        this.run();
     }
 
     @Override

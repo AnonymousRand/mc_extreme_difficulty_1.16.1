@@ -21,6 +21,8 @@ public class CustomEntityZombieHusk extends EntityZombieHusk {
     public CustomEntityZombieHusk(World world) {
         super(EntityTypes.HUSK, world);
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a10 = false;
         this.a25 = false;

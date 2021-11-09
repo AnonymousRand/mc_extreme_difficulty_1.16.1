@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +17,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -43,89 +46,32 @@ public class ProjectileListeners implements Listener {
         World nmsWorld = ((CraftWorld)bukkitProjectile.getWorld()).getHandle();
 
         if (nmsProjectile instanceof EntityArrow) {
-            Arrow bukkitArrow = (Arrow)bukkitProjectile;
+            Arrow bukkitArrow = (Arrow) bukkitProjectile;
             Location loc = bukkitArrow.getLocation();
+            CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
+            newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
 
-            if (!(nmsShooter instanceof CustomEntitySkeletonStray)) {
-                CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
-
-                if (nmsShooter instanceof CustomEntitySkeleton) {
-                    if (((CustomEntitySkeleton)nmsShooter).spawnExplodingArrow) { //replace skeleton arrows with exploding ones
-                        newArrow = new CustomEntityArrowExploding(nmsWorld, bukkitArrow.getVelocity(), (byte)0, bukkitArrow.getShooter(), 1.0F);
-                        newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                        nmsWorld.addEntity(newArrow);
-                        bukkitArrow.remove();
-                        return;
-                    }
-                } else if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
-                    newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5,this.random.nextDouble() - 0.5)), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
-                }
-
-                newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                nmsWorld.addEntity(newArrow);
-                bukkitArrow.remove();
-
-                if (nmsProjectile.isBurning()) { //carries over burning arrows
-                    newArrow.setOnFire(50);
-                }
-
-                if (nmsProjectile.isNoGravity()) { //carries over no gravity
-                    newArrow.setNoGravity(true);
-                }
-            } else {
-                if (!(((CustomEntitySkeletonStray)nmsShooter).spawnMob) && !(((CustomEntitySkeletonStray)nmsShooter).spawnExplodingArrow)) { //normal replace
-                    CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
-                    newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                    nmsWorld.addEntity(newArrow);
-                    bukkitArrow.remove();
-
-                    if (nmsProjectile.isBurning()) { //carries over burning arrows
-                        newArrow.setOnFire(50);
-                    }
-
-                    if (nmsProjectile.isNoGravity()) { //carries over no gravity
-                        newArrow.setNoGravity(true);
-                    }
-                } else if (((CustomEntitySkeletonStray)nmsShooter).spawnMob){ //replace stray arrows with the mob spawning ones
-                    int rand2 = random.nextInt(4);
-                    CustomEntityArrowSpawnMob newArrow;
-
-                    //todo: replace with custom mobs
-                    switch (rand2) {
-                        case 0 -> {
-                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntityCreeper(nmsWorld, 40));
-                        }
-                        case 1 -> {
-                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new EntityVex(EntityTypes.VEX, nmsWorld));
-                        }
-                        case 2 -> {
-                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntityRabbit(nmsWorld));
-                        }
-                        default -> {
-                            newArrow = new CustomEntityArrowSpawnMob(nmsWorld, bukkitArrow.getVelocity(), bukkitArrow.getShooter(), new CustomEntitySilverfish(nmsWorld));
-                        }
-                    }
-
-                    newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                    nmsWorld.addEntity(newArrow);
-                    bukkitArrow.remove();
-                } else { //replace stray arrows with exploding arrows
-                    CustomEntityArrowExploding newArrow = new CustomEntityArrowExploding(nmsWorld, bukkitArrow.getVelocity(), (byte)0, bukkitArrow.getShooter(), 1.0F);
-                    newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
-                    nmsWorld.addEntity(newArrow);
-                    newArrow.setNoGravity(true); /**this arrow does not lose y level*/
-                    bukkitArrow.remove();
-                }
+            if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
+                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5)), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
             }
+
+            if (nmsProjectile.isBurning()) { //carries over burning arrows
+                newArrow.setOnFire(nmsProjectile.getFireTicks());
+            }
+
+            if (nmsProjectile.isNoGravity()) { //carries over no gravity
+                newArrow.setNoGravity(true);
+            }
+
+            nmsWorld.addEntity(newArrow);
+            bukkitArrow.remove();
         }
 
         if (bukkitProjectile instanceof Trident) {
             Trident bukkitTrident = (Trident)bukkitProjectile;
             Location loc = bukkitTrident.getLocation();
-            CustomEntityThrownTrident newTrident = new CustomEntityThrownTrident(((CraftWorld)bukkitTrident.getWorld()).getHandle(), bukkitTrident.getVelocity(), (byte)bukkitTrident.getPierceLevel(), bukkitTrident.getShooter());
+            CustomEntityThrownTrident newTrident = new CustomEntityThrownTrident(nmsWorld, bukkitTrident.getVelocity(), (byte)bukkitTrident.getPierceLevel(), bukkitTrident.getShooter());
             newTrident.setPosition(loc.getX(), loc.getY(), loc.getZ());
-            ((CraftWorld)bukkitTrident.getWorld()).getHandle().addEntity(newTrident);
-            bukkitTrident.remove();
 
             if (nmsShooter instanceof CustomEntityDrowned) {
                 if (((CustomEntityDrowned)nmsShooter).attacks >= 30) {
@@ -134,6 +80,9 @@ public class ProjectileListeners implements Listener {
                     }
                 }
             }
+
+            nmsWorld.addEntity(newTrident);
+            bukkitTrident.remove();
         }
     }
 

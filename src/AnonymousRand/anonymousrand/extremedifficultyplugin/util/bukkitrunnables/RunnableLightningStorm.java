@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
-public class LightningStorm extends BukkitRunnable {
+public class RunnableLightningStorm extends BukkitRunnable {
 
     private CustomEntityLightning newLightning;
     private final net.minecraft.server.v1_16_R1.World nmsWorld;
@@ -25,7 +25,7 @@ public class LightningStorm extends BukkitRunnable {
     private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
     private final Random random = new Random();
 
-    public LightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, int maxCycles) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, int maxCycles) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.loc = loc;
@@ -36,7 +36,7 @@ public class LightningStorm extends BukkitRunnable {
         LightningStrikeListeners.storm = true;
     }
 
-    public LightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, double radius, int maxCycles, boolean customLightning) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, double radius, int maxCycles, boolean customLightning) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.loc = loc;

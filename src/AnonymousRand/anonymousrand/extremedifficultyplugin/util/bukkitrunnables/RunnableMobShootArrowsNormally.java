@@ -1,0 +1,80 @@
+package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
+
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityRabbit;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
+import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Random;
+
+public class RunnableMobShootArrowsNormally extends BukkitRunnable {
+
+    private final EntityInsentient entity;
+    private final EntityLiving target;
+    private final float distance;
+    private final int numOfArrows, arrowType, pierce;
+    private final double inaccuracy;
+    private final boolean onFire, noGravity;
+    private final World nmsWorld;
+    private final Random random = new Random();
+
+    public RunnableMobShootArrowsNormally(EntityInsentient entity, EntityLiving target, float distance, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
+        this.entity = entity;
+        this.target = target;
+        this.distance = distance;
+        this.numOfArrows = numOfArrows;
+        this.arrowType = arrowType;
+        this.inaccuracy = inaccuracy;
+        this.pierce = pierce;
+        this.onFire = onFire;
+        this.noGravity = noGravity;
+        this.nmsWorld = entity.getWorld();
+        this.run();
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < numOfArrows; i++) {
+            CustomEntityArrow entityArrow = new CustomEntityArrow(this.nmsWorld);
+            double rand = this.random.nextDouble();
+
+            switch (arrowType) { //todo: change to custom mobs
+                case 2 -> entityArrow = new CustomEntityArrowExploding(this.nmsWorld); //exploding arrows
+                case 3 -> { //stray spawn mob arrows
+                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new EntityVex(EntityTypes.VEX, this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
+                }
+                case 4 -> { //piglin spawn piglin arrows
+                    if (rand < 0.015) {
+                        entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, new CustomEntityPiglin(this.nmsWorld));
+                    }
+                }
+                case 5 -> entityArrow = new CustomEntityArrowBadEffects(this.nmsWorld); //piglin bad status effects arrow
+                case 6 -> entityArrow = new CustomEntityArrowKnockback(this.nmsWorld); //extreme knockback arrows
+            }
+
+            entityArrow.a(this.target, this.distance); //sets damage based on distance
+            entityArrow.setShooter(this.entity);
+            entityArrow.setPosition(this.entity.locX(), this.entity.locY() + 1.5, this.entity.locZ());
+            entityArrow.setPierceLevel((byte)this.pierce);
+            double d0 = this.target.locX() - this.entity.locX();
+            double d1 = this.target.e(0.3333333333333333D) - entityArrow.locY();
+            double d2 = this.target.locZ() - this.entity.locZ();
+            double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+
+            if (this.onFire) {
+                entityArrow.setOnFire(50);
+            }
+
+            if (this.noGravity) {
+                entityArrow.setNoGravity(true);
+            }
+
+            entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, this.arrowType == 3 ? 0.0F : (float)(this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /**mob-spawning arrows have no inaccuracy*/
+            this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
+            this.nmsWorld.addEntity(entityArrow);
+        }
+    }
+}

@@ -12,6 +12,8 @@ public class CustomEntityIronGolem extends EntityIronGolem {
 
     public CustomEntityIronGolem(World world) {
         super(EntityTypes.IRON_GOLEM, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.followRangeMultipler = 1.0;
     }

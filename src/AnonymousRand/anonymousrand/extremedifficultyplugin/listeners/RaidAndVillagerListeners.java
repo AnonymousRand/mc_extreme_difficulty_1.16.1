@@ -2,9 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombie;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.MeteorRain;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.ThorLightningEffectStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
@@ -60,7 +60,7 @@ public class RaidAndVillagerListeners implements Listener {
             for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
                 if (entity instanceof CustomEntityIronGolem) {
                     ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                    new ThorLightningEffectStorm(entity, 100).runTaskTimer(this.plugin, 0L, 2L);
+                    new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(this.plugin, 0L, 2L);
                 }
             }
         }
@@ -70,9 +70,9 @@ public class RaidAndVillagerListeners implements Listener {
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
         Player player = event.getWinners().get(this.random.nextInt(event.getWinners().size()));
 
-        new MeteorRain(player, 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new MeteorRain(player, 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new MeteorRain(player, 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
     }
 
     //temp, todo end: delete
@@ -80,9 +80,9 @@ public class RaidAndVillagerListeners implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
             if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new MeteorRain(event.getPlayer(), 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new MeteorRain(event.getPlayer(), 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new MeteorRain(event.getPlayer(), 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+                new RunnableMeteorRain(event.getPlayer(), 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+                new RunnableMeteorRain(event.getPlayer(), 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
+                new RunnableMeteorRain(event.getPlayer(), 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
             }
         }
     }

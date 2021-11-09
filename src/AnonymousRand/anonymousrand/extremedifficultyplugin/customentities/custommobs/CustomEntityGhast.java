@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.FireballsInAllDirections;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableFireballsInAllDirections;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +22,8 @@ public class CustomEntityGhast extends EntityGhast {
     public CustomEntityGhast(World world, JavaPlugin plugin) {
         super(EntityTypes.GHAST, world);
         this.plugin = plugin;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
         this.deathFireballs = false;
@@ -61,7 +63,7 @@ public class CustomEntityGhast extends EntityGhast {
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new FireballsInAllDirections(this, 0.4, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new RunnableFireballsInAllDirections(this, 0.4, 2).runTaskTimer(this.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 
@@ -171,7 +173,7 @@ public class CustomEntityGhast extends EntityGhast {
                     world.addEntity(entitylargefireball);
 
                     if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
-                        new FireballsInAllDirections(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
+                        new RunnableFireballsInAllDirections(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
                     }
 
                     this.a = 0;

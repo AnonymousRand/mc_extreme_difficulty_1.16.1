@@ -10,6 +10,8 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
 
     public CustomEntityMushroomCow(World world) {
         super(EntityTypes.MOOSHROOM, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

@@ -57,6 +57,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityMushroomCow ||
                 nmsEntity instanceof CustomEntityPhantom ||
                 nmsEntity instanceof CustomEntityPig ||
+                nmsEntity instanceof CustomEntityPiglin ||
                 nmsEntity instanceof CustomEntityRabbit ||
                 nmsEntity instanceof CustomEntityRavager ||
                 nmsEntity instanceof CustomEntitySheepAggressive ||
@@ -152,6 +153,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     new SpawnLivingEntity(nmsWorld, (int)phantomSize, newPhantom, rand, null, bukkitEntity, null, true, false).run(); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
                 }
                 case PIG -> new SpawnLivingEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                case PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case RABBIT -> new SpawnLivingEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true).run(); /**rabbits are spawned in as 5-10 killer bunnies instead*/
                 case RAVAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                 case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
@@ -225,6 +227,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityMushroomCow ||
                         nmsEntity instanceof CustomEntityPhantom ||
                         nmsEntity instanceof CustomEntityPig ||
+                        nmsEntity instanceof CustomEntityPiglin ||
                         nmsEntity instanceof CustomEntityRabbit ||
                         nmsEntity instanceof CustomEntityRavager ||
                         nmsEntity instanceof CustomEntitySheepAggressive ||
@@ -265,6 +268,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                             new SpawnLivingEntity(nmsWorld, newPhantom, this.random.nextInt(4) + 12, null, bukkitEntity, null, true, false).run(); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
                         }
                         case PIG -> new SpawnLivingEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
+                        case PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true).run();
                         case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/
                             if (((EntityRabbit)nmsEntity).getRabbitType() == 99) { //to avoid infinte duplication when joining world
                                 return;

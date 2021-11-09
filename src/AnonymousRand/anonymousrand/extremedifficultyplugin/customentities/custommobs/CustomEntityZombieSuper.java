@@ -13,6 +13,8 @@ public class CustomEntityZombieSuper extends EntityZombie {
 
     public CustomEntityZombieSuper(World world, JavaPlugin plugin) {
         super(EntityTypes.ZOMBIE, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
     }

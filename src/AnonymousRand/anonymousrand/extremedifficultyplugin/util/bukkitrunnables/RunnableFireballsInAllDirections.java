@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class FireballsInAllDirections extends BukkitRunnable {
+public class RunnableFireballsInAllDirections extends BukkitRunnable {
 
     private final EntityInsentient entity;
     private final double spacing;
@@ -14,7 +14,7 @@ public class FireballsInAllDirections extends BukkitRunnable {
     private final int maxCycles;
     private CustomEntitySmallFireball entitySmallFireball;
 
-    public FireballsInAllDirections(EntityInsentient entity, double spacing, int maxCycles) {
+    public RunnableFireballsInAllDirections(EntityInsentient entity, double spacing, int maxCycles) {
         this.entity = entity;
         this.spacing = spacing;
         this.cycles = 0;

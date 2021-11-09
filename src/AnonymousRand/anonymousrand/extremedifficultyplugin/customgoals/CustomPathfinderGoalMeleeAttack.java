@@ -30,6 +30,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
             return false;
         } else {
             this.k = i;
+
             EntityLiving entityliving = this.a.getGoalTarget();
 
             if (entityliving == null) {

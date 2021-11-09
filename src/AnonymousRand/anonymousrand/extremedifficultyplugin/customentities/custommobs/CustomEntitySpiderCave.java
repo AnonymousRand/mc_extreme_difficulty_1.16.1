@@ -14,6 +14,8 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
 
     public CustomEntitySpiderCave(World world) {
         super(EntityTypes.CAVE_SPIDER, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 45;
         this.a25 = false;
         this.a45 = false;

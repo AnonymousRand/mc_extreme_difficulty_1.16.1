@@ -87,6 +87,11 @@ public class PlayerDamageListeners implements Listener {
                     }
                 }
                 case PHANTOM -> ((CustomEntityPhantom)nmsDamager).attacks++;
+                case PIGLIN -> {
+                    CustomEntityPiglin piglin = (CustomEntityPiglin)nmsDamager;
+                    piglin.attacks++;
+                    piglin.setHealth((float)(piglin.getHealth() + 1.0)); /**piglins heal by 1 every time its attacks increase by 1*/
+                }
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
                     CustomEntityRavager ravager = (CustomEntityRavager)nmsDamager;
@@ -208,7 +213,7 @@ public class PlayerDamageListeners implements Listener {
             }
 
             if (cause.equals(EntityDamageEvent.DamageCause.CONTACT)) {
-                event.setDamage(15.0); /**cactus does 15 damage per tick*/
+                event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
             }
 
             if (cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) { /**anvils do 60% less damage*/

@@ -14,8 +14,9 @@ public class CustomEntityEnderman extends EntityEnderman {
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
-        this.a(PathType.WATER, 0.0F); //no longer avoids water
-        this.a(PathType.LAVA, 0.0F); //no longer avoids lava
+        this.a(PathType.WATER, 0.0F); /**no longer avoids water*/
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a12 = false;
         this.a25 = false;

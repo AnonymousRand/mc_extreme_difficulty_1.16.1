@@ -1,0 +1,27 @@
+package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
+
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDropItemEvent;
+
+import java.util.Random;
+
+import static org.bukkit.entity.EntityType.PIGLIN;
+
+public class PiglinBarterListeners implements Listener {
+
+    private final Random random = new Random();
+
+    @EventHandler
+    public void piglinBarter(EntityDropItemEvent event) {
+        if (((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityPiglin) { /**trading increases a piglin's attacks by 1*/
+            CustomEntityPiglin piglin = (CustomEntityPiglin)((CraftEntity)event.getEntity()).getHandle();
+            piglin.attacks++;
+            piglin.setHealth((float)(piglin.getHealth() + 1.0)); /**piglins heal by 1 every time its attacks increase by 1*/
+        }
+    }
+}

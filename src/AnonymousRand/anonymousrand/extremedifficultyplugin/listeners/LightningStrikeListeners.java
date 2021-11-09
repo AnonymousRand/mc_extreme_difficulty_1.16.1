@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.LightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -50,7 +50,7 @@ public class LightningStrikeListeners implements Listener {
             }
 
             if (!storm && random.nextDouble() < 0.025) { /**non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-                new LightningStorm(nmsWorld, loc, this.random.nextInt(16) + 40).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
+                new RunnableLightningStorm(nmsWorld, loc, this.random.nextInt(16) + 40).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
             }
 
             if (!storm && random.nextDouble() < 0.0175) { /**non-storm lightning has a 1.75% chance to summon thor*/

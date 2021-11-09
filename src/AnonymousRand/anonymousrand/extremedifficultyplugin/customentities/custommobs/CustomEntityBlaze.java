@@ -23,9 +23,8 @@ public class CustomEntityBlaze extends EntityBlaze {
         super(EntityTypes.BLAZE, world);
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.WATER, 0.0F); /**no longer avoids water*/
-        this.a(PathType.LAVA, 8.0F);
-        this.a(PathType.DANGER_FIRE, 0.0F);
-        this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.rapidFireTracker = 0;
     }
@@ -105,7 +104,7 @@ public class CustomEntityBlaze extends EntityBlaze {
         return d0 * d0 + d2 * d2;
     }
 
-    public static class CustomPathfinderGoalBlazeFireball extends PathfinderGoal { //new attack goal
+    static class CustomPathfinderGoalBlazeFireball extends PathfinderGoal { //new attack goal
 
         private final CustomEntityBlaze blaze;
         private int b;

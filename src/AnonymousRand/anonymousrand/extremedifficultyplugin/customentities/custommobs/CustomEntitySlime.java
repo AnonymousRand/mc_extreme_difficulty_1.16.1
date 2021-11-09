@@ -16,6 +16,8 @@ public class CustomEntitySlime extends EntitySlime {
     public CustomEntitySlime(World world) {
         super(EntityTypes.SLIME, world);
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attackCooldown = 0;
         this.attacks = 0;
         this.a12 = false;

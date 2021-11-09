@@ -27,6 +27,8 @@ public class CustomEntityEvoker extends EntityEvoker {
     public CustomEntityEvoker(World world, JavaPlugin plugin) {
         super(EntityTypes.EVOKER, world);
         this.plugin = plugin;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a25 = false;
         this.a36 = false;

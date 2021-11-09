@@ -19,6 +19,8 @@ public class CustomEntityDrowned extends EntityDrowned {
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT)); /**drowned always spawn with tridents*/
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a50 = false;
         this.a100 = false;

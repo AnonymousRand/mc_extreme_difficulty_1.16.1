@@ -15,6 +15,8 @@ public class CustomEntityEndermite extends EntityEndermite {
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
         this.targetSelectorVanilla = super.targetSelector;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a35 = false;
         this.a60 = false;

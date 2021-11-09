@@ -4,9 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSpawnBlocksEntitiesOnMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.FireballsInAllDirections;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableFireballsInAllDirections;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 public class CustomEntitySlimeMagmaCube extends EntityMagmaCube {
 
@@ -220,7 +219,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube {
         @Override
         public void e() {
             if (this.cube.ticksLived % this.cube.getBlazeFireballGoalAttackCooldown() == 0) {
-                new FireballsInAllDirections(this.cube, 0.4, 1).run();
+                new RunnableFireballsInAllDirections(this.cube, 0.4, 1).run();
             }
         }
     }

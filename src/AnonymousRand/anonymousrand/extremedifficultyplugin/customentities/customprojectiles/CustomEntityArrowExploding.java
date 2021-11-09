@@ -11,8 +11,11 @@ public class CustomEntityArrowExploding extends CustomEntityArrow {
 
     public CustomEntityArrowExploding(World world, Vector a, byte pierce, ProjectileSource source, float yield) {
         super(world, a, pierce, source);
-
         this.yield = yield;
+    }
+
+    public CustomEntityArrowExploding(World world) {
+        super(world);
     }
 
     @Override

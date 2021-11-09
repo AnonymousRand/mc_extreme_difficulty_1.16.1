@@ -1,9 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
-import net.minecraft.server.v1_16_R1.EntitySkeletonAbstract;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,6 +21,8 @@ public class CustomEntitySkeleton extends EntitySkeleton {
     public CustomEntitySkeleton(World world, JavaPlugin plugin) {
         super(EntityTypes.SKELETON, world);
         this.plugin = plugin;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.spawnExplodingArrow = false;
         this.attacks = 0;
@@ -47,48 +50,11 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         this.attacks++;
 
         if (this.attacks >= 20 && this.attacks <= 45 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
-            for (int i = 0; i < 10; i++) {
-                this.spawnExplodingArrow = true;
-                ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-                EntityArrow entityarrow = this.b(itemstack, f);
-
-                double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-                double d2 = entityliving.locZ() - this.locZ();
-                double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-
-                entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(50 - this.getWorld().getDifficulty().a() * 4)); //more inaccuracy
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
-                this.getWorld().addEntity(entityarrow);
-            }
-        } else if (this.attacks < 30) {
-            this.spawnExplodingArrow = false;
-
-            for (int i = 0; i < 75; i++) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-                ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-                EntityArrow entityarrow = this.b(itemstack, f);
-                double d0 = entityliving.locX() - this.locX();
-                double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-                double d2 = entityliving.locZ() - this.locZ();
-                double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-
-                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
-                    entityarrow.setPierceLevel((byte)1);
-                }
-
-                if (this.attacks >= 18) { /**after the 18th attack, arrows are on fire and do not lose y level*/
-                    entityarrow.setOnFire(50);
-                    entityarrow.setNoGravity(true);
-                }
-
-                entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(40 - this.getWorld().getDifficulty().a() * 4));
-                this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
-                this.getWorld().addEntity(entityarrow);
-            }
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
+        } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.02 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
-            this.spawnExplodingArrow = false;
-
-            new SkeletonRapidFire(this, entityliving, this.attacks >= 35 ? 40 : 8, f).runTaskTimer(this.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
+            new SkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(this.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
         }
     }
 
@@ -181,15 +147,15 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         private final EntityLiving target;
         private int cycles;
         private final int maxCycles;
-        private final float f;
+        private final float distance;
         private final Random random = new Random();
 
-        public SkeletonRapidFire(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float f) {
+        public SkeletonRapidFire(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float distance) {
             this.skeleton = skeleton;
             this.target = target;
             this.cycles = 0;
             this.maxCycles = maxCycles;
-            this.f = f;
+            this.distance = distance;
         }
 
         @Override
@@ -199,25 +165,28 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             }
 
             for (int i = 0; i < (skeleton.attacks < 35 ? 10 : 1); i++) {
-                ItemStack itemstack = skeleton.f(skeleton.b(ProjectileHelper.a(skeleton, Items.BOW)));
-                EntityArrow entityarrow = skeleton.b(itemstack, f);
+                CustomEntityArrow entityArrow = new CustomEntityArrow(this.skeleton.getWorld());
+                entityArrow.a(this.target, this.distance);
+                entityArrow.setShooter(this.skeleton);
+                entityArrow.setPosition(this.skeleton.locX(), this.skeleton.locY() + 1.5, this.skeleton.locZ());
+
                 double d0 = target.locX() - skeleton.locX();
                 double d1 = target.locY() - skeleton.locY();
                 double d2 = target.locZ() - skeleton.locZ();
 
                 if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
-                    entityarrow.setPierceLevel((byte)1);
+                    entityArrow.setPierceLevel((byte)1);
                 }
 
                 if (this.skeleton.attacks >= 35) { /**starting from the 35th attack, arrows do not lose y level*/
-                    entityarrow.setNoGravity(true);
+                    entityArrow.setNoGravity(true);
                 }
 
-                entityarrow.setOnFire(50);
+                entityArrow.setOnFire(50);
 
-                entityarrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
+                entityArrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
                 skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.getRandom().nextFloat() * 0.4F + 0.8F));
-                skeleton.world.addEntity(entityarrow);
+                skeleton.world.addEntity(entityArrow);
             }
         }
     }

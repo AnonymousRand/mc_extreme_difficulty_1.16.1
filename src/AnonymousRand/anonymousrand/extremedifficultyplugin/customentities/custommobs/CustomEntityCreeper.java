@@ -15,6 +15,8 @@ public class CustomEntityCreeper extends EntityCreeper {
     public CustomEntityCreeper(World world, int fuse) {
         super(EntityTypes.CREEPER, world);
         this.maxFuseTicks = fuse;
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
 
         try {
             this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");

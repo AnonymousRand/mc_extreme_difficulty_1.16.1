@@ -18,6 +18,8 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
         this.a30 = false;
