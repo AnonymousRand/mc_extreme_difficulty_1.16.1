@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomEntityBat extends EntityBat {
+public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a5, a10, a20, a32, a45, firstDuplicate;
-
-    private NewPathfinderGoalBuffMobs buffMobs= new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(), 32, 5, 200, 101);
+    private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 5, 200, 101);
 
     public CustomEntityBat(World world) { /**bats are now aggressive*/
         super(EntityTypes.BAT, world);
@@ -71,7 +70,7 @@ public class CustomEntityBat extends EntityBat {
         map.put(attributeBase, attributeModifiable);
     }
 
-    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 5 attacks, all monsters within 32 block sphere get speed 1, strength 1, and regen 1 for 3 minutes. After 20 attacks, all monsters within 64 block sphere shoot an arrow every 20 ticks and potion durations are increased to 5 minutes. After 32 attacks, all monsters within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 45 attacks, all monsters within 64 block sphere get regen 2 for 5 minutes and shoot an arrow every 8 ticks*/
+    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 5 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 1 for 4 minutes. After 20 attacks, all mobs within 64 block sphere shoot an arrow every 20 ticks. After 32 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 45 attacks, all mobs within 64 block sphere get regen 2 for 4 minutes and shoot an arrow every 8 ticks*/
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
         ArrayList<MobEffect> attacks5 = new ArrayList<>();
@@ -79,11 +78,11 @@ public class CustomEntityBat extends EntityBat {
         ArrayList<MobEffect> attacks32 = new ArrayList<>();
         ArrayList<MobEffect> attacks45 = new ArrayList<>();
 
-        attacks5.add(new MobEffect(MobEffects.REGENERATION, this.attacks < 20 ? 3600 : 6000, 0));
-        attacks5.add(new MobEffect(MobEffects.FASTER_MOVEMENT, this.attacks < 20 ? 3600 : 6000, 0));
-        attacks5.add(new MobEffect(MobEffects.INCREASE_DAMAGE, this.attacks < 20 ? 3600 : 6000, 0));
+        attacks5.add(new MobEffect(MobEffects.REGENERATION, 4800, 0));
+        attacks5.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
+        attacks5.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
         attacks20.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
-        attacks20.add(new MobEffect(MobEffects.REGENERATION, 6000, 1));
+        attacks20.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
         attacks32.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
         attacks45.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
 
@@ -99,10 +98,10 @@ public class CustomEntityBat extends EntityBat {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) { /**summons 15-20 bats when hit by player and not killed for the first time (also 2 aggressive bats after 45 attacks)*/
             this.firstDuplicate = false;
-            new SpawnLivingEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), this.random.nextInt(6) + 15, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false).run();
+            new SpawnLivingEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), this.random.nextInt(6) + 15, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             if (this.attacks >= 45) {
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 2, null, null, this, false, false).run();
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 2, null, null, this, false, false);
             }
         }
 

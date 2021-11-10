@@ -7,7 +7,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinder
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableFireballsInAllDirections;
 import net.minecraft.server.v1_16_R1.*;
 
-public class CustomEntitySlimeMagmaCube extends EntityMagmaCube {
+public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private int attackCooldown;

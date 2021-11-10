@@ -9,7 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CustomEntityHoglin extends EntityHoglin {
+public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMethods {
 
     private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
@@ -36,7 +36,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /**custom goal that breaks repellant blocks around the mob periodically*/
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
@@ -45,7 +45,7 @@ public class CustomEntityHoglin extends EntityHoglin {
         super.die();
 
         if (this.random.nextDouble() < (this.attacks < 70 ? 0.3 : 1.0)) { /**hoglins have a 30% chance to spawn a zoglin after death (100% chance after 70 attacks)*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld(), this.plugin), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld(), this.plugin), 1, null, null, this, false, true);
         }
     }
 
@@ -71,15 +71,15 @@ public class CustomEntityHoglin extends EntityHoglin {
         if (this.attacks == 42 && !this.a42) { /**after 42 attacks, hoglins summon a baby hoglin*/
             this.a42 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
-            new SpawnLivingEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true).run();
             newHoglin.a(true);
+            new SpawnLivingEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
         }
 
         if (this.attacks == 70 && !this.a70) { /**after 70 attacks, hoglins summon 2 baby hoglins*/
             this.a70 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
-            new SpawnLivingEntity(this.getWorld(), this.plugin, newHoglin, 2, null, null, this, false, true).run();
             newHoglin.a(true);
+            new SpawnLivingEntity(this.getWorld(), this.plugin, newHoglin, 2, null, null, this, false, true);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

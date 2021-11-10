@@ -11,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntityChickenAggressive extends EntityChicken { //can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
+public class CustomEntityChickenAggressive extends EntityChicken implements ICommonCustomMethods { //can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
     public int attacks;
     private boolean a15, a30;
@@ -78,7 +78,7 @@ public class CustomEntityChickenAggressive extends EntityChicken { //can't exten
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
 
             if (this.attacks >= 60) { /**after 60 attacks, aggressive chickens also duplicate into a custom exploding aggressive chicken when hit and not killed*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityChickenAggressiveExploding(this.getWorld()), 1, null, null, this, false, true).run();
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityChickenAggressiveExploding(this.getWorld()), 1, null, null, this, false, true);
             }
         }
 

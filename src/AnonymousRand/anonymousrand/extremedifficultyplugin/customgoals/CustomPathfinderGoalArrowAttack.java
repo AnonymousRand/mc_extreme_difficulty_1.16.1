@@ -8,7 +8,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     private final EntityInsentient entity;
     private final IRangedEntity entityButIRangedEntity;
-    private EntityLiving attackTarget;
+    protected EntityLiving attackTarget;
     private int d;
     private final double e;
     private int f;
@@ -17,8 +17,8 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
     private final float i;
     private final float j;
 
-    public CustomPathfinderGoalArrowAttack(IRangedEntity irangedentity, double d0, int i, float f) {
-        this(irangedentity, d0, i, i, f);
+    public CustomPathfinderGoalArrowAttack(IRangedEntity irangedentity, double speedTowardsTarget, int delayTimer, float maxDistance) {
+        this(irangedentity, speedTowardsTarget, delayTimer, delayTimer, maxDistance);
     }
 
     public CustomPathfinderGoalArrowAttack(IRangedEntity irangedentity, double d0, int i, int j, float f) {

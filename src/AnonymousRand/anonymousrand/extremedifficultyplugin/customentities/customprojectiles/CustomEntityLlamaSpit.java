@@ -28,7 +28,7 @@ public class CustomEntityLlamaSpit extends EntityLlamaSpit {
             }
         } else if (this.getShooter() instanceof CustomEntityLlamaTrader) {
             if (((CustomEntityLlamaTrader)this.getShooter()).attacks >= 25) { /**after 25 attacks, trader llama spit summons a wandering trader on hit*/
-                new SpawnLivingEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true).run();
+                new SpawnLivingEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }

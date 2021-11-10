@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntit
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityEndermite extends EntityEndermite {
+public class CustomEntityEndermite extends EntityEndermite implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
@@ -37,7 +37,7 @@ public class CustomEntityEndermite extends EntityEndermite {
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /**duplicates when hit by player and not killed*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
         }
 
         return super.damageEntity(damagesource, f);

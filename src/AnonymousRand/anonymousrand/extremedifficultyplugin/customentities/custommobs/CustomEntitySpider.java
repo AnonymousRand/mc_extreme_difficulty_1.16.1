@@ -7,7 +7,7 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class CustomEntitySpider extends EntitySpider {
+public class CustomEntitySpider extends EntitySpider implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a18, a20, a50, a80;
@@ -63,12 +63,12 @@ public class CustomEntitySpider extends EntitySpider {
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders summon 3 vanilla cave spiders*/
             this.a50 = true;
-            new SpawnLivingEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 3, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 3, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
         if (this.attacks == 80 && !this.a80) { /**after 80 attacks, spiders summon 5 cave spiders*/
             this.a80 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 5, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 5, null, null, this, false, true);
         }
 
         if (this.ticksLived == 10) { /**spiders move 70% faster but only do 1 damage and have 12.5 health*/

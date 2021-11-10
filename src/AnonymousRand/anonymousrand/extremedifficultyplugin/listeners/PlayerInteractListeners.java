@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
 import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
@@ -35,6 +37,7 @@ public class PlayerInteractListeners implements Listener {
             Block bukkitBlock = event.getClickedBlock();
             Material type = bukkitBlock.getType();
             Player bukkitPlayer = event.getPlayer();
+            EntityPlayer nmsPlayer = ((CraftPlayer)bukkitPlayer).getHandle();
             Location loc = bukkitPlayer.getLocation();
             World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
             boolean containerBlock = type == Material.CHEST || type == Material.BARREL || type == Material.DISPENSER || type == Material.DROPPER || type == Material.ENDER_CHEST || type == Material.HOPPER || type == Material.CHEST_MINECART || type == Material.HOPPER_MINECART || type == Material.SHULKER_BOX || type == Material.TRAPPED_CHEST;
@@ -49,6 +52,19 @@ public class PlayerInteractListeners implements Listener {
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 600, 0));
                     }
                 } else {
+                    if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins in a 40 block cube to go into a frenzy for 10 seconds*/
+                        CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
+                        new SpawnLivingEntity(nmsWorld, newPiglin, 1, null, loc, true);
+                        newPiglin.setSlot(EnumItemSlot.MAINHAND, this.random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                        PiglinAI.a(newPiglin); //code from onInitialSpawn
+
+                        List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin);
+
+                        for (Entity entity : nmsEntities) {
+                            ((CustomEntityPiglin)entity).veryAngryTicks += 200;
+                        }
+                    }
+
                     if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**right-clicking an anvil or smithing table causes it to explode 10 seconds later*/
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
                         {
@@ -62,13 +78,6 @@ public class PlayerInteractListeners implements Listener {
                             }
                         }, 200L);
                     }
-                }
-
-                if (containerBlock) { /**mining or right-clicking these blocks spawns a piglin*/
-                    CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
-                    new SpawnLivingEntity(nmsWorld, newPiglin, 1, null, loc, true).run();
-                    newPiglin.setSlot(EnumItemSlot.MAINHAND, this.random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
-                    PiglinAI.a(newPiglin); //code from onInitialSpawn
                 }
             }
         }

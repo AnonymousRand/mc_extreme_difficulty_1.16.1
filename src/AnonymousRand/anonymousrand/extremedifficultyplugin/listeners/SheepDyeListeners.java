@@ -25,6 +25,6 @@ public class SheepDyeListeners implements Listener {
         World nmsWorld = nmsSheep.getWorld();
 
         CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld, this.plugin);
-        new SpawnLivingEntity(nmsWorld, newSheep, 1, null, null, nmsSheep, true, true).run();
+        new SpawnLivingEntity(nmsWorld, newSheep, 1, null, null, nmsSheep, true, true);
     }
 }

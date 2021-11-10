@@ -90,7 +90,7 @@ public class PlayerDamageListeners implements Listener {
                 case PIGLIN -> {
                     CustomEntityPiglin piglin = (CustomEntityPiglin)nmsDamager;
                     piglin.attacks++;
-                    piglin.setHealth((float)(piglin.getHealth() + 1.0)); /**piglins heal by 1 every time its attacks increase by 1*/
+                    piglin.setHealth((float)(piglin.getHealth() + 0.75)); /**piglins heal by 0.75 every time its attacks increase by 1*/
                 }
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
@@ -148,7 +148,7 @@ public class PlayerDamageListeners implements Listener {
                     silverfish.attacks++;
 
                     if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true).run();
+                        new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true);
                     }
                 }
                 case SLIME -> ((CustomEntitySlime)nmsDamager).attacks++;
@@ -204,9 +204,9 @@ public class PlayerDamageListeners implements Listener {
                 World nmsWorld = nmsPlayer.getWorld();
 
                 if (this.random.nextDouble() < 0.2) {
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true).run();
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true);
                 } else if (this.random.nextDouble() < 0.025) {
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, null, nmsPlayer, false, true).run();
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, null, nmsPlayer, false, true);
                 } else {
                     //todo pufferfish
                 }

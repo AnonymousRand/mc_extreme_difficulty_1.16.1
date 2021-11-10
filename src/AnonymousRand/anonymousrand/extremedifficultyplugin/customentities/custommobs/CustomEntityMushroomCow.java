@@ -35,8 +35,6 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
 
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 15.0F, false, Explosion.Effect.DESTROY); /**mooshrooms explode massively and die when they are milked/sheared*/
             this.die();
-
-            Bukkit.broadcastMessage("You've gotten food...but at what cost?");
         }
 
         return super.b(entityhuman, enumhand);

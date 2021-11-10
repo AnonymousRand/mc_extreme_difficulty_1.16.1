@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class CustomEntityZombieVillager extends EntityZombieVillager {
+public class CustomEntityZombieVillager extends EntityZombieVillager implements ICommonCustomMethods {
 
     private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
@@ -38,7 +38,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)); /**prioritizes villagers over players*/
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
@@ -46,7 +46,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager {
 
     @Override
     public void startConversion(@Nullable UUID uuid, int i) { /**zombie villagers can't be converted and instead summon 10 more zombie villagers when fed a golden apple*/
-        new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombieVillager(this.getWorld(), this.plugin), 10, null, null, this, false, true).run();
+        new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombieVillager(this.getWorld(), this.plugin), 10, null, null, this, false, true);
         this.world.broadcastEntityEffect(this, (byte) 16);
     }
 

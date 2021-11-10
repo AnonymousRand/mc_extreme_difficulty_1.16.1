@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityGhast extends EntityGhast {
+public class CustomEntityGhast extends EntityGhast implements ICommonCustomMethods {
 
     private final JavaPlugin plugin;
     public int attacks;
@@ -49,6 +49,10 @@ public class CustomEntityGhast extends EntityGhast {
         } else {
             return super.damageEntity(damagesource, f);
         }
+    }
+
+    public double getFollowRange() { /**ghasts have 80 block detection range (setting attribute doesn't work)*/
+        return 80.0;
     }
 
     @Override
@@ -143,7 +147,7 @@ public class CustomEntityGhast extends EntityGhast {
         public void e() {
             EntityLiving entityliving = this.ghast.getGoalTarget();
 
-            if (this.ghast.d(entityliving.getPositionVector()) < 4096.0D) { /**removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing*/
+            if (this.ghast.d(entityliving.getPositionVector()) < 6400.0D) { /**removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing*/
                 World world = this.ghast.world;
 
                 ++this.a;
@@ -207,7 +211,6 @@ public class CustomEntityGhast extends EntityGhast {
                 this.a.aH = this.a.yaw;
             } else {
                 EntityLiving entityliving = this.a.getGoalTarget();
-                double d0 = 64.0D;
 
                 if (entityliving.h((Entity) this.a) < 4096.0D) {
                     double d1 = entityliving.locX() - this.a.locX();

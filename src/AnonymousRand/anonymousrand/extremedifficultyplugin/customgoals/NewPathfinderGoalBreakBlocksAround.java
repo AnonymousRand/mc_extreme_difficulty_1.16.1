@@ -26,7 +26,7 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
 
     @Override
     public boolean a() { //should execute
-        return this.entity.getGoalTarget() != null ? !this.entity.getGoalTarget().isInvulnerable() : false;
+        return this.entity.getGoalTarget() != null && !this.entity.getGoalTarget().isInvulnerable();
     }
 
     @Override

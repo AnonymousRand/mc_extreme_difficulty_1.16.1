@@ -54,7 +54,7 @@ public class LightningStrikeListeners implements Listener {
             }
 
             if (!storm && random.nextDouble() < 0.0175) { /**non-storm lightning has a 1.75% chance to summon thor*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld, this.plugin), 1, null, loc, true).run();
+                new SpawnLivingEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld, this.plugin), 1, null, loc, true);
             }
         }
     }

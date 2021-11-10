@@ -46,7 +46,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
             CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld, this.plugin);
             newZombie.getBukkitEntity().setCustomName("Dinnerbone");
-            new SpawnLivingEntity(nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true).run();
+            new SpawnLivingEntity(nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true);
             superZombies.add(newZombie);
         }
     }
@@ -74,7 +74,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
                 if (respawnCount.get(bukkitPlayer) % 5 == 0) { /**summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5*/
                     World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
                     MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Bukkit.getServer().getOnlinePlayers().size() * respawnCount.get(bukkitPlayer) / 5;
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int)MobSpawnAndReplaceWithCustomListeners.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false).run();
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int)MobSpawnAndReplaceWithCustomListeners.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
                 }
 
                 if (superZombies.size() >= (3 * Bukkit.getServer().getOnlinePlayers().size())) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/

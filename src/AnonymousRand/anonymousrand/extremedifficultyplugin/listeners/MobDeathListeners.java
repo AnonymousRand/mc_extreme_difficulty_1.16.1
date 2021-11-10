@@ -46,7 +46,7 @@ public class MobDeathListeners implements Listener {
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
                     if (this.random.nextDouble() < 0.2) { /**aggressive chickens have a 20% chance to explode into 12-18 normal chickens*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityChicken(nmsWorld), this.random.nextInt(7) + 12, null, null, nmsEntity, false, true).run();
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityChicken(nmsWorld), this.random.nextInt(7) + 12, null, null, nmsEntity, false, true);
                     }
                 } else if (nmsEntity instanceof CustomEntityChickenAggressiveExploding) { /**aggressive exploding chickens explode with power 1 after 20 seconds or when killed*/
                     bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.0F, false);
@@ -61,14 +61,14 @@ public class MobDeathListeners implements Listener {
                     }
                 }
             }
-            case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true).run(); /**iron golems summon 15 silverfish when killed*/
+            case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true); /**iron golems summon 15 silverfish when killed*/
             case MUSHROOM_COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 15.0F, false); /**mooshrooms explode with power 15 when killed*/
             case PIG -> {
                 if (this.random.nextDouble() < 0.14) {
                     if (this.random.nextDouble() < 0.285714286) { /**pigs have a 4% chance to summon a hoglin on death and a 10% chance to summon a piglin on death*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, false, true).run();
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, false, true);
                     } else {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, false, true).run();
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, false, true);
                     }
                 }
             }
@@ -77,8 +77,8 @@ public class MobDeathListeners implements Listener {
                 new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);
             }
             case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
-                new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true).run();
-                new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true).run();
+                new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityEvoker(nmsWorld, this.plugin), 2, null, null, nmsEntity, false, true);
+                new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/

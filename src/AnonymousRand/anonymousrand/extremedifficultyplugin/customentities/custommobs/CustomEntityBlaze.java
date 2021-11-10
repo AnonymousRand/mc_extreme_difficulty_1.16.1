@@ -11,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.EnumSet;
 
-public class CustomEntityBlaze extends EntityBlaze {
+public class CustomEntityBlaze extends EntityBlaze implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;

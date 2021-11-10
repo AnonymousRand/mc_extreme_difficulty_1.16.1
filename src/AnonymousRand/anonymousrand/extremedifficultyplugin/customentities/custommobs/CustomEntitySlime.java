@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinder
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class CustomEntitySlime extends EntitySlime {
+public class CustomEntitySlime extends EntitySlime implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private int attackCooldown;

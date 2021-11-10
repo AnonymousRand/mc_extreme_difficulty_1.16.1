@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CustomEntityEvoker extends EntityEvoker {
+public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMethods {
 
     public final JavaPlugin plugin;
     private EntitySheep wololoTarget;
@@ -390,7 +390,7 @@ public class CustomEntityEvoker extends EntityEvoker {
             EntitySheep entitysheep = CustomEntityEvoker.this.fh();
 
             if (entitysheep != null && entitysheep.isAlive()) { /**instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep*/
-                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin), 1, null, null, entitysheep, true, true).run();
+                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin), 1, null, null, entitysheep, true, true);
             }
         }
 

@@ -7,7 +7,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityEnderman extends EntityEnderman {
+public class CustomEntityEnderman extends EntityEnderman implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a12, a25, a40;
@@ -119,7 +119,7 @@ public class CustomEntityEnderman extends EntityEnderman {
 
             if (flag && damagesource.getEntity() instanceof EntityPlayer) {
                 if (this.attacks >= 40) { /**after 40 attacks, endermen summon an endermite when hit and not killed*/
-                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true).run();
+                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                 }
             }
 
@@ -136,7 +136,7 @@ public class CustomEntityEnderman extends EntityEnderman {
         super.die();
 
         if (this.attacks >= 40) { /**after 40 attacks, endermen summon 5 endermites when killed*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
     }
 
@@ -163,7 +163,7 @@ public class CustomEntityEnderman extends EntityEnderman {
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermen summon 5 endermites*/
             this.a40 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {
@@ -178,7 +178,7 @@ public class CustomEntityEnderman extends EntityEnderman {
                     this.o(target.locX(), target.locY(), target.locZ());
 
                     if (this.random.nextDouble() < 0.3) { /**30% chance to summon an endermite where it teleports to*/
-                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true).run();
+                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
 
@@ -186,7 +186,7 @@ public class CustomEntityEnderman extends EntityEnderman {
                     this.o(target.locX(), target.locY(), target.locZ());
 
                     if (this.random.nextDouble() < 0.3) { /**30% chance to summan an endermite where it teleports to*/
-                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true).run();
+                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
             }

@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityDrowned extends EntityDrowned {
+public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a50, a100;
@@ -31,9 +31,9 @@ public class CustomEntityDrowned extends EntityDrowned {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 10.0F)); /**throws a trident every 2 ticks and continues shooting even when line of sight is broken*/
+        this.goalSelector.a(1, new CustomEntityDrowned.CustomPathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 40.0F)); /**throws a trident every 2 ticks and continues shooting even when line of sight is broken*/
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(2, new CustomEntityDrowned.CustomPathfinderGoalDrownedAttack(this, 1.0D, false)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
@@ -58,12 +58,12 @@ public class CustomEntityDrowned extends EntityDrowned {
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, drowned summon a guardian*/
             this.a50 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 2, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 2, null, null, this, false, true);
         }
 
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, drowned summon an elder guardian*/
             this.a100 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.ticksLived == 10) { /**drowned only have 13.5 health*/

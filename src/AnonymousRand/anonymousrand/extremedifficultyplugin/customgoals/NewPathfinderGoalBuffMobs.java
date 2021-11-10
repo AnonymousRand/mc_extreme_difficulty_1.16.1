@@ -10,7 +10,7 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
     public EntityInsentient entity;
     private final Class<? extends EntityLiving> targetClass;
     private final HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects;
-    private double rangeRadius;
+    private final double rangeRadius;
     private final int attackMin, ticksDelayMin, ticksDelayRandBound;
     private final Random random = new Random();
     private Field attacks;
@@ -53,14 +53,10 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
     @Override
     public void e() {
         try {
-            List<Entity> nmsEntities = this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius));
+            List<Entity> nmsEntities = this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance);
             int attacksLocal = this.attacks.getInt(this.entity);
 
             for (Entity targetEntity : nmsEntities) {
-                if (!this.targetClass.isInstance(targetEntity) || targetEntity instanceof EntityPlayer) {
-                    continue;
-                }
-
                 if (this.normalGetDistanceSq(this.entity.getPositionVector(), targetEntity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { //ensures that the entities is in a sphere around the mob and not a cube
                     continue;
                 }

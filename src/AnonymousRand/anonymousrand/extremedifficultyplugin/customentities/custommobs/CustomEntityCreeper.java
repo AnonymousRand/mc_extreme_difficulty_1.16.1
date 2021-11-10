@@ -8,7 +8,7 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class CustomEntityCreeper extends EntityCreeper {
+public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomMethods {
 
     public Field fuseTicks;
 
@@ -46,7 +46,7 @@ public class CustomEntityCreeper extends EntityCreeper {
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) { /**creeper has a 50% chance to duplicate when hit by player and not killed (extra fuse on new creeper) (100% chance to duplicate into 10 if powered)*/
-            new SpawnLivingEntity(this.getWorld(), this.maxFuseTicks, new CustomEntityCreeper(this.getWorld(), 20), this.isPowered() ? 10 : 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), this.maxFuseTicks, new CustomEntityCreeper(this.getWorld(), 20), this.isPowered() ? 10 : 1, null, null, this, false, true);
         }
 
         return super.damageEntity(damagesource, f);
@@ -55,7 +55,7 @@ public class CustomEntityCreeper extends EntityCreeper {
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 9.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 3
+            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 9.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 3
                 try {
                     this.fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
@@ -92,7 +92,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
     }
 
-    private void createEffectCloud() {
+    private void createEffectCloud() { //todo: custom, setinvisible
         Collection<MobEffect> collection = this.getEffects();
 
         if (!collection.isEmpty()) {
@@ -115,14 +115,6 @@ public class CustomEntityCreeper extends EntityCreeper {
 
     }
 
-    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3d2) {
-        double d0 = vec3d2.getX() - vec3d1.getX(); //explode function still takes into account y level
-        double d1 = vec3d2.getY() - vec3d1.getY();
-        double d2 = vec3d2.getZ() - vec3d1.getZ();
-
-        return d0 * d0 + d1 * d1 + d2 * d2;
-    }
-
     public double getFollowRange() { /**creepers have 28 block detection range (64 if powered)*/
         return this.isPowered() ? 64.0 : 28.0;
     }
@@ -132,7 +124,7 @@ public class CustomEntityCreeper extends EntityCreeper {
         super.tick();
 
         if (this.isPowered() && this.getGoalTarget() != null && !this.isIgnited()) { /**charged creepers detonate starting 5 blocks away*/
-            if (normalGetDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
+            if (getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
                 this.ignite();
             }
         }

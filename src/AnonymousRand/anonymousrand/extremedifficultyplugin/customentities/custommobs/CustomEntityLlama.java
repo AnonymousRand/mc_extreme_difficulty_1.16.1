@@ -7,7 +7,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityLlama extends EntityLlama {
+public class CustomEntityLlama extends EntityLlama implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a15;

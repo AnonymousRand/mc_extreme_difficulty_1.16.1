@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntitySpiderCave extends EntityCaveSpider {
+public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a25, a45;
@@ -55,7 +55,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider {
         super.tick();
 
         if (this.ticksLived == 400) { /**duplicates if it has been alive for 20 seconds*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
             this.getBukkitEntity().setCustomName("Haha good luck making me despawn"); //doesn't despawn and doesn't count towards mob cap
         } else if (this.ticksLived == 6000) { /**explodes and dies after 5 minutes to reduce lag*/
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);

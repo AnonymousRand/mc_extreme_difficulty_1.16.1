@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
-public class CustomEntitySkeleton extends EntitySkeleton {
+public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCustomMethods {
 
     private final JavaPlugin plugin;
     public boolean spawnExplodingArrow;
@@ -63,14 +63,6 @@ public class CustomEntitySkeleton extends EntitySkeleton {
         return ProjectileHelper.a(this, itemstack, f);
     }
 
-    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
-        double d0 = vec3dt.getX() - vec3d1.getX(); //skeletons generally still include vertical distance for performance reasons
-        double d1 = vec3dt.getY() - vec3d1.getY();
-        double d2 = vec3dt.getZ() - vec3d1.getZ();
-
-        return d0 * d0 + d1 * d1 + d2 * d2;
-    }
-
     public double getFollowRange() { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks)*/
         return this.attacks < 25 ? 22.0 : 32.0;
     }
@@ -95,7 +87,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
 
             if (this.random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true).run();
+                new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
             }
         }
 
@@ -103,7 +95,7 @@ public class CustomEntitySkeleton extends EntitySkeleton {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggro if player out of y-level-included sphere for performance reasons
+                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggro if player out of y-level-included sphere for performance reasons
                     this.setGoalTarget(null);
                 }
             }

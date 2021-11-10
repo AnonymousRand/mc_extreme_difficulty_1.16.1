@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class CustomEntityGuardianElder extends EntityGuardianElder {
+public class CustomEntityGuardianElder extends EntityGuardianElder implements ICommonCustomMethods {
 
     public CustomEntityGuardianElder(World world) {
         super(EntityTypes.ELDER_GUARDIAN, world);
@@ -73,14 +73,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                 entityplayer.addEffect(new MobEffect(mobeffectlist, 3000, 2));
             }
         }
-    }
-
-    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
-        double d0 = vec3dt.getX() - vec3d1.getX(); //for calculating laser distance
-        double d1 = vec3dt.getY() - vec3d1.getY();
-        double d2 = vec3dt.getZ() - vec3d1.getZ();
-
-        return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
     public double getFollowRange() { /**elder guardians have 40 block detection range (setting attribute doesn't work)*/
@@ -204,7 +196,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder {
                     this.entity.setGoalTarget((EntityLiving)null);
                 } else if (this.b + 40 == this.entity.eL()) { /**2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player*/
 
-                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityliving.locX() - this.entity.locX(), entityliving.locY() - this.entity.locY(), entityliving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.normalGetDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()), 0.5) + 1);
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityliving.locX() - this.entity.locX(), entityliving.locY() - this.entity.locY(), entityliving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.getNormalDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()), 0.5) + 1);
                     while (iterator.hasNext()) {
                         Location locBase = iterator.next().getLocation();
                         Location loc;

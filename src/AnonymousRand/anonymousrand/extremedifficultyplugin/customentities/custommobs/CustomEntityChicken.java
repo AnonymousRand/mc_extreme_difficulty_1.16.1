@@ -28,7 +28,7 @@ public class CustomEntityChicken extends EntityChicken {
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
 
             if (this.random.nextDouble() < 0.25) { /**25% chance to spawn in as an aggressive chicken instead*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1, null, null, this, true, true).run();
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1, null, null, this, true, true);
             }
         }
     }

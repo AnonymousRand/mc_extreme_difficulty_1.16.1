@@ -1,8 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityGuardian;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
+import net.minecraft.server.v1_16_R1.Entity;
+import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.Explosion;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
@@ -10,6 +15,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -19,6 +27,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
@@ -60,17 +70,26 @@ public class BlockPlaceAndBreakListeners implements Listener {
 
     @EventHandler
     public void blockBreak(BlockBreakEvent event) {
-        World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
+        EntityPlayer nmsPlayer = ((CraftPlayer)event.getPlayer()).getHandle();
+        World nmsWorld = nmsPlayer.getWorld();
         Block bukkitBlock = event.getBlock();
         Location loc = bukkitBlock.getLocation();
         Material type = bukkitBlock.getType();
 
         if (type == Material.SPAWNER || type == Material.CONDUIT || type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
-            new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true).run(); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
+            new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
         }
 
         if (type == Material.DEAD_BUSH || type == Material.TORCH || type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**dead bushes, torches, anvils, and smithing tables explode when broken but don't break blocks*/
             nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
+        }
+
+        if (type == Material.GOLD_BLOCK || type == Material.GOLD_ORE || type == Material.NETHER_GOLD_ORE || type == Material.CHEST || type == Material.BARREL || type == Material.DISPENSER || type == Material.DROPPER || type == Material.ENDER_CHEST || type == Material.HOPPER || type == Material.CHEST_MINECART || type == Material.HOPPER_MINECART || type == Material.SHULKER_BOX || type == Material.TRAPPED_CHEST) {
+            List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin); /**breaking these blocks causes piglins in a 40 block cube to go into a frenzy for 15 seconds*/
+
+            for (Entity entity : nmsEntities) {
+                ((CustomEntityPiglin)entity).veryAngryTicks += 300;
+            }
         }
     }
 
@@ -87,7 +106,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
             type = block.getType();
 
             if (type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true).run();
+                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
             }
 
             if (type == Material.DEAD_BUSH || type == Material.TORCH) { /**dead bushes and torches explode when broken but don't break blocks*/
@@ -109,7 +128,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
             type = block.getType();
 
             if (type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true).run();
+                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
             }
 
             if (type == Material.DEAD_BUSH || type == Material.TORCH) { /**dead bushes and torches explode when broken but don't break blocks*/
@@ -138,7 +157,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 this.cancel();
             }
 
-            new SpawnLivingEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true).run();
+            new SpawnLivingEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true);
         }
     }
 }

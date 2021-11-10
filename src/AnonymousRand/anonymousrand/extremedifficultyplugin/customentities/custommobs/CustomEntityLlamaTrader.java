@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityLlamaTrader extends EntityLlamaTrader {
+public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a15;
@@ -37,7 +37,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); //why is this here???
+        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F));
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));

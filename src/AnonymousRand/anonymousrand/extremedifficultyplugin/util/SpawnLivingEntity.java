@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 public class SpawnLivingEntity extends BukkitRunnable {
 
@@ -46,6 +47,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
+        this.run();
     }
 
     public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
@@ -59,6 +61,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
+        this.run();
     }
 
     public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
@@ -72,6 +75,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
+        this.run();
     }
 
     public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, boolean phantomDuplicate, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
@@ -85,6 +89,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.pos = this.bukkitOriginalEntity.getLocation();
+        this.run();
     }
 
     public SpawnLivingEntity(World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
@@ -97,6 +102,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.pos = loc;
+        this.run();
     }
 
     public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
@@ -110,6 +116,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.pos = loc;
+        this.run();
     }
 
     @Override

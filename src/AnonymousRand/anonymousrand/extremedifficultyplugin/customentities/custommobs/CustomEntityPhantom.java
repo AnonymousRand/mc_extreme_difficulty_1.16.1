@@ -13,7 +13,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
-public class CustomEntityPhantom extends EntityPhantom {
+public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a30, deathExplosion, duplicate;
@@ -79,7 +79,7 @@ public class CustomEntityPhantom extends EntityPhantom {
 
         if (this.attacks >= 40 || this.duplicate) { /**after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4*/
             if (this.getSize() > 7) {
-                new SpawnLivingEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false).run();
+                new SpawnLivingEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
     }

@@ -7,7 +7,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntitySilverfish extends EntitySilverfish {
+public class CustomEntitySilverfish extends EntitySilverfish implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
@@ -37,7 +37,7 @@ public class CustomEntitySilverfish extends EntitySilverfish {
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /**duplicates when hit by player and not killed*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntitySilverfish(this.getWorld()), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntitySilverfish(this.getWorld()), 1, null, null, this, false, true);
         }
 
         return super.damageEntity(damagesource, f);

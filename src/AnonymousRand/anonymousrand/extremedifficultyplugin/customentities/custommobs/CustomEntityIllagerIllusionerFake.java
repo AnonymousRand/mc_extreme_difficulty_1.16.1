@@ -55,7 +55,7 @@ public class CustomEntityIllagerIllusionerFake extends CustomEntityIllagerIllusi
         if (this.parentIllusioner.attacks == 30 && !this.a30) { /**after 30 attacks, summoned fake illusioners attack faster*/
             this.a30 = true;
 
-            for (PathfinderGoal goal : RemovePathfinderGoals.removePathfinderGoal(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) { //todo: not working, check if anything is being removed
+            for (PathfinderGoal goal : RemovePathfinderGoals.removePathfinderGoal(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
                 this.goalSelector.a(goal);
             }
 

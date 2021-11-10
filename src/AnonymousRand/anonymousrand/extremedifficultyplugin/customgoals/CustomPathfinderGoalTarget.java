@@ -51,6 +51,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case EVOKER -> {
                 return ((CustomEntityEvoker)this.e).getFollowRange();
             }
+            case GHAST -> {
+                return ((CustomEntityGhast)this.e).getFollowRange();
+            }
             case GUARDIAN -> {
                 return ((CustomEntityGuardian)this.e).getFollowRange();
             }

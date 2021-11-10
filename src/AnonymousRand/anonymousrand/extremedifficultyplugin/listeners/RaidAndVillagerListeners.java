@@ -53,15 +53,13 @@ public class RaidAndVillagerListeners implements Listener {
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
 
-            new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityZombie(nmsWorld, this.plugin), 5, null, bukkitVillager.getLocation(), true).run();  /**5 zombies are spawned when a villager dies*/
+            new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityZombie(nmsWorld, this.plugin), 5, null, bukkitVillager.getLocation(), true);  /**5 zombies are spawned when a villager dies*/
 
-            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(64.0));
+            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(64.0), entity -> entity instanceof CustomEntityIronGolem);
 
             for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
-                if (entity instanceof CustomEntityIronGolem) {
-                    ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                    new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(this.plugin, 0L, 2L);
-                }
+                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
+                new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(this.plugin, 0L, 2L);
             }
         }
     }

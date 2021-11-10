@@ -47,7 +47,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
                     entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new EntityVex(EntityTypes.VEX, this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
                 }
                 case 4 -> { //piglin spawn piglin arrows
-                    if (rand < 0.015) {
+                    if (rand < 0.0125) {
                         entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, new CustomEntityPiglin(this.nmsWorld));
                     }
                 }

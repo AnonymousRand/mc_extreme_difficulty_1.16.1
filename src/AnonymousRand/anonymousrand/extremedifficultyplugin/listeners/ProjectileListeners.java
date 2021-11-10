@@ -153,7 +153,7 @@ public class ProjectileListeners implements Listener {
         }
 
         if (nmsProjectile instanceof EntityEnderPearl) { /**ender pearls spawn an endermite on landing (with now a 5% chance to spawn 2 due to the original vanilla spawning)*/
-            new SpawnLivingEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, null, nmsProjectile, false, true).run();
+            new SpawnLivingEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, null, nmsProjectile, false, true);
         }
 
         if (nmsProjectile instanceof CustomEntitySmallFireball && nmsShooter instanceof CustomEntityGhast) { /**blaze fireballs when shot by ghasts during their death still explode like large fireballs; the reason I use small fireballs instead is because large fireballs keep hitting each other as they are spawned on the same spot*/

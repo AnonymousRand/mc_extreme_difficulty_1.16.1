@@ -7,7 +7,7 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class CustomEntitySkeletonStray extends EntitySkeletonStray {
+public class CustomEntitySkeletonStray extends EntitySkeletonStray implements ICommonCustomMethods {
 
     public boolean spawnMob, spawnExplodingArrow;
     public int attacks;
@@ -55,14 +55,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         }
     }
 
-    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3dt) {
-        double d0 = vec3dt.getX() - vec3d1.getX(); //skeletons generally still include vertical distance for performance reasons
-        double d1 = vec3dt.getY() - vec3d1.getY();
-        double d2 = vec3dt.getZ() - vec3d1.getZ();
-
-        return d0 * d0 + d1 * d1 + d2 * d2;
-    }
-
     public double getFollowRange() { /**strays have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks)*/
         return this.attacks < 25 ? 22.0 : 32.0;
     }
@@ -79,7 +71,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, strays summon 6 vanilla skeletons*/
             this.a60 = true;
 
-            new SpawnLivingEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 6, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 6, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
         if (this.ticksLived == 10) { /**strays only have 13.5 health*/
@@ -91,7 +83,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (this.normalGetDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggro if player out of y-level-included sphere for performance reasons
+                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggro if player out of y-level-included sphere for performance reasons
                     this.setGoalTarget(null);
                 }
             }

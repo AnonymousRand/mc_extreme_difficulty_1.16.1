@@ -9,7 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CustomEntityIllagerIllusioner extends EntityIllagerIllusioner {
+public class CustomEntityIllagerIllusioner extends EntityIllagerIllusioner implements ICommonCustomMethods {
 
     public ArrayList<CustomEntityIllagerIllusionerFake> fakeIllusioners = new ArrayList<>();
     public int attacks;

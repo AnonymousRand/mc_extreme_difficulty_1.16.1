@@ -31,7 +31,7 @@ public class MobDamageListeners implements Listener {
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case ENDERMAN, SHEEP ->/**endermen and sheep don't take fire, lava, or fall damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
-            case ENDERMITE, PIGLIN, SILVERFISH -> /**endermites, piglins and silverfish don't take fire, lava, or suffocation damage*/
+            case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take fire, lava, or suffocation damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
             case GHAST -> /**ghasts don't take explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
@@ -41,6 +41,8 @@ public class MobDamageListeners implements Listener {
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case MAGMA_CUBE, SLIME -> /**magma cubes and slimes don't take explosion, fall or suffocation damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
+            case PIGLIN -> /**piglins don't take fire, lava, explosion, suffocation, or projectile damage*/
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.PROJECTILE);
             case SKELETON, STRAY -> /**skeletons and strays don't take fire and lightning damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING);
         }
@@ -75,13 +77,10 @@ public class MobDamageListeners implements Listener {
         }
 
         if (entityType != IRON_GOLEM && entityType != PLAYER) { /**golems within 40 block cube of damaged entity get a 15% stat boost*/
-            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(40.0));
+            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityIronGolem);
 
             for (Entity entity : nmsEntities) {
-                if (entity instanceof CustomEntityIronGolem) {
-                    ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.15);
-                }
-            }
+                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.15);            }
         }
     }
 

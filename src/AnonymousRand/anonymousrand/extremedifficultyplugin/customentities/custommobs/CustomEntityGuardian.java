@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-public class CustomEntityGuardian extends EntityGuardian {
+public class CustomEntityGuardian extends EntityGuardian implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a10, a25, a75;
@@ -83,7 +83,7 @@ public class CustomEntityGuardian extends EntityGuardian {
 
         if (this.attacks == 75 && !this.a75) { /**after 75 attacks, guardians summon an elder guardian*/
             this.a75 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true).run();
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
         }
     }
 

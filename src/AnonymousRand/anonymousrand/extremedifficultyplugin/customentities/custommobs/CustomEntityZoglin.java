@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
-public class CustomEntityZoglin extends EntityZoglin {
+public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMethods {
 
     private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
@@ -36,7 +36,7 @@ public class CustomEntityZoglin extends EntityZoglin {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomEntityZoglin.CustomPathfinderGoalZoglinAttack(this, 1.0D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(1, new CustomEntityZoglin.CustomPathfinderGoalZoglinAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); //instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));

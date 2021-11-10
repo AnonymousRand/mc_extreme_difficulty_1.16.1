@@ -9,7 +9,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityBee extends EntityBee {
+public class CustomEntityBee extends EntityBee implements ICommonCustomMethods {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private boolean firstSting;
@@ -25,7 +25,7 @@ public class CustomEntityBee extends EntityBee {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true)); /**custom melee attack goal continues attacking even when line of sight is broken*/
+        this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**bees are always aggro*/
@@ -51,7 +51,7 @@ public class CustomEntityBee extends EntityBee {
 
             if (this.firstSting) { /**duplicates after the first time stinging*/
                 this.firstSting = false;
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null, null, this, false, false).run();
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null, null, this, false, false);
             }
         }
     }
