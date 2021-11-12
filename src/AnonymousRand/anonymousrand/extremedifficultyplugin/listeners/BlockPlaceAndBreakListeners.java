@@ -29,10 +29,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
+import java.util.Random;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
     private final JavaPlugin plugin;
+    private final Random random = new Random();
 
     public BlockPlaceAndBreakListeners(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -90,6 +92,10 @@ public class BlockPlaceAndBreakListeners implements Listener {
             for (Entity entity : nmsEntities) {
                 ((CustomEntityPiglin)entity).veryAngryTicks += 300;
             }
+        }
+
+        if (type == Material.NETHER_GOLD_ORE && this.random.nextDouble() < 0.8) { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
+            (new Location(bukkitBlock.getWorld(), loc.getX() + this.random.nextInt(5) - 2, loc.getY() + this.random.nextInt(5) - 2, loc.getZ() + this.random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
         }
     }
 

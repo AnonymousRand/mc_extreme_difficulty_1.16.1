@@ -16,8 +16,8 @@ public class CustomEntityArrowKnockback extends CustomEntityArrow {
 
         Entity entity = movingobjectpositionentity.getEntity();
 
-        if (entity instanceof EntityPlayer) {
-            ((EntityPlayer)entity).setMot(new Vec3D(this.getMot().getX() * 2.0, -this.getMot().getY(), this.getMot().getZ() * 2.0));
+        if (entity instanceof EntityPlayer) { //doesn't work all the time
+            ((EntityPlayer)entity).setMot(new Vec3D(this.getMot().getX() * 1.5, -this.getMot().getY(), this.getMot().getZ() * 1.5));
         }
     }
 }

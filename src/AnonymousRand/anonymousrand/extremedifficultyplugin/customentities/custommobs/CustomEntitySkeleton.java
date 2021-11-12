@@ -52,7 +52,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         if (this.attacks >= 20 && this.attacks <= 45 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
             new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
         } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.02 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
             new SkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(this.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
         }
@@ -86,8 +86,10 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
             this.setHealth(13.5F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
 
-            if (this.random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead*/
+            if (this.random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead*/
                 new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
+            } else if (this.random.nextDouble() < 0.05) {
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
             }
         }
 

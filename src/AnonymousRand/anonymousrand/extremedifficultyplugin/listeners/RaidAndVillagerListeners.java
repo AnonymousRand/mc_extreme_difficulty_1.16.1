@@ -5,8 +5,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -78,9 +80,7 @@ public class RaidAndVillagerListeners implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
             if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new RunnableMeteorRain(event.getPlayer(), 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new RunnableMeteorRain(event.getPlayer(), 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-                new RunnableMeteorRain(event.getPlayer(), 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+                new RunnableTornado(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new BlockPosition(event.getClickedBlock().getLocation().getX(), event.getClickedBlock().getLocation().getY(), event.getClickedBlock().getLocation().getZ()), 10.0, 40).runTaskTimer(this.plugin, 0L, 1L);
             }
         }
     }

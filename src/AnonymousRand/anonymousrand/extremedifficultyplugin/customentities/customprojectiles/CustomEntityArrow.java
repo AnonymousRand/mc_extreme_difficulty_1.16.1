@@ -1,10 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIllagerIllusioner;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySkeleton;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySkeletonStray;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -23,10 +21,6 @@ public class CustomEntityArrow extends EntityArrow {
 
         if (source instanceof Entity) {
             this.setShooter(((CraftEntity)source).getHandle());
-        }
-
-        if (this.getShooter() instanceof CustomEntityIllagerIllusioner || this.getShooter() instanceof CustomEntityPiglin || this.getShooter() instanceof CustomEntitySkeleton || this.getShooter() instanceof CustomEntitySkeletonStray) {
-            this.setDamage(1.5); /**illusioners, piglins, skeletons and strays do slightly less damage with arrows*/
         }
     }
 

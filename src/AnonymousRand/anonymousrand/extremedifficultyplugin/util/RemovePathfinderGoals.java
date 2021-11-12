@@ -50,6 +50,10 @@ public class RemovePathfinderGoals {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
+                case PILLAGER -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityPillager)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityPillager)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
                 case RABBIT -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));

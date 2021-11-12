@@ -1,11 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityRabbit;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -14,17 +12,17 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
 
     private final EntityInsentient entity;
     private final EntityLiving target;
-    private final float distance;
+    private final float arrowVelocity;
     private final int numOfArrows, arrowType, pierce;
     private final double inaccuracy;
     private final boolean onFire, noGravity;
     private final World nmsWorld;
     private final Random random = new Random();
 
-    public RunnableMobShootArrowsNormally(EntityInsentient entity, EntityLiving target, float distance, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
+    public RunnableMobShootArrowsNormally(EntityInsentient entity, EntityLiving target, float arrowVelocity, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
         this.entity = entity;
         this.target = target;
-        this.distance = distance;
+        this.arrowVelocity = arrowVelocity;
         this.numOfArrows = numOfArrows;
         this.arrowType = arrowType;
         this.inaccuracy = inaccuracy;
@@ -55,14 +53,13 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
                 case 6 -> entityArrow = new CustomEntityArrowKnockback(this.nmsWorld); //extreme knockback arrows
             }
 
-            entityArrow.a(this.target, this.distance); //sets damage based on distance
             entityArrow.setShooter(this.entity);
             entityArrow.setPosition(this.entity.locX(), this.entity.locY() + 1.5, this.entity.locZ());
             entityArrow.setPierceLevel((byte)this.pierce);
             double d0 = this.target.locX() - this.entity.locX();
             double d1 = this.target.e(0.3333333333333333D) - entityArrow.locY();
             double d2 = this.target.locZ() - this.entity.locZ();
-            double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+            double d3 = this.noGravity ? 0.0 : (double)MathHelper.sqrt(d0 * d0 + d2 * d2); //this adjusts arrow height for distance
 
             if (this.onFire) {
                 entityArrow.setOnFire(50);
@@ -73,6 +70,11 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
             }
 
             entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, this.arrowType == 3 ? 0.0F : (float)(this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /**mob-spawning arrows have no inaccuracy*/
+
+            if (this.entity instanceof CustomEntityIllagerIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
+                entityArrow.setDamage(1.0); /**illusioners, piglins, pillagers, skeletons and strays always do 2 damage with arrows and distance does not play a factor in determining damage*/
+            }
+
             this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
             this.nmsWorld.addEntity(entityArrow);
         }

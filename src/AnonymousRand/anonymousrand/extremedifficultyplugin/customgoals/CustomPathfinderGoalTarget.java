@@ -84,6 +84,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case PIGLIN -> {
                 return ((CustomEntityPiglin)this.e).getFollowRange();
             }
+            case PILLAGER -> {
+                return ((CustomEntityPillager)this.e).getFollowRange();
+            }
             case RABBIT -> {
                 return ((CustomEntityRabbit)this.e).getFollowRange();
             }
