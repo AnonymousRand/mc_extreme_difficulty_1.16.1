@@ -7,12 +7,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntityLargeFireball extends EntityLargeFireball {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     private boolean summonLightning = false;
 
     public CustomEntityLargeFireball(EntityTypes<? extends EntityLargeFireball> entitytypes, World world, int intYield, Vec3D vec, double x, double y, double z) {
         super(entitytypes, world);
-        this.plugin = null;
         this.yield = intYield;
         this.setPosition(x, y, z);
         this.setMot(vec);
@@ -20,14 +19,12 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
     public CustomEntityLargeFireball(World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield) {
         super(world, entityliving, d0, d1, d2);
-        this.plugin = null;
         this.yield = intYield;
         this.setShooter(entityliving);
     }
 
-    public CustomEntityLargeFireball(JavaPlugin plugin, World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield, boolean summonLightning) {
+    public CustomEntityLargeFireball(World world, EntityLiving entityliving, double d0, double d1, double d2, int intYield, boolean summonLightning) {
         super(world, entityliving, d0, d1, d2);
-        this.plugin = plugin;
         this.yield = intYield;
         this.summonLightning = summonLightning;
         this.setShooter(entityliving);
@@ -42,8 +39,8 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
-            if (this.summonLightning && this.plugin != null) { //summon thor lightning
-                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, this.random.nextInt(3) + 8, false).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 2);
+            if (this.summonLightning && plugin != null) { //summon thor lightning
+                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(plugin, 0L, random.nextInt(3) + 2);
             }
 
             this.die();

@@ -50,14 +50,14 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements IComm
 
             if (this.h((Entity)entityliving) < 0.6D * (double)i * 0.6D * (double)i && entityliving.damageEntity(DamageSource.mobAttack(this), this.eN())) { /**magma cubes don't need line of sight to attack player*/
                 this.attackCooldown = 20;
-                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
                 this.a((EntityLiving)this, (Entity)entityliving);
             }
         }
     }
 
     protected int eK() { /**magma cubes jump faster*/
-        return this.random.nextInt(4) + 9;
+        return random.nextInt(4) + 9;
     }
 
     public int getBlazeFireballGoalAttackCooldown() { /**after 20 attacks, magma cubes shoot a ring of blaze fireballs every 11 seconds (6.5 seconds after 40 attacks)*/
@@ -124,7 +124,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements IComm
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

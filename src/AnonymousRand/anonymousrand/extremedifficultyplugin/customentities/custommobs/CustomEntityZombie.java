@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -14,15 +15,14 @@ import java.lang.reflect.Field;
 
 public class CustomEntityZombie extends EntityZombie implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a7, a15, a25, a40, a50;
     private Field bA;
 
-    public CustomEntityZombie(World world, JavaPlugin plugin) {
+    public CustomEntityZombie(World world) {
         super(EntityTypes.ZOMBIE, world);
-        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
@@ -72,17 +72,17 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
                 this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityliving.locX(), entityliving.locY(), entityliving.locZ()));
             }
 
-            if ((double)this.random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /**zombies can now spawn reinforcements on any difficulty*/
-                for (int ii = 0; ii < (this.random.nextDouble() < 0.985 ? 1 : 30); ii++) { /**1.5% chance to make 30 spawn attempts instead of 1 (on average, about half of them succeed)*/
+            if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /**zombies can now spawn reinforcements on any difficulty*/
+                for (int ii = 0; ii < (random.nextDouble() < 0.985 ? 1 : 30); ii++) { /**1.5% chance to make 30 spawn attempts instead of 1 (on average, about half of them succeed)*/
                     int i = MathHelper.floor(this.locX());
                     int j = MathHelper.floor(this.locY());
                     int k = MathHelper.floor(this.locZ());
-                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld(), this.plugin);
+                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
 
                     for (int l = 0; l < 50; ++l) {
-                        int i1 = i + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
-                        int j1 = j + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
-                        int k1 = k + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
+                        int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                        int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                        int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                         BlockPosition blockposition = new BlockPosition(i1, j1, k1);
                         EntityTypes<?> entitytypes = newZombie.getEntityType();
                         EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
@@ -151,20 +151,20 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
             this.setHealth(25.0F);
-            new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombie(this.getWorld(), this.plugin), 2, null, null, this, false, true);
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 2, null, null, this, false, true);
         }
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, zombies summon thor*/
             this.a50 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld(), this.plugin), 1, null, null, this, false, true);
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/
             this.a40 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
-            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(this.plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(this.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
         }
 
         if (this.ticksLived == 10) { /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/
@@ -196,7 +196,7 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

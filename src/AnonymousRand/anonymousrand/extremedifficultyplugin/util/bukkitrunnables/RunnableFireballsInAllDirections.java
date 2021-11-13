@@ -23,8 +23,9 @@ public class RunnableFireballsInAllDirections extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (++this.cycles >= this.maxCycles) {
+        if (++this.cycles > this.maxCycles) {
             this.cancel();
+            return;
         }
 
         if (this.entity instanceof CustomEntityGhast) {

@@ -13,13 +13,13 @@ public class CommandStart implements CommandExecutor {
     private ExtremeDifficultyPlugin plugin;
 
     public CommandStart(ExtremeDifficultyPlugin plugin){
-        this.plugin = plugin;
+        plugin = plugin;
     }
 
     @Override
     public boolean onCommand (CommandSender sender, Command command, String label, String[] args) { //nothing happends when the command is executed
         BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(this.plugin, new Runnable() {
+        scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
             public void run() {
             }
         }, 0L, 1L); //loop

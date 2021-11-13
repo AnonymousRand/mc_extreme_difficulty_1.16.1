@@ -23,12 +23,8 @@ import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
 
-    private final JavaPlugin plugin;
-    private final Random random = new Random();
-
-    public PlayerInteractListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
+    private static final Random random = new Random();
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
@@ -55,7 +51,7 @@ public class PlayerInteractListeners implements Listener {
                     if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins in a 40 block cube to go into a frenzy for 10 seconds*/
                         CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
                         new SpawnLivingEntity(nmsWorld, newPiglin, 1, null, loc, true);
-                        newPiglin.setSlot(EnumItemSlot.MAINHAND, this.random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
+                        newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
                         PiglinAI.a(newPiglin); //code from onInitialSpawn
 
                         List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin);
@@ -66,7 +62,7 @@ public class PlayerInteractListeners implements Listener {
                     }
 
                     if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**right-clicking an anvil or smithing table causes it to explode 10 seconds later*/
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                         {
                             @Override
                             public void run() {

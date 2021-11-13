@@ -13,18 +13,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SheepDyeListeners implements Listener {
 
-    private final JavaPlugin plugin;
-
-    public SheepDyeListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
 
     @EventHandler
     public void sheepDyeWool(SheepDyeWoolEvent event) { /**sheep turn aggressive and pink when dyed*/
         EntitySheep nmsSheep = ((CraftSheep)event.getEntity()).getHandle();
         World nmsWorld = nmsSheep.getWorld();
 
-        CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld, this.plugin);
+        CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld);
         new SpawnLivingEntity(nmsWorld, newSheep, 1, null, null, nmsSheep, true, true);
     }
 }

@@ -14,14 +14,13 @@ import java.util.UUID;
 
 public class CustomEntityZombieVillager extends EntityZombieVillager implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a25, deathLightningStorm;
 
-    public CustomEntityZombieVillager(World world, JavaPlugin plugin) {
+    public CustomEntityZombieVillager(World world) {
         super(EntityTypes.ZOMBIE_VILLAGER, world);
-        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
@@ -46,7 +45,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     @Override
     public void startConversion(@Nullable UUID uuid, int i) { /**zombie villagers can't be converted and instead summon 10 more zombie villagers when fed a golden apple*/
-        new SpawnLivingEntity(this.getWorld(), this.plugin, new CustomEntityZombieVillager(this.getWorld(), this.plugin), 10, null, null, this, false, true);
+        new SpawnLivingEntity(this.getWorld(), new CustomEntityZombieVillager(this.getWorld()), 10, null, null, this, false, true);
         this.world.broadcastEntityEffect(this, (byte) 16);
     }
 
@@ -66,7 +65,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { //do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
             this.deathLightningStorm = true;
             LightningStrikeListeners.storm = true;
-            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), this.random.nextInt(10) + 50).runTaskTimer(this.plugin, 0L, this.random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
+            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(plugin, 0L, random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
         }
 
         if (this.ticksLived == 10) { /**zombie villgers move 3x faster*/
@@ -94,7 +93,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

@@ -63,9 +63,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
     @Override
     protected boolean eM() { //teleportRandomly()
         if (!this.getWorld().s_() && this.isAlive()) {
-            double d0 = this.locX() + (this.random.nextDouble() - 0.5D) * 20.0D; /**random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player*/
-            double d1 = this.locY() + (double)(this.random.nextInt(64) - 32);
-            double d2 = this.locZ() + (this.random.nextDouble() - 0.5D) * 24.0D;
+            double d0 = this.locX() + (random.nextDouble() - 0.5D) * 20.0D; /**random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player*/
+            double d1 = this.locY() + (double)(random.nextInt(64) - 32);
+            double d2 = this.locZ() + (random.nextDouble() - 0.5D) * 24.0D;
 
             return this.o(d0, d1, d2);
         } else {
@@ -77,9 +77,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         Vec3D vec3d = new Vec3D(this.locX() - entity.locX(), this.e(0.5D) - entity.getHeadY(), this.locZ() - entity.locZ());
 
         vec3d = vec3d.d();
-        double d1 = this.locX() + (this.random.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
-        double d2 = this.locY() + (double)(this.random.nextInt(16) - 8) - vec3d.y * 16.0D;
-        double d3 = this.locZ() + (this.random.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
+        double d1 = this.locX() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
+        double d2 = this.locY() + (double)(random.nextInt(16) - 8) - vec3d.y * 16.0D;
+        double d3 = this.locZ() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
 
         return this.o(d1, d2, d3);
     }
@@ -123,7 +123,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                 }
             }
 
-            if (!this.getWorld().s_() && this.random.nextInt(10) != 0) {
+            if (!this.getWorld().s_() && random.nextInt(10) != 0) {
                 this.eM();
             }
 
@@ -177,7 +177,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                 if (this.d(target.getPositionVector()) > 144.0) { /**teleports to player if player is more than 12 blocks horizontally but less than 20 blocks away*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (this.random.nextDouble() < 0.3) { /**30% chance to summon an endermite where it teleports to*/
+                    if (random.nextDouble() < 0.3) { /**30% chance to summon an endermite where it teleports to*/
                         new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
@@ -185,7 +185,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                 if (!this.getEntitySenses().a(target)) { /**teleports to player if player can't be seen (includes when the player is towering up to avoid enderman)*/
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (this.random.nextDouble() < 0.3) { /**30% chance to summan an endermite where it teleports to*/
+                    if (random.nextDouble() < 0.3) { /**30% chance to summan an endermite where it teleports to*/
                         new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
@@ -218,7 +218,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

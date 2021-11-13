@@ -29,7 +29,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
     protected void initPathfinder() { /**no longer avoids sun and wolves or targets iron golems*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning this.randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(4, new CustomPathfinderGoalBowShoot<>(this, 1.0D, 21, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
@@ -43,11 +43,11 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
     @Override
     public void a(EntityLiving entityliving, float f) {
         this.attacks++;
-        double rand = this.random.nextDouble();
+        double rand = random.nextDouble();
 
         if (rand < (this.attacks < 25 ? 0.9 : this.attacks < 35 ? 0.85 : this.attacks < 45 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 15 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 15 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
-            boolean fire = this.random.nextDouble() < (this.attacks < 15 ? 0.222222222 : 0.444444444);
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.025 ? 1 : 0, fire, false); /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone; 2.25% of arrows shot are piercing 1*/
+            boolean fire = random.nextDouble() < (this.attacks < 15 ? 0.222222222 : 0.444444444);
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, fire, false); /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone; 2.25% of arrows shot are piercing 1*/
         } else if (rand < (this.attacks < 35 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
             new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
         } else {
@@ -109,7 +109,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

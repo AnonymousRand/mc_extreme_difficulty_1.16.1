@@ -15,7 +15,7 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
 
     public EntityInsentient entity;
     private boolean hunger, unluck;
-    private final Random random = new Random();
+    private static final Random random = new Random();
     private Field attacks;
 
     public NewPathfinderGoalGetBuffedByMobs(EntityInsentient entity) {
@@ -99,13 +99,13 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
         double d2 = lookDirection.getZ();
         double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-        if (this.random.nextDouble() <= 0.2) { /**20% of arrows shot are piercing 1*/
+        if (random.nextDouble() <= 0.2) { /**20% of arrows shot are piercing 1*/
             entityarrow.setPierceLevel((byte)1);
         }
 
         entityarrow.setPosition(pos.getX() + lookDirection.getX() * 0.5, pos.getY() + 1.8, pos.getZ() + lookDirection.getZ() * 0.5);
         entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.25F, 0.0F); /**arrows have no inaccuracy and move slightly slower*/
-        this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
+        this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
         this.entity.getWorld().addEntity(entityarrow);
     }
 

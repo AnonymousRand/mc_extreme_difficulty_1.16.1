@@ -17,7 +17,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
     private final double inaccuracy;
     private final boolean onFire, noGravity;
     private final World nmsWorld;
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
     public RunnableMobShootArrowsNormally(EntityInsentient entity, EntityLiving target, float arrowVelocity, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
         this.entity = entity;
@@ -37,7 +37,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
     public void run() {
         for (int i = 0; i < numOfArrows; i++) {
             CustomEntityArrow entityArrow = new CustomEntityArrow(this.nmsWorld);
-            double rand = this.random.nextDouble();
+            double rand = random.nextDouble();
 
             switch (arrowType) { //todo: change to custom mobs
                 case 2 -> entityArrow = new CustomEntityArrowExploding(this.nmsWorld); //exploding arrows
@@ -75,7 +75,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
                 entityArrow.setDamage(1.0); /**illusioners, piglins, pillagers, skeletons and strays always do 2 damage with arrows and distance does not play a factor in determining damage*/
             }
 
-            this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
+            this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
             this.nmsWorld.addEntity(entityArrow);
         }
     }

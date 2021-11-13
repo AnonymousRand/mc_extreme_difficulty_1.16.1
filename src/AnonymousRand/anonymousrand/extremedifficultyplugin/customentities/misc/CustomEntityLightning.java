@@ -13,7 +13,7 @@ public class CustomEntityLightning extends EntityLightning {
     public CustomEntityLightning(World world) {
         super(EntityTypes.LIGHTNING_BOLT, world);
         this.lifeTicks = 2;
-        this.remainingBoltAnimationDuration = this.random.nextInt(3) + 1;
+        this.remainingBoltAnimationDuration = random.nextInt(3) + 1;
         this.maxLifespan = this.remainingBoltAnimationDuration;
     }
 
@@ -27,10 +27,10 @@ public class CustomEntityLightning extends EntityLightning {
                 --this.remainingBoltAnimationDuration;
             } else if (this.remainingBoltAnimationDuration == 0) {
                 this.die();
-            } else if (this.lifeTicks < -this.random.nextInt(10)) {
+            } else if (this.lifeTicks < -random.nextInt(10)) {
                 --this.remainingBoltAnimationDuration;
                 this.lifeTicks = 1;
-                this.b = this.random.nextLong();
+                this.b = random.nextLong();
                 this.a(0);
             }
         }

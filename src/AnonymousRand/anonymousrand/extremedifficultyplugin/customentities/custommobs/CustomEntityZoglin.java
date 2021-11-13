@@ -15,14 +15,13 @@ import java.util.Random;
 
 public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a8, a40;
 
-    public CustomEntityZoglin(World world, JavaPlugin plugin) {
+    public CustomEntityZoglin(World world) {
         super(EntityTypes.ZOGLIN, world);
-        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
@@ -78,7 +77,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         if (this.attacks == 8 && !this.a8) { /**after 8 attacks, zoglins gain regen 2*/
             this.a8 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this.plugin, this, 100, 1, false)); /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
+            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false)); /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
         }
 
         if (this.attacks == 40 &&!this.a40) { /**after 40 attacks, zoglins gain speed 5*/
@@ -122,7 +121,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -197,7 +196,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         private final EntityLiving target;
         private int cycles;
         private final int maxCycles;
-        private final Random random = new Random();
+        private static final Random random = new Random();
 
         public ZoglinThrowPlayerAround(CustomEntityZoglin zoglin, EntityLiving target, int maxCycles) {
             this.zoglin = zoglin;

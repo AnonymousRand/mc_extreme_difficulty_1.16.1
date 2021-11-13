@@ -26,12 +26,8 @@ import java.util.Random;
 
 public class ProjectileListeners implements Listener {
 
-    private final JavaPlugin plugin;
-    private final Random random = new Random();
-
-    public ProjectileListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
+    private static final Random random = new Random();
 
     @EventHandler
     public void projectileLaunch(ProjectileLaunchEvent event) { //replace arrows when shot with custom arrows
@@ -52,7 +48,7 @@ public class ProjectileListeners implements Listener {
             newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
 
             if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
-                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5, this.random.nextDouble() - 0.5)), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
+                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
             }
 
             if (nmsProjectile.isBurning()) { //carries over burning arrows
@@ -75,7 +71,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsShooter instanceof CustomEntityDrowned) {
                 if (((CustomEntityDrowned)nmsShooter).attacks >= 30) {
-                    if (this.random.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
+                    if (random.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /**tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count*/
                         newTrident.setNoGravity(true);
                     }
                 }
@@ -109,7 +105,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof CraftPlayer)) { /**arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything*/
                 if (type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB) { //as long as it isn't one of these blocks
-                    if (this.random.nextDouble() <= 0.2) {
+                    if (random.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); //set the block as air instead of breaking it as there is no way to break it directly without it dropping
                     }
                 }
@@ -121,7 +117,7 @@ public class ProjectileListeners implements Listener {
 
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /**tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything*/
                 if (type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB) { //as long as it isn't one of these blocks
-                    if (this.random.nextDouble() <= 0.1) {
+                    if (random.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);
                     }
                 }

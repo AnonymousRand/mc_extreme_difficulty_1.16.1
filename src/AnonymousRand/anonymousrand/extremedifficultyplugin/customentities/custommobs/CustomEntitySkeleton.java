@@ -13,14 +13,13 @@ import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public boolean spawnExplodingArrow;
     public int attacks;
     private boolean a25, a90;
 
-    public CustomEntitySkeleton(World world, JavaPlugin plugin) {
+    public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
-        this.plugin = plugin;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
@@ -52,9 +51,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         if (this.attacks >= 20 && this.attacks <= 45 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
             new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
         } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, this.random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
-            new SkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(this.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
+            new SkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
         }
     }
 
@@ -86,9 +85,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
             this.setHealth(13.5F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
 
-            if (this.random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead*/
+            if (random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead*/
                 new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
-            } else if (this.random.nextDouble() < 0.05) {
+            } else if (random.nextDouble() < 0.05) {
                 new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
             }
         }
@@ -123,7 +122,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -142,7 +141,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         private int cycles;
         private final int maxCycles;
         private final float distance;
-        private final Random random = new Random();
+        private static final Random random = new Random();
 
         public SkeletonRapidFire(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float distance) {
             this.skeleton = skeleton;
@@ -156,6 +155,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         public void run() {
             if (++this.cycles > this.maxCycles) {
                 this.cancel();
+                return;
             }
 
             for (int i = 0; i < (skeleton.attacks < 35 ? 10 : 1); i++) {
@@ -168,7 +168,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
                 double d1 = target.locY() - skeleton.locY();
                 double d2 = target.locZ() - skeleton.locZ();
 
-                if (this.random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
+                if (random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
                     entityArrow.setPierceLevel((byte)1);
                 }
 

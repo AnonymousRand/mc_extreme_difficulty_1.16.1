@@ -14,14 +14,12 @@ import java.util.Map;
 
 public class CustomEntitySheepAggressive extends EntitySheep implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
     public int attacks;
     private boolean a20, a40, a65, die;
     public boolean launchHigh;
 
-    public CustomEntitySheepAggressive(World world, JavaPlugin plugin) {
+    public CustomEntitySheepAggressive(World world) {
         super(EntityTypes.SHEEP, world);
-        this.plugin = plugin;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setColor(EnumColor.PINK); //always pink
@@ -108,7 +106,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
 
                 if (this.attacks >= 65) { /**after 65 attacks, aggressive sheep summon an evoker when killed*/
-                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld(), this.plugin), 1, null, null, this, false, true);
+                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
                 }
             }
         }
@@ -142,7 +140,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
                 int k = this.getEntityType().e().g() + 32; /**random despawn distance increased to 64 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

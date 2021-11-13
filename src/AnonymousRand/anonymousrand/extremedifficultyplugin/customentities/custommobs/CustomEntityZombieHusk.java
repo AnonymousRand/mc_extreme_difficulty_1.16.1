@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -98,8 +98,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICommonC
         private Location locTemp;
         private BlockData blockData;
         private double randomDouble;
-        private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-        private final Random random = new Random();
+        private static final Random random = new Random();
 
         public NewPathfinderGoalHuskSandStorm(CustomEntityZombieHusk husk) {
             this.husk = husk;
@@ -124,14 +123,14 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICommonC
 
                 for (int i = 0; i < Math.ceil(this.husk.getSandStormStrength() / 5.0); i++) {
                     for (int j = 0; j < this.husk.getSandStormStrength() * 8.0; j++) {
-                        this.randomDouble = this.random.nextDouble();
-                        this.locTemp = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), this.random.nextInt(this.husk.attacks < 25.0 ? 16 : 21), this.husk.getGoalTarget().locY() + 8.0 + i, 361.0);
+                        randomDouble = random.nextDouble();
+                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(this.husk.attacks < 25.0 ? 16 : 21), this.husk.getGoalTarget().locY() + 8.0 + i, 361.0);
 
-                        if (this.randomDouble < 0.5) {
+                        if (randomDouble < 0.5) {
                             this.blockData = org.bukkit.Material.SAND.createBlockData();
-                        } else if (this.randomDouble < 0.9) {
+                        } else if (randomDouble < 0.9) {
                             this.blockData = org.bukkit.Material.STONE.createBlockData();
-                        } else if (this.randomDouble < 0.95) {
+                        } else if (randomDouble < 0.95) {
                             this.blockData = org.bukkit.Material.INFESTED_STONE.createBlockData();
                         } else {
                             this.blockData = org.bukkit.Material.ANVIL.createBlockData();

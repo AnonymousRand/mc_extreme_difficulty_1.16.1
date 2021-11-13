@@ -30,12 +30,8 @@ import static org.bukkit.entity.EntityType.VILLAGER;
 
 public class RaidAndVillagerListeners implements Listener {
 
-    private final JavaPlugin plugin;
-    private final Random random = new Random();
-
-    public RaidAndVillagerListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
+    private static final Random random = new Random();
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {
@@ -55,24 +51,24 @@ public class RaidAndVillagerListeners implements Listener {
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
 
-            new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntityZombie(nmsWorld, this.plugin), 5, null, bukkitVillager.getLocation(), true);  /**5 zombies are spawned when a villager dies*/
+            new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld), 5, null, bukkitVillager.getLocation(), true);  /**5 zombies are spawned when a villager dies*/
 
             List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(64.0), entity -> entity instanceof CustomEntityIronGolem);
 
             for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
                 ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(this.plugin, 0L, 2L);
+                new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(plugin, 0L, 2L);
             }
         }
     }
 
     @EventHandler
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
-        Player player = event.getWinners().get(this.random.nextInt(event.getWinners().size()));
+        Player player = event.getWinners().get(random.nextInt(event.getWinners().size()));
 
-        new RunnableMeteorRain(player, 1, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new RunnableMeteorRain(player, 2, 70.0, 100).runTaskTimer(this.plugin, 0L, 1L);
-        new RunnableMeteorRain(player, 3, 70.0, 120).runTaskTimer(this.plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 1, 70.0, 100).runTaskTimer(plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 2, 70.0, 100).runTaskTimer(plugin, 0L, 1L);
+        new RunnableMeteorRain(player, 3, 70.0, 120).runTaskTimer(plugin, 0L, 1L);
     }
 
     //temp, todo end: delete
@@ -80,7 +76,7 @@ public class RaidAndVillagerListeners implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
             if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new RunnableTornado(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new BlockPosition(event.getClickedBlock().getLocation().getX(), event.getClickedBlock().getLocation().getY(), event.getClickedBlock().getLocation().getZ()), 10.0, 40).runTaskTimer(this.plugin, 0L, 1L);
+                new RunnableTornado(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new BlockPosition(event.getClickedBlock().getLocation().getX(), event.getClickedBlock().getLocation().getY(), event.getClickedBlock().getLocation().getZ()), 50.0, 150).runTaskTimer(plugin, 0L, 1L);
             }
         }
     }

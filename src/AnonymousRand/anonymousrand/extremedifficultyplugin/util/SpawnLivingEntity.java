@@ -19,7 +19,6 @@ import java.util.Objects;
 
 public class SpawnLivingEntity extends BukkitRunnable {
 
-    private JavaPlugin plugin = null;
     private int maxFuseTicksOrPhantomSize = 0;
     private final EntityLiving firstEntityToSpawn;
     private final int numToSpawn;
@@ -38,20 +37,6 @@ public class SpawnLivingEntity extends BukkitRunnable {
     }
 
     public SpawnLivingEntity(World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
-        this.nmsWorld = nmsWorld;
-        this.firstEntityToSpawn = firstEntityToSpawn;
-        this.numToSpawn = numToSpawn;
-        this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
-        this.bukkitOriginalEntity = bukkitOriginalEntity == null ? nmsOriginalEntity.getBukkitEntity() : bukkitOriginalEntity;
-        this.phantomDuplicate = false;
-        this.removeOriginal = removeOriginal;
-        this.equipBoots = equipBoots;
-        this.pos = this.bukkitOriginalEntity.getLocation();
-        this.run();
-    }
-
-    public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
-        this.plugin = plugin;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
@@ -105,20 +90,6 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.run();
     }
 
-    public SpawnLivingEntity(World nmsWorld, JavaPlugin plugin, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
-        this.plugin = plugin;
-        this.nmsWorld = nmsWorld;
-        this.firstEntityToSpawn = firstEntityToSpawn;
-        this.numToSpawn = numToSpawn;
-        this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
-        this.bukkitOriginalEntity = null;
-        this.phantomDuplicate = false;
-        this.removeOriginal = false;
-        this.equipBoots = equipBoots;
-        this.pos = loc;
-        this.run();
-    }
-
     @Override
     public void run() {
         for (int i = 0; i < this.numToSpawn; i++) {
@@ -129,11 +100,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
                     } else if (this.firstEntityToSpawn instanceof CustomEntityPhantom) {
                         this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, int.class, boolean.class).newInstance(this.nmsWorld, this.maxFuseTicksOrPhantomSize, this.phantomDuplicate);
                     } else if (this.firstEntityToSpawn.getClass().getName().toLowerCase().contains("custom")) {
-                        try {
-                            this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class).newInstance(this.nmsWorld); //create a new instance of the same class as the first entity if spawning multiple
-                        } catch (NoSuchMethodException e) {
-                            this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, JavaPlugin.class).newInstance(this.nmsWorld, this.plugin);
-                        }
+                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class).newInstance(this.nmsWorld); //create a new instance of the same class as the first entity if spawning multiple
                     } else {
                         this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(EntityTypes.class, World.class).newInstance(this.firstEntityToSpawn.getEntityType(), this.nmsWorld); //for vanilla mobs that use a different constructor: create a new instance of the same class as the first entity if spawning multiple
                     }

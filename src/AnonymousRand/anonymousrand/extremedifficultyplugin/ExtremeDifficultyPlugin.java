@@ -1,7 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalShootLargeFireballs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.BlockOverride;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,6 +20,8 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        CustomMathHelper.initTrigTables();
+
         BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
         endStone.set("durability", 16.0F);
 
@@ -41,26 +49,53 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
-        getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(this), this);  //registers the listeners
-        getServer().getPluginManager().registerEvents(new DropItemListeners(this),this);
+        getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);  //registers the listeners
+        getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
-        getServer().getPluginManager().registerEvents(new MobDeathListeners(this),this);
-        getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(this), this);
-        getServer().getPluginManager().registerEvents(new LightningStrikeListeners(this),this);
+        getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);
+        getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(), this);
+        getServer().getPluginManager().registerEvents(new LightningStrikeListeners(),this);
         getServer().getPluginManager().registerEvents(new PiglinBarterListeners(), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListeners(this),this);
-        getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerEatListeners(this),this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerDamageListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerEatListeners(),this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(),this);
         getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new PotionEffectListeners(), this);
-        getServer().getPluginManager().registerEvents(new ProjectileListeners(this), this);
-        getServer().getPluginManager().registerEvents(new RaidAndVillagerListeners(this),this);
-        getServer().getPluginManager().registerEvents(new SheepDyeListeners(this), this);
+        getServer().getPluginManager().registerEvents(new ProjectileListeners(), this);
+        getServer().getPluginManager().registerEvents(new RaidAndVillagerListeners(),this);
+        getServer().getPluginManager().registerEvents(new SheepDyeListeners(), this);
         getServer().getPluginManager().registerEvents(new SleepListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);
+
+        //initializes static plugin fields
+        CustomEntityEvoker.plugin = this;
+        CustomEntityGhast.plugin = this;
+        CustomEntitySkeleton.plugin = this;
+        CustomEntityZoglin.plugin = this;
+        CustomEntityZombie.plugin = this;
+        CustomEntityZombieThor.plugin = this;
+        CustomEntityZombieVillager.plugin = this;
+        CustomEntityLargeFireball.plugin = this;
+
+        BlockPlaceAndBreakListeners.plugin = this;
+        DropItemListeners.plugin = this;
+        MobDeathListeners.plugin = this;
+        MobSpawnAndReplaceWithCustomListeners.plugin = this;
+        LightningStrikeListeners.plugin = this;
+        LightningStrikeListeners.storm = false;
+        LightningStrikeListeners.numberOfThors = 0;
+        PlayerDamageListeners.plugin = this;
+        PlayerDeathAndRespawnListeners.plugin = this;
+        PlayerEatListeners.plugin = this;
+        PlayerInteractListeners.plugin = this;
+        ProjectileListeners.plugin = this;
+        RaidAndVillagerListeners.plugin = this;
+        SheepDyeListeners.plugin = this;
+
+        RunnableTornado.plugin = this;
 
         addEyeOfEnderRecipe(); /**changes eye of ender recipe*/
     }

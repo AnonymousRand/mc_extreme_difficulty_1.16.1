@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.Location;
@@ -19,7 +19,6 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
     private int cycles;
     private final int maxCycles;
     private final boolean effect;
-    private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
 
     public RunnableThorLightningEffectStorm(CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal, int maxCycles) {
         this.thorGoal = thorGoal;
@@ -48,7 +47,7 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
             this.loc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
             for (int i = 0; i < 5; i++) {
-                this.loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), 3.0, this.loc.getY(), this.cycles * 13.0 + i * 60.0);
+                this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), 3.0, this.loc.getY(), this.cycles * 13.0 + i * 60.0);
 
                 if (this.effect) {
                     this.bukkitWorld.strikeLightningEffect(this.loc2);

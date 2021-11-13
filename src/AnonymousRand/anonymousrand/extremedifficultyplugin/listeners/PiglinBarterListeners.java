@@ -14,7 +14,7 @@ import static org.bukkit.entity.EntityType.PIGLIN;
 
 public class PiglinBarterListeners implements Listener {
 
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
     @EventHandler
     public void piglinBarter(EntityDropItemEvent event) {

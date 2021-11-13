@@ -12,11 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class DropItemListeners implements Listener {
 
-    private final JavaPlugin plugin;
-
-    public DropItemListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
 
     @EventHandler
     public void itemSpawn(ItemSpawnEvent event) {
@@ -24,7 +20,7 @@ public class DropItemListeners implements Listener {
         Material type = item.getItemStack().getType();
 
         if (type.equals(Material.SAND)) { /**dropped sand despawns after 5 sec to reduce lag*/
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 @Override
                 public void run() {

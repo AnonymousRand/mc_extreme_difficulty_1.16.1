@@ -8,10 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomMethods {
 
@@ -19,6 +16,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
     private boolean a30, deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
     private Field orbitPosition, orbitOffset;
+    private static final Random random = new Random();
 
     public CustomEntityPhantom(World world, int size, boolean duplicate) {
         this(world);
@@ -131,7 +129,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -205,7 +203,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         @Override
         public void d() {
             try {
-                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
+                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.random.nextInt(20)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -218,8 +216,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
                 if (this.b <= 0) {
                     CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.SWOOP;
                     this.g();
-                    this.b = (8 + CustomEntityPhantom.this.random.nextInt(4)) * 20;
-                    CustomEntityPhantom.this.playSound(SoundEffects.ENTITY_PHANTOM_SWOOP, 10.0F, 0.95F + CustomEntityPhantom.this.random.nextFloat() * 0.1F);
+                    this.b = (8 + CustomEntityPhantom.random.nextInt(4)) * 20;
+                    CustomEntityPhantom.this.playSound(SoundEffects.ENTITY_PHANTOM_SWOOP, 10.0F, 0.95F + CustomEntityPhantom.random.nextFloat() * 0.1F);
                 }
             }
         }
@@ -227,7 +225,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         private void g() {
             if (CustomEntityPhantom.this.getGoalTarget() != null) {
                 try {
-                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.this.random.nextInt(20)));
+                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.random.nextInt(20)));
                     BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this));
 
                     if (orbitPos.getY() < CustomEntityPhantom.this.world.getSeaLevel()) {
@@ -317,19 +315,19 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
 
         @Override
         public void c() {
-            this.d = 5.0F + CustomEntityPhantom.this.random.nextFloat() * 10.0F;
-            this.e = -4.0F + CustomEntityPhantom.this.random.nextFloat() * 9.0F;
-            this.f = CustomEntityPhantom.this.random.nextBoolean() ? 1.0F : -1.0F;
+            this.d = 5.0F + CustomEntityPhantom.random.nextFloat() * 10.0F;
+            this.e = -4.0F + CustomEntityPhantom.random.nextFloat() * 9.0F;
+            this.f = CustomEntityPhantom.random.nextBoolean() ? 1.0F : -1.0F;
             this.h();
         }
 
         @Override
         public void e() {
-            if (CustomEntityPhantom.this.random.nextInt(350) == 0) {
-                this.e = -4.0F + CustomEntityPhantom.this.random.nextFloat() * 9.0F;
+            if (CustomEntityPhantom.random.nextInt(350) == 0) {
+                this.e = -4.0F + CustomEntityPhantom.random.nextFloat() * 9.0F;
             }
 
-            if (CustomEntityPhantom.this.random.nextInt(250) == 0) {
+            if (CustomEntityPhantom.random.nextInt(250) == 0) {
                 ++this.d;
                 if (this.d > 15.0F) {
                     this.d = 5.0F;
@@ -337,8 +335,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
                 }
             }
 
-            if (CustomEntityPhantom.this.random.nextInt(450) == 0) {
-                this.c = CustomEntityPhantom.this.random.nextFloat() * 2.0F * 3.1415927F;
+            if (CustomEntityPhantom.random.nextInt(450) == 0) {
+                this.c = CustomEntityPhantom.random.nextFloat() * 2.0F * 3.1415927F;
                 this.h();
             }
 

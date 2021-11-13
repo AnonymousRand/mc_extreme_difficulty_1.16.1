@@ -1,20 +1,24 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.function.BiFunction;
 
 public class RunnableTornado extends BukkitRunnable {
 
+    public static JavaPlugin plugin;
     private final World nmsWorld;
     private final org.bukkit.World bukkitWorld;
     private final BlockPosition pos;
@@ -22,63 +26,77 @@ public class RunnableTornado extends BukkitRunnable {
     private final double radius;
     private int cycles;
     private final int maxCycles;
-    private List<Entity> nmsEntities;
+    private List<Entity> nmsEntitiesTemp;
     private ArrayList<Entity> nmsEntitiesAll = new ArrayList<>();
-    private ArrayList<Block> bukkitBlocks = new ArrayList<>();
+    private ArrayList<Block> bukkitBlocksTemp = new ArrayList<>();
     private org.bukkit.Material type;
-    private ArrayList<FallingBlock> fallingBlocksAll = new ArrayList<>();
-    private double phi;
-    private double x;
-    private double z;
-    private final Random random = new Random();
+    private HashMap<FallingBlock, Integer> fallingBlocksAll = new HashMap<>();
+    private HashMap<Entity, Boolean> playerBreakBlocks = new HashMap<>();
+    private Vector vec;
+    private Location randomLoc;
+    private static final Random random = new Random();
 
     public RunnableTornado(World nmsWorld, BlockPosition pos, double radius, int maxCycles) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.pos = pos;
-        this.loc = new Location(this.bukkitWorld, this.pos.getX(), this.pos.getY(), this.pos.getZ());
+        this.loc = new Location(this.bukkitWorld, this.pos.getX(), this.pos.getY() + 1.0, this.pos.getZ());
         this.radius = radius;
         this.maxCycles = maxCycles;
-        this.phi = 0;
         LightningStrikeListeners.storm = true;
     }
 
     @Override
     public void run() {
-        if (++this.cycles <= this.maxCycles) {
-            if (this.cycles % 3 == 0) {
-                this.bukkitWorld.strikeLightningEffect(this.loc);
+        if (++this.cycles <= this.maxCycles) { //continue the spinning motion of falling blocks every tick
+            for (Map.Entry<FallingBlock, Integer> fallingBlockEntry : this.fallingBlocksAll.entrySet()) {
+                fallingBlockEntry.getKey().setVelocity(CustomMathHelper.spiralVector(13.0 + fallingBlockEntry.getValue() / 20.0, this.cycles - fallingBlockEntry.getValue(), 0.5 + random.nextDouble() * 0.75).multiply(0.3));
+            }
 
-                this.nmsEntities = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> entity instanceof EntityLiving);
-                this.nmsEntitiesAll.addAll(this.nmsEntities);
-                for (Entity nmsEntity : this.nmsEntities) {
+            if (this.cycles % 5 == 0) { //pull in entities every 5 ticks
+                this.nmsEntitiesTemp = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> ((entity instanceof EntityLiving || entity instanceof EntityEnderPearl) && !(entity instanceof CustomEntityEnderDragon || entity instanceof EntityWither))); //todo: change to custom mobs
+                this.nmsEntitiesAll.addAll(this.nmsEntitiesTemp);
+                for (Entity nmsEntity : this.nmsEntitiesTemp) {
                     nmsEntity.noclip = true;
+
+                    if (nmsEntity instanceof EntityPlayer && (!this.playerBreakBlocks.containsKey(nmsEntity) || !this.playerBreakBlocks.get(nmsEntity))) {
+                        this.playerBreakBlocks.put(nmsEntity, true);
+                        new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, this.maxCycles - this.cycles).runTaskTimer(plugin, 0L, 1L); //because a player's noclip is instantly turned off if not in spectator
+                    }
+
                     nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 8.0, (this.pos.getY() - nmsEntity.locY()) / 8.0, (this.pos.getZ() - nmsEntity.locZ()) / 8.0));
                 }
             }
 
-            this.bukkitBlocks.clear();
-            for (int i = 0; i < this.random.nextInt(2) + 4; i++) {
-                this.bukkitBlocks.add(new Location(this.bukkitWorld, this.pos.getX() + this.random.nextGaussian() * this.radius * 0.25, this.pos.getY() + this.random.nextGaussian() * this.radius * 0.25, this.pos.getZ() + this.random.nextGaussian() * this.radius * 0.25).getBlock());
-            }
+            if (this.cycles % 2 == 0) {
+                this.bukkitWorld.strikeLightningEffect(this.loc); //strike lightning every 2 ticks
 
-            this.phi += Math.PI / 8.0; //todo: not spiraling
-            for (Block bukkitBlock : this.bukkitBlocks) {
-                type = bukkitBlock.getType();
+                this.bukkitBlocksTemp.clear();
+                for (int i = 0; i < random.nextInt(3) + 4; i++) { //pick up 4-6 new blocks every 2 ticks
+                    randomLoc = new Location(this.bukkitWorld, this.pos.getX() + random.nextGaussian() * this.radius * 0.2, 0.0, this.pos.getZ() + random.nextGaussian() * this.radius * 0.2);
+                    this.bukkitBlocksTemp.add(this.bukkitWorld.getHighestBlockAt(randomLoc));
+                }
 
-                if (type != org.bukkit.Material.BEDROCK && type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.NETHER_PORTAL && type != org.bukkit.Material.COMMAND_BLOCK && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER) {
-                    for (double t = 0; t <= 2.0 * Math.PI; t += Math.PI / 8.0){
-                        for (double i = 0; i < 2; i++){
-                            this.x = 0.3 * (2.0 * Math.PI - t) * 0.5 * Math.cos(t + this.phi + i * Math.PI);
-                            this.z = 0.3 * (2 * Math.PI - t) * 0.5 * Math.sin(t + this.phi + i * Math.PI);
+                this.vec = CustomMathHelper.spiralVector(13.0, this.cycles, 0.5 + random.nextDouble() * 0.75).multiply(0.3);
+                randomLoc = new Location(this.bukkitWorld, this.loc.getX() + 13.0, this.loc.getY(), this.loc.getZ()); //so that after its first "toss" by the tornado, it will be perfectly centered on it
+                for (Block bukkitBlock : this.bukkitBlocksTemp) { //turn those new blocks into falling blocks
+                    type = bukkitBlock.getType();
+
+                    if (type != org.bukkit.Material.BEDROCK && type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.NETHER_PORTAL && type != org.bukkit.Material.COMMAND_BLOCK && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA && type != org.bukkit.Material.END_STONE && type != org.bukkit.Material.OBSIDIAN && type != org.bukkit.Material.CRYING_OBSIDIAN && type != org.bukkit.Material.RESPAWN_ANCHOR && type != org.bukkit.Material.ANCIENT_DEBRIS && type != org.bukkit.Material.NETHERITE_BLOCK) { //as long as it isn't one of these blocks
+                        FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
+                        fallingBlock.setGravity(false);
+                        fallingBlock.setVelocity(this.vec);
+                        this.fallingBlocksAll.put(fallingBlock, this.cycles);
+                        bukkitBlock.setType(org.bukkit.Material.AIR);
+                    } else if (type == org.bukkit.Material.END_STONE || type == org.bukkit.Material.OBSIDIAN || type == org.bukkit.Material.CRYING_OBSIDIAN || type == org.bukkit.Material.RESPAWN_ANCHOR || type == org.bukkit.Material.ANCIENT_DEBRIS || type == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to pick up these blocks
+                        if (random.nextDouble() < 0.5) {
+                            FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
+                            fallingBlock.setGravity(false);
+                            fallingBlock.setVelocity(this.vec);
+                            this.fallingBlocksAll.put(fallingBlock, this.cycles);
+                            bukkitBlock.setType(org.bukkit.Material.AIR);
                         }
                     }
-
-                    FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(bukkitBlock.getLocation(), bukkitBlock.getBlockData());
-                    fallingBlock.setGravity(false);
-                    fallingBlock.setVelocity(new Vector(this.x, 0.5 + this.random.nextDouble() / 5.0, this.z));
-                    this.fallingBlocksAll.add(fallingBlock);
-                    bukkitBlock.setType(org.bukkit.Material.AIR);
                 }
             }
         } else if (this.cycles - 5 >= this.maxCycles) {
@@ -89,8 +107,12 @@ public class RunnableTornado extends BukkitRunnable {
                 nmsEntity.noclip = false;
             }
 
-            for (FallingBlock fallingBlock : this.fallingBlocksAll) {
+            for (FallingBlock fallingBlock : this.fallingBlocksAll.keySet()) {
                 fallingBlock.setGravity(true);
+            }
+
+            for (Map.Entry<Entity, Boolean> entry : this.playerBreakBlocks.entrySet()) {
+                entry.setValue(false);
             }
         }
     }

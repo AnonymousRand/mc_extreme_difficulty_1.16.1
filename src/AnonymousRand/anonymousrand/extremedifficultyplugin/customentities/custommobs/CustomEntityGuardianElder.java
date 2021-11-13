@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -103,7 +104,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                 int k = this.getEntityType().e().g() + 28; /**random despawn distance increased to 60 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -133,7 +134,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
     static class CustomPathfinderGoalGuardianAttack extends PathfinderGoal { /**guardian no longer stops attacking if player is too close*/
 
-    private final CustomEntityGuardianElder entity;
+        private final CustomEntityGuardianElder entity;
         private int b;
         private final boolean isElder;
 
@@ -195,28 +196,10 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                     entityliving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget((EntityLiving)null);
                 } else if (this.b + 40 == this.entity.eL()) { /**2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player*/
-
                     BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityliving.locX() - this.entity.locX(), entityliving.locY() - this.entity.locY(), entityliving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.getNormalDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()), 0.5) + 1);
+
                     while (iterator.hasNext()) {
-                        Location locBase = iterator.next().getLocation();
-                        Location loc;
-                        Random random = new Random();
-
-                        for (int x = -1; x <= 1; x++) {
-                            for (int y = -1; y <= 1; y++) {
-                                for (int z = -1; z <= 1; z++) {
-                                    loc = new Location(this.entity.getWorld().getWorld(), locBase.getX() + x, locBase.getY() + y, locBase.getZ() + z);
-
-                                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.CRYING_OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.END_STONE && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB && loc.getBlock().getType() != org.bukkit.Material.WATER) { //as long as it isn't one of these blocks
-                                        loc.getBlock().setType(org.bukkit.Material.AIR);
-                                    } else if (loc.getBlock().getType() == org.bukkit.Material.OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.CRYING_OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.ANCIENT_DEBRIS || loc.getBlock().getType() == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to break these blocks
-                                        if (random.nextDouble() < 0.5) {
-                                            loc.getBlock().setType(org.bukkit.Material.AIR);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        new RunnableBreakBlocks(iterator.next().getLocation(), this.entity.getWorld().getWorld(), 1, 1, 1, 0, false).run();
                     }
                 }
 

@@ -18,12 +18,11 @@ import java.util.Random;
 
 public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public static double phantomSize;
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
-    public MobSpawnAndReplaceWithCustomListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public MobSpawnAndReplaceWithCustomListeners() {
         phantomSize = 0.0;
     }
 
@@ -84,9 +83,9 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 }
                 case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case BLAZE -> {
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && this.random.nextDouble() < 0.1) { /**blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
                         CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld); //todo copy to wither skeleton as well
-                        int i = this.random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
+                        int i = random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
                         int j = 1 << i;
                         newMagmaCube.setSize(j, true);
                         new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
@@ -107,18 +106,18 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case ELDER_GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ENDERMAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ENDERMITE -> new SpawnLivingEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case EVOKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
-                case GHAST -> new SpawnLivingEntity(nmsWorld, new CustomEntityGhast(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, false);
+                case EVOKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case GHAST -> new SpawnLivingEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case MAGMA_CUBE -> {
                     CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
 
-                    if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && this.random.nextDouble() < 0.3) { /**naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead*/
+                    if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && random.nextDouble() < 0.3) { /**naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead*/
                         bukkitEntity.remove();
 
-                        /*if (this.random.nextDouble() < 0.666666666) { //todo
+                        /*if (random.nextDouble() < 0.666666666) { //todo
                             new SpawnLivingEntity();
                         } else {
                             new SpawnLivingEntity();
@@ -127,7 +126,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         return;
                     }
 
-                    int i = this.random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
+                    int i = random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
                     int j = 1 << i;
 
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SLIME_SPLIT) {
@@ -148,7 +147,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case MUSHROOM_COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PHANTOM -> {
-                    int rand = this.random.nextInt(4) + 12;
+                    int rand = random.nextInt(4) + 12;
                     phantomSize += 0.05 / Bukkit.getServer().getOnlinePlayers().size() * rand; /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.05*/
                     CustomEntityPhantom newPhantom = new CustomEntityPhantom(nmsWorld, (int)phantomSize);
                     new SpawnLivingEntity(nmsWorld, (int)phantomSize, newPhantom, rand, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
@@ -160,19 +159,19 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case RAVAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
                     if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
-                        new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntitySheepAggressive(nmsWorld, this.plugin), 2, null, bukkitEntity, null, true, true);
+                        new SpawnLivingEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
                     }
                 }
                 case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case SKELETON -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntitySkeleton(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                        new SpawnLivingEntity(nmsWorld, new CustomEntitySkeleton(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
                 case SLIME -> {
                     CustomEntitySlime newSlime = new CustomEntitySlime(nmsWorld);
 
-                    int i = this.random.nextInt(3) + 1;  /**all slimes spawn one "size" larger from sizes 2, 4, and 8 compared to 1, 2, and 4 only*/
+                    int i = random.nextInt(3) + 1;  /**all slimes spawn one "size" larger from sizes 2, 4, and 8 compared to 1, 2, and 4 only*/
                     int j = 1 << i;
 
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SLIME_SPLIT) {
@@ -186,13 +185,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ZOMBIE -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                        new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
-                case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
             }
         }
     }
@@ -256,10 +255,10 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case ELDER_GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ENDERMAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ENDERMITE -> new SpawnLivingEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case EVOKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
-                        case GHAST -> new SpawnLivingEntity(nmsWorld, new CustomEntityGhast(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, false);
+                        case EVOKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case GHAST -> new SpawnLivingEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                        case HOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case HUSK -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ILLUSIONER -> new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -268,7 +267,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case PHANTOM -> {
                             phantomSize += 0.025 / Bukkit.getServer().getOnlinePlayers().size();
                             CustomEntityPhantom newPhantom = new CustomEntityPhantom(nmsWorld, (int)phantomSize);
-                            new SpawnLivingEntity(nmsWorld, newPhantom, this.random.nextInt(4) + 12, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
+                            new SpawnLivingEntity(nmsWorld, newPhantom, random.nextInt(4) + 12, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
                         }
                         case PIG -> new SpawnLivingEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -283,15 +282,15 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case RAVAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
                             if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
-                                new SpawnLivingEntity(nmsWorld, this.plugin, new CustomEntitySheepAggressive(nmsWorld, this.plugin), 2, null, bukkitEntity, null, true, true);
+                                new SpawnLivingEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
                             }
                         }
                         case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
-                        case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld, this.plugin), 1, null, bukkitEntity, null, true, true);
+                        case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
             }

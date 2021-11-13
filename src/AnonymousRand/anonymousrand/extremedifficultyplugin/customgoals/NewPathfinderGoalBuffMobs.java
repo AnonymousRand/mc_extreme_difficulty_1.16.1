@@ -12,7 +12,7 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
     private final HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects;
     private final double rangeRadius;
     private final int attackMin, ticksDelayMin, ticksDelayRandBound;
-    private final Random random = new Random();
+    private static final Random random = new Random();
     private Field attacks;
 
     public NewPathfinderGoalBuffMobs(EntityInsentient entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksMin, int ticksDelayMin, int ticksDelayRandBound) {
@@ -32,7 +32,7 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        if (this.entity.ticksLived % (this.random.nextInt(this.ticksDelayRandBound) + this.ticksDelayMin) == 0) {
+        if (this.entity.ticksLived % (random.nextInt(this.ticksDelayRandBound) + this.ticksDelayMin) == 0) {
             try {
                 if (this.attacks.getInt(this.entity) >= this.attackMin) {
                     return true;

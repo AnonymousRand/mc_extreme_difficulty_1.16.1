@@ -30,9 +30,9 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
         this.attacks = 0;
         this.attackNum = 0;
 
-        if (this.random.nextDouble() < 0.25) { /**pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead*/
+        if (random.nextDouble() < 0.25) { /**pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead*/
             new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
-        } else if (this.random.nextDouble() < 0.5) {
+        } else if (random.nextDouble() < 0.5) {
             new SpawnLivingEntity(this.getWorld(), new CustomEntityIllagerIllusioner(this.getWorld()), 1, null, null, this, true, true);
         }
     }
@@ -54,7 +54,7 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
             this.attacks++;
         }
 
-        new RunnableMobShootArrowsNormally(this, entityliving, f, 1, this.attackNum % 24 == 0 ? 6 : 1, 3.0, this.random.nextDouble() < (this.attackNum % 24 == 0 ? 0.75 : 0.05) ? 1 : 0, false, true); /**shoots a knockback arrow every 24th attack; 5% of arrows shot are piercing 1 (75% for knockback arrow); arrows do not lose y level*/
+        new RunnableMobShootArrowsNormally(this, entityliving, f, 1, this.attackNum % 24 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 0.75 : 0.05) ? 1 : 0, false, true); /**shoots a knockback arrow every 24th attack; 5% of arrows shot are piercing 1 (75% for knockback arrow); arrows do not lose y level*/
     }
 
     public double getFollowRange() { /**pillagers have 24 block detection range (setting attribute doesn't work)*/
@@ -89,7 +89,7 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

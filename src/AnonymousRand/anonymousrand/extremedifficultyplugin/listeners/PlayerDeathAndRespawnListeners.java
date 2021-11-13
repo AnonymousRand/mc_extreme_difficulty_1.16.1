@@ -27,14 +27,10 @@ import java.util.HashMap;
 
 public class PlayerDeathAndRespawnListeners implements Listener {
 
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
     private static HashMap<Player, Integer> respawnCount = new HashMap<>();
     public static ArrayList<EntityZombie> superZombies = new ArrayList<>();
-
-    public PlayerDeathAndRespawnListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
@@ -44,7 +40,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
 
         if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /**when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc*/
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
-            CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld, this.plugin);
+            CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld);
             newZombie.getBukkitEntity().setCustomName("Dinnerbone");
             new SpawnLivingEntity(nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true);
             superZombies.add(newZombie);
@@ -55,7 +51,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
         {
             @Override
             public void run() {
@@ -88,7 +84,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     @EventHandler
     public void totemUse(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player) {
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 @Override
                 public void run() {

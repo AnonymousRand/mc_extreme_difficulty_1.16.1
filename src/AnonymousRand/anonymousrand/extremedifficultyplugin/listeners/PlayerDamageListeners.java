@@ -20,12 +20,8 @@ import static org.bukkit.entity.EntityType.*;
 
 public class PlayerDamageListeners implements Listener {
 
-    private final JavaPlugin plugin;
-    private final Random random = new Random();
-
-    public PlayerDamageListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
+    private static final Random random = new Random();
 
     @EventHandler
     public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects and attack counts etc. if it is hard to do in their custom entity classes
@@ -54,7 +50,7 @@ public class PlayerDamageListeners implements Listener {
                         hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + 1.2);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() { //delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { //delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
                         @Override
                         public void run() {
                             bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0));  /**hoglins launch players into air, doubled if baby*/
@@ -78,7 +74,7 @@ public class PlayerDamageListeners implements Listener {
                     ironGolem.increaseStatsAdd(1.0, 0.25, 0.015);
 
                     if (ironGolem.attacks == 10 || ironGolem.attacks == 20 || ironGolem.attacks == 25 || ironGolem.attacks == 30 || ironGolem.attacks == 35 || ironGolem.attacks == 40 || ironGolem.attacks == 43 || ironGolem.attacks == 46 || ironGolem.attacks == 49 || ironGolem.attacks >= 50) { /**on these attacks, iron golems knock players high into the air*/
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                             @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0));
@@ -101,7 +97,7 @@ public class PlayerDamageListeners implements Listener {
                         Bukkit.broadcastMessage("You really thought you could get away with that?");
                         ravager.launchHigh = false;
                         event.setDamage(6.0);
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                             @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 1.0, 0.0));
@@ -109,7 +105,7 @@ public class PlayerDamageListeners implements Listener {
                         }, 2L);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                         @Override
                         public void run() {
                             if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6*/
@@ -126,7 +122,7 @@ public class PlayerDamageListeners implements Listener {
                         Bukkit.broadcastMessage("You really thought you could get away with that?");
                         sheep.launchHigh = false;
                         event.setDamage(9.0);
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                             @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0));
@@ -134,7 +130,7 @@ public class PlayerDamageListeners implements Listener {
                         }, 2L);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                         @Override
                         public void run() {
                             if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 9*/
@@ -166,7 +162,7 @@ public class PlayerDamageListeners implements Listener {
                     zoglin.attacks++;
 
                     if (zoglin.attacks >= 40) {
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                             @Override
                             public void run() {
                                 bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)); /**after 40 attacks, zoglins throw players into the air when it hits the player*/
@@ -203,9 +199,9 @@ public class PlayerDamageListeners implements Listener {
             if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning spawns a pufferfish per damage tick, with 20% chance to also spawn a guardian and a 2.5% chance to spawn an elder guardian*/
                 World nmsWorld = nmsPlayer.getWorld();
 
-                if (this.random.nextDouble() < 0.2) {
+                if (random.nextDouble() < 0.2) {
                     new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true);
-                } else if (this.random.nextDouble() < 0.025) {
+                } else if (random.nextDouble() < 0.025) {
                     new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, null, nmsPlayer, false, true);
                 } else {
                     //todo pufferfish

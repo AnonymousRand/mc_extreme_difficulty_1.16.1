@@ -19,14 +19,14 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMethods {
 
-    public final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     private EntitySheep wololoTarget;
     public int attacks;
     private boolean a25, a36, a60;
+    private static final Random random = new Random();
 
-    public CustomEntityEvoker(World world, JavaPlugin plugin) {
+    public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
-        this.plugin = plugin;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
@@ -117,7 +117,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -200,14 +200,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
             CustomEntityEvoker.this.attacks += 6;
 
             for (int i = 0; i < 6; ++i) { /**summons 6 vexes at a time instead of 3*/
-                BlockPosition blockposition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.this.random.nextInt(5), 1, -2 + CustomEntityEvoker.this.random.nextInt(5));
+                BlockPosition blockposition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.random.nextInt(5), 1, -2 + CustomEntityEvoker.random.nextInt(5));
                 EntityVex newVex = (EntityVex)EntityTypes.VEX.a(CustomEntityEvoker.this.getWorld());
 
                 newVex.setPositionRotation(blockposition, 0.0F, 0.0F);
                 newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockposition), EnumMobSpawn.MOB_SUMMONED, (GroupDataEntity)null, (NBTTagCompound)null);
                 newVex.a((EntityInsentient) CustomEntityEvoker.this);
                 newVex.g(blockposition);
-                newVex.a(20 * (30 + CustomEntityEvoker.this.random.nextInt(90)));
+                newVex.a(20 * (30 + CustomEntityEvoker.random.nextInt(90)));
                 CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
 
                 //todo: also summon a random other illager besides ravager and evoker
@@ -270,7 +270,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
                 }
             }
 
-            new EvokerStopPlayer(CustomEntityEvoker.this, entityliving, 7).runTaskTimer(CustomEntityEvoker.this.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
+            new EvokerStopPlayer(entityliving, 7).runTaskTimer(CustomEntityEvoker.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
@@ -367,7 +367,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
                 if (list.isEmpty()) {
                     return false;
                 } else {
-                    CustomEntityEvoker.this.a((EntitySheep)list.get(CustomEntityEvoker.this.random.nextInt(list.size())));
+                    CustomEntityEvoker.this.a((EntitySheep)list.get(CustomEntityEvoker.random.nextInt(list.size())));
                     return true;
                 }
             }
@@ -390,7 +390,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
             EntitySheep entitysheep = CustomEntityEvoker.this.fh();
 
             if (entitysheep != null && entitysheep.isAlive()) { /**instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep*/
-                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld(), CustomEntityEvoker.this.plugin), 1, null, null, entitysheep, true, true);
+                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld()), 1, null, null, entitysheep, true, true);
             }
         }
 
@@ -586,12 +586,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
 
     static class EvokerStopPlayer extends BukkitRunnable {
 
-        private CustomEntityEvoker evoker;
         private EntityLiving target;
         private int cycles, maxCycles;
 
-        public EvokerStopPlayer(CustomEntityEvoker evoker, EntityLiving target, int maxCycles) {
-            this.evoker = evoker;
+        public EvokerStopPlayer(EntityLiving target, int maxCycles) {
             this.target = target;
             this.cycles = 0;
             this.maxCycles = maxCycles;
@@ -601,6 +599,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         public void run() {
             if (++this.cycles > this.maxCycles) {
                 this.cancel();
+                return;
             }
 
             LivingEntity bukkitEntity = (LivingEntity)target.getBukkitEntity();

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Random;
@@ -10,8 +10,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
 
     public EntityInsentient entity;
     private final double yLevelDifferenceToActivate, initialRange, chancePerTick;
-    private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
     public NewPathfinderGoalTeleportToPlayerAdjustY(EntityInsentient entity, double yLevelDifferenceToActivate, double initialRange, double chancePerTick) {
         this.entity = entity;
@@ -49,7 +48,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         EntityPlayer player;
         player = (EntityPlayer)this.entity.getGoalTarget();
 
-        BlockPosition pos = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+        BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
         BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
 
         if (pos2 != null) {

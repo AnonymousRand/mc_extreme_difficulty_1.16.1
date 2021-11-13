@@ -2,9 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CoordsFromHypotenuse;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.BlockPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,8 +21,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
     private int cycles;
     private final int maxCycles;
     private final boolean customLightning;
-    private final CoordsFromHypotenuse coordsFromHypotenuse = new CoordsFromHypotenuse();
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
     public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, int maxCycles) {
         this.nmsWorld = nmsWorld;
@@ -50,7 +48,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
     @Override
     public void run() {
         if (++this.cycles <= this.maxCycles) {
-            this.loc2 = coordsFromHypotenuse.CoordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), this.random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
+            this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
 
             if (this.customLightning) {
                 this.newLightning = new CustomEntityLightning(this.nmsWorld);

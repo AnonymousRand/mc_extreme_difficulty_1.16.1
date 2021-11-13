@@ -23,7 +23,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         super(EntityTypes.PIGLIN, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        double rand = this.random.nextDouble();
+        double rand = random.nextDouble();
         this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.96 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /**piglins have a 45% chance to be armed with a crossbow or a sword each, a 6% chance to have a netherite hoe, and a 4% chance to have a netherite sword*/
         Arrays.fill(this.dropChanceHand, 0.0f); /**piglins can't drop the items they are holding*/
         this.attacks = 0;
@@ -83,14 +83,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         this.setHealth((float) (this.getHealth() + 0.75)); /**piglins heal by 0.75 every time its attacks increase by 1*/
 
         if (this.attacks == 1) { /**first attack always shoots knockback arrows*/
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 6, 25.0, this.random.nextDouble() < 0.2 ? 1 : 0, false, false);
+            new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false);
         } else {
-            int rand = this.random.nextInt(4);
+            int rand = random.nextInt(4);
 
             if (rand == 0) { /**shoots 15 arrows at a time with increased inaccuracy to seem like a cone; 25% of arrows shot are piercing 1*/
-                new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 1, 25.0, this.random.nextDouble() < 0.25 ? 1 : 0, false, false);
+                new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false);
             } else {
-                new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 3 + rand, 25.0, this.random.nextDouble() < 0.25 ? 1 : 0, false, false); /**25% chance to shoot normal arrows, 25% chance to shoot arrows that each with a 1.25% chance to spawn a piglin; 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows*/
+                new RunnableMobShootArrowsNormally(this, entityliving, f, 15, 3 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false); /**25% chance to shoot normal arrows, 25% chance to shoot arrows that each with a 1.25% chance to spawn a piglin; 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows*/
             }
         }
     }
@@ -98,7 +98,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) {  /**piglins have a 10% chance to summon a baby piglin when it is hit by a player and not killed*/
-            if (this.random.nextDouble() < 0.1) {
+            if (random.nextDouble() < 0.1) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
                 newPiglin.a(true);
                 new SpawnLivingEntity(this.getWorld(), newPiglin, 1, null, null, this, false, true);
@@ -152,7 +152,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         if (this.attacks >= 20) {
             if (this.attacks >= 35) { /**after 35 attacks, piglins spawn a zombie piglin when killed*/
                 new SpawnLivingEntity(this.getWorld(), new EntityPigZombie(EntityTypes.ZOMBIFIED_PIGLIN, this.getWorld()), 1, null, null, this, false, true);
-            } else if (this.random.nextDouble() < 0.5) { /**after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed*/
+            } else if (random.nextDouble() < 0.5) { /**after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed*/
                 new SpawnLivingEntity(this.getWorld(), new EntityPigZombie(EntityTypes.ZOMBIFIED_PIGLIN, this.getWorld()), 1, null, null, this, false, true);
             }
         }
@@ -253,7 +253,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

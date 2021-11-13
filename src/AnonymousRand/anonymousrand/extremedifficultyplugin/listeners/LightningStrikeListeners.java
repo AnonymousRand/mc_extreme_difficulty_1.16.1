@@ -3,6 +3,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
+import net.minecraft.server.v1_16_R1.BlockPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -17,14 +20,10 @@ import java.util.Random;
 
 public class LightningStrikeListeners implements Listener {
     
-    private final JavaPlugin plugin;
+    public static JavaPlugin plugin;
     public static boolean storm;
-    private final Random random = new Random();
-
-    public LightningStrikeListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-        storm = false;
-    }
+    public static int numberOfThors;
+    private static final Random random = new Random();
 
     @EventHandler
     public void lightningSpawned(EntitySpawnEvent event) {
@@ -50,11 +49,16 @@ public class LightningStrikeListeners implements Listener {
             }
 
             if (!storm && random.nextDouble() < 0.025) { /**non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-                new RunnableLightningStorm(nmsWorld, loc, this.random.nextInt(16) + 40).runTaskTimer(this.plugin, 0L, this.random.nextInt(4) + 2);
+                new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 40).runTaskTimer(plugin, 0L, random.nextInt(4) + 2);
+
+                if (random.nextDouble() < 0.4) { /**the lightning strike that started a storm has a 40% chance of causing a tornado*/
+                    new RunnableTornado(nmsWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 40.0, 150).runTaskTimer(plugin, 0L, 1L);
+                }
             }
 
-            if (!storm && random.nextDouble() < 0.0175) { /**non-storm lightning has a 1.75% chance to summon thor*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld, this.plugin), 1, null, loc, true);
+            if (!storm && random.nextDouble() < 0.0175 && numberOfThors / 2 < Bukkit.getOnlinePlayers().size()) { /**non-storm lightning has a 1.75% chance to summon thor, up to 2 thors per player*/
+                new SpawnLivingEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld), 1, null, loc, true);
+                numberOfThors++;
             }
         }
     }

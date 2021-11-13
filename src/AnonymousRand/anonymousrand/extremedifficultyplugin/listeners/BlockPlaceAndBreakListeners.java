@@ -33,12 +33,8 @@ import java.util.Random;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
-    private final JavaPlugin plugin;
-    private final Random random = new Random();
-
-    public BlockPlaceAndBreakListeners(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public static JavaPlugin plugin;
+    private static final Random random = new Random();
 
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
@@ -55,11 +51,11 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
 
             if (type == Material.CONDUIT) { /**conduits spawn guardians every 5 seconds for 50 seconds*/
-                new ConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(this.plugin, 0L, 100L);
+                new ConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(plugin, 0L, 100L);
             }
         } else {
             if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 2.5 seconds
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 2.5 seconds
                 {
                     @Override
                     public void run() {
@@ -94,8 +90,8 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
         }
 
-        if (type == Material.NETHER_GOLD_ORE && this.random.nextDouble() < 0.8) { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
-            (new Location(bukkitBlock.getWorld(), loc.getX() + this.random.nextInt(5) - 2, loc.getY() + this.random.nextInt(5) - 2, loc.getZ() + this.random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
+        if (type == Material.NETHER_GOLD_ORE && random.nextDouble() < 0.8) { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
+            (new Location(bukkitBlock.getWorld(), loc.getX() + random.nextInt(5) - 2, loc.getY() + random.nextInt(5) - 2, loc.getZ() + random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
         }
     }
 
@@ -159,8 +155,9 @@ public class BlockPlaceAndBreakListeners implements Listener {
 
         @Override
         public void run() {
-            if (++this.cycles >= this.maxCycles) {
+            if (++this.cycles > this.maxCycles) {
                 this.cancel();
+                return;
             }
 
             new SpawnLivingEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true);

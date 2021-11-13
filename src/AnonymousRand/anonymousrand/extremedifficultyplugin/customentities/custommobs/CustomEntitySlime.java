@@ -49,7 +49,7 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
 
             if (this.h((Entity) entityliving) < 0.6D * (double) i * 0.6D * (double) i && entityliving.damageEntity(DamageSource.mobAttack(this), this.eN())) { /**slimes don't need line of sight to attack player*/
                 this.attackCooldown = 20;
-                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
                 this.a((EntityLiving)this, (Entity)entityliving);
             }
         }
@@ -86,7 +86,7 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
                     entityslime.setNoAI(flag);
                     entityslime.setInvulnerable(this.isInvulnerable());
                     entityslime.setSize(j, true);
-                    entityslime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5D, this.locZ() + (double) f2, this.random.nextFloat() * 360.0F, 0.0F);
+                    entityslime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5D, this.locZ() + (double) f2, random.nextFloat() * 360.0F, 0.0F);
                     this.world.addEntity(entityslime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
                 }
             }
@@ -94,7 +94,7 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
     }
 
     protected int eK() { /**slimes jump faster*/
-        return this.random.nextInt(4) + 9;
+        return random.nextInt(4) + 9;
     }
 
     public double getFollowRange() { /**slimes have 40 block detection range (setting attribute doesn't work)*/
@@ -153,7 +153,7 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

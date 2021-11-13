@@ -11,14 +11,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a10, a32, a42, a70;
 
-    public CustomEntityHoglin(World world, JavaPlugin plugin) {
+    public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
-        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
@@ -44,8 +42,8 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
     public void die() {
         super.die();
 
-        if (this.random.nextDouble() < (this.attacks < 70 ? 0.3 : 1.0)) { /**hoglins have a 30% chance to spawn a zoglin after death (100% chance after 70 attacks)*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld(), this.plugin), 1, null, null, this, false, true);
+        if (random.nextDouble() < (this.attacks < 70 ? 0.3 : 1.0)) { /**hoglins have a 30% chance to spawn a zoglin after death (100% chance after 70 attacks)*/
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
     }
 
@@ -70,16 +68,16 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
 
         if (this.attacks == 42 && !this.a42) { /**after 42 attacks, hoglins summon a baby hoglin*/
             this.a42 = true;
-            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
+            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
             new SpawnLivingEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
         }
 
         if (this.attacks == 70 && !this.a70) { /**after 70 attacks, hoglins summon 2 baby hoglins*/
             this.a70 = true;
-            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld(), this.plugin);
+            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
-            new SpawnLivingEntity(this.getWorld(), this.plugin, newHoglin, 2, null, null, this, false, true);
+            new SpawnLivingEntity(this.getWorld(), newHoglin, 2, null, null, this, false, true);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
@@ -114,7 +112,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
                 int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;

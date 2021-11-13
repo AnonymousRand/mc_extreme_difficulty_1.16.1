@@ -8,14 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntityZombieSuper extends EntityZombie implements ICommonCustomMethods {
 
-    private final JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
 
-    public CustomEntityZombieSuper(World world, JavaPlugin plugin) {
+    public CustomEntityZombieSuper(World world) {
         super(EntityTypes.ZOMBIE, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        this.plugin = plugin;
         this.targetSelectorVanilla = super.targetSelector;
     }
 
@@ -45,17 +43,17 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICommonCust
                 return true;
             }
 
-            if ((double)this.random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /**zombies can now spawn reinforcements on any difficulty*/
-                for (int ii = 0; ii < (this.random.nextDouble() < 0.99 ? 1 : 30); ii++) { /**1% chance to make 30 spawn attempts instead of 1 (on average, about half of them succeed)*/
+            if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /**zombies can now spawn reinforcements on any difficulty*/
+                for (int ii = 0; ii < (random.nextDouble() < 0.99 ? 1 : 30); ii++) { /**1% chance to make 30 spawn attempts instead of 1 (on average, about half of them succeed)*/
                     int i = MathHelper.floor(this.locX());
                     int j = MathHelper.floor(this.locY());
                     int k = MathHelper.floor(this.locZ());
-                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld(), this.plugin);
+                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
 
                     for (int l = 0; l < 50; ++l) {
-                        int i1 = i + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
-                        int j1 = j + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
-                        int k1 = k + MathHelper.nextInt(this.random, 7, 40) * MathHelper.nextInt(this.random, -1, 1);
+                        int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                        int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                        int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                         BlockPosition blockposition = new BlockPosition(i1, j1, k1);
                         EntityTypes<?> entitytypes = newZombie.getEntityType();
                         EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
