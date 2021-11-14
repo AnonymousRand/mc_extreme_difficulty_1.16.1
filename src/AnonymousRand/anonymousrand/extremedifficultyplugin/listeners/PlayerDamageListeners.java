@@ -115,6 +115,10 @@ public class PlayerDamageListeners implements Listener {
                     }, 5L);
                 }
                 case SHEEP -> {
+                    if (!(nmsDamager instanceof CustomEntitySheepAggressive)) {
+                        return;
+                    }
+
                     CustomEntitySheepAggressive sheep = (CustomEntitySheepAggressive)nmsDamager;
                     sheep.attacks++;
 

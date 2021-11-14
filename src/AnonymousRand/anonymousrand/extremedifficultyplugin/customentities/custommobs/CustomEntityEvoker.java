@@ -68,8 +68,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    public double getFollowRange() { /**evokers have 24 block detection range (setting attribute doesn't work) (36 after 36 attacks)*/
-        return this.attacks < 36 ? 24.0 : 36.0;
+    public double getFollowRange() { /**evokers have 28 block detection range (setting attribute doesn't work)*/
+        return 28.0;
     }
 
     @Override
@@ -83,7 +83,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
             this.a36 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex
@@ -171,7 +170,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
 
         private CustomPathfinderGoalEvokerSummonVexSpell() {
             super();
-            this.e = (new PathfinderTargetCondition()).a(16.0D).c().e().a().b();
+            this.e = (new CustomPathfinderTargetCondition()).a(28.0D).c().e().a().b();
         }
 
         @Override
@@ -179,9 +178,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
             if (!super.a()) {
                 return false;
             } else {
-                int i = CustomEntityEvoker.this.getWorld().a(EntityVex.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().g(16.0D)).size();
+                int i = CustomEntityEvoker.this.getWorld().a(EntityVex.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().g(28.0D)).size();
 
-                return 24 > i; //evoker can have up to 24 vexes in its vicinity
+                return 24 > i; //evoker can have up to 24 vexes in its vicinity (28 blocks)
             }
         }
 

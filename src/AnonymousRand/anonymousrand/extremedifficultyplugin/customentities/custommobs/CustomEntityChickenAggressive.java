@@ -37,8 +37,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICom
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, 16.0F)); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
@@ -109,6 +108,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICom
         if (this.ticksLived == 10) { /**aggressive chickens move twice as fast and do 3 damage*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
+            this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /**uses the custom goal that makes this mob actually move towards the player within 16 blocks*/
         }
     }
 

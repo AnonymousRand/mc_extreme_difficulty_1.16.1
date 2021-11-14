@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieVillager;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ public class MobDamageListeners implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent event) {
+
         EntityType entityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
@@ -43,6 +45,11 @@ public class MobDamageListeners implements Listener {
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
             case PIGLIN -> /**piglins don't take fire, lava, explosion, suffocation, or projectile damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.PROJECTILE);
+            case PLAYER -> {
+                if (((EntityPlayer)nmsEntity).isBlocking() && event.getDamage() < 3.0) { /**all attacks damage shields by 3 damage no matter how little*/
+                    event.setDamage(3.0);
+                }
+            }
             case SKELETON, STRAY -> /**skeletons and strays don't take fire and lightning damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING);
         }
@@ -72,7 +79,7 @@ public class MobDamageListeners implements Listener {
             event.setCancelled(true);
         }
 
-        if ((cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds or falling anvils*/
+        if ((cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON)) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds, poison/harm potions, or falling anvils*/
             event.setCancelled(true);
         }
 

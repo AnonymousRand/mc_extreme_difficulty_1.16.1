@@ -2,11 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalShootLargeFireballs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.BlockOverride;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
@@ -20,8 +18,23 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        this.changeBlocksBlastResistance();
         CustomMathHelper.initTrigTables();
+    }
 
+    @Override
+    public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
+        this.initializeListeners();
+        this.initializePluginFields();
+        this.addEyeOfEnderRecipe(); /**changes eye of ender recipe*/
+    }
+
+    @Override
+    public void onDisable() {
+
+    }
+
+    private void changeBlocksBlastResistance() {
         BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
         endStone.set("durability", 16.0F);
 
@@ -45,10 +58,12 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
         BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /**spawners are now indestructible by explosions*/
         spawner.set("durability", 3600000.0F);
+
+        BlockOverride conduit = new BlockOverride(Blocks.CONDUIT); /**conduits are now indestructible by explosions*/
+        conduit.set("durability", 3600000.0F);
     }
 
-    @Override
-    public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
+    private void initializeListeners() {
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);  //registers the listeners
         getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
@@ -69,9 +84,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SleepListeners(), this);
         getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);
+    }
 
-        //initializes static plugin fields
-        CustomEntityEvoker.plugin = this;
+    private void initializePluginFields() {
+        CustomEntityEvoker.plugin = this; //initializes static plugin fields
         CustomEntityGhast.plugin = this;
         CustomEntitySkeleton.plugin = this;
         CustomEntityZoglin.plugin = this;
@@ -96,16 +112,9 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         SheepDyeListeners.plugin = this;
 
         RunnableTornado.plugin = this;
-
-        addEyeOfEnderRecipe(); /**changes eye of ender recipe*/
     }
 
-    @Override
-    public void onDisable() {
-
-    }
-
-    public void addEyeOfEnderRecipe() {
+    private void addEyeOfEnderRecipe() {
         Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
         NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
         ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));

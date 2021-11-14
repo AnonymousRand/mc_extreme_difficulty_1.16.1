@@ -48,6 +48,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityGuardian ||
                 nmsEntity instanceof CustomEntityGuardianElder ||
                 nmsEntity instanceof CustomEntityHoglin ||
+                nmsEntity instanceof EntityHorseSkeleton ||
                 nmsEntity instanceof CustomEntityIllagerIllusioner ||
                 nmsEntity instanceof CustomEntityIronGolem ||
                 nmsEntity instanceof CustomEntitySlimeMagmaCube ||
@@ -58,8 +59,10 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityPig ||
                 nmsEntity instanceof CustomEntityPiglin ||
                 nmsEntity instanceof CustomEntityPillager ||
+                nmsEntity instanceof CustomEntityPufferfish ||
                 nmsEntity instanceof CustomEntityRabbit ||
                 nmsEntity instanceof CustomEntityRavager ||
+                nmsEntity instanceof CustomEntitySheep ||
                 nmsEntity instanceof CustomEntitySheepAggressive ||
                 nmsEntity instanceof CustomEntitySilverfish ||
                 nmsEntity instanceof CustomEntitySkeleton ||
@@ -100,8 +103,14 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     }
                 }
                 case CHICKEN -> new SpawnLivingEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnLivingEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, true, true); /**all fish spawn in as 4 pufferfish*/
                 case COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case CREEPER -> new SpawnLivingEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
+                case DONKEY, HORSE, MULE -> { /**donkeys, horses and mules spawn in as a skeleton horse trap instead; becuase of this listener, the skeletons and horses are separate, not rider-passenger*/
+                    EntityHorseSkeleton newSkeletonHorse = new EntityHorseSkeleton(EntityTypes.SKELETON_HORSE, nmsWorld);
+                    newSkeletonHorse.t(true);
+                    new SpawnLivingEntity(nmsWorld, newSkeletonHorse, 1, null, bukkitEntity, null, true, true);
+                }
                 case DROWNED -> new SpawnLivingEntity(nmsWorld, new CustomEntityDrowned(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ELDER_GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ENDERMAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -160,6 +169,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
                     if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
                         new SpawnLivingEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
+                    } else {
+                        new SpawnLivingEntity(nmsWorld, new CustomEntitySheep(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
                 case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -221,6 +232,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityGuardian ||
                         nmsEntity instanceof CustomEntityGuardianElder ||
                         nmsEntity instanceof CustomEntityHoglin ||
+                        nmsEntity instanceof EntityHorseSkeleton ||
                         nmsEntity instanceof CustomEntityIllagerIllusioner ||
                         nmsEntity instanceof CustomEntityIronGolem ||
                         nmsEntity instanceof CustomEntityLlama ||
@@ -230,8 +242,10 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityPig ||
                         nmsEntity instanceof CustomEntityPiglin ||
                         nmsEntity instanceof CustomEntityPillager ||
+                        nmsEntity instanceof CustomEntityPufferfish ||
                         nmsEntity instanceof CustomEntityRabbit ||
                         nmsEntity instanceof CustomEntityRavager ||
+                        nmsEntity instanceof CustomEntitySheep ||
                         nmsEntity instanceof CustomEntitySheepAggressive ||
                         nmsEntity instanceof CustomEntitySilverfish ||
                         nmsEntity instanceof EntitySkeleton ||
@@ -249,8 +263,14 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case BLAZE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case CHICKEN -> new SpawnLivingEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnLivingEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, true, true);
                         case COW -> new SpawnLivingEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case CREEPER -> new SpawnLivingEntity(nmsWorld, new CustomEntityCreeper(nmsWorld,15), 1, null, bukkitEntity, null, true, true);
+                        case CREEPER -> new SpawnLivingEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
+                        case DONKEY, HORSE, MULE -> {
+                            EntityHorseSkeleton newSkeletonHorse = new EntityHorseSkeleton(EntityTypes.SKELETON_HORSE, nmsWorld);
+                            newSkeletonHorse.t(true);
+                            new SpawnLivingEntity(nmsWorld, newSkeletonHorse, 1, null, bukkitEntity, null, true, true);
+                        }
                         case DROWNED -> new SpawnLivingEntity(nmsWorld, new CustomEntityDrowned(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ELDER_GUARDIAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ENDERMAN -> new SpawnLivingEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -267,12 +287,12 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case PHANTOM -> {
                             phantomSize += 0.025 / Bukkit.getServer().getOnlinePlayers().size();
                             CustomEntityPhantom newPhantom = new CustomEntityPhantom(nmsWorld, (int)phantomSize);
-                            new SpawnLivingEntity(nmsWorld, newPhantom, random.nextInt(4) + 12, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
+                            new SpawnLivingEntity(nmsWorld, newPhantom, random.nextInt(4) + 12, null, bukkitEntity, null, true, false);
                         }
                         case PIG -> new SpawnLivingEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/
+                        case RABBIT -> {
                             if (((EntityRabbit)nmsEntity).getRabbitType() == 99) { //to avoid infinte duplication when joining world
                                 return;
                             }
@@ -280,9 +300,11 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                             new SpawnLivingEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true);
                         }
                         case RAVAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
+                        case SHEEP -> {
                             if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
                                 new SpawnLivingEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
+                            } else {
+                                new SpawnLivingEntity(nmsWorld, new CustomEntitySheep(nmsWorld), 1, null, bukkitEntity, null, true, true);
                             }
                         }
                         case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);

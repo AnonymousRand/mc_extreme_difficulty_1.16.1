@@ -76,7 +76,7 @@ public class CustomMathHelper {
     }
 
     public static Vector spiralVector(double radiusOfSpiral, double xIntervalNumber, double yChangePerInterval) { //clockwise starting quadrant 2
-        double angle = xIntervalNumber / (8.5 + random.nextDouble() * 1.0);
+        double angle = xIntervalNumber / (8.5 + random.nextDouble());
         angle %= 2.0;
         angle *= 360.0;
         double x = radiusOfSpiral * trigTableSin[(int)angle];

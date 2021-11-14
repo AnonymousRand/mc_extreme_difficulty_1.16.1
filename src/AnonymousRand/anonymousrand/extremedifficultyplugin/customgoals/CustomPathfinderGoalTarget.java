@@ -87,6 +87,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case PILLAGER -> {
                 return ((CustomEntityPillager)this.e).getFollowRange();
             }
+            case PUFFERFISH -> {
+                return ((CustomEntityPufferfish)this.e).getFollowRange();
+            }
             case RABBIT -> {
                 return ((CustomEntityRabbit)this.e).getFollowRange();
             }
@@ -94,7 +97,11 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 return ((CustomEntityRavager)this.e).getFollowRange();
             }
             case SHEEP -> {
-                return ((CustomEntitySheepAggressive)this.e).getFollowRange();
+                if (this.e instanceof CustomEntitySheepAggressive) {
+                    return ((CustomEntitySheepAggressive)this.e).getFollowRange();
+                } else {
+                    return ((CustomEntitySheep)this.e).getFollowRange();
+                }
             }
             case SILVERFISH -> {
                 return ((CustomEntitySilverfish)this.e).getFollowRange();

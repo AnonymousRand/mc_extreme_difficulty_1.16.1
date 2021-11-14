@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPufferfish;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -28,20 +29,28 @@ public class SleepListeners implements Listener {
     @EventHandler
     public void playerBedEnter(PlayerBedEnterEvent event) { /**players can't sleep even if there are monsters below or above it (doesn't count horizontal range; no monster range increased to 30 blocks)*/
 
-        EntityPlayer player = ((CraftPlayer)event.getPlayer()).getHandle();
-        World world = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
-        EntityMonster closestMonster = world.a(EntityMonster.class, new CustomPathfinderTargetCondition(), player, player.locX(), player.locY(), player.locZ(), player.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest monster within 128 sphere radius of player
+        EntityPlayer nmsPlayer = ((CraftPlayer)event.getPlayer()).getHandle();
+        World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
+        EntityLiving closestMonster = nmsWorld.a(EntityMonster.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0)); //get closest monster within 40 sphere radius of player
+        CustomEntityPufferfish closestPufferfish = nmsWorld.a(CustomEntityPufferfish.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0)); //get closest pufferfish within 40 sphere radius of player
+        double monsterDistanceNoY = Math.pow(closestMonster.locX() - nmsPlayer.locX(), 2) + Math.pow(closestMonster.locZ() - nmsPlayer.locZ(), 2);
+        double pufferfishDistanceNoY = Math.pow(closestPufferfish.locX() - nmsPlayer.locX(), 2) + Math.pow(closestPufferfish.locZ() - nmsPlayer.locZ(), 2);
 
-        if (world.getMinecraftWorld().isRainingAt(new BlockPosition(player.getPositionVector().getX(), player.getPositionVector().getY(), player.getPositionVector().getZ())) && world.isDay()) { /**can't sleep in day thunderstorm anymore*/
+        if (pufferfishDistanceNoY < monsterDistanceNoY) { /**pufferfish also counts as monsters to prevent sleeping*/
+            closestMonster = closestPufferfish;
+            monsterDistanceNoY = pufferfishDistanceNoY;
+        }
+
+        if (nmsWorld.getMinecraftWorld().isRainingAt(new BlockPosition(nmsPlayer.getPositionVector().getX(), nmsPlayer.getPositionVector().getY(), nmsPlayer.getPositionVector().getZ())) && nmsWorld.isDay()) { /**can't sleep in day thunderstorm anymore*/
             Bukkit.broadcastMessage("The thunder is too loud and you can't fall asleep");
             event.setCancelled(true);
         }
 
-        if (closestMonster != null && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) <= 900.0) && (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) > 64.0)) { //player within 30 blocks horizontally of closestMonster but out of the default 8 block range
-            if (Math.pow(closestMonster.locX() - player.locX(), 2) + Math.pow(closestMonster.locY() - player.locY(), 2) + Math.pow(closestMonster.locZ() - player.locZ(), 2) <= 900.0) { //player within 30 blocks including vertical distance of closestMonster
+        if (closestMonster != null && (monsterDistanceNoY <= 1024.0) && (monsterDistanceNoY > 64.0)) { //player within 32 blocks horizontally of closestMonster but out of the default 8 block range
+            if (Math.pow(closestMonster.locX() - nmsPlayer.locX(), 2) + Math.pow(closestMonster.locY() - nmsPlayer.locY(), 2) + Math.pow(closestMonster.locZ() - nmsPlayer.locZ(), 2) <= 1024.0) { //player within 32 blocks including vertical distance of closestMonster
                 Bukkit.broadcastMessage("There are still monsters nearby");
                 event.setCancelled(true);
-            } else if (closestMonster.locY() < player.locY()){ //player not within 30 blocks if counting vertical distance and is above mobs
+            } else if (closestMonster.locY() < nmsPlayer.locY()){ //player not within 30 blocks if counting vertical distance and is above mobs
                 Bukkit.broadcastMessage("You may not sleep now, there are monsters below you");
                 event.setCancelled(true);
             } else { //player not within 30 blocks if counting vertical distance and is below mobs

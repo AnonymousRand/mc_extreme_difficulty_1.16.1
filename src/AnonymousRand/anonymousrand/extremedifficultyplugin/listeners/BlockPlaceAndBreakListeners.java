@@ -74,24 +74,30 @@ public class BlockPlaceAndBreakListeners implements Listener {
         Location loc = bukkitBlock.getLocation();
         Material type = bukkitBlock.getType();
 
-        if (type == Material.SPAWNER || type == Material.CONDUIT || type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
-            new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
-        }
+        switch (type) {
+            case DEAD_BUSH, TORCH, ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, SMITHING_TABLE ->  /**dead bushes, torches, anvils, and smithing tables explode when broken but don't break blocks*/
+                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
+            case GOLD_BLOCK, GOLD_ORE, CHEST, BARREL, DISPENSER, DROPPER, ENDER_CHEST, HOPPER, CHEST_MINECART, HOPPER_MINECART, SHULKER_BOX, TRAPPED_CHEST -> { /**breaking these blocks causes piglins in a 40 block cube to go into a frenzy for 15 seconds*/
+                List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin);
 
-        if (type == Material.DEAD_BUSH || type == Material.TORCH || type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**dead bushes, torches, anvils, and smithing tables explode when broken but don't break blocks*/
-            nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
-        }
-
-        if (type == Material.GOLD_BLOCK || type == Material.GOLD_ORE || type == Material.NETHER_GOLD_ORE || type == Material.CHEST || type == Material.BARREL || type == Material.DISPENSER || type == Material.DROPPER || type == Material.ENDER_CHEST || type == Material.HOPPER || type == Material.CHEST_MINECART || type == Material.HOPPER_MINECART || type == Material.SHULKER_BOX || type == Material.TRAPPED_CHEST) {
-            List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin); /**breaking these blocks causes piglins in a 40 block cube to go into a frenzy for 15 seconds*/
-
-            for (Entity entity : nmsEntities) {
-                ((CustomEntityPiglin)entity).veryAngryTicks += 300;
+                for (Entity entity : nmsEntities) {
+                    ((CustomEntityPiglin)entity).veryAngryTicks += 300;
+                }
             }
-        }
+            case NETHER_GOLD_ORE -> { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
+                if (random.nextDouble() < 0.8) {
+                    (new Location(bukkitBlock.getWorld(), loc.getX() + random.nextInt(5) - 2, loc.getY() + random.nextInt(5) - 2, loc.getZ() + random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
+                }
 
-        if (type == Material.NETHER_GOLD_ORE && random.nextDouble() < 0.8) { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
-            (new Location(bukkitBlock.getWorld(), loc.getX() + random.nextInt(5) - 2, loc.getY() + random.nextInt(5) - 2, loc.getZ() + random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
+                List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin);
+
+                for (Entity entity : nmsEntities) {
+                    ((CustomEntityPiglin)entity).veryAngryTicks += 300;
+                }
+            }
+            case SPAWNER, CONDUIT, STONE_BRICKS, CRACKED_STONE_BRICKS, MOSSY_STONE_BRICKS, IRON_BARS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS, COBBLESTONE_STAIRS, BOOKSHELF -> { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
+                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
+            }
         }
     }
 
@@ -107,11 +113,19 @@ public class BlockPlaceAndBreakListeners implements Listener {
             loc = block.getLocation();
             type = block.getType();
 
-            if (type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
+            switch (type) {
+                case DEAD_BUSH, TORCH -> /**dead bushes and torches explode when broken but don't break blocks*/
+                    nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
+                case STONE_BRICKS, CRACKED_STONE_BRICKS, MOSSY_STONE_BRICKS, IRON_BARS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS, COBBLESTONE_STAIRS, BOOKSHELF -> { /**breaking these blocks (all found in strongholds) causes a silverfish to spawn*/
+                    new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
+                }
+            }
+
+            if (type == Material.STONE_BRICKS || type == Material.CRACKED_STONE_BRICKS || type == Material.MOSSY_STONE_BRICKS || type == Material.IRON_BARS || type == Material.STONE_BRICK_SLAB || type == Material.STONE_BRICK_STAIRS || type == Material.COBBLESTONE_STAIRS || type == Material.BOOKSHELF) {
                 new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
             }
 
-            if (type == Material.DEAD_BUSH || type == Material.TORCH) { /**dead bushes and torches explode when broken but don't break blocks*/
+            if (type == Material.DEAD_BUSH || type == Material.TORCH) {
                 nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 3.0F, false, Explosion.Effect.NONE);
             }
         }
