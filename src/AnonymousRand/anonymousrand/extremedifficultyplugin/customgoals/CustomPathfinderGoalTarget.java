@@ -103,6 +103,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                     return ((CustomEntitySheep)this.e).getFollowRange();
                 }
             }
+            case SHULKER -> {
+                return ((CustomEntityShulker)this.e).getFollowRange();
+            }
             case SILVERFISH -> {
                 return ((CustomEntitySilverfish)this.e).getFollowRange();
             }
@@ -121,6 +124,15 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case TRADER_LLAMA -> {
                 return ((CustomEntityLlamaTrader)this.e).getFollowRange();
             }
+            case VEX -> {
+                return ((CustomEntityVex)this.e).getFollowRange();
+            }
+            case VINDICATOR -> {
+                return ((CustomEntityVindicator)this.e).getFollowRange();
+            }
+            case WOLF -> {
+                return ((CustomEntityWolf)this.e).getFollowRange();
+            }
             case ZOGLIN -> {
                 return ((CustomEntityZoglin)this.e).getFollowRange();
             }
@@ -135,6 +147,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             }
             case ZOMBIE_VILLAGER -> {
                 return ((CustomEntityZombieVillager)this.e).getFollowRange();
+            }
+            case ZOMBIFIED_PIGLIN -> {
+                return ((CustomEntityZombiePig)this.e).getFollowRange();
             }
         }
 

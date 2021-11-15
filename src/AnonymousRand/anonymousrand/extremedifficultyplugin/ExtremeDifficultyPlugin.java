@@ -26,7 +26,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
         this.initializeListeners();
         this.initializePluginFields();
-        this.addEyeOfEnderRecipe(); /**changes eye of ender recipe*/
+        this.addEyeOfEnderRecipe();
     }
 
     @Override
@@ -63,8 +63,8 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         conduit.set("durability", 3600000.0F);
     }
 
-    private void initializeListeners() {
-        getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);  //registers the listeners
+    private void initializeListeners() { //registers the listeners
+        getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);
         getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);
@@ -86,8 +86,8 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);
     }
 
-    private void initializePluginFields() {
-        CustomEntityEvoker.plugin = this; //initializes static plugin fields
+    private void initializePluginFields() { //initializes static plugin fields
+        CustomEntityEvoker.plugin = this;
         CustomEntityGhast.plugin = this;
         CustomEntitySkeleton.plugin = this;
         CustomEntityZoglin.plugin = this;
@@ -107,6 +107,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         PlayerDeathAndRespawnListeners.plugin = this;
         PlayerEatListeners.plugin = this;
         PlayerInteractListeners.plugin = this;
+        PotionEffectListeners.plugin = this;
         ProjectileListeners.plugin = this;
         RaidAndVillagerListeners.plugin = this;
         SheepDyeListeners.plugin = this;
@@ -114,7 +115,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         RunnableTornado.plugin = this;
     }
 
-    private void addEyeOfEnderRecipe() {
+    private void addEyeOfEnderRecipe() { /**changes eye of ender recipe*/
         Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
         NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
         ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));
@@ -124,7 +125,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         newRecipe.addIngredient(Material.BEETROOT_SOUP);
         newRecipe.addIngredient(Material.SCUTE);
         newRecipe.addIngredient(Material.WRITABLE_BOOK);
-        newRecipe.addIngredient(Material.DRIED_KELP_BLOCK);
+        newRecipe.addIngredient(Material.DAYLIGHT_DETECTOR);
         newRecipe.addIngredient(Material.CRACKED_POLISHED_BLACKSTONE_BRICKS);
         newRecipe.addIngredient(Material.DEAD_BRAIN_CORAL);
         Bukkit.getServer().addRecipe(newRecipe);

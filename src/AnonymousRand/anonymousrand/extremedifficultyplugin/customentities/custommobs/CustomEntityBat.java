@@ -115,7 +115,6 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
 
     @Override
     protected void mobTick() {
-
         try { //reflection to get EntityBat.c
             this.c1 = EntityBat.class.getDeclaredField("c");
             this.c1.setAccessible(true);

@@ -53,18 +53,18 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
     @Override
     public void e() {
         try {
-            List<Entity> nmsEntities = this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance);
+            List<Entity> entities = this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance);
             int attacksLocal = this.attacks.getInt(this.entity);
 
-            for (Entity targetEntity : nmsEntities) {
-                if (this.normalGetDistanceSq(this.entity.getPositionVector(), targetEntity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { //ensures that the entities is in a sphere around the mob and not a cube
+            for (Entity entity : entities) {
+                if (entity instanceof EntityPlayer || this.normalGetDistanceSq(this.entity.getPositionVector(), entity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { //ensures that the entities is in a sphere around the mob and not a cube
                     continue;
                 }
 
                 for (Map.Entry<Integer, ArrayList<MobEffect>> entry : this.attacksAndEffects.entrySet()) {
                     if (attacksLocal >= entry.getKey()) { //entry.getKey is the integer in the hashmap entry
                         for (MobEffect effect : entry.getValue()) { //entry.getValue is the arraylist of mobeffects in the hashmap entry
-                            ((EntityLiving)targetEntity).addEffect(effect);
+                            ((EntityLiving)entity).addEffect(effect);
                         }
                     }
                 }

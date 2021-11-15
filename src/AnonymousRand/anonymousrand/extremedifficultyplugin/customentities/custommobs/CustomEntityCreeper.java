@@ -31,8 +31,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00025)); /**custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0025)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.0002)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
@@ -105,7 +105,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
             entityareaeffectcloud.setRadiusPerTick(-entityareaeffectcloud.getRadius() / (float) entityareaeffectcloud.getDuration());
 
             for (MobEffect mobeffect : collection) { /**creepers only create area effect clouds of negative effects*/
-                if (mobeffect.getMobEffect().equals(MobEffects.SLOWER_MOVEMENT) || mobeffect.getMobEffect().equals(MobEffects.SLOWER_DIG) || mobeffect.getMobEffect().equals(MobEffects.CONFUSION) || mobeffect.getMobEffect().equals(MobEffects.BLINDNESS) || mobeffect.getMobEffect().equals(MobEffects.HUNGER) || mobeffect.getMobEffect().equals(MobEffects.WEAKNESS) || mobeffect.getMobEffect().equals(MobEffects.POISON) || mobeffect.getMobEffect().equals(MobEffects.WITHER) || mobeffect.getMobEffect().equals(MobEffects.LEVITATION) || mobeffect.getMobEffect().equals(MobEffects.UNLUCK) || mobeffect.getMobEffect().equals(MobEffects.BAD_OMEN)) { /**creepers only create area effect clouds of negative effects*/
+                MobEffectList type = mobeffect.getMobEffect();
+                
+                if (type.equals(MobEffects.BAD_OMEN) || type.equals(MobEffects.BLINDNESS) || type.equals(MobEffects.CONFUSION) || type.equals(MobEffects.HUNGER) || type.equals(MobEffects.LEVITATION)|| type.equals(MobEffects.POISON) || type.equals(MobEffects.SLOWER_DIG) || type.equals(MobEffects.SLOWER_MOVEMENT) || type.equals(MobEffects.UNLUCK) || type.equals(MobEffects.WEAKNESS) || type.equals(MobEffects.WITHER)) { /**creepers only create area effect clouds of negative effects*/
                     entityareaeffectcloud.addEffect(new MobEffect(mobeffect));
                 }
             }

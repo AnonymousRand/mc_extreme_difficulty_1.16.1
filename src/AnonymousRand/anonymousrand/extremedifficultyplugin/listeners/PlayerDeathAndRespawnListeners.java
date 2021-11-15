@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class PlayerDeathAndRespawnListeners implements Listener {
@@ -55,7 +56,7 @@ public class PlayerDeathAndRespawnListeners implements Listener {
         {
             @Override
             public void run() {
-                for (PotionEffect e : collections.getOrDefault(bukkitPlayer, null)) { //only re-applies negative status effects
+                for (PotionEffect e : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { //only re-applies negative status effects
                     if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
                         bukkitPlayer.addPotionEffect(e);
                     }

@@ -53,9 +53,9 @@ public class RaidAndVillagerListeners implements Listener {
 
             new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld), 5, null, bukkitVillager.getLocation(), true);  /**5 zombies are spawned when a villager dies*/
 
-            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().g(64.0), entity -> entity instanceof CustomEntityIronGolem);
+            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem);
 
-            for (Entity entity : nmsEntities) { /**golems within 64 block cube of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
+            for (Entity entity : nmsEntities) { /**golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
                 ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
                 new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(plugin, 0L, 2L);
             }

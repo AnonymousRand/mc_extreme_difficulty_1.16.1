@@ -63,8 +63,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
     public void die() {
         super.die();
 
-        if (this.attacks >= 60) { /**after 60 attacks, evokers summon 7 vexes when killed*/ //todo
-
+        if (this.attacks >= 60) { /**after 60 attacks, evokers summon 7 vexes when killed*/
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
         }
     }
 
@@ -76,8 +76,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
     public void tick() {
         super.tick();
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers spawn 3 vexes*/ //todo
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers spawn 3 vexes*/
             this.a25 = true;
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
         }
 
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
@@ -85,15 +86,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/ //todo: replace with custom vex
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/
             this.a60 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.ticksLived == 10) { /**evokers only have 20 health*/
-            this.setHealth(20.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         }
     }
 
@@ -195,21 +191,19 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
 
         @Override
-        protected void j() { //todo: replace with custom vex
+        protected void j() {
             CustomEntityEvoker.this.attacks += 6;
 
             for (int i = 0; i < 6; ++i) { /**summons 6 vexes at a time instead of 3*/
                 BlockPosition blockposition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.random.nextInt(5), 1, -2 + CustomEntityEvoker.random.nextInt(5));
-                EntityVex newVex = (EntityVex)EntityTypes.VEX.a(CustomEntityEvoker.this.getWorld());
+                CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
                 newVex.setPositionRotation(blockposition, 0.0F, 0.0F);
                 newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockposition), EnumMobSpawn.MOB_SUMMONED, (GroupDataEntity)null, (NBTTagCompound)null);
-                newVex.a((EntityInsentient) CustomEntityEvoker.this);
+                newVex.a((EntityInsentient)CustomEntityEvoker.this);
                 newVex.g(blockposition);
                 newVex.a(20 * (30 + CustomEntityEvoker.random.nextInt(90)));
                 CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
-
-                //todo: also summon a random other illager besides ravager and evoker
             }
         }
 
@@ -236,8 +230,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
 
         @Override
-        protected int h() {
-            return 100;
+        protected int h() { /**summons fangs every 90 ticks instead of 100*/
+            return 90;
         }
 
         @Override
@@ -340,7 +334,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    public class CustomPathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
+    class CustomPathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityliving) -> {
             return !((EntitySheep)entityliving).getColor().equals(EnumColor.PINK); /**can target all non-pink sheep now within 32 blocks and with line of sight*/

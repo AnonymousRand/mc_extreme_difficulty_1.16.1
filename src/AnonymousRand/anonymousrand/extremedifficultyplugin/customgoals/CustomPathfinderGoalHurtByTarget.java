@@ -26,4 +26,10 @@ public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget
             entityinsentient.setGoalTarget(entityliving, EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
         }
     }
+
+    @Override
+    public CustomPathfinderGoalHurtByTarget a(Class<?>... aclass) {
+        super.a(aclass);
+        return this;
+    }
 }

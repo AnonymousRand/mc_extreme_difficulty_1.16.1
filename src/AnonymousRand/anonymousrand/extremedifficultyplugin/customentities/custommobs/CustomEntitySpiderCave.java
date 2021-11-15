@@ -19,15 +19,8 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
         this.attacks = 45;
         this.a25 = false;
         this.a45 = false;
-
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,50, 40);
+        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 0.0F,40, 39);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
-
-        try {
-            this.newAEC.setColor(PotionUtil.a(PotionUtil.a((PotionRegistry)this.newAEC.potionRegistry.get(this.newAEC), this.newAEC.effects)));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -72,9 +65,9 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1));
         }
 
-        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 1 damage and have 9 health*/
+        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 2 damage and have 9 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
             this.setHealth(9.0F);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
         }

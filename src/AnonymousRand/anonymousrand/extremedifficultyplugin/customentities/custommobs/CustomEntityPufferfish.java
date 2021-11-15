@@ -16,6 +16,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICommonC
 
     public CustomEntityPufferfish(World world) {
         super(EntityTypes.PUFFERFISH, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

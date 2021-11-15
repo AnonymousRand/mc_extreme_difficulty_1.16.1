@@ -161,6 +161,8 @@ public class PlayerDamageListeners implements Listener {
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times*/
                     }
                 }
+                case VEX -> ((CustomEntityVex)nmsDamager).attacks++;
+                case VINDICATOR -> ((CustomEntityVindicator)nmsDamager).attacks++;
                 case ZOGLIN -> {
                     CustomEntityZoglin zoglin = (CustomEntityZoglin)nmsDamager;
                     zoglin.attacks++;
@@ -189,6 +191,7 @@ public class PlayerDamageListeners implements Listener {
                     }
                 }
                 case ZOMBIE_VILLAGER -> ((CustomEntityZombieVillager)nmsDamager).attacks++;
+                case ZOMBIFIED_PIGLIN -> ((CustomEntityZombiePig)nmsDamager).attacks++;
             }
         }
     }
@@ -200,32 +203,21 @@ public class PlayerDamageListeners implements Listener {
         if (event.getEntityType() == PLAYER) {
             EntityPlayer nmsPlayer = (EntityPlayer)((CraftEntity) event.getEntity()).getHandle();
 
-            if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning spawns a pufferfish per damage tick, with 20% chance to also spawn a guardian and a 2.5% chance to spawn an elder guardian*/
+            if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning damage has a 50% chance to spawn a pufferfish, and a 15% chance to spawn a guardian*/
                 World nmsWorld = nmsPlayer.getWorld();
 
-                if (random.nextDouble() < 0.2) {
+                if (random.nextDouble() < 0.5) {
+                    new SpawnLivingEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 1, null, null, nmsPlayer, false, true);
+                } else if (random.nextDouble() < 0.15) {
                     new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true);
-                } else if (random.nextDouble() < 0.025) {
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, null, nmsPlayer, false, true);
-                } else {
-                    //todo pufferfish
                 }
             }
 
-            if (cause.equals(EntityDamageEvent.DamageCause.CONTACT)) {
-                event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
-            }
-
-            if (cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) { /**anvils do 60% less damage*/
-                event.setDamage(event.getDamage() * 0.4);
-            }
-
-            if (cause.equals(EntityDamageEvent.DamageCause.LIGHTNING)) {
-                event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
-            }
-
-            if (cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION)) {
-                event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
+            switch (cause) {
+                case CONTACT -> event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
+                case FALLING_BLOCK -> event.setDamage(event.getDamage() * 0.4); /**anvils do 60% less damage*/
+                case LIGHTNING -> event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
+                case SUFFOCATION -> event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
             }
         }
     }

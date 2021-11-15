@@ -1,9 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalArrowAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
@@ -42,7 +39,7 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(0, new CustomEntityPillager.PathfinderGoalPillagerUpgradeArmor(this)); /**custom goal that allows the pillager to upgrade its armor gradually as part of the attacks system*/
+        this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /**custom goal that allows this mob to upgrade its armor gradually as part of the attacks system*/
         this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0, 3, 24.0F)); /**shoots every 3 ticks; uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
@@ -125,197 +122,6 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
             int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
 
             return i + 3;
-        }
-    }
-
-    static class PathfinderGoalPillagerUpgradeArmor extends PathfinderGoal {
-
-        private final CustomEntityPillager pillager;
-        private HashMap<Integer, Boolean> attackBooleans = new HashMap<>();
-
-        public PathfinderGoalPillagerUpgradeArmor(CustomEntityPillager pillager) {
-            this.pillager = pillager;
-            this.attackBooleans.put(4, false);
-            this.attackBooleans.put(8, false);
-            this.attackBooleans.put(11, false);
-            this.attackBooleans.put(15, false);
-            this.attackBooleans.put(19, false);
-            this.attackBooleans.put(22, false);
-            this.attackBooleans.put(26, false);
-            this.attackBooleans.put(29, false);
-            this.attackBooleans.put(32, false);
-            this.attackBooleans.put(36, false);
-            this.attackBooleans.put(39, false);
-            this.attackBooleans.put(42, false);
-            this.attackBooleans.put(50, false);
-        }
-
-        @Override
-        public boolean a() {
-            if (this.attackBooleans.containsKey(this.pillager.attacks)) {
-                if (!this.attackBooleans.get(this.pillager.attacks)) {
-                    this.attackBooleans.replace(this.pillager.attacks, true);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean b() {
-            return this.a();
-        }
-
-        @Override
-        public void e() {
-            LivingEntity livingEntity = ((LivingEntity)this.pillager.getBukkitEntity());
-
-            switch (this.pillager.attacks) {
-                case 4 -> {
-                    if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.IRON_CHESTPLATE) {
-                        livingEntity.getEquipment().setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_CHESTPLATE));
-                    }
-                }
-                case 8 -> {
-                    if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.IRON_LEGGINGS) {
-                        livingEntity.getEquipment().setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_LEGGINGS));
-                    }
-                }
-                case 11 -> {
-                    org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BOOTS);
-                    boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
-                    boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                    if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.IRON_HELMET) {
-                        livingEntity.getEquipment().setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_HELMET));
-                    }
-
-                    if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.IRON_BOOTS) {
-                        livingEntity.getEquipment().setBoots(boots);
-                    }
-                }
-                case 15 -> {
-                    if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.DIAMOND_CHESTPLATE) {
-                        livingEntity.getEquipment().setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_CHESTPLATE));
-                    }
-                }
-                case 19 -> {
-                    if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.DIAMOND_LEGGINGS) {
-                        livingEntity.getEquipment().setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_LEGGINGS));
-                    }
-                }
-                case 22 -> {
-                    org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_BOOTS);
-                    boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
-                    boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                    if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.DIAMOND_HELMET) {
-                        livingEntity.getEquipment().setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_HELMET));
-                    }
-
-                    if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.DIAMOND_BOOTS) {
-                        livingEntity.getEquipment().setBoots(boots);
-                    }
-                }
-                case 26 -> {
-                    org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
-                    chestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-
-                    if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                        livingEntity.getEquipment().setChestplate(chestplate);
-                    }
-                }
-                case 29 -> {
-                    org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
-                    leggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-
-                    if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                        livingEntity.getEquipment().setLeggings(leggings);
-                    }
-                }
-                case 32 -> {
-                    org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
-                    helmet.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-
-                    org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
-                    boots.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-                    boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
-                    boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                    if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                        livingEntity.getEquipment().setHelmet(helmet);
-                    }
-
-                    if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                        livingEntity.getEquipment().setBoots(boots);
-                    }
-                }
-                case 36 -> {
-                    org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
-                    chestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);
-
-                    if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                        livingEntity.getEquipment().setChestplate(chestplate);
-                    }
-                }
-                case 39 -> {
-                    org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
-                    leggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);
-
-                    if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                        livingEntity.getEquipment().setLeggings(leggings);
-                    }
-                }
-                case 42 -> {
-                    org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
-                    helmet.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);
-
-                    org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
-                    boots.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3);
-                    boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
-                    boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                    if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                        livingEntity.getEquipment().setHelmet(helmet);
-                    }
-
-                    if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                        livingEntity.getEquipment().setBoots(boots);
-                    }
-                }
-                case 50 -> {
-                    org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
-                    chestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-
-                    if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                        livingEntity.getEquipment().setChestplate(chestplate);
-                    }
-
-                    org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
-                    leggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-
-                    if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                        livingEntity.getEquipment().setLeggings(leggings);
-                    }
-
-                    org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
-                    helmet.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-
-                    org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
-                    boots.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                    boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
-                    boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-                    if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                        livingEntity.getEquipment().setHelmet(helmet);
-                    }
-
-                    if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                        livingEntity.getEquipment().setBoots(boots);
-                    }
-                }
-            }
         }
     }
 }

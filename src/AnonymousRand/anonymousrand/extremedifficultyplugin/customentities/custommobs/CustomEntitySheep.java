@@ -9,6 +9,8 @@ public class CustomEntitySheep extends EntitySheep implements ICommonCustomMetho
 
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
     }
 
     @Override

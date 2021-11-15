@@ -8,6 +8,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
+import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -19,6 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.Random;
 
 public class MobDeathListeners implements Listener {
@@ -68,7 +70,7 @@ public class MobDeathListeners implements Listener {
                     }
                 }
             }
-            case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds when killed in a 3 by 3 cube around itself*/
+            case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds in a 3 by 3 cube around itself when killed*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
                 new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);
             }
@@ -76,19 +78,26 @@ public class MobDeathListeners implements Listener {
                 new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
                 new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
+            case VEX -> { /**vexes give all players within 2.5 blocks horizontally slowness 4 for 3 seconds when killed*/
+                List<Entity> entities = nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(2.5, 128.0, 2.5), entity -> entity instanceof EntityPlayer);
+
+                for (Entity entity : entities) {
+                    ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 60, 3));
+                }
+            }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
                     new RunnableLightningStorm(nmsWorld, loc, random.nextInt(21) + 50).runTaskTimer(plugin, 0L, random.nextInt(4) + 2);
                     Location loc2;
 
                     for (int i = 0; i < 8; i++) {
-                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 3.0, loc.getY(), i * 45.0);
+                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 3.0, bukkitWorld.getHighestBlockYAt(loc), i * 45.0);
                         bukkitWorld.strikeLightning(loc2);
                     }
 
                     CustomEntityLightning newLightning;
                     for (int i = 0; i < 20; i++) {
-                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 10.0, loc.getY(), i * 18.0);
+                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(loc), i * 18.0);
 
                         newLightning = new CustomEntityLightning(nmsWorld);
                         newLightning.setPosition(loc2.getX(), loc2.getY(), loc2.getZ());

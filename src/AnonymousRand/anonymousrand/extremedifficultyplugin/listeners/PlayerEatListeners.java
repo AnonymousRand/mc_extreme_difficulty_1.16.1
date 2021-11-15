@@ -17,28 +17,29 @@ public class PlayerEatListeners implements Listener {
     @EventHandler
     public void playerItemConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        
-        if (event.getItem().getType() == Material.POISONOUS_POTATO) { /**poisonous potatoes give 5 mintues of poison 256 and 2 seconds of hunger 256*/
-            player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 6000, 255));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 40, 255));
-        }
+        Material type = event.getItem().getType();
 
-        if (event.getItem().getType() == Material.CHICKEN || event.getItem().getType() == Material.COOKED_CHICKEN) { /**eating chicken meat gives you hunger for 20 seconds*/
-            player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 400, 0));
-        }
+        switch (type) {
+            case CHICKEN, COOKED_CHICKEN -> player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 400, 0)); /**eating chicken meat gives you hunger for 20 seconds*/
+            case HONEY_BOTTLE, MILK_BUCKET -> { /**milk and poison extends negative potion effect durations by 4 times and +1 amplifier instead of removing them*/
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
+                {
+                    @Override
+                    public void run() {
+                        for (PotionEffect effect : player.getActivePotionEffects()) {
+                            if (effect.getType().equals(PotionEffectType.SLOW) || effect.getType().equals(PotionEffectType.SLOW_DIGGING) || effect.getType().equals(PotionEffectType.CONFUSION) || effect.getType().equals(PotionEffectType.BLINDNESS) || effect.getType().equals(PotionEffectType.HUNGER) || effect.getType().equals(PotionEffectType.WEAKNESS) || effect.getType().equals(PotionEffectType.POISON) || effect.getType().equals(PotionEffectType.WITHER) || effect.getType().equals(PotionEffectType.LEVITATION) || effect.getType().equals(PotionEffectType.UNLUCK) || effect.getType().equals(PotionEffectType.BAD_OMEN)) {
 
-        if (event.getItem().getType() == Material.MILK_BUCKET || event.getItem().getType() == Material.HONEY_BOTTLE) { /**milk and poison extends negative potion effect durations by 10 times and +1 amplifier instead of removing them*/
-            for (PotionEffect e : player.getActivePotionEffects()) {
-                if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
-                    {
-                        @Override
-                        public void run() {
-                            player.addPotionEffect(new PotionEffect(e.getType(), e.getDuration() * 10, e.getAmplifier() + 1));
-                            Bukkit.broadcastMessage("You thought...");
+                                player.addPotionEffect(new PotionEffect(effect.getType(), effect.getDuration() * 4, effect.getAmplifier() + 1));
+                            }
                         }
-                    }, 1);
-                }
+
+                        Bukkit.broadcastMessage("You thought...");
+                    }
+                }, 1);
+            }
+            case POISONOUS_POTATO -> { /**poisonous potatoes give 5 mintues of poison 256 and 2 seconds of hunger 256*/
+                player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 6000, 255));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 40, 255));
             }
         }
     }

@@ -39,10 +39,10 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
             CustomEntityArrow entityArrow = new CustomEntityArrow(this.nmsWorld);
             double rand = random.nextDouble();
 
-            switch (arrowType) { //todo: change to custom mobs
+            switch (arrowType) {
                 case 2 -> entityArrow = new CustomEntityArrowExploding(this.nmsWorld); //exploding arrows
                 case 3 -> { //stray spawn mob arrows
-                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new EntityVex(EntityTypes.VEX, this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
+                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
                 }
                 case 4 -> { //piglin spawn piglin arrows
                     if (rand < 0.0125) {

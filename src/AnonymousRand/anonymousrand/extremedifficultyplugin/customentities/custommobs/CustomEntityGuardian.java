@@ -142,7 +142,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
 
         public CustomPathfinderGoalGuardianAttack(CustomEntityGuardian entityguardian) {
             this.guardian = entityguardian;
-            this.isElder = false; //todo: copy class to elder guardian and change to true
+            this.isElder = false;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         }
 

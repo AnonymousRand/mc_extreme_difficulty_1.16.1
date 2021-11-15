@@ -31,7 +31,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICommonCusto
     }
 
     @Override
-    public void initPathfinder() { /***no longer targets iron golems*/
+    public void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
@@ -47,7 +47,6 @@ public class CustomEntityZombieThor extends EntityZombie implements ICommonCusto
     @Override
     public void die() {
         super.die();
-
         LightningStrikeListeners.numberOfThors--;
     }
 

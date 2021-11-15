@@ -147,13 +147,13 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
 
     @Override
     public void die() {
-        super.die(); //todo: change to custom mob
+        super.die();
 
         if (this.attacks >= 20) {
             if (this.attacks >= 35) { /**after 35 attacks, piglins spawn a zombie piglin when killed*/
-                new SpawnLivingEntity(this.getWorld(), new EntityPigZombie(EntityTypes.ZOMBIFIED_PIGLIN, this.getWorld()), 1, null, null, this, false, true);
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
             } else if (random.nextDouble() < 0.5) { /**after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed*/
-                new SpawnLivingEntity(this.getWorld(), new EntityPigZombie(EntityTypes.ZOMBIFIED_PIGLIN, this.getWorld()), 1, null, null, this, false, true);
+                new SpawnLivingEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }

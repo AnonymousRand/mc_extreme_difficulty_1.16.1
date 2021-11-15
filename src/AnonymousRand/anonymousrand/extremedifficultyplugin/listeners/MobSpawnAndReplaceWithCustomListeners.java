@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -64,17 +65,23 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityRavager ||
                 nmsEntity instanceof CustomEntitySheep ||
                 nmsEntity instanceof CustomEntitySheepAggressive ||
+                nmsEntity instanceof CustomEntityShulker ||
                 nmsEntity instanceof CustomEntitySilverfish ||
                 nmsEntity instanceof CustomEntitySkeleton ||
                 nmsEntity instanceof CustomEntitySkeletonStray ||
                 nmsEntity instanceof CustomEntitySlime ||
                 nmsEntity instanceof CustomEntitySpider ||
+                nmsEntity instanceof CustomEntityStrider ||
+                nmsEntity instanceof CustomEntityVex ||
+                nmsEntity instanceof CustomEntityVindicator ||
+                nmsEntity instanceof CustomEntityWolf ||
                 nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
                 nmsEntity instanceof CustomEntityZombieHusk ||
                 nmsEntity instanceof CustomEntityZombieSuper ||
                 nmsEntity instanceof CustomEntityZombieThor ||
-                nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+                nmsEntity instanceof CustomEntityZombieVillager ||
+                nmsEntity instanceof CustomEntityZombiePig)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
             CreatureSpawnEvent.SpawnReason spawnReason = event.getSpawnReason();
 
@@ -93,6 +100,8 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         newMagmaCube.setSize(j, true);
                         new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
                         return;
+                    } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER || random.nextDouble() < 0.1) { /**blaze spawners have a 10% chance to spawn a wither skeleton instead*/
+                        //todo: spawn wither skeleton
                     }
 
                     new SpawnLivingEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
@@ -124,13 +133,11 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
 
                     if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && random.nextDouble() < 0.3) { /**naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead*/
-                        bukkitEntity.remove();
-
-                        /*if (random.nextDouble() < 0.666666666) { //todo
-                            new SpawnLivingEntity();
+                        if (random.nextDouble() < 0.666666666) {
+                            new SpawnLivingEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         } else {
-                            new SpawnLivingEntity();
-                        }*/
+                            new SpawnLivingEntity(nmsWorld, new CustomEntityShulker(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                        }
 
                         return;
                     }
@@ -173,6 +180,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         new SpawnLivingEntity(nmsWorld, new CustomEntitySheep(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
+                case SHULKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityShulker(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case SKELETON -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
@@ -195,7 +203,11 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 }
                 case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case STRIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case VEX -> new SpawnLivingEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                case VINDICATOR -> new SpawnLivingEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case WOLF -> new SpawnLivingEntity(nmsWorld, new CustomEntityWolf(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ZOMBIE -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.BEEHIVE) {
@@ -203,6 +215,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                     }
                 }
                 case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case ZOMBIFIED_PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombiePig(nmsWorld), 1, null, bukkitEntity, null, true, true);
             }
         }
     }
@@ -247,17 +260,23 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityRavager ||
                         nmsEntity instanceof CustomEntitySheep ||
                         nmsEntity instanceof CustomEntitySheepAggressive ||
+                        nmsEntity instanceof CustomEntityShulker ||
                         nmsEntity instanceof CustomEntitySilverfish ||
                         nmsEntity instanceof EntitySkeleton ||
                         nmsEntity instanceof CustomEntitySkeletonStray ||
                         nmsEntity instanceof EntitySlime ||
                         nmsEntity instanceof CustomEntitySpider ||
+                        nmsEntity instanceof CustomEntityStrider ||
+                        nmsEntity instanceof CustomEntityVex ||
+                        nmsEntity instanceof CustomEntityVindicator ||
+                        nmsEntity instanceof CustomEntityWolf ||
                         nmsEntity instanceof CustomEntityZoglin ||
                         nmsEntity instanceof CustomEntityZombie ||
                         nmsEntity instanceof CustomEntityZombieHusk ||
                         nmsEntity instanceof CustomEntityZombieSuper ||
                         nmsEntity instanceof CustomEntityZombieThor ||
-                        nmsEntity instanceof CustomEntityZombieVillager)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
+                        nmsEntity instanceof CustomEntityZombieVillager ||
+                        nmsEntity instanceof CustomEntityZombiePig)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
                     switch (type) {
                         case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
@@ -307,12 +326,18 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                                 new SpawnLivingEntity(nmsWorld, new CustomEntitySheep(nmsWorld), 1, null, bukkitEntity, null, true, true);
                             }
                         }
+                        case SHULKER -> new SpawnLivingEntity(nmsWorld, new CustomEntityShulker(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case SILVERFISH -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case SPIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntitySpider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case STRAY -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonStray(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case STRIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case VEX -> new SpawnLivingEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                        case VINDICATOR -> new SpawnLivingEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case WOLF -> new SpawnLivingEntity(nmsWorld, new CustomEntityWolf(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case ZOMBIFIED_PIGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombiePig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     }
                 }
             }

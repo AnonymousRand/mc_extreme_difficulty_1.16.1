@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityStrider;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -28,6 +29,18 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.yRadius = 0;
         this.zRadius = 0;
         this.yOffset = 0.0;
+        this.terraform = false;
+    }
+
+    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, double yOffset) {
+        this.entity = entity;
+        this.material = material;
+        this.firstEntityToSpawn = null;
+        this.delayTimer = delayTimer;
+        this.xRadius = 0;
+        this.yRadius = 0;
+        this.zRadius = 0;
+        this.yOffset = yOffset;
         this.terraform = false;
     }
 
@@ -137,13 +150,16 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
                                 }
                             }
                         } else if (this.firstEntityToSpawn instanceof CustomEntityAreaEffectCloud) {
-                            this.AEC = (CustomEntityAreaEffectCloud) this.firstEntityToSpawn;
+                            this.AEC = (CustomEntityAreaEffectCloud)this.firstEntityToSpawn;
 
                             try {
                                 this.entityToBeSpawned = this.firstEntityToSpawn.getClass().getDeclaredConstructor(World.class, float.class, int.class, int.class).newInstance(this.nmsWorld, this.AEC.getRadius(), this.AEC.getDuration(), this.AEC.waitTime);
-                                ((CustomEntityAreaEffectCloud) this.entityToBeSpawned).setColor(this.AEC.getColor());
                             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
                                 e.printStackTrace();
+                            }
+
+                            for (MobEffect effect : this.AEC.effects) {
+                                ((CustomEntityAreaEffectCloud)this.entityToBeSpawned).addEffect(effect);
                             }
 
                             if (this.entityToBeSpawned != null) {

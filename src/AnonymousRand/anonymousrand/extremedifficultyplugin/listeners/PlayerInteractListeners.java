@@ -43,18 +43,14 @@ public class PlayerInteractListeners implements Listener {
                     if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 2 for 7.5 seconds*/
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 150, 2));
                     }
-
-                    if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { /**attempting to mine these blocks gives the player mining fatigue 1 for 30 seconds*/
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 600, 0));
-                    }
                 } else {
-                    if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins in a 40 block cube to go into a frenzy for 10 seconds*/
+                    if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds*/
                         CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
                         new SpawnLivingEntity(nmsWorld, newPiglin, 1, null, loc, true);
                         newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
                         PiglinAI.a(newPiglin); //code from onInitialSpawn
 
-                        List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().g(40.0), entity -> entity instanceof CustomEntityPiglin);
+                        List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin);
 
                         for (Entity entity : nmsEntities) {
                             ((CustomEntityPiglin)entity).veryAngryTicks += 200;

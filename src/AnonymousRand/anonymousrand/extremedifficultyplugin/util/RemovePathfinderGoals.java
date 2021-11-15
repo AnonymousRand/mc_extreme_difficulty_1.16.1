@@ -70,6 +70,14 @@ public class RemovePathfinderGoals {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
+                case VEX -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityVex)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityVex)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
+                case VINDICATOR -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
                 case ZOGLIN -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
@@ -89,6 +97,10 @@ public class RemovePathfinderGoals {
                 case ZOMBIE_VILLAGER -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieVillager)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityZombieVillager)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
+                case ZOMBIFIED_PIGLIN -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZombiePig)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityZombiePig)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
