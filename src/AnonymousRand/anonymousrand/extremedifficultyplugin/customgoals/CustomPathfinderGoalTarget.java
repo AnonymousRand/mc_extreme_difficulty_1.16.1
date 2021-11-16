@@ -130,6 +130,12 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case VINDICATOR -> {
                 return ((CustomEntityVindicator)this.e).getFollowRange();
             }
+            case WITCH -> {
+                return ((CustomEntityWitch)this.e).getFollowRange();
+            }
+            case WITHER_SKELETON -> {
+                return ((CustomEntitySkeletonWither)this.e).getFollowRange();
+            }
             case WOLF -> {
                 return ((CustomEntityWolf)this.e).getFollowRange();
             }

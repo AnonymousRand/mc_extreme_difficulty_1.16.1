@@ -1,15 +1,18 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombie;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,11 +38,17 @@ public class RaidAndVillagerListeners implements Listener {
 
     @EventHandler
     public void villagerDamage(EntityDamageByEntityEvent event) {
+        Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
+
         if ((event.getEntityType() == VILLAGER)) {
             event.setDamage(event.getDamage() * 2.0); /**villagers take twice as much damage from everything*/
 
-            if (event.getDamager() instanceof Player) { /**villagers give players bad omen if they are hit by a player*/
-                ((Player)event.getDamager()).addPotionEffect(new PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 255));
+            if (nmsDamager instanceof EntityPlayer) { /**villagers give players bad omen if they are hit by a player*/
+                ((EntityPlayer)nmsDamager).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
+            } else if (nmsDamager instanceof CustomEntityArrow) {
+                if (((CustomEntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) {
+                    ((EntityPlayer)((CustomEntityArrow)nmsDamager).getShooter()).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
+                }
             }
         }
     }
@@ -50,8 +59,9 @@ public class RaidAndVillagerListeners implements Listener {
             LivingEntity bukkitVillager = event.getEntity();
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
-
-            new SpawnLivingEntity(nmsWorld, new CustomEntityZombie(nmsWorld), 5, null, bukkitVillager.getLocation(), true);  /**5 zombies are spawned when a villager dies*/
+            double rand = random.nextDouble();
+//todo custom witch
+            new SpawnLivingEntity(nmsWorld, rand < 0.25 ? new CustomEntityPillager(nmsWorld) : rand < 0.5 ? new CustomEntityVindicator(nmsWorld) : rand < 0.7 ? new EntityWitch(EntityTypes.WITCH, nmsWorld) : rand < 0.875 ? new CustomEntityEvoker(nmsWorld) : new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitVillager.getLocation(), true); /**when killed, villagers have a 25% chance to summon a pillager, a 25% chance to summon a vindicator, a 20% chance to summon a witch, a 17.5% chance to summon an evoker, and a 12.5% chance to summon an illusioner*/
 
             List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem);
 

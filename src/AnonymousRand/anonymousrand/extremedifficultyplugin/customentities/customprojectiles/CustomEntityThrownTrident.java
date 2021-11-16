@@ -29,7 +29,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         net.minecraft.server.v1_16_R1.Entity entity = movingobjectpositionentity.getEntity();
-        float f = 3.0F; /**trident damage decreased from 8 to 3*/
+        float f = 3.5F; /**trident damage decreased from 8 to 3.5*/
 
         if (entity instanceof EntityLiving) {
             EntityLiving entityliving = (EntityLiving) entity;

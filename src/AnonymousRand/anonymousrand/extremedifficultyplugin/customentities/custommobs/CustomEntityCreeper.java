@@ -39,8 +39,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
     }
 
     @Override
@@ -92,12 +92,13 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
     }
 
-    private void createEffectCloud() { //todo: custom, setinvisible
+    private void createEffectCloud() {
         Collection<MobEffect> collection = this.getEffects();
 
         if (!collection.isEmpty()) {
             EntityAreaEffectCloud entityareaeffectcloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
 
+            entityareaeffectcloud.setInvisible(true);
             entityareaeffectcloud.setRadius(2.5F);
             entityareaeffectcloud.setRadiusOnUse(-0.5F);
             entityareaeffectcloud.setWaitTime(10);

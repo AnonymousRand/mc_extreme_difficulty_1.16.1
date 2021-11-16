@@ -66,7 +66,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableFireballsInAllDirections(this, 0.4, 2).runTaskTimer(plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new RunnableFireballsInAllDirections(this, 0.5, 2).runTaskTimer(plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 

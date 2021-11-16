@@ -53,7 +53,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             Entity entity = movingobjectpositionentity.getEntity();
             Entity entity1 = this.getShooter();
 
-            entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /**large fireballs only do 1 direct damage*/
+            entity.damageEntity(DamageSource.fireball(this, entity1), 1.333333333F); /**large fireballs only do 1.333333333 direct damage*/
             if (entity1 instanceof EntityLiving) {
                 this.a((EntityLiving) entity1, entity);
             }

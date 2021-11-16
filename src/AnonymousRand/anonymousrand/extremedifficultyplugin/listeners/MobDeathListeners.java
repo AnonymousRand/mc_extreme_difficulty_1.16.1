@@ -70,6 +70,15 @@ public class MobDeathListeners implements Listener {
                     }
                 }
             }
+            case RAVAGER -> { /**ravagers explode with power 4 when killed and give all raiders within 32 blocks horiztonally regen 32 for 1 second*/
+                bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 4.0F, true);
+
+                List<Entity> nmsEntities = nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> entity instanceof EntityRaider);
+
+                for (Entity entity : nmsEntities) {
+                    ((EntityRaider)entity).addEffect(new MobEffect(MobEffects.REGENERATION, 20, 31));
+                }
+            }
             case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds in a 3 by 3 cube around itself when killed*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
                 new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);

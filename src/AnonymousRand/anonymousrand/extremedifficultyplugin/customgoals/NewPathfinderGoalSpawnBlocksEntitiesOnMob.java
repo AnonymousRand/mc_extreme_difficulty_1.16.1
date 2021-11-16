@@ -13,12 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 
 public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
 
-    private final EntityInsentient entity;
-    private final Material material;
-    private final Entity firstEntityToSpawn;
-    private final int delayTimer, xRadius, yRadius, zRadius;
-    private final double yOffset;
-    private final boolean terraform;
+    protected final EntityInsentient entity;
+    protected final Material material;
+    protected final Entity firstEntityToSpawn;
+    protected final int delayTimer, xRadius, yRadius, zRadius;
+    protected final double yOffset;
+    protected boolean terraform;
 
     public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
         this.entity = entity;

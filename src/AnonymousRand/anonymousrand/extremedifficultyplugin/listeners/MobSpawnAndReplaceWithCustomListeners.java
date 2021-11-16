@@ -69,11 +69,13 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntitySilverfish ||
                 nmsEntity instanceof CustomEntitySkeleton ||
                 nmsEntity instanceof CustomEntitySkeletonStray ||
+                nmsEntity instanceof CustomEntitySkeletonWither ||
                 nmsEntity instanceof CustomEntitySlime ||
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityStrider ||
                 nmsEntity instanceof CustomEntityVex ||
                 nmsEntity instanceof CustomEntityVindicator ||
+                nmsEntity instanceof CustomEntityWitch ||
                 nmsEntity instanceof CustomEntityWolf ||
                 nmsEntity instanceof CustomEntityZoglin ||
                 nmsEntity instanceof CustomEntityZombie ||
@@ -94,14 +96,15 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case BEE -> new SpawnLivingEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case BLAZE -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
-                        CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld); //todo copy to wither skeleton as well
+                        CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
                         int i = random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
                         int j = 1 << i;
                         newMagmaCube.setSize(j, true);
                         new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
                         return;
-                    } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER || random.nextDouble() < 0.1) { /**blaze spawners have a 10% chance to spawn a wither skeleton instead*/
-                        //todo: spawn wither skeleton
+                    } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**blaze spawners have a 10% chance to spawn a wither skeleton instead*/
+                        new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
+                        return;
                     }
 
                     new SpawnLivingEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
@@ -206,7 +209,25 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case STRIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case VEX -> new SpawnLivingEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                case VILLAGER -> { /**villagers spawn 15 at a time*/
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
+                        new SpawnLivingEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 14, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                    }
+                }
                 case VINDICATOR -> new SpawnLivingEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case WITCH -> new SpawnLivingEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case WITHER_SKELETON -> {
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**wither skeletons not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
+                        CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
+                        int i = random.nextInt(3) + 2;  /**all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only*/
+                        int j = 1 << i;
+                        newMagmaCube.setSize(j, true);
+                        new SpawnLivingEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
+                        return;
+                    }
+
+                    new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                }
                 case WOLF -> new SpawnLivingEntity(nmsWorld, new CustomEntityWolf(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ZOMBIE -> {
@@ -262,13 +283,15 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntitySheepAggressive ||
                         nmsEntity instanceof CustomEntityShulker ||
                         nmsEntity instanceof CustomEntitySilverfish ||
-                        nmsEntity instanceof EntitySkeleton ||
+                        nmsEntity instanceof CustomEntitySkeleton ||
                         nmsEntity instanceof CustomEntitySkeletonStray ||
+                        nmsEntity instanceof CustomEntitySkeletonWither ||
                         nmsEntity instanceof EntitySlime ||
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityStrider ||
                         nmsEntity instanceof CustomEntityVex ||
                         nmsEntity instanceof CustomEntityVindicator ||
+                        nmsEntity instanceof CustomEntityWitch ||
                         nmsEntity instanceof CustomEntityWolf ||
                         nmsEntity instanceof CustomEntityZoglin ||
                         nmsEntity instanceof CustomEntityZombie ||
@@ -333,7 +356,10 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case STRIDER -> new SpawnLivingEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnLivingEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case VEX -> new SpawnLivingEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                        case VILLAGER -> new SpawnLivingEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 14, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false); /**villagers spawn 15 at a time*/
                         case VINDICATOR -> new SpawnLivingEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case WITCH -> new SpawnLivingEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case WITHER_SKELETON -> new SpawnLivingEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WOLF -> new SpawnLivingEntity(nmsWorld, new CustomEntityWolf(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ZOGLIN -> new SpawnLivingEntity(nmsWorld, new CustomEntityZoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ZOMBIE_VILLAGER -> new SpawnLivingEntity(nmsWorld, new CustomEntityZombieVillager(nmsWorld), 1, null, bukkitEntity, null, true, true);

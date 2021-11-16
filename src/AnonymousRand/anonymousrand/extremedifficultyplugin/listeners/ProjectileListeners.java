@@ -44,11 +44,10 @@ public class ProjectileListeners implements Listener {
         if (nmsProjectile instanceof EntityArrow) {
             Arrow bukkitArrow = (Arrow) bukkitProjectile;
             Location loc = bukkitArrow.getLocation();
-            CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
-            newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
+            CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
 
             if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
-                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)), (byte) bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
+                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
             }
 
             if (nmsProjectile.isBurning()) { //carries over burning arrows
@@ -59,6 +58,7 @@ public class ProjectileListeners implements Listener {
                 newArrow.setNoGravity(true);
             }
 
+            newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
             nmsWorld.addEntity(newArrow);
             bukkitArrow.remove();
         }

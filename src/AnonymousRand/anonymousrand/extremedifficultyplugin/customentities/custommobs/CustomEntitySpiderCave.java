@@ -16,7 +16,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
         super(EntityTypes.CAVE_SPIDER, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        this.attacks = 45;
+        this.attacks = 0;
         this.a25 = false;
         this.a45 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 0.0F,40, 39);
@@ -35,7 +35,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
@@ -65,11 +65,11 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1));
         }
 
-        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 2 damage and have 9 health*/
+        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 2 damage and have 8 health*/
             this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
-            this.setHealth(9.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(9.0);
+            this.setHealth(8.0F);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
         }
     }
 

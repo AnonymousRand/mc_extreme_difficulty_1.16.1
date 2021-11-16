@@ -111,9 +111,9 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
         }
 
         if (this.ticksLived == 10) { /**aggressive sheep move 2.1x as fast, do 7 damage, have extra knockback, have 100 health, and have regen 2*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.0);
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
             this.setHealth(100.0F);

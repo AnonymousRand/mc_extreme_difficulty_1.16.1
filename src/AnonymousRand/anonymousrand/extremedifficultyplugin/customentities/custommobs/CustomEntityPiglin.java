@@ -15,8 +15,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
 
     public int attacks, veryAngryTicks;
     private boolean a10, a20, a35, a50, a75;
-    private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 0);
-    private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 0);
+    private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
+    private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
     private Field goalTarget;
 
     public CustomEntityPiglin(World world) {

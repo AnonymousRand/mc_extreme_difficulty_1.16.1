@@ -47,7 +47,7 @@ public class CustomEntityLlama extends EntityLlama implements ICommonCustomMetho
     public void a(EntityLiving entityliving, float f) { //shoots custom spit instead of vanilla
         this.attacks++;
 
-        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 14.0 : 20.0); /**after 6 attacks, llamas do 20 damage*/
+        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 18.0 : 26.0); /**after 6 attacks, trader llamas do 26 damage*/
         double d0 = entityliving.locX() - this.locX();
         double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
         double d2 = entityliving.locZ() - this.locZ();

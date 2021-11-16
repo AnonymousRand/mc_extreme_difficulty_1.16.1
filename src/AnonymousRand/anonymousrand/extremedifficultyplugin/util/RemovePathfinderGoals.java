@@ -78,6 +78,14 @@ public class RemovePathfinderGoals {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                 }
+                case WITCH -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityWitch)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityWitch)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
+                case WITHER_SKELETON -> {
+                    goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntitySkeletonWither)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
+                    goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntitySkeletonWither)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
+                }
                 case ZOGLIN -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));

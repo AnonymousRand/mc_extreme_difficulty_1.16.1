@@ -38,7 +38,6 @@ public class PotionEffectListeners implements Listener {
                     {
                         @Override
                         public void run() {
-                            Bukkit.broadcastMessage("3");
                             ((LivingEntity)bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int)(bukkitNewEffect.getDuration() * 0.05), bukkitNewEffect.getAmplifier()));
                             Bukkit.broadcastMessage("Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.05 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase());
                         }

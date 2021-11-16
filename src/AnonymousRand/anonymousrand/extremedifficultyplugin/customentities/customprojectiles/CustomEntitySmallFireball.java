@@ -20,7 +20,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
                 int i = entity.getFireTicks();
 
                 entity.setOnFire(4);
-                boolean flag = entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /**small fireballs only do 1 direct damage and do 1 less fire tick damage*/
+                boolean flag = entity.damageEntity(DamageSource.fireball(this, entity1), 1.333333333F); /**small fireballs only do 1.333333333 direct damage and do 1 less fire tick damage*/
 
                 if (!flag) {
                     entity.setFireTicks(i);

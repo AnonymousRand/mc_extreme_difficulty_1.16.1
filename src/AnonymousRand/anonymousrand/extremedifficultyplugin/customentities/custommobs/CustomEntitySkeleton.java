@@ -39,9 +39,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
     }
 
     @Override
@@ -77,8 +77,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
         }
 
-        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/ //todo
+        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/
             this.a90 = true;
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.ticksLived == 10) { /**skeletons only have 13.5 health*/

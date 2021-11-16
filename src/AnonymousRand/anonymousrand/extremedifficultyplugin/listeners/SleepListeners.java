@@ -33,8 +33,20 @@ public class SleepListeners implements Listener {
         World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
         EntityLiving closestMonster = nmsWorld.a(EntityMonster.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0)); //get closest monster within 40 sphere radius of player
         CustomEntityPufferfish closestPufferfish = nmsWorld.a(CustomEntityPufferfish.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0)); //get closest pufferfish within 40 sphere radius of player
-        double monsterDistanceNoY = Math.pow(closestMonster.locX() - nmsPlayer.locX(), 2) + Math.pow(closestMonster.locZ() - nmsPlayer.locZ(), 2);
-        double pufferfishDistanceNoY = Math.pow(closestPufferfish.locX() - nmsPlayer.locX(), 2) + Math.pow(closestPufferfish.locZ() - nmsPlayer.locZ(), 2);
+        double monsterDistanceNoY;
+        double pufferfishDistanceNoY;
+
+        try {
+            monsterDistanceNoY = Math.pow(closestMonster.locX() - nmsPlayer.locX(), 2) + Math.pow(closestMonster.locZ() - nmsPlayer.locZ(), 2);
+        } catch (NullPointerException e) {
+            monsterDistanceNoY = Integer.MAX_VALUE;
+        }
+
+        try {
+            pufferfishDistanceNoY = Math.pow(closestPufferfish.locX() - nmsPlayer.locX(), 2) + Math.pow(closestPufferfish.locZ() - nmsPlayer.locZ(), 2);
+        } catch (NullPointerException e) {
+            pufferfishDistanceNoY = Integer.MAX_VALUE;
+        }
 
         if (pufferfishDistanceNoY < monsterDistanceNoY) { /**pufferfish also counts as monsters to prevent sleeping*/
             closestMonster = closestPufferfish;

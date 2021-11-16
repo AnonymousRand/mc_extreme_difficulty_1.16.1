@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -163,6 +164,7 @@ public class PlayerDamageListeners implements Listener {
                 }
                 case VEX -> ((CustomEntityVex)nmsDamager).attacks++;
                 case VINDICATOR -> ((CustomEntityVindicator)nmsDamager).attacks++;
+                case WITHER_SKELETON -> ((CustomEntitySkeletonWither)nmsDamager).attacks++;
                 case ZOGLIN -> {
                     CustomEntityZoglin zoglin = (CustomEntityZoglin)nmsDamager;
                     zoglin.attacks++;
@@ -198,10 +200,10 @@ public class PlayerDamageListeners implements Listener {
 
     @EventHandler
     public void playerDamage(EntityDamageEvent event) {
-        EntityDamageEvent.DamageCause cause = event.getCause();
-        
         if (event.getEntityType() == PLAYER) {
+            EntityDamageEvent.DamageCause cause = event.getCause();
             EntityPlayer nmsPlayer = (EntityPlayer)((CraftEntity) event.getEntity()).getHandle();
+            double damage = event.getDamage();
 
             if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning damage has a 50% chance to spawn a pufferfish, and a 15% chance to spawn a guardian*/
                 World nmsWorld = nmsPlayer.getWorld();
@@ -215,8 +217,10 @@ public class PlayerDamageListeners implements Listener {
 
             switch (cause) {
                 case CONTACT -> event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
-                case FALLING_BLOCK -> event.setDamage(event.getDamage() * 0.4); /**anvils do 60% less damage*/
+                case FALLING_BLOCK -> event.setDamage(damage * 0.4); /**anvils do 60% less damage*/
                 case LIGHTNING -> event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
+                case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
+                case PROJECTILE -> event.setDamage(damage * 0.75); /**projectiles do 25% less damage, including llama spit and fireballs*/
                 case SUFFOCATION -> event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
             }
         }

@@ -54,6 +54,8 @@ public class MobDamageListeners implements Listener {
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING);
             case VEX -> /**vexes don't take starvation damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.STARVATION);
+            case WITCH -> /**witches don't take drowning damage*/
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.DROWNING);
         }
 
         if (event.isCancelled()) {

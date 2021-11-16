@@ -42,7 +42,6 @@ public class CustomEntityRavager extends EntityRavager implements ICommonCustomM
         this.heal(this.attacks < 30 ? 20.0F : 30.0F);
     }
 
-    //todo: copy all from this point onwards to all applicable mobs
     public double getFollowRange() { /**ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks)*/
         return this.attacks < 20 ? 40.0 : 80.0;
     }
