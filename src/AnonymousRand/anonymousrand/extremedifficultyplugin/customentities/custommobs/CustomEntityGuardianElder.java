@@ -81,11 +81,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     }
 
     @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();

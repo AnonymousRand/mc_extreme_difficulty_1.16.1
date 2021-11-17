@@ -22,6 +22,7 @@ public class CustomEntityIllagerIllusioner extends EntityIllagerIllusioner imple
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.attacks = 54;
         this.a55 = false;
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0)); /**illusioners and fake illusioners have regen 1*/
     }
 
     @Override
@@ -76,10 +77,6 @@ public class CustomEntityIllagerIllusioner extends EntityIllagerIllusioner imple
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.setHealth(40.0F);
-        }
-
-        if (this.ticksLived == 10) { /**illusioners and fake illusioners have regen 1*/
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0));
         }
     }
 

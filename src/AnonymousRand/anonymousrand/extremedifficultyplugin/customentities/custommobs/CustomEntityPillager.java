@@ -26,6 +26,9 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
         Arrays.fill(this.dropChanceArmor, 0.0f); /**pillagers can't drop any armor that it wears*/
         this.attacks = 0;
         this.attackNum = 0;
+        this.setHealth(15.0F); /**pillagers only have 15 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         if (random.nextDouble() < 0.25) { /**pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead*/
             new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
@@ -56,17 +59,6 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
 
     public double getFollowRange() { /**pillagers have 24 block detection range (setting attribute doesn't work)*/
         return 24.0;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.ticksLived == 10) { /**pillagers only have 15 health*/
-            this.setHealth(15.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        }
     }
 
     @Override

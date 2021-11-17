@@ -19,7 +19,7 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a7, a15, a25, a40, a50;
-    private Field bA;
+    private static Field bA;
 
     public CustomEntityZombie(World world) {
         super(EntityTypes.ZOMBIE, world);
@@ -32,10 +32,18 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
         this.a25 = false;
         this.a40 = false;
         this.a50 = false;
+        this.setBaby(true);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/
+        this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);
+        this.setHealth(12.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+    }
 
+    static {
         try {
-            this.bA = EntityZombie.class.getDeclaredField("bA");
-            this.bA.setAccessible(true);
+            bA = EntityZombie.class.getDeclaredField("bA");
+            bA.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -124,9 +132,9 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
             } else if (this.eO()) {
                 try {
                     if (this.a((Tag) TagsFluid.WATER)) {
-                        this.bA.setInt(this, this.bA.getInt(this) + 3);
+                        bA.setInt(this, bA.getInt(this) + 3);
                     } else {
-                        this.bA.setInt(this, -1);
+                        bA.setInt(this, -1);
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -165,15 +173,6 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
             new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(plugin, 0L, 2L);
             new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
             new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
-        }
-
-        if (this.ticksLived == 10) { /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/
-            this.setBaby(true);
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69);
-            this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);
-            this.setHealth(12.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

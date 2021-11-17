@@ -60,15 +60,13 @@ public class RaidAndVillagerListeners implements Listener {
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
             World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
             double rand = random.nextDouble();
-//todo custom witch
-            new SpawnLivingEntity(nmsWorld, rand < 0.25 ? new CustomEntityPillager(nmsWorld) : rand < 0.5 ? new CustomEntityVindicator(nmsWorld) : rand < 0.7 ? new EntityWitch(EntityTypes.WITCH, nmsWorld) : rand < 0.875 ? new CustomEntityEvoker(nmsWorld) : new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitVillager.getLocation(), true); /**when killed, villagers have a 25% chance to summon a pillager, a 25% chance to summon a vindicator, a 20% chance to summon a witch, a 17.5% chance to summon an evoker, and a 12.5% chance to summon an illusioner*/
 
-            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem);
+            new SpawnLivingEntity(nmsWorld, rand < 0.25 ? new CustomEntityPillager(nmsWorld) : rand < 0.5 ? new CustomEntityVindicator(nmsWorld) : rand < 0.7 ? new CustomEntityWitch(nmsWorld) : rand < 0.875 ? new CustomEntityEvoker(nmsWorld) : new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitVillager.getLocation(), true); /**when killed, villagers have a 25% chance to summon a pillager, a 25% chance to summon a vindicator, a 20% chance to summon a witch, a 17.5% chance to summon an evoker, and a 12.5% chance to summon an illusioner*/
 
-            for (Entity entity : nmsEntities) { /**golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 10 seconds*/
+            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /**golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds*/
                 ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                new RunnableThorLightningEffectStorm(entity, 100 , true).runTaskTimer(plugin, 0L, 2L);
-            }
+                new RunnableThorLightningEffectStorm(entity, 50 , true).runTaskTimer(plugin, 0L, 2L);
+            });
         }
     }
 

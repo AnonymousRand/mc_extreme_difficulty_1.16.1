@@ -23,6 +23,8 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         this.attacks = 0;
         this.a25 = false;
         this.a60 = false;
+        this.setHealth(13.5F); /**strays only have 13.5 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
     }
 
     @Override
@@ -72,11 +74,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
             this.a60 = true;
 
             new SpawnLivingEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 6, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
-        }
-
-        if (this.ticksLived == 10) { /**strays only have 13.5 health*/
-            this.setHealth(13.5F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
 
         if (this.ticksLived % 5 == 2) {

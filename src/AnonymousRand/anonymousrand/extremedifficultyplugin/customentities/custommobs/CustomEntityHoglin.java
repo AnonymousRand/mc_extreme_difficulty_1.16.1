@@ -25,6 +25,10 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
         this.a32 = false;
         this.a42 = false;
         this.a70 = false;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /**hoglins move 75% faster (125% faster for babies), do 3 damage (6 for babies), and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 6.0 : 3.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -83,13 +87,6 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
         if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**hoglins lay down fire trails on itself as long as it is inside an air block*/
             thisLoc.getBlock().setType(org.bukkit.Material.FIRE);
-        }
-
-        if (this.ticksLived == 10) { /**hoglins move 75% faster (125% faster for babies), do 3 damage (6 for babies), and have extra knockback*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 6.0 : 3.0);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

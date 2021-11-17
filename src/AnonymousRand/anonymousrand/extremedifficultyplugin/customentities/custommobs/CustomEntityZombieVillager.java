@@ -27,6 +27,8 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         this.attacks = 0;
         this.a25 = false;
         this.deathLightningStorm = false;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombie villgers move 3x faster*/
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -66,11 +68,6 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
             this.deathLightningStorm = true;
             LightningStrikeListeners.storm = true;
             new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(plugin, 0L, random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
-        }
-
-        if (this.ticksLived == 10) { /**zombie villgers move 3x faster*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

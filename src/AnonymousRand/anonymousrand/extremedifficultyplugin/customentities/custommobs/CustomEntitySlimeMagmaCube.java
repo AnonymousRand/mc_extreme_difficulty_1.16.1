@@ -22,11 +22,13 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements IComm
         this.a15 = false;
         this.a40 = false;
         this.deathExplosion = false;
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
     protected void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
+        this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /**custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count*/
         this.goalSelector.a(1, new PathfinderGoalMagmaCubeBlazeFireball(this)); /**custom goal that allows magma cube to occasionally shoot small fireballs in all directions depending on attack count*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -99,9 +101,6 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements IComm
             if (this.getSize() > 3) {
                 this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /**custom goal that breaks blocks around the mob periodically*/
             }
-
-            this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /**custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count*/
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

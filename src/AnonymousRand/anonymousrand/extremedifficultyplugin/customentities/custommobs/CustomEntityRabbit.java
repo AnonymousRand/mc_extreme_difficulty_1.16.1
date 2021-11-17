@@ -25,6 +25,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICommonCustomMet
         this.a15 = false;
         this.a25 = false;
         this.die = false;
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         this.setRabbitType(99);
     }
@@ -93,10 +94,6 @@ public class CustomEntityRabbit extends EntityRabbit implements ICommonCustomMet
                 if (this.attacks >= 25) { /**after 25 attacks, killer bunnies explode when killed*/
                     this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
                 }
-            }
-
-            if (this.ticksLived == 10) {
-                RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
             }
         }
     }

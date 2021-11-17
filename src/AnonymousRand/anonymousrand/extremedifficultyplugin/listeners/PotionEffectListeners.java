@@ -28,20 +28,26 @@ public class PotionEffectListeners implements Listener {
                 bukkitEntity.setVelocity(new Vector(0.0, -0.1, 0.0));
             }
 
-            if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD) && bukkitEntity instanceof Player) { /**positive potion effects last 20 times shorter*/
+            if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD)) { /**positive potion effects last 20 times shorter*/
                 PotionEffectType bukkitEffectType = bukkitNewEffect.getType();
 
                 if (bukkitEffectType.equals(PotionEffectType.ABSORPTION) || bukkitEffectType.equals(PotionEffectType.CONDUIT_POWER) || bukkitEffectType.equals(PotionEffectType.DAMAGE_RESISTANCE) || bukkitEffectType.equals(PotionEffectType.DOLPHINS_GRACE) || bukkitEffectType.equals(PotionEffectType.FAST_DIGGING) || bukkitEffectType.equals(PotionEffectType.FIRE_RESISTANCE) || bukkitEffectType.equals(PotionEffectType.HEAL) || bukkitEffectType.equals(PotionEffectType.HEALTH_BOOST) || bukkitEffectType.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || bukkitEffectType.equals(PotionEffectType.INCREASE_DAMAGE) || bukkitEffectType.equals(PotionEffectType.INVISIBILITY) || bukkitEffectType.equals(PotionEffectType.JUMP) || bukkitEffectType.equals(PotionEffectType.LUCK) || bukkitEffectType.equals(PotionEffectType.NIGHT_VISION) || bukkitEffectType.equals(PotionEffectType.REGENERATION) || bukkitEffectType.equals(PotionEffectType.SATURATION) || bukkitEffectType.equals(PotionEffectType.SLOW_FALLING) || bukkitEffectType.equals(PotionEffectType.SPEED) || bukkitEffectType.equals(PotionEffectType.WATER_BREATHING)) {
-                    event.setCancelled(true);
+                    if (bukkitEntity instanceof Player) {
+                        event.setCancelled(true);
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                    {
-                        @Override
-                        public void run() {
-                            ((LivingEntity)bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int)(bukkitNewEffect.getDuration() * 0.05), bukkitNewEffect.getAmplifier()));
-                            Bukkit.broadcastMessage("Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.05 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase());
-                        }
-                    }, 1);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                        {
+                            @Override
+                            public void run() {
+                                ((LivingEntity)bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int)(bukkitNewEffect.getDuration() * 0.05), bukkitNewEffect.getAmplifier()));
+                                Bukkit.broadcastMessage("Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.05 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " "));
+                            }
+                        }, 1);
+                    }
+                } else {
+                    if (!(bukkitEntity instanceof Player)) { /**non-player mobs are not affected by negative splash/lingering potions*/
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

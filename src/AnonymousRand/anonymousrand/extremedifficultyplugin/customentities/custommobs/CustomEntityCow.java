@@ -12,6 +12,13 @@ public class CustomEntityCow extends EntityCow {
         super(EntityTypes.COW, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /**cows move twice as fast and have 20 health*/
+        this.setHealth(20.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
+
+        if (random.nextDouble() < 0.04) { /**cows have a 1 in 25 chance to spawn as a mooshroom*/
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
+        }
     }
 
     @Override
@@ -19,20 +26,5 @@ public class CustomEntityCow extends EntityCow {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.ticksLived == 10) { /**cows move twice as fast and have 20 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
-            this.setHealth(20.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
-
-            if (random.nextDouble() < 0.04) { /**cows have a 1 in 25 chance to spawn as a mooshroom*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
-            }
-        }
     }
 }

@@ -15,7 +15,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
     public int attacks;
     private boolean a30, deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
-    private Field orbitPosition, orbitOffset;
+    private static Field orbitPosition, orbitOffset;
     private static final Random random = new Random();
 
     public CustomEntityPhantom(World world, int size, boolean duplicate) {
@@ -41,12 +41,14 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         this.deathExplosion = false;
         this.duplicate = false;
         this.getBukkitEntity().setCustomName("You voted for me");
+    }
 
+    static {
         try {
-            this.orbitPosition = EntityPhantom.class.getDeclaredField("d");
-            this.orbitPosition.setAccessible(true);
-            this.orbitOffset = EntityPhantom.class.getDeclaredField("c");
-            this.orbitOffset.setAccessible(true);
+            orbitPosition = EntityPhantom.class.getDeclaredField("d");
+            orbitPosition.setAccessible(true);
+            orbitOffset = EntityPhantom.class.getDeclaredField("c");
+            orbitOffset.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -172,7 +174,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
 
         protected boolean g() {
             try {
-                return ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0D;
+                return ((Vec3D)CustomEntityPhantom.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0D;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 return false;
@@ -203,7 +205,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         @Override
         public void d() {
             try {
-                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.random.nextInt(20)));
+                CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.random.nextInt(20)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -225,11 +227,11 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         private void g() {
             if (CustomEntityPhantom.this.getGoalTarget() != null) {
                 try {
-                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.random.nextInt(20)));
-                    BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this));
+                    CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.random.nextInt(20)));
+                    BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this));
 
                     if (orbitPos.getY() < CustomEntityPhantom.this.world.getSeaLevel()) {
-                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
+                        CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -280,7 +282,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
             EntityLiving entityliving = CustomEntityPhantom.this.getGoalTarget();
 
             try {
-                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityliving.locX(), entityliving.e(0.5D), entityliving.locZ()));
+                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityliving.locX(), entityliving.e(0.5D), entityliving.locZ()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -345,7 +347,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
             }
 
             try {
-                Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this));
+                Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.orbitOffset.get(CustomEntityPhantom.this));
 
                 if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
                     this.e = Math.max(1.0F, this.e);
@@ -363,13 +365,13 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
 
         private void h() {
             try {
-                BlockPosition orbitPos = (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this);
+                BlockPosition orbitPos = (BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this);
                 if (BlockPosition.ZERO.equals(orbitPos)) {
-                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getChunkCoordinates());
+                    CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getChunkCoordinates());
                 }
 
                 this.c += this.f * 15.0F * 0.017453292F;
-                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b((BaseBlockPosition)orbitPos).add((double) (this.d * MathHelper.cos(this.c)), (double) (-4.0F + this.e), (double) (this.d * MathHelper.sin(this.c))));
+                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b((BaseBlockPosition)orbitPos).add((double) (this.d * MathHelper.cos(this.c)), (double) (-4.0F + this.e), (double) (this.d * MathHelper.sin(this.c))));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

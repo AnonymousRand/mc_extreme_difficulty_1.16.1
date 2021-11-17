@@ -24,6 +24,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomM
         this.attacks = 0;
         this.a50 = false;
         this.a100 = false;
+        this.setHealth(13.5F); /**drowned only have 13.5 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
     }
 
     @Override
@@ -64,11 +66,6 @@ public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomM
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, drowned summon an elder guardian*/
             this.a100 = true;
             new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
-        }
-
-        if (this.ticksLived == 10) { /**drowned only have 13.5 health*/
-            this.setHealth(13.5F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
         }
     }
 

@@ -19,6 +19,9 @@ public class CustomEntityIllagerIllusionerFake extends CustomEntityIllagerIllusi
         this.a30 = false;
         this.a55 = false;
         this.deathExplosion = false;
+        float health = (float)(random.nextFloat() * 5.0 + 10.0);
+        this.setHealth(health);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health); /**fake illusioners have anywhere between 10 and 15 health*/
     }
 
     @Override
@@ -63,7 +66,6 @@ public class CustomEntityIllagerIllusionerFake extends CustomEntityIllagerIllusi
         }
 
         if (this.parentIllusioner.attacks == 55 && !this.a55) { /**after 55 attacks, summoned fake illusioners attack even faster*/
-        Bukkit.broadcastMessage("55");
             this.a55 = true;
 
             for (PathfinderGoal goal : RemovePathfinderGoals.removePathfinderGoal(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
@@ -75,12 +77,6 @@ public class CustomEntityIllagerIllusionerFake extends CustomEntityIllagerIllusi
 
         if (this.ticksLived >= 1600) { /**fake illusioners die after 80 seconds*/
             this.die();
-        }
-
-        if (this.ticksLived == 10) { /**fake illusioners have anywhere between 10 and 15 health*/
-            float health = (float)(random.nextFloat() * 5.0 + 10.0);
-            this.setHealth(health);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         }
     }
 }

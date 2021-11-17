@@ -33,10 +33,10 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICommonC
     public void tick() {
         super.tick();
 
-        List<Entity> entities = this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer); /**pufferfish have a poison/wither range of 5 blocks horizontally*/
-
-        for (Entity entity : entities) {
-            this.pickup((EntityHuman)entity);
+        if (this.ticksLived % 3 == 0) {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> {
+                this.pickup((EntityHuman)entity);
+            }); /**pufferfish have a poison/wither range of 5 blocks horizontally*/
         }
     }
 

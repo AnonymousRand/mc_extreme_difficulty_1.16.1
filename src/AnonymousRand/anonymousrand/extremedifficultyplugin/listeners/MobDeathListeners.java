@@ -73,11 +73,9 @@ public class MobDeathListeners implements Listener {
             case RAVAGER -> { /**ravagers explode with power 4 when killed and give all raiders within 32 blocks horiztonally regen 32 for 1 second*/
                 bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 4.0F, true);
 
-                List<Entity> nmsEntities = nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> entity instanceof EntityRaider);
-
-                for (Entity entity : nmsEntities) {
+                nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> entity instanceof EntityRaider).forEach(entity -> {
                     ((EntityRaider)entity).addEffect(new MobEffect(MobEffects.REGENERATION, 20, 31));
-                }
+                });
             }
             case SPIDER -> { /**spiders lay down cobwebs that last 10 seconds in a 3 by 3 cube around itself when killed*/
                 EntitySpider spider = (EntitySpider)(nmsEntity);
@@ -87,11 +85,10 @@ public class MobDeathListeners implements Listener {
                 new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
                 new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
-            case VEX -> { /**vexes give all players within 2.5 blocks horizontally slowness 4 for 3 seconds when killed*/
-                List<Entity> entities = nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(2.5, 128.0, 2.5), entity -> entity instanceof EntityPlayer);
-
-                for (Entity entity : entities) {
-                    ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 60, 3));
+            case WITHER -> bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3)); /**withers also drop 3 eyes of ender when killed*/
+            case WITHER_SKELETON -> { /**wither skeletons now have a +8% chance to drop a skull when killed*/
+                if (random.nextDouble() < 0.08) {
+                    bukkitWorld.dropItem(loc, new ItemStack(Material.WITHER_SKELETON_SKULL));
                 }
             }
             case ZOMBIE -> {

@@ -14,7 +14,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommo
 
     public int attacks;
     private boolean a15;
-    private Field bH;
+    private static Field bH;
 
     public CustomEntityLlamaTrader(World world) {
         super(EntityTypes.TRADER_LLAMA, world);
@@ -22,10 +22,15 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommo
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
+        this.setStrength(1); /**makes sure zombies etc. don't run away from trader llamas*/
+        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /**trader llamas have 30 health*/
+        this.setHealth(30.0F);
+    }
 
+    static {
         try {
-            this.bH = EntityLlama.class.getDeclaredField("bH");
-            this.bH.setAccessible(true);
+            bH = EntityLlama.class.getDeclaredField("bH");
+            bH.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -64,7 +69,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommo
         this.world.addEntity(entityllamaspit);
 
         try {
-            this.bH.setBoolean(this, true);
+            bH.setBoolean(this, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -82,12 +87,6 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommo
             this.a15 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
             this.setHealth(50.0F);
-        }
-
-        if (this.ticksLived == 10) { /**trader llamas have 30 health*/
-            this.setStrength(1); /**makes sure zombies etc. don't run away from trader llamas*/
-            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
-            this.setHealth(30.0F);
         }
     }
 }

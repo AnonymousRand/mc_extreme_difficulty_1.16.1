@@ -22,6 +22,10 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICommonC
         this.a15 = false;
         this.a90 = false;
         this.getBukkitEntity().setCustomName("Having a good time?");
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375); /**silverfish move 50% faster and have 9 health*/
+        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(9.0);
+        this.setHealth(9.0F);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -60,13 +64,6 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICommonC
             this.a90 = true;
             new RunnableSpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.INFESTED_STONE, 2);
             this.die();
-        }
-
-        if (this.ticksLived == 10) { /**silverfish move 50% faster and have 9 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375);
-            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(9.0);
-            this.setHealth(9.0F);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

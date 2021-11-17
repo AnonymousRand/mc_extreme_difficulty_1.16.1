@@ -21,6 +21,10 @@ public class CustomEntitySpider extends EntitySpider implements ICommonCustomMet
         this.a20 = false;
         this.a50 = false;
         this.a80 = false;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /**spiders move 70% faster but only do 1 damage and have 12.5 health*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+        this.setHealth(12.5F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
     }
 
     @Override
@@ -69,13 +73,6 @@ public class CustomEntitySpider extends EntitySpider implements ICommonCustomMet
         if (this.attacks == 80 && !this.a80) { /**after 80 attacks, spiders summon 5 cave spiders*/
             this.a80 = true;
             new SpawnLivingEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 5, null, null, this, false, true);
-        }
-
-        if (this.ticksLived == 10) { /**spiders move 70% faster but only do 1 damage and have 12.5 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(12.5F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
         }
     }
 

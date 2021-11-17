@@ -22,6 +22,11 @@ public class CustomEntityRavager extends EntityRavager implements ICommonCustomM
         this.a60 = false;
         this.a90 = false;
         this.launchHigh = false;
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(0.25); /**ravagers have 400 health and extra knockback, but only 0.25 damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
+        this.setHealth(400.0F);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /**changing attributes don't work on ravagers so ravagers have speed 3*/
     }
@@ -65,14 +70,6 @@ public class CustomEntityRavager extends EntityRavager implements ICommonCustomM
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, ravagers get regen 3*/
             this.a90 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.ticksLived == 10) { /**ravagers have 400 health and extra knockback, but only 0.25 damage*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(0.25);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
-            this.setHealth(400.0F);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

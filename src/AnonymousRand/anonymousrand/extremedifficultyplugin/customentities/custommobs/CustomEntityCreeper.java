@@ -17,6 +17,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.maxFuseTicks = fuse;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35); /**creepers move 40% faster but only have 12.75 health*/
+        this.setHealth(12.75F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
 
         try {
             this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
@@ -130,12 +133,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
             if (getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
                 this.ignite();
             }
-        }
-
-        if (this.ticksLived == 10) { /**creepers move 40% faster but only have 12.75 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35);
-            this.setHealth(12.75F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
         }
     }
 

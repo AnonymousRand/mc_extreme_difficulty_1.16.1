@@ -27,6 +27,9 @@ public class CustomEntityBlaze extends EntityBlaze implements ICommonCustomMetho
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.rapidFireTracker = 0;
+        this.setHealth(6.0F); /**blazes only have 6 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -45,16 +48,6 @@ public class CustomEntityBlaze extends EntityBlaze implements ICommonCustomMetho
 
     public double getFollowRange() { /**blazes have 48 block detection range (setting attribute doesn't work)*/
         return 48.0;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (this.ticksLived == 10) { /**blazes have 6 health*/
-            this.setHealth(6.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(6.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        }
     }
 
     @Override

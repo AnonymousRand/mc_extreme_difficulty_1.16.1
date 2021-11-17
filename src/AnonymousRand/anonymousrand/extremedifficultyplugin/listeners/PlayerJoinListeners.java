@@ -1,6 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import net.minecraft.server.v1_16_R1.EntityPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

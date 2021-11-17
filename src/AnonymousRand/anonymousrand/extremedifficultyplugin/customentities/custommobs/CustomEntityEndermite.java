@@ -22,6 +22,11 @@ public class CustomEntityEndermite extends EntityEndermite implements ICommonCus
         this.a60 = false;
         this.a75 = false;
         this.getBukkitEntity().setCustomName("Insert name here");
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /**endermites move 60% faster and have 10.5 health, but only do 1 damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.5);
+        this.setHealth(10.5F);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -67,14 +72,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICommonCus
             this.a75 = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
             this.die();
-        }
-
-        if (this.ticksLived == 10) { /**endermites move 60% faster and have 10.5 health, but only do 1 damage*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.5);
-            this.setHealth(10.5F);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

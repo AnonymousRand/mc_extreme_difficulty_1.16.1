@@ -29,6 +29,8 @@ public class CustomEntityVindicator extends EntityVindicator implements ICommonC
         this.a10 = false;
         this.a25 = false;
         this.a35 = false;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.6125); /**vindicators move 75% faster*/
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -67,11 +69,6 @@ public class CustomEntityVindicator extends EntityVindicator implements ICommonC
             this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.NETHERITE_AXE));
             this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.NETHERITE_AXE));
             this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.ticksLived == 10) { /**vindicators move 75% faster*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.6125);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

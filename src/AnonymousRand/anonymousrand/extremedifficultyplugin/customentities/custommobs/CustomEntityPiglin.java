@@ -17,7 +17,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
     private boolean a10, a20, a35, a50, a75;
     private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
-    private Field goalTarget;
+    private static Field goalTarget;
 
     public CustomEntityPiglin(World world) {
         super(EntityTypes.PIGLIN, world);
@@ -33,10 +33,26 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         this.a35 = false;
         this.a75 = false;
         this.veryAngryTicks = 0;
+        this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /**piglins have speed 1 and 40 max health*/
+        ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(40.0);
 
+        if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /**piglins continue attacking while trading*/
+            this.goalSelector.a(1, new CustomPathfinderGoalCrossbowAttack<>(this, 1.0, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken; since the behavior-controlled crossbow shots have not been removed, this can cause a faster, more irregular attacking rhythm (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinArrowAttack(this, 1.0, 10, 40.0F)); /**for frenzied phase; uses the custom goal that attacks even when line of sight is broken*/
+        } else {
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0, true)); /**for frenzied phase; uses the custom melee attack goal that attacks even when line of sight is broken*/
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /**for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player*/
+        }
+
+        this.goalSelector.a(0, this.buffPiglins);
+        this.goalSelector.a(0, this.buffMobs);
+    }
+
+    static {
         try {
-            this.goalTarget = EntityInsentient.class.getDeclaredField("goalTarget");
-            this.goalTarget.setAccessible(true);
+            goalTarget = EntityInsentient.class.getDeclaredField("goalTarget");
+            goalTarget.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -111,7 +127,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
     @Override
     public void setGoalTarget(EntityLiving entityLiving) {
         try {
-            this.goalTarget.set(this, entityLiving);
+            goalTarget.set(this, entityLiving);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -121,8 +137,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
     @Override
     public EntityLiving getGoalTarget() { //uses normal EntityInsentient getGoalTarget() method that doesn't use the piglin's memory modules because they were removed along with its brain and behavior goals
         try {
-            if ((this.goalTarget.get(this)) != null) {
-                return (EntityLiving) this.goalTarget.get(this);
+            if ((goalTarget.get(this)) != null) {
+                return (EntityLiving)goalTarget.get(this);
             } else {
                 return null;
             }
@@ -209,28 +225,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
 
         if (this.attacks == 75 && !this.a75) { /**after 75 attacks, piglins duplicate all piglins excluding itself within 30 blocks*/
             this.a75 = true;
-            List<Entity> piglins = this.getWorld().getEntities(this, this.getBoundingBox().g(30.0), entity -> entity instanceof CustomEntityPiglin);
-
-            for (Entity entity : piglins) {
+            this.getWorld().getEntities(this, this.getBoundingBox().g(30.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
                 new SpawnLivingEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld()), 1, null, null, entity, false, true);
-            }
-        }
-
-        if (this.ticksLived == 10) { /**piglins have speed 1 and 40 max health*/
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(40.0);
-
-            if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /**piglins continue attacking while trading*/
-                this.goalSelector.a(1, new CustomPathfinderGoalCrossbowAttack<>(this, 1.0, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken; since the behavior-controlled crossbow shots have not been removed, this can cause a faster, more irregular attacking rhythm (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-                this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinArrowAttack(this, 1.0, 10, 40.0F)); /**for frenzied phase; uses the custom goal that attacks even when line of sight is broken*/
-            } else {
-                this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
-                this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0, true)); /**for frenzied phase; uses the custom melee attack goal that attacks even when line of sight is broken*/
-                this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /**for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player*/
-            }
-
-            this.goalSelector.a(0, this.buffPiglins);
-            this.goalSelector.a(0, this.buffMobs);
+            });
         }
     }
 

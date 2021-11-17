@@ -29,6 +29,7 @@ public class CustomEntityWitch extends EntityWitch implements ICommonCustomMetho
         this.a30 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         try {
             this.bx = EntityWitch.class.getDeclaredField("bx");
@@ -136,10 +137,6 @@ public class CustomEntityWitch extends EntityWitch implements ICommonCustomMetho
         if (this.attacks == 30 && !this.a30) { /**after 30 attacks, witches summon area effect clouds wherever it goes*/
             this.a30 = true;
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1, 0, 1, 0, 1.0));
-        }
-
-        if (this.ticksLived == 10) {
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

@@ -21,16 +21,24 @@ public class MobDamageListeners implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent event) {
-
         EntityType entityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
+        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING);
 
         switch (entityType) { //natural damage immunities by specific mobs
             case BAT, CHICKEN, HOGLIN, ZOGLIN -> /**bats, chickens, hoglins and zoglins don't take fire, lava, or explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case DROWNED, HUSK, IRON_GOLEM, PHANTOM, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, iron golems, phantoms, zombies, and zombie villagers don't take fire, lightning, suffocation, or explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+            case ENDER_DRAGON, WITHER -> {
+                if (checkCause) {
+                    LivingEntity livingEntity = (LivingEntity)event.getEntity();
+                    livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.25); //increase max health by 25% of the damage dealt
+                    livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.25); //ender dragon and wither heal 25%
+                    event.setDamage(0.0);
+                }
+            }
             case ENDERMAN, SHEEP ->/**endermen and sheep don't take fire, lava, or fall damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL);
             case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take fire, lava, or suffocation damage*/
@@ -62,7 +70,18 @@ public class MobDamageListeners implements Listener {
             return;
         }
 
-        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING);
+        switch (cause) {
+            case CRAMMING -> { /**no entity cramming to make sure that duplicating mobs when killed don't cause an endless cycle*/
+                event.setCancelled(true);
+                return;
+            }
+            case DRAGON_BREATH, FALLING_BLOCK, MAGIC, POISON -> { /**non-player mobs do not take damage from area effect clouds, poison/harm potions, or falling anvils*/
+                if (entityType != PLAYER) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
 
         if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /**all non-player mobs take 95% less damage from these sources*/
             if (checkCause) {
@@ -70,28 +89,10 @@ public class MobDamageListeners implements Listener {
             }
         }
 
-        if (entityType == ENDER_DRAGON || entityType == WITHER) { /**ender dragon and wither heal from these damage sources*/
-            if (checkCause) {
-                LivingEntity livingEntity = (LivingEntity)event.getEntity();
-                livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.25); //increase max health by 25% of the damage dealt
-                livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.25); //ender dragon and wither heal 25%
-                event.setDamage(0.0);
-            }
-        }
-
-        if (cause.equals(EntityDamageEvent.DamageCause.CRAMMING)) { /**no entity cramming to make sure that duplicating mobs when killed don't cause an endless cycle*/
-            event.setCancelled(true);
-        }
-
-        if ((cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON)) && entityType != PLAYER) { /**non-player mobs do not take damage from area effect clouds, poison/harm potions, or falling anvils*/
-            event.setCancelled(true);
-        }
-
         if (entityType != IRON_GOLEM && entityType != PLAYER) { /**golems within 40 blocks horizontally of damaged entity get a 15% stat boost*/
-            List<Entity> nmsEntities = nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityIronGolem);
-
-            for (Entity entity : nmsEntities) {
-                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.15);            }
+            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> {
+                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.15);
+            });
         }
     }
 

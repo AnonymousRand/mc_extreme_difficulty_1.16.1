@@ -79,11 +79,9 @@ public class BlockPlaceAndBreakListeners implements Listener {
             case ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, DEAD_BUSH, SMITHING_TABLE, TORCH ->  /**anvils, dead bushes, smithing tables, and torches explode when broken but don't break blocks*/
                     nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
             case BARREL, CHEST, CHEST_MINECART, DISPENSER, DROPPER, ENDER_CHEST, GOLD_BLOCK, GOLD_ORE, HOPPER, HOPPER_MINECART, NETHER_GOLD_ORE, SHULKER_BOX, TRAPPED_CHEST -> { /**breaking these blocks causes piglins within 40 blocks horizontally to go into a frenzy for 15 seconds*/
-                List<Entity> nmsEntities = nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin);
-
-                for (Entity entity : nmsEntities) {
+                nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
                     ((CustomEntityPiglin)entity).veryAngryTicks += 300;
-                }
+                });
 
                 if (type == Material.NETHER_GOLD_ORE) { /**breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava*/
                     if (random.nextDouble() < 0.8) {

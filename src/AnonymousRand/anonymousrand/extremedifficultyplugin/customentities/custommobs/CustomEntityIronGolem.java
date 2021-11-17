@@ -16,6 +16,8 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICommonCus
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.followRangeMultipler = 1.0;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /**iron golems move twice as fast but do half as much damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
     }
 
     @Override
@@ -66,11 +68,6 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICommonCus
     @Override
     public void tick() {
         super.tick();
-
-        if (this.ticksLived == 10) { /**iron golems move twice as fast but do half as much damage*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
-        }
     }
 
     @Override

@@ -38,12 +38,12 @@ public class ProjectileListeners implements Listener {
             return;
         }
 
+        Location loc = bukkitProjectile.getLocation();
         Entity nmsShooter = ((CraftEntity)bukkitProjectile.getShooter()).getHandle();
         World nmsWorld = ((CraftWorld)bukkitProjectile.getWorld()).getHandle();
 
         if (nmsProjectile instanceof EntityArrow) {
-            Arrow bukkitArrow = (Arrow) bukkitProjectile;
-            Location loc = bukkitArrow.getLocation();
+            Arrow bukkitArrow = (Arrow)bukkitProjectile;
             CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
 
             if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
@@ -63,9 +63,8 @@ public class ProjectileListeners implements Listener {
             bukkitArrow.remove();
         }
 
-        if (bukkitProjectile instanceof Trident) {
+        if (nmsProjectile instanceof EntityThrownTrident) {
             Trident bukkitTrident = (Trident)bukkitProjectile;
-            Location loc = bukkitTrident.getLocation();
             CustomEntityThrownTrident newTrident = new CustomEntityThrownTrident(nmsWorld, bukkitTrident.getVelocity(), (byte)bukkitTrident.getPierceLevel(), bukkitTrident.getShooter());
             newTrident.setPosition(loc.getX(), loc.getY(), loc.getZ());
 

@@ -27,6 +27,14 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         this.attacks = 0;
         this.a25 = false;
         this.a90 = false;
+        this.setHealth(13.5F); /**skeletons only have 13.5 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
+
+        if (random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead*/
+            new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
+        } else if (random.nextDouble() < 0.05) {
+            new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
+        }
     }
 
     @Override
@@ -80,17 +88,6 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/
             this.a90 = true;
             new SpawnLivingEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
-        }
-
-        if (this.ticksLived == 10) { /**skeletons only have 13.5 health*/
-            this.setHealth(13.5F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
-
-            if (random.nextDouble() < 0.05) { /**skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
-            } else if (random.nextDouble() < 0.05) {
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
-            }
         }
 
         if (this.ticksLived % 10 == 2) {

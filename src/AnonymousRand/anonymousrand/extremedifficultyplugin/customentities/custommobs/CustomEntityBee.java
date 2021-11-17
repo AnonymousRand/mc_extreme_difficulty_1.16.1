@@ -20,6 +20,10 @@ public class CustomEntityBee extends EntityBee implements ICommonCustomMethods {
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.firstSting = true;
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0); /**bees do 1000 damage but only have 5 health*/
+        this.setHealth(5.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -38,13 +42,6 @@ public class CustomEntityBee extends EntityBee implements ICommonCustomMethods {
     @Override
     public void tick() {
         super.tick();
-
-        if (this.ticksLived == 10) { /**bees do 1000 damage but only have 5 health*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
-            this.setHealth(5.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        }
 
         if (this.hasStung()) {
             this.setHasStung(false); /**bees don't die from stinging*/

@@ -11,7 +11,7 @@ public class CustomEntityLlama extends EntityLlama implements ICommonCustomMetho
 
     public int attacks;
     private boolean a15;
-    private Field bH;
+    private static Field bH;
 
     public CustomEntityLlama(World world) {
         super(EntityTypes.LLAMA, world);
@@ -19,10 +19,15 @@ public class CustomEntityLlama extends EntityLlama implements ICommonCustomMetho
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a15 = false;
+        this.setStrength(1); /**makes sure zombies etc. don't run away from llamas*/
+        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /**llamas have 30 health*/
+        this.setHealth(30.0F);
+    }
 
+    static {
         try {
-            this.bH = EntityLlama.class.getDeclaredField("bH");
-            this.bH.setAccessible(true);
+            bH = EntityLlama.class.getDeclaredField("bH");
+            bH.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -61,7 +66,7 @@ public class CustomEntityLlama extends EntityLlama implements ICommonCustomMetho
         this.world.addEntity(entityllamaspit);
 
         try {
-            this.bH.setBoolean(this, true);
+            bH.setBoolean(this, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -77,14 +82,8 @@ public class CustomEntityLlama extends EntityLlama implements ICommonCustomMetho
 
         if (this.attacks == 15 && !this.a15) { /**after 15 attacks, llamas get 40 max health*/
             this.a15 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
             this.setHealth(50.0F);
-        }
-
-        if (this.ticksLived == 10) { /**llamas have 30 health*/
-            this.setStrength(1); /**makes sure zombies etc. don't run away from llamas*/
-            ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
-            this.setHealth(30.0F);
         }
     }
 }

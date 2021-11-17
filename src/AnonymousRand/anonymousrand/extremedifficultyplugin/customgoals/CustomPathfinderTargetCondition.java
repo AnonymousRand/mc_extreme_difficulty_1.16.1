@@ -16,29 +16,31 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
     private boolean f;
     private boolean g = true;
     private Predicate<EntityLiving> h;
-
     private Field c1, d1, e1, f1;
 
-    public CustomPathfinderTargetCondition a(double followRange) {
-        this.followRange = followRange;
+    public CustomPathfinderTargetCondition() {
+        super();
 
-        try { //get booleans via reflection
-            this.c1 = PathfinderTargetCondition.class.getDeclaredField("c");
-            this.c1.setAccessible(true);
+        try {
+            c1 = PathfinderTargetCondition.class.getDeclaredField("c");
+            c1.setAccessible(true);
+            d1 = PathfinderTargetCondition.class.getDeclaredField("d");
+            d1.setAccessible(true);
+            e1 = PathfinderTargetCondition.class.getDeclaredField("e");
+            e1.setAccessible(true);
+            f1 = PathfinderTargetCondition.class.getDeclaredField("f");
+            f1.setAccessible(true);
             this.c = c1.getBoolean(this);
-            this.d1 = PathfinderTargetCondition.class.getDeclaredField("d");
-            this.d1.setAccessible(true);
             this.d = d1.getBoolean(this);
-            this.e1 = PathfinderTargetCondition.class.getDeclaredField("e");
-            this.e1.setAccessible(true);
             this.e = e1.getBoolean(this);
-            this.f1 = PathfinderTargetCondition.class.getDeclaredField("f");
-            this.f1.setAccessible(true);
             this.f = f1.getBoolean(this);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
 
+    public CustomPathfinderTargetCondition a(double followRange) {
+        this.followRange = followRange;
         return this;
     }
 

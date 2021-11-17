@@ -26,6 +26,7 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICommonCus
         this.a15 = false;
         this.a25 = false;
         this.a35 = false;
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -70,11 +71,6 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICommonCus
         if (this.attacks == 35 && !this.a35) { /**after 35 attacks, zombie piglins can aggro other zombie piglins up to 48 blocks away*/
             this.a35 = true;
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(48.0);
-        }
-
-        if (this.ticksLived == 10) { /**zombie piglins only do ~3 damage*/
-            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, -2));
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

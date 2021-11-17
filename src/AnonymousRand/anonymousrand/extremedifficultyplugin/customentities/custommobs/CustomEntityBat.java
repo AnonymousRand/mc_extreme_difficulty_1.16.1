@@ -21,6 +21,8 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
 
     public int attacks;
     private boolean a5, a10, a20, a32, a45, firstDuplicate;
+    protected PathfinderTargetCondition c;
+    private BlockPosition d;
     private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 5, 200, 101);
 
     public CustomEntityBat(World world) { /**bats are now aggressive*/
@@ -34,11 +36,16 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
         this.a32 = false;
         this.a45 = false;
         this.firstDuplicate = true;
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0); /**bats do 1 damage and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        this.goalSelector.a(0, this.buffMobs); /**custom goal that provides the buffing mechanism*/
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_KNOCKBACK);
-        } catch (IllegalAccessException e) {
+            Field c1 = EntityBat.class.getDeclaredField("c");
+            this.c = (PathfinderTargetCondition)c1.get(this);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -108,25 +115,8 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
         return super.damageEntity(damagesource, f);
     }
 
-    private Field c1;
-    protected PathfinderTargetCondition c;
-    protected BlockPosition d;
-    private EntityBat bat = new EntityBat(EntityTypes.BAT, this.getWorld());
-
     @Override
     protected void mobTick() {
-        try { //reflection to get EntityBat.c
-            this.c1 = EntityBat.class.getDeclaredField("c");
-            this.c1.setAccessible(true);
-            try {
-                this.c = (PathfinderTargetCondition) c1.get(bat);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            }
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
         BlockPosition blockposition = this.getChunkCoordinates();
         BlockPosition blockposition1 = blockposition.up();
 
@@ -222,13 +212,6 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
             this.a45 = true;
             this.firstDuplicate = true;
             this.buffMobs.e(); /**buffs are immediately applied the first time*/
-        }
-
-        if (this.ticksLived == 10) { /**bats do 1 damage and have extra knockback*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-
-            this.goalSelector.a(0, this.buffMobs); /**custom goal that provides the buffing mechanism*/
         }
     }
 

@@ -28,6 +28,9 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         this.attacks = 0;
         this.a8 = false;
         this.a40 = false;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /**zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies)*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -93,12 +96,6 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newTNT);
             }
-        }
-
-        if (this.ticksLived == 10) { /**zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies)*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 
 public class CustomEntityThrownTrident extends EntityThrownTrident {
 
+    private static Field ap;
+
     public CustomEntityThrownTrident(World world, Vector a, byte pierce, @Nullable ProjectileSource source) {
         super(EntityTypes.TRIDENT, world);
 
@@ -24,7 +26,14 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         }
     }
 
-    private Field ap;
+    static {
+        try {
+            ap = EntityThrownTrident.class.getDeclaredField("ap");
+            ap.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
@@ -41,10 +50,8 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         DamageSource damagesource = DamageSource.a((net.minecraft.server.v1_16_R1.Entity)this, (net.minecraft.server.v1_16_R1.Entity)(entity1 == null ? this : entity1));
 
         try {
-            this.ap = EntityThrownTrident.class.getDeclaredField("ap");
-            this.ap.setAccessible(true);
-            this.ap.setBoolean(this, true);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            ap.setBoolean(this, true);
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 

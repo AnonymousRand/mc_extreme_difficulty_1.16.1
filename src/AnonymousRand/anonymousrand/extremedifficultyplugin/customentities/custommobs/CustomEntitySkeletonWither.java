@@ -21,6 +21,9 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.attacks = 0;
         this.a25 = false;
         this.a55 = false;
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0); /**wither skeletons twice as fast and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -65,12 +68,6 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         if (this.attacks == 55 && !this.a55) { /**after 55 attacks, wither skeletons summon a mini wither*/
             this.a55 = true;
             //todo: custom wither
-        }
-
-        if (this.ticksLived == 10) { /**wither skeletons twice as fast and have extra knockback*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0);
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

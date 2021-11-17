@@ -11,6 +11,10 @@ public class CustomEntitySheep extends EntitySheep implements ICommonCustomMetho
         super(EntityTypes.SHEEP, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /**sheep move 2x faster and have 20 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
+        this.setHealth(20.0F);
+        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /**uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal*/
     }
 
     @Override
@@ -32,13 +36,6 @@ public class CustomEntitySheep extends EntitySheep implements ICommonCustomMetho
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }
-        }
-
-        if (this.ticksLived == 10) { /**sheep move 2x faster and have 20 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
-            this.setHealth(20.0F);
-            this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /**uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal*/
         }
     }
 

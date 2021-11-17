@@ -28,6 +28,10 @@ public class CustomEntityVex extends EntityVex implements ICommonCustomMethods {
         this.a45 = false;
         this.a60 = false;
         this.getBukkitEntity().setCustomName("Am I worse than phantoms?");
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0); /**vexes only have 11 health and do 1 damage*/
+        this.setHealth(11.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(11.0);
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -64,22 +68,18 @@ public class CustomEntityVex extends EntityVex implements ICommonCustomMethods {
             this.a30 = true;
             this.setHealth(11.0F);
 
-            List<Entity> entities = this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex);
-
-            for (Entity entity : entities) {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex).forEach(entity -> {
                 ((CustomEntityVex)entity).setHealth(11.0F);
-            }
+            });
         }
 
         if (attacks == 45 && !this.a45) { /**after 45 attacks, vexes heal itself and all other evokers and vexes within 32 blocks horizontally to full health*/
             this.a45 = true;
             this.setHealth(11.0F);
 
-            List<Entity> entities = this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof CustomEntityEvoker));
-
-            for (Entity entity : entities) {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof CustomEntityEvoker)).forEach(entity -> {
                 ((EntityLiving)entity).setHealth(11.0F);
-            }
+            });
         }
 
         if (this.attacks >= 60 && !this.a60) { /**after 60 attacks, vexes teleport ASAP to their goal target, explode and die*/
@@ -89,13 +89,6 @@ public class CustomEntityVex extends EntityVex implements ICommonCustomMethods {
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.5F, false, Explosion.Effect.NONE);
                 this.die();
             }
-        }
-
-        if (this.ticksLived == 10) { /**vexes only have 11 health and do 1 damage*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.setHealth(11.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(11.0);
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

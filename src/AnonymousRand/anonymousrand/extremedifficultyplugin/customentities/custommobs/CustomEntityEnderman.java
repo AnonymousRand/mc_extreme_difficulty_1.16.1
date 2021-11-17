@@ -21,6 +21,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         this.a12 = false;
         this.a25 = false;
         this.a40 = false;
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0); /**endermen only have 25 health and 3 damage*/
+        this.setHealth(25.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
     }
 
     @Override
@@ -190,12 +193,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                     }
                 }
             }
-        }
-
-        if (this.ticksLived == 10) { /**endermen only have 25 health and 3 damage*/
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
-            this.setHealth(25.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
         }
     }
 

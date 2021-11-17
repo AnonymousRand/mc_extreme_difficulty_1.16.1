@@ -23,6 +23,7 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
         this.a12 = false;
         this.a35 = false;
         this.deathExplosion = false;
+        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -129,8 +130,6 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
             if (this.getSize() > 3) {
                 this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /**custom goal that breaks blocks around the mob periodically*/
             }
-
-            RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         }
     }
 

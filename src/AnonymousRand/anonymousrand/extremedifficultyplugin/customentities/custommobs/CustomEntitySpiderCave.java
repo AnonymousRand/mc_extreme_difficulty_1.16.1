@@ -21,6 +21,10 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
         this.a45 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 0.0F,40, 39);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /**cave spiders move 70% faster but only do 2 damage and have 8 health*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
+        this.setHealth(8.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
     }
 
     @Override
@@ -63,13 +67,6 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICommonC
         if (this.attacks == 45 && !this.a45) { /**after 45 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs*/
             this.a45 = true;
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1));
-        }
-
-        if (this.ticksLived == 10) { /**cave spiders move 70% faster but only do 2 damage and have 8 health*/
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51);
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
-            this.setHealth(8.0F);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
         }
     }
 
