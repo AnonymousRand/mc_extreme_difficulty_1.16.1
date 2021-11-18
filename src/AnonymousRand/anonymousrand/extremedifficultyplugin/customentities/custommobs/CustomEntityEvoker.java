@@ -5,10 +5,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -46,11 +44,11 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomPathfinderGoalEvokerCastSpell());
+        this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
-        this.goalSelector.a(4, new CustomPathfinderGoalEvokerSummonVexSpell());
-        this.goalSelector.a(5, new CustomPathfinderGoalEvokerFangSpell());
-        this.goalSelector.a(6, new CustomPathfinderGoalEvokerWololoSpell());
+        this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
+        this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
+        this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -160,11 +158,11 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         return this.wololoTarget;
     }
 
-    class CustomPathfinderGoalEvokerSummonVexSpell extends EntityIllagerWizard.c {
+    class PathfinderGoalEvokerSummonVexSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e;
 
-        private CustomPathfinderGoalEvokerSummonVexSpell() {
+        private PathfinderGoalEvokerSummonVexSpell() {
             super();
             this.e = (new CustomPathfinderTargetCondition()).a(28.0D).c().e().a().b();
         }
@@ -218,9 +216,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    class CustomPathfinderGoalEvokerFangSpell extends EntityIllagerWizard.c {
+    class PathfinderGoalEvokerFangSpell extends EntityIllagerWizard.c {
 
-        private CustomPathfinderGoalEvokerFangSpell() {
+        private PathfinderGoalEvokerFangSpell() {
             super();
         }
 
@@ -263,7 +261,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
                 }
             }
 
-            new EvokerStopPlayer(entityliving, 7).runTaskTimer(CustomEntityEvoker.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
+            new RunnableEvokerStopPlayer(entityliving, 7).runTaskTimer(CustomEntityEvoker.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
@@ -334,13 +332,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    class CustomPathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
+    class PathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityliving) -> {
             return !((EntitySheep)entityliving).getColor().equals(EnumColor.PINK); /**can target all non-pink sheep now within 32 blocks and with line of sight*/
         });
 
-        public CustomPathfinderGoalEvokerWololoSpell() {
+        public PathfinderGoalEvokerWololoSpell() {
             super();
         }
 
@@ -413,9 +411,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    class CustomPathfinderGoalEvokerCastSpell extends EntityIllagerWizard.b {
+    class PathfinderGoalEvokerCastSpell extends EntityIllagerWizard.b {
 
-        private CustomPathfinderGoalEvokerCastSpell() {
+        private PathfinderGoalEvokerCastSpell() {
             super();
         }
 
@@ -577,12 +575,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         }
     }
 
-    static class EvokerStopPlayer extends BukkitRunnable {
+    static class RunnableEvokerStopPlayer extends BukkitRunnable {
 
         private EntityLiving target;
         private int cycles, maxCycles;
 
-        public EvokerStopPlayer(EntityLiving target, int maxCycles) {
+        public RunnableEvokerStopPlayer(EntityLiving target, int maxCycles) {
             this.target = target;
             this.cycles = 0;
             this.maxCycles = maxCycles;

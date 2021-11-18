@@ -2,8 +2,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
-import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.Explosion;
 import net.minecraft.server.v1_16_R1.World;
@@ -12,9 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -25,7 +21,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
 import java.util.Random;
 
 public class BlockPlaceAndBreakListeners implements Listener {
@@ -48,7 +43,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
 
             if (type == Material.CONDUIT) { /**conduits spawn guardians every 5 seconds for 50 seconds*/
-                new ConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(plugin, 0L, 100L);
+                new RunnableConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(plugin, 0L, 100L);
             }
         } else {
             if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
@@ -142,14 +137,14 @@ public class BlockPlaceAndBreakListeners implements Listener {
         }
     }
 
-    static class ConduitSummonGuardian extends BukkitRunnable {
+    static class RunnableConduitSummonGuardian extends BukkitRunnable {
 
         private final World nmsWorld;
         private final Location loc;
         private int cycles;
         private final int maxCycles;
 
-        public ConduitSummonGuardian(World nmsWorld, Location loc, int maxCycles) {
+        public RunnableConduitSummonGuardian(World nmsWorld, Location loc, int maxCycles) {
             this.nmsWorld = nmsWorld;
             this.loc = loc;
             this.cycles = 0;

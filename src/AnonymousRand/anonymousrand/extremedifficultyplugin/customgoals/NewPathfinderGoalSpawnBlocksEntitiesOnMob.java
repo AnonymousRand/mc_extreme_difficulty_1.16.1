@@ -1,6 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityStrider;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -93,11 +92,11 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
     @Override
     public void e() {
         if ((this.entity.ticksLived - 10) % this.delayTimer == 0) {
-            new SpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.yOffset, this.terraform).run();
+            new RunnableSpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.yOffset, this.terraform).run();
         }
     }
 
-    static class SpawnBlocksEntities extends BukkitRunnable{
+    static class RunnableSpawnBlocksEntities extends BukkitRunnable{
 
         private final EntityInsentient entity;
         private final Material material;
@@ -110,7 +109,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         private CustomEntityAreaEffectCloud AEC;
         private Location loc;
 
-        public SpawnBlocksEntities(EntityInsentient entity, Material material, Entity entityToBeSpawned, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform) {
+        public RunnableSpawnBlocksEntities(EntityInsentient entity, Material material, Entity entityToBeSpawned, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform) {
             this.entity = entity;
             this.material = material;
             this.firstEntityToSpawn = entityToBeSpawned;

@@ -37,7 +37,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICommonCustomMetho
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(3, new CustomEntityBlaze.CustomPathfinderGoalBlazeFireball(this));
+        this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
@@ -97,14 +97,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICommonCustomMetho
         return d0 * d0 + d2 * d2;
     }
 
-    static class CustomPathfinderGoalBlazeFireball extends PathfinderGoal { //new attack goal
+    static class PathfinderGoalBlazeFireballAttack extends PathfinderGoal { //new attack goal
 
         private final CustomEntityBlaze blaze;
         private int b;
         private int c;
         private int d;
 
-        public CustomPathfinderGoalBlazeFireball(CustomEntityBlaze entityblaze) {
+        public PathfinderGoalBlazeFireballAttack(CustomEntityBlaze entityblaze) {
             this.blaze = entityblaze;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         }

@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWither;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
@@ -54,7 +55,7 @@ public class RunnableTornado extends BukkitRunnable {
             }
 
             if (this.cycles % 5 == 0) { //pull in entities every 5 ticks
-                this.nmsEntitiesTemp = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> ((entity instanceof EntityLiving || entity instanceof EntityEnderPearl) && !(entity instanceof CustomEntityEnderDragon || entity instanceof EntityWither))); //todo: change to custom mobs
+                this.nmsEntitiesTemp = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> ((entity instanceof EntityLiving || entity instanceof EntityEnderPearl) && !(entity instanceof CustomEntityEnderDragon || entity instanceof CustomEntityWither)));
                 this.nmsEntitiesAll.addAll(this.nmsEntitiesTemp);
                 for (Entity nmsEntity : this.nmsEntitiesTemp) {
                     nmsEntity.noclip = true;

@@ -33,7 +33,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(4, new CustomEntityGuardian.CustomPathfinderGoalGuardianAttack(this));
+        this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
@@ -134,13 +134,13 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
         return d0 * d0 + d2 * d2;
     }
 
-    static class CustomPathfinderGoalGuardianAttack extends PathfinderGoal { /**guardian no longer stops attacking if player is too close*/
+    static class PathfinderGoalGuardianAttack extends PathfinderGoal { /**guardian no longer stops attacking if player is too close*/
 
         private final CustomEntityGuardian guardian;
         private int b;
         private final boolean isElder;
 
-        public CustomPathfinderGoalGuardianAttack(CustomEntityGuardian entityguardian) {
+        public PathfinderGoalGuardianAttack(CustomEntityGuardian entityguardian) {
             this.guardian = entityguardian;
             this.isElder = false;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));

@@ -19,7 +19,7 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         Entity entity = movingobjectpositionentity.getEntity();
-        if (!(entity instanceof EntityHuman)) { /**shulker bullets can only hit players*/
+        if (!(entity instanceof EntityPlayer)) { /**shulker bullets can only hit players*/
             return;
         }
 

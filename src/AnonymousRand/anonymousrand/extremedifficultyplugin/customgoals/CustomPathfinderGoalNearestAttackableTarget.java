@@ -17,7 +17,6 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     protected final int targetChance;
     public EntityLiving nearestTarget;
     protected CustomPathfinderTargetCondition targetCondition;
-    private boolean firstTarget;
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean checkSight) {
         this(entityinsentient, oclass, checkSight, false);
@@ -33,7 +32,6 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         this.targetChance = i;
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
         this.targetCondition = (new CustomPathfinderTargetCondition()).a(this.k()).a(predicate);
-        this.firstTarget = true;
     }
 
     @Override

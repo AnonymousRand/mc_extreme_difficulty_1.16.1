@@ -37,7 +37,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
         this.goalSelector.a(11, new CustomEntityEnderman.PathfinderGoalEndermanPickupBlock(this));
-        this.targetSelector.a(2, new CustomPathfinderGoalPlayerWhoLookedAtTarget(this));
+        this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not*/
@@ -303,7 +303,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         }
     }
 
-    static class CustomPathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityHuman> {
+    static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityHuman> {
 
         private final CustomEntityEnderman entity;
         private EntityHuman target;
@@ -312,7 +312,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         private final CustomPathfinderTargetCondition m;
         private final CustomPathfinderTargetCondition n = (CustomPathfinderTargetCondition)(new CustomPathfinderTargetCondition()).c();
 
-        public CustomPathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityenderman) {
+        public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityenderman) {
             super(entityenderman, EntityHuman.class, false);
             this.entity = entityenderman;
             this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityliving) -> { /**players can anger endermen from up to 128 blocks away*/

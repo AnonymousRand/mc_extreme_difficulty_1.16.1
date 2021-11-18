@@ -4,7 +4,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
@@ -57,7 +56,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(1, new CustomEntityPhantom.PathfinderGoalPhantomPickAttack());
-        this.goalSelector.a(2, new CustomEntityPhantom.CustomPathfinderGoalPhantomSweepAttack());
+        this.goalSelector.a(2, new PathfinderGoalPhantomSweepAttack());
         this.goalSelector.a(3, new CustomEntityPhantom.PathfinderGoalPhantomOrbitPoint());
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false));
     }
@@ -240,9 +239,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         }
     }
 
-    class CustomPathfinderGoalPhantomSweepAttack extends PathfinderGoalMove {
+    class PathfinderGoalPhantomSweepAttack extends PathfinderGoalMove {
 
-        private CustomPathfinderGoalPhantomSweepAttack() {
+        private PathfinderGoalPhantomSweepAttack() {
             super();
         }
 

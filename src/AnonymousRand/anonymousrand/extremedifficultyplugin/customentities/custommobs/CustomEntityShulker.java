@@ -4,12 +4,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Field;
 import java.util.EnumSet;
-import java.util.UUID;
 
 public class CustomEntityShulker extends EntityShulker implements ICommonCustomMethods {
 
@@ -60,7 +57,7 @@ public class CustomEntityShulker extends EntityShulker implements ICommonCustomM
     @Override
     public void die() {
         super.die();
-        new ShulkerDeathBullets(this); /**shulkers explode into 9 shulker bullets that seek out the player when killed*/
+        new RunnableShulkerDeathBullets(this); /**shulkers explode into 9 shulker bullets that seek out the player when killed*/
     }
 
     public double getFollowRange() { /**shulkers have 40 block detection range (setting attribute doesn't work)*/
@@ -229,13 +226,13 @@ public class CustomEntityShulker extends EntityShulker implements ICommonCustomM
         }
     }
 
-    static class ShulkerDeathBullets extends BukkitRunnable {
+    static class RunnableShulkerDeathBullets extends BukkitRunnable {
 
         private final CustomEntityShulker shulker;
         private final World nmsWorld;
         private final Vec3D pos;
 
-        public ShulkerDeathBullets(CustomEntityShulker shulker) {
+        public RunnableShulkerDeathBullets(CustomEntityShulker shulker) {
             this.shulker = shulker;
             this.nmsWorld = shulker.getWorld();
             this.pos = shulker.getPositionVector();

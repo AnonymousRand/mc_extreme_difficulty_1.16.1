@@ -91,6 +91,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         CustomEntityGhast.plugin = this;
         CustomEntitySkeleton.plugin = this;
         CustomEntitySkeletonWither.plugin = this;
+        CustomEntityWither.plugin = this;
         CustomEntityZoglin.plugin = this;
         CustomEntityZombie.plugin = this;
         CustomEntityZombieThor.plugin = this;

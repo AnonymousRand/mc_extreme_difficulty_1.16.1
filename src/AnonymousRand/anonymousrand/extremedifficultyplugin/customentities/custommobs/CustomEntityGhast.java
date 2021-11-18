@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableFireballsInAllDirections;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +35,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new CustomEntityGhast.CustomPathfinderGoalGhastAttackTarget(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+        this.goalSelector.a(7, new PathfinderGoalGhastAttackTarget(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
@@ -66,7 +66,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableFireballsInAllDirections(this, 0.5, 2).runTaskTimer(plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new RunnableRingOfFireballs(this, 0.5, 2).runTaskTimer(plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 
@@ -117,12 +117,12 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
         return d0 * d0 + d2 * d2;
     }
 
-    static class CustomPathfinderGoalGhastAttackTarget extends PathfinderGoal {
+    static class PathfinderGoalGhastAttackTarget extends PathfinderGoal {
 
         private final CustomEntityGhast ghast;
         public int a, attackNum;
 
-        public CustomPathfinderGoalGhastAttackTarget(CustomEntityGhast entityghast) {
+        public PathfinderGoalGhastAttackTarget(CustomEntityGhast entityghast) {
             this.ghast = entityghast;
             this.attackNum = 0;
         }
@@ -176,7 +176,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
                     world.addEntity(entitylargefireball);
 
                     if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
-                        new RunnableFireballsInAllDirections(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
+                        new RunnableRingOfFireballs(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
                     }
 
                     this.a = 0;

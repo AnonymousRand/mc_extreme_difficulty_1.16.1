@@ -38,7 +38,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomEntityZoglin.CustomPathfinderGoalZoglinAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
+        this.goalSelector.a(1, new CustomEntityZoglin.PathfinderGoalZoglinAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); //instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -157,12 +157,12 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         }
     }
 
-    public class CustomPathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
+    public class PathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
 
         protected final CustomEntityZoglin zoglin;
         private boolean moveEverywhere;
 
-        public CustomPathfinderGoalZoglinAttack(CustomEntityZoglin zoglin, double speedTowardsTarget, boolean useLongMemory) {
+        public PathfinderGoalZoglinAttack(CustomEntityZoglin zoglin, double speedTowardsTarget, boolean useLongMemory) {
             super(zoglin, speedTowardsTarget, useLongMemory);
             this.zoglin = zoglin;
             this.moveEverywhere = false;
@@ -181,13 +181,13 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
             if (this.zoglin.attacks >= 8) {
                 if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /**after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking*/
                     this.moveEverywhere = true;
-                    new ZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(this.zoglin.plugin, 0L, 5L);
+                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(this.zoglin.plugin, 0L, 5L);
                 }
             }
         }
     }
 
-    static class ZoglinThrowPlayerAround extends BukkitRunnable {
+    static class RunnableZoglinThrowPlayerAround extends BukkitRunnable {
 
         private final CustomEntityZoglin zoglin;
         private final EntityLiving target;
@@ -195,7 +195,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         private final int maxCycles;
         private static final Random random = new Random();
 
-        public ZoglinThrowPlayerAround(CustomEntityZoglin zoglin, EntityLiving target, int maxCycles) {
+        public RunnableZoglinThrowPlayerAround(CustomEntityZoglin zoglin, EntityLiving target, int maxCycles) {
             this.zoglin = zoglin;
             this.target = target;
             this.cycles = 0;

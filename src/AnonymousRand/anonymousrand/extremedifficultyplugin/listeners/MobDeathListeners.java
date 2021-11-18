@@ -1,14 +1,15 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import net.minecraft.server.v1_16_R1.*;
-import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
@@ -19,8 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
 import java.util.Random;
 
 public class MobDeathListeners implements Listener {
@@ -85,7 +86,10 @@ public class MobDeathListeners implements Listener {
                 new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
                 new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
-            case WITHER -> bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3)); /**withers also drop 3 eyes of ender when killed*/
+            case WITHER -> { /**withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain*/
+                bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3));
+                new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(plugin, 0L, 1L);
+            }
             case WITHER_SKELETON -> { /**wither skeletons now have a +8% chance to drop a skull when killed*/
                 if (random.nextDouble() < 0.08) {
                     bukkitWorld.dropItem(loc, new ItemStack(Material.WITHER_SKELETON_SKULL));
@@ -125,6 +129,35 @@ public class MobDeathListeners implements Listener {
                     nmsWorld.addEntity(newAEC);
                 }
             }
+        }
+    }
+
+    static class RunnableWitherDeathSkulls extends BukkitRunnable {
+
+        private final CustomEntityWither wither;
+        private final World nmsWorld;
+        private int cycles;
+        private final int maxCycles;
+        private CustomEntityWitherSkull entityWitherSkull;
+
+        public RunnableWitherDeathSkulls(CustomEntityWither wither, int maxCycles) {
+            this.wither = wither;
+            this.nmsWorld = wither.getWorld();
+            this.cycles = 0;
+            this.maxCycles = maxCycles;
+        }
+
+        @Override
+        public void run() {
+            if (++this.cycles > this.maxCycles) {
+                this.cancel();
+                return;
+            }
+
+            this.entityWitherSkull = new CustomEntityWitherSkull(this.nmsWorld, this.wither, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0);
+            this.entityWitherSkull.setCharged(true);
+            this.entityWitherSkull.setPosition(entityWitherSkull.locX(), this.wither.e(0.5D) + 0.5D, this.entityWitherSkull.locZ());
+            this.nmsWorld.addEntity(entityWitherSkull);
         }
     }
 }
