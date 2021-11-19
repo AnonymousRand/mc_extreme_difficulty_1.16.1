@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.entity.Entity;
@@ -14,8 +15,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class PotionEffectListeners implements Listener {
-
-    public static JavaPlugin plugin;
 
     @EventHandler
     public void potionEffect(EntityPotionEffectEvent event) {
@@ -35,13 +34,9 @@ public class PotionEffectListeners implements Listener {
                     if (bukkitEntity instanceof Player) {
                         event.setCancelled(true);
 
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                        {
-                            @Override
-                            public void run() {
-                                ((LivingEntity)bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int)(bukkitNewEffect.getDuration() * 0.05), bukkitNewEffect.getAmplifier()));
-                                Bukkit.broadcastMessage("Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.05 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " "));
-                            }
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                            ((LivingEntity) bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int) (bukkitNewEffect.getDuration() * 0.05), bukkitNewEffect.getAmplifier()));
+                            Bukkit.broadcastMessage("Enjoy your " + (int) (bukkitNewEffect.getDuration() * 0.05 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " "));
                         }, 1);
                     }
                 } else {

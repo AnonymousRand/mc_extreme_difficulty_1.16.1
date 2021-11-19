@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
@@ -8,24 +9,26 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 public class CustomEntityWither extends EntityWither implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
+    private boolean dash;
     private static Field bB, bC;
 
     public CustomEntityWither(World world) {
         super(EntityTypes.WITHER, world);
-        this.setInvul(50); /**withers only take 5 seconds to explode when spawned*/ //todo change to 100
-        double health = 200.0 + 75.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**withers have 75 more health per player online, and 200 starting health*/
+        this.setInvul(100); /**withers only take 5 seconds to explode when spawned*/
+        this.dash = false;
+        double health = 200.0 + 70.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**withers have 70 more health per player online, and 200 starting health*/
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float)health);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /**wither causes thunderstorm*/
     }
 
     static {
@@ -43,7 +46,8 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
     protected void initPathfinder() {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(0, new CustomEntityWither.PathfinderGoalWitherDoNothing());
+        this.goalSelector.a(0, new PathfinderGoalWitherDoNothingWhileInvulnerable());
+        this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /**custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 25 seconds) that breaks blocks around it and does 6 damage to all nearby players*/
         this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /**main head shoots a skull every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
@@ -58,10 +62,18 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
     }
 
     private void shootSkullToEntity(int i, EntityLiving entityliving) {
-        this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ());
+        this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), false);
     }
 
-    private void shootSkullToCoords(int i, double d0, double d1, double d2) {
+    private void shootSkullToEntity(int i, EntityLiving entityliving, boolean alwaysBlue) {
+        this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), alwaysBlue);
+    }
+
+    private void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
+        if (this.dash) {
+            return;
+        }
+
         if (!this.isSilent() && random.nextDouble() < 0.05) { /**wither only plays the skull shooting sound 5% of the time*/
             this.world.a((EntityHuman)null, 1024, this.getChunkCoordinates(), 0);
         }
@@ -77,7 +89,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         CustomEntityWitherSkull entitywitherskull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
         entitywitherskull.setShooter(this);
 
-        if (flag) {
+        if (flag || alwaysBlue) {
             entitywitherskull.setCharged(true);
         }
 
@@ -88,11 +100,21 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (super.damageEntity(damagesource, f)) { /**wither now breaks all usual blocks including bedrock when damaged*/
-            new RunnableBreakBlocksWither(this, 1, 2, 1, 2, true).run();
+            new RunnableWitherBreakBlocks(this, 1, 2, 1, 2, true).run();
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void setMot(double x, double y, double z) {
+        if (this.dash && this.getGoalTarget() != null) { /**when wither is dashing, always move towards player*/
+            EntityLiving target = this.getGoalTarget();
+            super.setMot((target.locX() - this.locX()) / 14.0, (target.locY() - this.locY()) / 14.0, (target.locZ() - this.locZ()) / 14.0);
+        } else {
+            super.setMot(x, y, z);
+        }
     }
 
     @Override
@@ -110,7 +132,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
 
             if (i <= 0) {
                 this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /**withers explode with power 12 instead of 7 when spawned and sets blocks on fire*/
-                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 120).runTaskTimer(plugin, 0L, 1L); /**withers summon a tornado after the spawn explosion*/
+                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /**withers summon a tornado after the spawn explosion*/
 
                 if (!this.isSilent()) {
                     this.world.b(1023, this.getChunkCoordinates(), 0);
@@ -140,7 +162,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         }
     }
 
-    public double getFollowRange() { /**withers' main head has 80 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /**withers have 80 block detection range (setting attribute doesn't work)*/
         return 80.0;
     }
 
@@ -148,8 +170,14 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (1200 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /**every 60 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton*/
+        if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /**every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton*/
             new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonWither(this.getWorld()), 1, null, null, this, false, true);
+        }
+
+        if (this.getGoalTarget() != null) {
+            if (!this.getEntitySenses().a(this.getGoalTarget()) && random.nextDouble() < 0.05) { /**if the wither can't see its target, it shoots a blue skull on average every second*/
+                this.shootSkullToEntity(0, this.getGoalTarget(), true);
+            }
         }
     }
 
@@ -195,9 +223,8 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         }
     }
 
-    class PathfinderGoalWitherDoNothing extends PathfinderGoal {
-
-        public PathfinderGoalWitherDoNothing() {
+    class PathfinderGoalWitherDoNothingWhileInvulnerable extends PathfinderGoal {
+        public PathfinderGoalWitherDoNothingWhileInvulnerable() {
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.JUMP, PathfinderGoal.Type.LOOK));
         }
 
@@ -207,12 +234,79 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         }
     }
 
-    static class RunnableBreakBlocksWither extends RunnableBreakBlocks {
-        public RunnableBreakBlocksWither(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
+    static class PathfinderGoalWitherDashAttack extends PathfinderGoal {
+
+        private final CustomEntityWither wither;
+        private static final Random random = new Random();
+
+        public PathfinderGoalWitherDashAttack(CustomEntityWither wither) {
+            this.wither = wither;
+        }
+
+        @Override
+        public boolean a() {
+            return this.wither.getGoalTarget() != null && this.wither.ticksLived % 500 == 0 && random.nextDouble() < 0.5;
+        }
+
+        @Override
+        public boolean b() {
+            return this.a();
+        }
+
+        @Override
+        public void e() {
+            if (this.wither.getGoalTarget() == null) {
+                return;
+            }
+
+            this.wither.dash = true;
+            new RunnableWitherDashAttack(this.wither).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+        }
+    }
+
+    static class RunnableWitherDashAttack extends BukkitRunnable {
+
+        private final CustomEntityWither wither;
+
+        public RunnableWitherDashAttack(CustomEntityWither wither) {
+            this.wither = wither;
+        }
+
+        @Override
+        public void run() {
+            RunnableWitherBreakBlocks newRunnableWitherBreakBlocks =  new RunnableWitherBreakBlocks(this.wither, 4, 4, 4, 4, true);
+
+            if (this.wither.getGoalTarget() == null) {
+                this.wither.dash = false;
+                this.cancel();
+            }
+
+            newRunnableWitherBreakBlocks.run();
+
+            if (this.wither.ticksLived % 2 == 0) {
+                this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(3.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 6.0F));
+            }
+
+            if (this.wither.getNormalDistanceSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
+                this.wither.dash = false;
+                this.cancel();
+            }
+        }
+    }
+
+    static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
+        public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
             blockBreakable = (type) -> { /**wither can now break bedrock*/
-                return type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.COMMAND_BLOCK  && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.FIRE && type != org.bukkit.Material.WITHER_ROSE;
+                return type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.COMMAND_BLOCK  && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.FIRE && type != org.bukkit.Material.WITHER_ROSE && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA;
             };
+        }
+
+        @Override
+        public void run() {
+            this.cycles = 0;
+            this.entity.getWorld().createExplosion(this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), 0.0F, false, Explosion.Effect.NONE); //constant explosion noises
+            super.run();
         }
     }
 }

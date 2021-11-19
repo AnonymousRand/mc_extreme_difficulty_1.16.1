@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -15,7 +16,6 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public int attacks;
     private boolean a15, deathFireballs;
 
@@ -66,7 +66,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, 2).runTaskTimer(plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
+            new RunnableRingOfFireballs(this, 0.5, 2).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 50 ? 20L : 40L); /**when killed, ghasts summon 100 power 1 fireballs in all directions, or wither skulls instead after 50 attacks*/
         }
     }
 
@@ -176,7 +176,7 @@ public class CustomEntityGhast extends EntityGhast implements ICommonCustomMetho
                     world.addEntity(entitylargefireball);
 
                     if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
-                        new RunnableRingOfFireballs(this.ghast, 0.4, 1).runTaskTimer(this.ghast.plugin, 0L, 20L);
+                        new RunnableRingOfFireballs(this.ghast, 0.4, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
                     this.a = 0;

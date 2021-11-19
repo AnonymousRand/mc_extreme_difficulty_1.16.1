@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
@@ -26,7 +27,6 @@ import java.util.Random;
 
 public class MobDeathListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static final Random random = new Random();
 
     @EventHandler
@@ -88,7 +88,7 @@ public class MobDeathListeners implements Listener {
             }
             case WITHER -> { /**withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain*/
                 bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3));
-                new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(plugin, 0L, 1L);
+                new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             }
             case WITHER_SKELETON -> { /**wither skeletons now have a +8% chance to drop a skull when killed*/
                 if (random.nextDouble() < 0.08) {
@@ -97,7 +97,7 @@ public class MobDeathListeners implements Listener {
             }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
-                    new RunnableLightningStorm(nmsWorld, loc, random.nextInt(21) + 50).runTaskTimer(plugin, 0L, random.nextInt(4) + 2);
+                    new RunnableLightningStorm(nmsWorld, loc, random.nextInt(21) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
                     Location loc2;
 
                     for (int i = 0; i < 8; i++) {

@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
@@ -16,7 +17,6 @@ import java.util.Random;
 
 public class CustomEntityZombieThor extends EntityZombie implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
 
     public CustomEntityZombieThor(World world) {
@@ -27,7 +27,6 @@ public class CustomEntityZombieThor extends EntityZombie implements ICommonCusto
         this.getBukkitEntity().setCustomName("Thor");
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE));
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather rain"); /**thor causes rain*/
         this.setBaby(false);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**thor zombies move 2.5x faster and have 55 health, but doesn't summon reinforcements*/
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.0);
@@ -35,7 +34,8 @@ public class CustomEntityZombieThor extends EntityZombie implements ICommonCusto
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(55.0);
         this.setHealth(55.0F);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        new RunnableThorLightningEffectStorm(this, 20, true).runTaskTimer(plugin, 0L, 2L); /**thor summons a vanilla lightning storm around it when first spawned for 2 seconds*/
+        new RunnableThorLightningEffectStorm(this, 20, true).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /**thor summons a vanilla lightning storm around it when first spawned for 2 seconds*/
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather rain"); /**thor causes rain*/
     }
 
     @Override
@@ -168,12 +168,12 @@ public class CustomEntityZombieThor extends EntityZombie implements ICommonCusto
             }
 
             if (random.nextDouble() < 0.00357142857 && !this.storm) {
-                new RunnableThorLightningEffectStorm(this, random.nextInt(9) + 25).runTaskTimer(CustomEntityZombieThor.plugin, 0L, 2L);
+                new RunnableThorLightningEffectStorm(this, random.nextInt(9) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
             }
 
             if (random.nextDouble() < 0.00333333333 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 35.0, 120).runTaskTimer(CustomEntityZombieThor.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 35.0, 120).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             }
         }
     }

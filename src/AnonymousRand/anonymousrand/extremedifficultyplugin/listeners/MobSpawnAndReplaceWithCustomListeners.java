@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -21,7 +22,6 @@ import java.util.Random;
 
 public class MobSpawnAndReplaceWithCustomListeners implements Listener {
 
-    public static JavaPlugin plugin;
     public static double phantomSize;
     private static final Random random = new Random();
 
@@ -219,15 +219,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 }
                 case VINDICATOR -> new SpawnLivingEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case WITCH -> new SpawnLivingEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case WITHER -> {
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //delay by 1 tick so that soul sand/soil and skulls are deleted
-                    {
-                        @Override
-                        public void run() {
-                            new SpawnLivingEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        }
-                    }, 1);
-                }
+                case WITHER -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> new SpawnLivingEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true), 1); //delay by 1 tick so that soul sand/soil and skulls are deleted
                 case WITHER_SKELETON -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**wither skeletons not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
                         CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);

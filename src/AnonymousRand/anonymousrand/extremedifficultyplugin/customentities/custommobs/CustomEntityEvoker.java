@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -17,7 +18,6 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     private EntitySheep wololoTarget;
     public int attacks;
     private boolean a25, a36, a60;
@@ -261,7 +261,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityliving, 7).runTaskTimer(CustomEntityEvoker.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
+            new RunnableEvokerStopPlayer(entityliving, 7).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {

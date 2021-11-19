@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -15,7 +16,6 @@ import java.util.Random;
 
 public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a8, a40;
@@ -157,7 +157,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
         }
     }
 
-    public class PathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
+    static class PathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
 
         protected final CustomEntityZoglin zoglin;
         private boolean moveEverywhere;
@@ -181,7 +181,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICommonCustomMet
             if (this.zoglin.attacks >= 8) {
                 if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /**after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking*/
                     this.moveEverywhere = true;
-                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(this.zoglin.plugin, 0L, 5L);
+                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(StaticPlugin.plugin, 0L, 5L);
                 }
             }
         }

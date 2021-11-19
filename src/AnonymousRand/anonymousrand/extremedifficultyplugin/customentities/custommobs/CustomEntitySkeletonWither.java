@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntitySkeletonWither extends EntitySkeletonWither implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a25, a55;

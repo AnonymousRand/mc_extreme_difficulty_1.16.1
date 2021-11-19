@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +20,6 @@ import java.util.function.BiFunction;
 
 public class RunnableTornado extends BukkitRunnable {
 
-    public static JavaPlugin plugin;
     private final World nmsWorld;
     private final org.bukkit.World bukkitWorld;
     private final BlockPosition pos;
@@ -62,7 +62,7 @@ public class RunnableTornado extends BukkitRunnable {
 
                     if (nmsEntity instanceof EntityPlayer && (!this.playerBreakBlocks.containsKey(nmsEntity) || !this.playerBreakBlocks.get(nmsEntity))) {
                         this.playerBreakBlocks.put(nmsEntity, true);
-                        new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, this.maxCycles - this.cycles).runTaskTimer(plugin, 0L, 1L); //because a player's noclip is instantly turned off if not in spectator
+                        new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, this.maxCycles - this.cycles).runTaskTimer(StaticPlugin.plugin, 0L, 1L); //because a player's noclip is instantly turned off if not in spectator
                     }
 
                     nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 8.0, (this.pos.getY() - nmsEntity.locY()) / 8.0, (this.pos.getZ() - nmsEntity.locZ()) / 8.0));

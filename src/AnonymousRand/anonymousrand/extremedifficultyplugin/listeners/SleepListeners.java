@@ -113,7 +113,7 @@ public class SleepListeners implements Listener {
             } else { //only executes if player has been in a bed continuously for 5 seconds and just woke up from that
                 switch (cycles) {
                     case 0 -> {
-                        Bukkit.broadcastMessage("Congrats, you made it through the night......sike");
+                        Bukkit.broadcastMessage("Congrats, you made it through the night....sike");
                         Bukkit.broadcastMessage("You got woken up by a nightmare");
                         leaveBedTime.put(player, world.getFullTime() - 7000);
                         world.setFullTime(world.getFullTime() - 7000); //approx 2/3 of the night

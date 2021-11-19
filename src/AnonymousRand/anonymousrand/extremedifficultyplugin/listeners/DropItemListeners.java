@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,7 +15,6 @@ import java.util.Random;
 
 public class DropItemListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static final Random random = new Random();
 
     @EventHandler
@@ -40,15 +40,8 @@ public class DropItemListeners implements Listener {
             }
             case POTATO -> /**every potato item dropped is replaced with 16 poisonous potatoes*/
                 item.setItemStack(new ItemStack(Material.POISONOUS_POTATO, 16));
-            case SAND -> { /**dropped sand despawns after 5 sec to reduce lag*/
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                {
-                    @Override
-                    public void run() {
-                        item.remove();
-                    }
-                }, 100);
-            }
+            case SAND -> /**dropped sand despawns after 5 sec to reduce lag*/
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, item::remove, 100);
         }
 
         if (type.toString().contains("_BED") || type.toString().contains("VINE")) {  /**delete bed and vine items immediately when they are spawned (eg. broken or thrown out)*/

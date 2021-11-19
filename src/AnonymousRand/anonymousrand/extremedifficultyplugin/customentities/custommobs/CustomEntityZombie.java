@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
@@ -15,7 +16,6 @@ import java.lang.reflect.Field;
 
 public class CustomEntityZombie extends EntityZombie implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a7, a15, a25, a40, a50;
@@ -170,9 +170,9 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/
             this.a40 = true; //do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
-            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
         }
     }
 

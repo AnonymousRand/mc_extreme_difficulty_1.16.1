@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.EntityPhantom;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.EntityZombie;
@@ -28,7 +29,6 @@ import java.util.HashMap;
 
 public class PlayerDeathAndRespawnListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
     private static HashMap<Player, Integer> respawnCount = new HashMap<>();
     public static ArrayList<EntityZombie> superZombies = new ArrayList<>();
@@ -52,32 +52,28 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
-        {
-            @Override
-            public void run() {
-                for (PotionEffect e : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { //only re-applies negative status effects
-                    if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
-                        bukkitPlayer.addPotionEffect(e);
-                    }
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
+            for (PotionEffect e : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { //only re-applies negative status effects
+                if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
+                    bukkitPlayer.addPotionEffect(e);
                 }
+            }
 
-                respawnCount.put(bukkitPlayer, respawnCount.getOrDefault(bukkitPlayer, 0) + 1);
+            respawnCount.put(bukkitPlayer, respawnCount.getOrDefault(bukkitPlayer, 0) + 1);
 
-                if (respawnCount.get(bukkitPlayer) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
-                    bukkitPlayer.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
-                }
+            if (respawnCount.get(bukkitPlayer) % 2 == 0) { /**create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors*/
+                bukkitPlayer.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
+            }
 
-                if (respawnCount.get(bukkitPlayer) % 5 == 0) { /**summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5*/
-                    World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
-                    MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Bukkit.getServer().getOnlinePlayers().size() * respawnCount.get(bukkitPlayer) / 5;
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int)MobSpawnAndReplaceWithCustomListeners.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
-                }
+            if (respawnCount.get(bukkitPlayer) % 5 == 0) { /**summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5*/
+                World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
+                MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Bukkit.getServer().getOnlinePlayers().size() * respawnCount.get(bukkitPlayer) / 5;
+                new SpawnLivingEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int)MobSpawnAndReplaceWithCustomListeners.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
+            }
 
-                if (superZombies.size() >= (3 * Bukkit.getServer().getOnlinePlayers().size())) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/
-                    superZombies.get(0).die();
-                    superZombies.remove(0);
-                }
+            if (superZombies.size() >= (3 * Bukkit.getServer().getOnlinePlayers().size())) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/
+                superZombies.get(0).die();
+                superZombies.remove(0);
             }
         }, 1L);
     }
@@ -85,13 +81,9 @@ public class PlayerDeathAndRespawnListeners implements Listener {
     @EventHandler
     public void totemUse(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player) {
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-            {
-                @Override
-                public void run() {
-                    for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /**totems leave the player at 1 heart without any status effects*/
-                        event.getEntity().removePotionEffect(effect.getType());
-                    }
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /**totems leave the player at 1 heart without any status effects*/
+                    event.getEntity().removePotionEffect(effect.getType());
                 }
             }, 4L);
         }

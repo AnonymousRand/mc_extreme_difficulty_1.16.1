@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,7 +24,6 @@ import java.util.Random;
 
 public class PlayerInteractListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static final Random random = new Random();
 
     @EventHandler
@@ -56,16 +56,9 @@ public class PlayerInteractListeners implements Listener {
                     }
 
                     if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**right-clicking an anvil or smithing table causes it to explode 10 seconds later*/
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                        {
-                            @Override
-                            public void run() {
-                                nmsWorld.createExplosion(null, bukkitBlock.getLocation().getX(), bukkitBlock.getLocation().getY(), bukkitBlock.getLocation().getZ(), 4.0F, true, Explosion.Effect.NONE);
-
-                                try {
-                                    bukkitBlock.setType(Material.AIR);
-                                } catch (Exception e) {}
-                            }
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                            nmsWorld.createExplosion(null, bukkitBlock.getLocation().getX(), bukkitBlock.getLocation().getY(), bukkitBlock.getLocation().getZ(), 4.0F, true, Explosion.Effect.NONE);
+                            bukkitBlock.setType(Material.AIR);
                         }, 200L);
                     }
                 }

@@ -51,7 +51,7 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
         }
 
         switch (type) {
-            case 0 -> { //small fireballs
+            case 0 -> { //small fireballs, default
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {

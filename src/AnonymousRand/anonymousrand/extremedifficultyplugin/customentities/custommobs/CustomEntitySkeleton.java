@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -13,7 +14,6 @@ import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public boolean spawnExplodingArrow;
     public int attacks;
     private boolean a25, a90;
@@ -61,7 +61,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICommonCusto
         } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
             new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
-            new RunnableSkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
+            new RunnableSkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
         }
     }
 

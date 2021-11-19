@@ -26,7 +26,6 @@ import java.util.Random;
 
 public class ProjectileListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static final Random random = new Random();
 
     @EventHandler

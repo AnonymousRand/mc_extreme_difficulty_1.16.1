@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -14,7 +15,6 @@ import java.util.UUID;
 
 public class CustomEntityZombieVillager extends EntityZombieVillager implements ICommonCustomMethods {
 
-    public static JavaPlugin plugin;
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a25, deathLightningStorm;
@@ -67,7 +67,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { //do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
             this.deathLightningStorm = true;
             LightningStrikeListeners.storm = true;
-            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(plugin, 0L, random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
+            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /**after 40 attacks, zombie villagers summon a lightning storm when killed*/
         }
     }
 

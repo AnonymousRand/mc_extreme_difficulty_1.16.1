@@ -16,7 +16,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
     }
 
     @Override
-    public float i() { /**blue skulls move 120% faster if fired as part of the wither's dying phase)*/
+    public float i() { /**blue skulls move 120% faster if fired as part of the wither's dying phase*/
         return this.isCharged() ? this.deathFireballs ? 1.606F : 0.73F : super.i();
     }
 
@@ -30,12 +30,12 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (entity1 instanceof EntityLiving) {
                 EntityLiving entityliving = (EntityLiving) entity1;
 
-                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 0.8F); /**wither skulls only do 0.8 direct damage*/
+                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 0.5F); /**wither skulls only do 0.5 direct damage*/
                 if (flag) {
                     if (entity.isAlive()) {
                         this.a(entityliving, entity);
                     } else {
-                        entityliving.heal(25.0F); /**withers heal 25 health per entity killed instead of 5 since they only attack players*/
+                        entityliving.heal(20.0F); /**withers heal 20 health per entity killed instead of 5 since they only attack players*/
                     }
                 }
             } else {

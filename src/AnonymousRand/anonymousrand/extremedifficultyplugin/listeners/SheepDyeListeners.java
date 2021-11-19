@@ -13,8 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SheepDyeListeners implements Listener {
 
-    public static JavaPlugin plugin;
-
     @EventHandler
     public void sheepDyeWool(SheepDyeWoolEvent event) { /**sheep turn aggressive and pink when dyed*/
         EntitySheep nmsSheep = ((CraftSheep)event.getEntity()).getHandle();

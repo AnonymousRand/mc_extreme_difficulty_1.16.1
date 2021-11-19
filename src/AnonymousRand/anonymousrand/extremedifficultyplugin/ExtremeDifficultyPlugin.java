@@ -1,11 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.BlockOverride;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -87,34 +85,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     }
 
     private void initializePluginFields() { //initializes static plugin fields
-        CustomEntityEvoker.plugin = this;
-        CustomEntityGhast.plugin = this;
-        CustomEntitySkeleton.plugin = this;
-        CustomEntitySkeletonWither.plugin = this;
-        CustomEntityWither.plugin = this;
-        CustomEntityZoglin.plugin = this;
-        CustomEntityZombie.plugin = this;
-        CustomEntityZombieThor.plugin = this;
-        CustomEntityZombieVillager.plugin = this;
-        CustomEntityLargeFireball.plugin = this;
-
-        BlockPlaceAndBreakListeners.plugin = this;
-        DropItemListeners.plugin = this;
-        MobDeathListeners.plugin = this;
-        MobSpawnAndReplaceWithCustomListeners.plugin = this;
-        LightningStrikeListeners.plugin = this;
-        LightningStrikeListeners.storm = false;
-        LightningStrikeListeners.numberOfThors = 0;
-        PlayerDamageListeners.plugin = this;
-        PlayerDeathAndRespawnListeners.plugin = this;
-        PlayerEatListeners.plugin = this;
-        PlayerInteractListeners.plugin = this;
-        PotionEffectListeners.plugin = this;
-        ProjectileListeners.plugin = this;
-        RaidAndVillagerListeners.plugin = this;
-        SheepDyeListeners.plugin = this;
-
-        RunnableTornado.plugin = this;
+        StaticPlugin.plugin = this;
     }
 
     private void addEyeOfEnderRecipe() { /**changes eye of ender recipe*/

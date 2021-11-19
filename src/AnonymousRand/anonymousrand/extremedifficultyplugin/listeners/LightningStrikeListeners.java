@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.BlockPosition;
@@ -20,7 +21,6 @@ import java.util.Random;
 
 public class LightningStrikeListeners implements Listener {
     
-    public static JavaPlugin plugin;
     public static boolean storm;
     public static int numberOfThors;
     private static final Random random = new Random();
@@ -49,10 +49,10 @@ public class LightningStrikeListeners implements Listener {
             }
 
             if (!storm && random.nextDouble() < 0.025) { /**non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-                new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 40).runTaskTimer(plugin, 0L, random.nextInt(4) + 2);
+                new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 40).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
 
                 if (random.nextDouble() < 0.4) { /**the lightning strike that started a storm has a 40% chance of causing a tornado*/
-                    new RunnableTornado(nmsWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 40.0, 150).runTaskTimer(plugin, 0L, 1L);
+                    new RunnableTornado(nmsWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 40.0, 150).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
                 }
             }
 

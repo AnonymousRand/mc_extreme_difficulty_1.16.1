@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.Explosion;
 import net.minecraft.server.v1_16_R1.World;
@@ -25,7 +26,6 @@ import java.util.Random;
 
 public class BlockPlaceAndBreakListeners implements Listener {
 
-    public static JavaPlugin plugin;
     private static final Random random = new Random();
 
     @EventHandler
@@ -43,17 +43,11 @@ public class BlockPlaceAndBreakListeners implements Listener {
             }
 
             if (type == Material.CONDUIT) { /**conduits spawn guardians every 5 seconds for 50 seconds*/
-                new RunnableConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(plugin, 0L, 100L);
+                new RunnableConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(StaticPlugin.plugin, 0L, 100L);
             }
         } else {
             if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() //async thread is used so that the game doesn't pause completely for 2.5 seconds
-                {
-                    @Override
-                    public void run() {
-                        bukkitBlock.setType(Material.AIR);
-                    }
-                }, 50);
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitBlock.setType(Material.AIR), 50); //async thread is used so that the game doesn't pause completely for 2.5 seconds
             }
         }
     }

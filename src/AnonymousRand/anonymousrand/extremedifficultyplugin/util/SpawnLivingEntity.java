@@ -118,7 +118,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
                 this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
 
                 if (this.equipBoots) {
-                    ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
+                    ((LivingEntity) this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
                 }
             }
         }
