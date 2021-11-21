@@ -2,9 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
@@ -64,7 +63,7 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
             }
 
             if (amplifier > 252 && this.entity.ticksLived % 240 == 0) {
-                new SpawnLivingEntity(this.entity.getWorld(), new CustomEntitySilverfish(this.entity.getWorld()), 1, null, null, this.entity, false, true);
+                new SpawnEntity(this.entity.getWorld(), new CustomEntitySilverfish(this.entity.getWorld()), 1, null, null, this.entity, false, true);
             }
         }
 

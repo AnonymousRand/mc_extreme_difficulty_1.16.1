@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMethods {
+public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
 
     public int attacks, veryAngryTicks;
     private boolean a10, a20, a35, a50, a75;
@@ -63,7 +63,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /**custom goal that removes fear of zombie piglins etc.*/
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /**buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 35 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks.*/
@@ -116,7 +116,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
             if (random.nextDouble() < 0.1) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
                 newPiglin.a(true);
-                new SpawnLivingEntity(this.getWorld(), newPiglin, 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), newPiglin, 1, null, null, this, false, true);
             }
         }
 
@@ -166,9 +166,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
 
         if (this.attacks >= 20) {
             if (this.attacks >= 35) { /**after 35 attacks, piglins spawn a zombie piglin when killed*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
             } else if (random.nextDouble() < 0.5) { /**after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed*/
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }
@@ -225,7 +225,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICommonCustomMet
         if (this.attacks == 75 && !this.a75) { /**after 75 attacks, piglins duplicate all piglins excluding itself within 30 blocks*/
             this.a75 = true;
             this.getWorld().getEntities(this, this.getBoundingBox().g(30.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld()), 1, null, null, entity, false, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld()), 1, null, null, entity, false, true);
             });
         }
     }

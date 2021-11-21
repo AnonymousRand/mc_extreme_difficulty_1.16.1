@@ -1,11 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSpawnBlocksEntitiesOnMob;
 import net.minecraft.server.v1_16_R1.EntityStrider;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.Explosion;
 import net.minecraft.server.v1_16_R1.World;
-import org.bukkit.Material;
 
 public class CustomEntityStrider extends EntityStrider {
 

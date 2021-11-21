@@ -4,17 +4,15 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinder
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityZombie extends EntityZombie implements ICommonCustomMethods {
+public class CustomEntityZombie extends EntityZombie implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
@@ -58,7 +56,7 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
     }
@@ -152,19 +150,19 @@ public class CustomEntityZombie extends EntityZombie implements ICommonCustomMet
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
             this.setHealth(16.0F);
-            new SpawnLivingEntity(this.getWorld(), new EntityZombie(EntityTypes.ZOMBIE, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new EntityZombie(EntityTypes.ZOMBIE, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, zombies get 25 max health and health and summon 2 zombies*/
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
             this.setHealth(25.0F);
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 2, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 2, null, null, this, false, true);
         }
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, zombies summon thor*/
             this.a50 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /**after 40 attacks, zombies summon a small meteor rain when it dies*/

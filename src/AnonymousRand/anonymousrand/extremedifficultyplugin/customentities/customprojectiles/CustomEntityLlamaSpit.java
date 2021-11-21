@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityLlama;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityLlamaTrader;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
 public class CustomEntityLlamaSpit extends EntityLlamaSpit {
@@ -28,7 +28,7 @@ public class CustomEntityLlamaSpit extends EntityLlamaSpit {
             }
         } else if (this.getShooter() instanceof CustomEntityLlamaTrader) {
             if (((CustomEntityLlamaTrader)this.getShooter()).attacks >= 25) { /**after 25 attacks, trader llama spit summons a wandering trader on hit*/
-                new SpawnLivingEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }

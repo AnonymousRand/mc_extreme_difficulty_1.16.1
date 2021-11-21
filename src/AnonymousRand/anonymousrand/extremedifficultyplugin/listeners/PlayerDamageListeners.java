@@ -1,7 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
@@ -11,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -119,7 +117,7 @@ public class PlayerDamageListeners implements Listener {
                     silverfish.attacks++;
 
                     if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true);
+                        new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true);
                     }
                 }
                 case SLIME -> ((CustomEntitySlime)nmsDamager).attacks++;
@@ -174,9 +172,9 @@ public class PlayerDamageListeners implements Listener {
                 World nmsWorld = nmsPlayer.getWorld();
 
                 if (random.nextDouble() < 0.5) {
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 1, null, null, nmsPlayer, false, true);
+                    new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 1, null, null, nmsPlayer, false, true);
                 } else if (random.nextDouble() < 0.15) {
-                    new SpawnLivingEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true);
+                    new SpawnEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, null, nmsPlayer, false, true);
                 }
             }
 

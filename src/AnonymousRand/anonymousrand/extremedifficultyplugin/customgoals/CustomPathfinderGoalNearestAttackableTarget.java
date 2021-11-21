@@ -1,15 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalTarget implements CustomIEntityAccess {
@@ -46,10 +40,8 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
 
     @Override
     public void c() {
-        super.c();
-
         if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
-            this.e.setGoalTarget(this.nearestTarget); //must have this to work
+            this.e.setGoalTarget(this.nearestTarget); //must have this to work; keeps giving null pointer warnings for some reason
         }
     }
 

@@ -1,6 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPufferfish;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;

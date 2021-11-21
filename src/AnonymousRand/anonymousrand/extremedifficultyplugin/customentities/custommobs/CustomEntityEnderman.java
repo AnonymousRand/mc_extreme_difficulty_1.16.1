@@ -1,13 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityEnderman extends EntityEnderman implements ICommonCustomMethods {
+public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     public int attacks;
     private boolean a12, a25, a40;
@@ -33,14 +33,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
-        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
         this.goalSelector.a(11, new CustomEntityEnderman.PathfinderGoalEndermanPickupBlock(this));
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not*/
     }
 
     @Override
@@ -122,7 +122,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
 
             if (flag && damagesource.getEntity() instanceof EntityPlayer) {
                 if (this.attacks >= 40) { /**after 40 attacks, endermen summon an endermite when hit and not killed*/
-                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                 }
             }
 
@@ -139,7 +139,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         super.die();
 
         if (this.attacks >= 40) { /**after 40 attacks, endermen summon 5 endermites when killed*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
     }
 
@@ -154,19 +154,19 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         if (this.attacks == 12 && !this.a12) { /**after 12 attacks, endermen gain speed 1*/
             this.a12 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, endermen get 40 max health and regen 3*/
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermen summon 5 endermites*/
             this.a40 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {
@@ -181,7 +181,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                     this.o(target.locX(), target.locY(), target.locZ());
 
                     if (random.nextDouble() < 0.3) { /**30% chance to summon an endermite where it teleports to*/
-                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                        new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
 
@@ -189,7 +189,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
                     this.o(target.locX(), target.locY(), target.locZ());
 
                     if (random.nextDouble() < 0.3) { /**30% chance to summan an endermite where it teleports to*/
-                        new SpawnLivingEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                        new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
             }
@@ -303,7 +303,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         }
     }
 
-    static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityHuman> {
+    static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer> {
 
         private final CustomEntityEnderman entity;
         private EntityHuman target;
@@ -313,7 +313,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICommonCusto
         private final CustomPathfinderTargetCondition n = (CustomPathfinderTargetCondition)(new CustomPathfinderTargetCondition()).c();
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityenderman) {
-            super(entityenderman, EntityHuman.class, false);
+            super(entityenderman, EntityPlayer.class, false);
             this.entity = entityenderman;
             this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityliving) -> { /**players can anger endermen from up to 128 blocks away*/
                 return entityenderman.shouldAttackPlayer((EntityHuman)entityliving);

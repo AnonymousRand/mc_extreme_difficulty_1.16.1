@@ -16,7 +16,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
     private boolean f;
     private boolean g = true;
     private Predicate<EntityLiving> h;
-    private Field c1, d1, e1, f1;
+    private static Field c1, d1, e1, f1;
 
     public CustomPathfinderTargetCondition() {
         super();
@@ -37,16 +37,6 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
-
-    public CustomPathfinderTargetCondition a(double followRange) {
-        this.followRange = followRange;
-        return this;
-    }
-
-    public CustomPathfinderTargetCondition a(@Nullable Predicate<EntityLiving> predicate) {
-        this.h = predicate;
-        return this;
     }
 
     @Override
@@ -88,5 +78,24 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
             return true;
         }
+    }
+
+
+    @Override
+    public CustomPathfinderTargetCondition a(double followRange) {
+        this.followRange = followRange;
+        return this;
+    }
+
+    @Override
+    public CustomPathfinderTargetCondition a(@Nullable Predicate<EntityLiving> predicate) {
+        this.h = predicate;
+        return this;
+    }
+
+    @Override
+    public CustomPathfinderTargetCondition b() {
+        this.d = true;
+        return this;
     }
 }

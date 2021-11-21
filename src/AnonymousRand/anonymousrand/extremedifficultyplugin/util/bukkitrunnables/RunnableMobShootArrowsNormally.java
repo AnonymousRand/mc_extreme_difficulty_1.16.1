@@ -2,9 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -36,11 +34,11 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < numOfArrows; i++) {
+        for (int i = 0; i < this.numOfArrows; i++) {
             CustomEntityArrow entityArrow = new CustomEntityArrow(this.nmsWorld);
             double rand = random.nextDouble();
 
-            switch (arrowType) {
+            switch (this.arrowType) {
                 case 2 -> entityArrow = new CustomEntityArrowExploding(this.nmsWorld); //exploding arrows
                 case 3 -> { //stray spawn mob arrows
                     entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));

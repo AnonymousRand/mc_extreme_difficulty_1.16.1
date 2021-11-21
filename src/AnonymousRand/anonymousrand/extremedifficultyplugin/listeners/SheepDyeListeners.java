@@ -1,15 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySheepAggressive;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.EntitySheep;
-import net.minecraft.server.v1_16_R1.EnumColor;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class SheepDyeListeners implements Listener {
 
@@ -19,6 +17,6 @@ public class SheepDyeListeners implements Listener {
         World nmsWorld = nmsSheep.getWorld();
 
         CustomEntitySheepAggressive newSheep = new CustomEntitySheepAggressive(nmsWorld);
-        new SpawnLivingEntity(nmsWorld, newSheep, 1, null, null, nmsSheep, true, true);
+        new SpawnEntity(nmsWorld, newSheep, 1, null, null, nmsSheep, true, true);
     }
 }

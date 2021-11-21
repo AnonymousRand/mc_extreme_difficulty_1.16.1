@@ -2,17 +2,14 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
-public class CustomEntityPillager extends EntityPillager implements ICommonCustomMethods {
+public class CustomEntityPillager extends EntityPillager implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks, attackNum;
@@ -31,9 +28,9 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         if (random.nextDouble() < 0.25) { /**pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
         } else if (random.nextDouble() < 0.5) {
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityIllagerIllusioner(this.getWorld()), 1, null, null, this, true, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityIllagerIllusioner(this.getWorld()), 1, null, null, this, true, true);
         }
     }
 
@@ -44,7 +41,7 @@ public class CustomEntityPillager extends EntityPillager implements ICommonCusto
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /**custom goal that allows this mob to upgrade its armor gradually as part of the attacks system*/
         this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0, 3, 24.0F)); /**shoots every 3 ticks; uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
     }
 

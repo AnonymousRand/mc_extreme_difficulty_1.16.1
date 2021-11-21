@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import net.minecraft.server.v1_16_R1.Vec3D;
 
-public interface ICommonCustomMethods {
+public interface ICustomMob {
 
     default double getNormalDistanceSq(Vec3D vec3d1, Vec3D vec3d2) {
         double d0 = vec3d2.getX() - vec3d1.getX(); //this function still takes into account y level

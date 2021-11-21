@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.google.common.collect.Lists;
@@ -8,7 +8,6 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
@@ -16,7 +15,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMethods {
+public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     private EntitySheep wololoTarget;
     public int attacks;
@@ -45,15 +44,15 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
-        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityHuman.class, 8.0F, 0.6D, 1.0D));
+        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
         this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
         this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
         this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
-        this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 3.0F, 1.0F));
+        this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)).a(300)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)).a(300)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).a(300));
     }
 
@@ -62,7 +61,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
         super.die();
 
         if (this.attacks >= 60) { /**after 60 attacks, evokers summon 7 vexes when killed*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
+            new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
         }
     }
 
@@ -76,7 +75,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers spawn 3 vexes*/
             this.a25 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
+            new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
         }
 
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
@@ -381,7 +380,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICommonCustomMet
             EntitySheep entitysheep = CustomEntityEvoker.this.fh();
 
             if (entitysheep != null && entitysheep.isAlive()) { /**instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep*/
-                new SpawnLivingEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld()), 1, null, null, entitysheep, true, true);
+                new SpawnEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld()), 1, null, null, entitysheep, true, true);
             }
         }
 

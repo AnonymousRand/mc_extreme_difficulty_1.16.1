@@ -4,16 +4,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
-
-import static org.bukkit.entity.EntityType.BEE;
-import static org.bukkit.entity.EntityType.BLAZE;
 
 public class RemovePathfinderGoals {
 

@@ -1,10 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalPassiveMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBuffMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
@@ -17,13 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
+public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     public int attacks;
     private boolean a5, a10, a20, a32, a45, firstDuplicate;
-    protected PathfinderTargetCondition c;
     private BlockPosition d;
     private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 5, 200, 101);
+    private static final CustomPathfinderTargetCondition c = (new CustomPathfinderTargetCondition()).a(4.0D).b();
+    private static Field attributeMap;
 
     public CustomEntityBat(World world) { /**bats are now aggressive*/
         super(EntityTypes.BAT, world);
@@ -36,30 +34,20 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
         this.a32 = false;
         this.a45 = false;
         this.firstDuplicate = true;
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0); /**bats do 1 damage and have extra knockback*/
-        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-        this.goalSelector.a(0, this.buffMobs); /**custom goal that provides the buffing mechanism*/
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_KNOCKBACK);
-            Field c1 = EntityBat.class.getDeclaredField("c");
-            this.c = (PathfinderTargetCondition)c1.get(this);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
 
-    @Override
-    public void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0); /**bats do 1 damage and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        this.goalSelector.a(0, this.buffMobs); /**custom goal that provides the buffing mechanism*/
     }
 
     //registers new attributes via reflection; code from Spigot forums
-    private static Field attributeMap;
-
     static {
         try {
             attributeMap = AttributeMapBase.class.getDeclaredField("b");
@@ -75,6 +63,13 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
+    }
+
+    @Override
+    public void initPathfinder() {
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 5 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 1 for 4 minutes. After 20 attacks, all mobs within 64 block sphere shoot an arrow every 20 ticks. After 32 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 45 attacks, all mobs within 64 block sphere get regen 2 for 4 minutes and shoot an arrow every 8 ticks*/
@@ -105,10 +100,10 @@ public class CustomEntityBat extends EntityBat implements ICommonCustomMethods {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) { /**summons 15-20 bats when hit by player and not killed for the first time (also 2 aggressive bats after 45 attacks)*/
             this.firstDuplicate = false;
-            new SpawnLivingEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(6) + 15, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
+            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(6) + 15, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             if (this.attacks >= 45) {
-                new SpawnLivingEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 2, null, null, this, false, false);
+                new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 2, null, null, this, false, false);
             }
         }
 

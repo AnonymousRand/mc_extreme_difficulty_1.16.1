@@ -4,11 +4,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSpawnBlocksEntitiesOnMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 
-public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICommonCustomMethods {
+public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private int attackCooldown;
@@ -26,12 +25,17 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements IComm
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
+    public CustomEntitySlimeMagmaCube(World world, int size) {
+        this(world);
+        this.setSize(size, true);
+    }
+
     @Override
     protected void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /**custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count*/
-        this.goalSelector.a(1, new PathfinderGoalMagmaCubeBlazeFireball(this)); /**custom goal that allows magma cube to occasionally shoot small fireballs in all directions depending on attack count*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.goalSelector.a(1, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeBlazeFireball(this)); /**custom goal that allows magma cube to occasionally shoot small fireballs in all directions depending on attack count*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override

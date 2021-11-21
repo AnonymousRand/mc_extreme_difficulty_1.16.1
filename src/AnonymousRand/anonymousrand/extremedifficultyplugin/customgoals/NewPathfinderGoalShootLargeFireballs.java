@@ -5,8 +5,6 @@ import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import net.minecraft.server.v1_16_R1.Vec3D;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 public class NewPathfinderGoalShootLargeFireballs extends PathfinderGoal {

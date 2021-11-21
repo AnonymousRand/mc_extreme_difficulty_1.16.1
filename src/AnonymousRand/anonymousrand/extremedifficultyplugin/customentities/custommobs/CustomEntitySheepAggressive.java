@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
@@ -11,11 +11,12 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntitySheepAggressive extends EntitySheep implements ICommonCustomMethods {
+public class CustomEntitySheepAggressive extends EntitySheep implements ICustomMob {
 
     public int attacks;
     private boolean a20, a40, a65, die;
     public boolean launchHigh;
+    private static Field attributeMap;
 
     public CustomEntitySheepAggressive(World world) {
         super(EntityTypes.SHEEP, world);
@@ -28,12 +29,6 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
         this.a65 = false;
         this.die = false;
         this.launchHigh = false;
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.0);/**aggressive sheep move 2.1x as fast, do 7 damage, have extra knockback, have 100 health, and have regen 2*/
-        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
-        this.setHealth(100.0F);
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -41,22 +36,16 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
 
-    @Override
-    protected void initPathfinder() { /**sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority)*/
-        super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(0, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
-        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /**uses the custom goal that makes this mob move towards the player*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.0);/**aggressive sheep move 2.1x as fast, do 7 damage, have extra knockback, have 100 health, and have regen 2*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
+        this.setHealth(100.0F);
     }
 
     //registers new attributes via reflection; code from Spigot forums
-    private static Field attributeMap;
-
     static {
         try {
             attributeMap = net.minecraft.server.v1_16_R1.AttributeMapBase.class.getDeclaredField("b");
@@ -72,6 +61,17 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
+    }
+
+    @Override
+    protected void initPathfinder() { /**sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority)*/
+        super.initPathfinder();
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /**uses the custom goal that makes this mob move towards the player*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); //updates follow range
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
         if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 3*/
@@ -112,7 +112,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICommonC
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
 
                 if (this.attacks >= 65) { /**after 65 attacks, aggressive sheep summon an evoker when killed*/
-                    new SpawnLivingEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
                 }
             }
         }

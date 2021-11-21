@@ -6,10 +6,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.C
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -45,7 +44,7 @@ public class MobDeathListeners implements Listener {
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
                     if (random.nextDouble() < 0.2) { /**aggressive chickens have a 20% chance to explode into 12-18 normal chickens*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(7) + 12, null, null, nmsEntity, false, true);
+                        new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(7) + 12, null, null, nmsEntity, false, true);
                     }
                 } else if (nmsEntity instanceof CustomEntityChickenAggressiveExploding) { /**aggressive exploding chickens explode with power 1 after 20 seconds or when killed*/
                     bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.0F, false);
@@ -60,14 +59,14 @@ public class MobDeathListeners implements Listener {
                     }
                 }
             }
-            case IRON_GOLEM -> new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true); /**iron golems summon 15 silverfish when killed*/
+            case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true); /**iron golems summon 15 silverfish when killed*/
             case MUSHROOM_COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 15.0F, false); /**mooshrooms explode with power 15 when killed*/
             case PIG -> {
                 if (random.nextDouble() < 0.14) {
                     if (random.nextDouble() < 0.285714286) { /**pigs have a 4% chance to summon a hoglin on death and a 10% chance to summon a piglin on death*/
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, false, true);
+                        new SpawnEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, false, true);
                     } else {
-                        new SpawnLivingEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, false, true);
+                        new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, false, true);
                     }
                 }
             }
@@ -83,12 +82,18 @@ public class MobDeathListeners implements Listener {
                 new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);
             }
             case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
-                new SpawnLivingEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
+                new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
+                new SpawnEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
-            case WITHER -> { /**withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain*/
-                bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3));
-                new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+            case WITHER -> {
+                if (nmsEntity instanceof CustomEntityWitherMini) { /**mini withers shoot less blue skulls in all directions and summon 3 wither skeletons when killed*/
+                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,15).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
+                    new SpawnEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 3, null, null, nmsEntity, false, true);
+                } else { /**withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain*/
+                    bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3));
+                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
+                    new RunnableMobRain(nmsEntity, ((CustomEntityWither)nmsEntity).getGoalTarget(), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 110L, 2L);
+                }
             }
             case WITHER_SKELETON -> { /**wither skeletons now have a +8% chance to drop a skull when killed*/
                 if (random.nextDouble() < 0.08) {

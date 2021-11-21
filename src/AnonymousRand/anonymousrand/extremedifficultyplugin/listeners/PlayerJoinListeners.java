@@ -4,9 +4,12 @@ import net.minecraft.server.v1_16_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class PlayerJoinListeners implements Listener {
 
@@ -17,6 +20,11 @@ public class PlayerJoinListeners implements Listener {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=small_fireball]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=fireball]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=falling_block]");
+        } else { /**when players join, they get blindness 255, slowness 255 and weakness 255 for 5 seconds to prevent exploits*/
+            Player bukkitPlayer = event.getPlayer();
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 255));
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 255));
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 100, 255));
         }
     }
 }

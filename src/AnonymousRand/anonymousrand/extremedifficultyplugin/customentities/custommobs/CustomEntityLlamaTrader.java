@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommonCustomMethods {
+public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICustomMob {
 
     public int attacks;
     private boolean a15;
@@ -46,10 +46,10 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICommo
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));
-        this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
+        this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     public void a(EntityLiving entityliving, float f) { //shoots custom spit instead of vanilla

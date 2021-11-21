@@ -4,7 +4,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomEntityLargeFireball extends EntityLargeFireball {
 

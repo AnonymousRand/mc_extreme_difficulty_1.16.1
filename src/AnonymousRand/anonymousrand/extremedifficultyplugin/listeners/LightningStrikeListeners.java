@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
@@ -15,7 +15,6 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 
@@ -57,7 +56,7 @@ public class LightningStrikeListeners implements Listener {
             }
 
             if (!storm && random.nextDouble() < 0.0175 && numberOfThors / 2 < Bukkit.getOnlinePlayers().size()) { /**non-storm lightning has a 1.75% chance to summon thor, up to 2 thors per player*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld), 1, null, loc, true);
+                new SpawnEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld), 1, null, loc, true);
                 numberOfThors++;
             }
         }

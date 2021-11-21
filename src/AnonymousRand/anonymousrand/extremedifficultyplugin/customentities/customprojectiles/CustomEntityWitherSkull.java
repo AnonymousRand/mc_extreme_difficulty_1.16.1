@@ -68,4 +68,13 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             this.die();
         }
     }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.ticksLived >= 200) { /**wither skulls despawn after 10 seconds to reduce lag*/
+            this.die();
+        }
+    }
 }

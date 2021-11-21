@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-public class CustomEntityGuardian extends EntityGuardian implements ICommonCustomMethods {
+public class CustomEntityGuardian extends EntityGuardian implements ICustomMob {
 
     public int attacks;
     private boolean a10, a25, a75;
@@ -36,7 +36,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
         this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);
-        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityGuardian.class, 12.0F, 0.01F));
         this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
@@ -72,7 +72,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
 
         if (this.attacks == 10 && !this.a10) {
             this.a10 = true;
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
         if (this.attacks == 25 && !this.a25) { /**after 25 attacks, guardians gain regen 3 and 40 max health*/
@@ -83,7 +83,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICommonCusto
 
         if (this.attacks == 75 && !this.a75) { /**after 75 attacks, guardians summon an elder guardian*/
             this.a75 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
         }
     }
 

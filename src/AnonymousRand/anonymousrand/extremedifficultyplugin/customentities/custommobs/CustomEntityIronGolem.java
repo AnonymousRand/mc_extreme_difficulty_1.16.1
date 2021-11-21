@@ -2,10 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityIronGolem extends EntityIronGolem implements ICommonCustomMethods {
+public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob {
 
     public int attacks;
     public double followRangeMultipler;
@@ -30,10 +29,10 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICommonCus
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));
         this.goalSelector.a(5, new PathfinderGoalOfferFlower(this));
-        this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
+        this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 
@@ -47,7 +46,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICommonCus
             this.followRangeMultipler = 5.0;
         }
 
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); //updates follow range
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); //updates follow range
     }
 
     public void increaseStatsAdd(double healthAdd, double damageAdd, double speedAdd) {

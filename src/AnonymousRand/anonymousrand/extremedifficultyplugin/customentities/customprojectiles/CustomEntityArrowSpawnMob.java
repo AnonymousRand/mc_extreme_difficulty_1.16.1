@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySkeleton;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySkeletonStray;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.Vec3D;
 import net.minecraft.server.v1_16_R1.World;
@@ -44,7 +44,7 @@ public class CustomEntityArrowSpawnMob extends CustomEntityArrow {
         super.die();
 
         if (this.entityToSpawn != null) {
-            new SpawnLivingEntity(this.getWorld(), this.entityToSpawn, 1, null, new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), true);
+            new SpawnEntity(this.getWorld(), this.entityToSpawn, 1, null, new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), true);
             this.entityToSpawn = null;
         }
     }

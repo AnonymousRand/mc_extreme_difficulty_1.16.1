@@ -2,14 +2,16 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.MobSpawnAndReplaceWithCustomListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomMethods {
+public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     public int attacks;
     private boolean a30, deathExplosion, duplicate;
@@ -32,6 +34,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         super(EntityTypes.PHANTOM, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.05*/
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /**phantoms can fly through blocks*/
@@ -58,7 +61,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
         this.goalSelector.a(1, new CustomEntityPhantom.PathfinderGoalPhantomPickAttack());
         this.goalSelector.a(2, new PathfinderGoalPhantomSweepAttack());
         this.goalSelector.a(3, new CustomEntityPhantom.PathfinderGoalPhantomOrbitPoint());
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
     private void updateSizeStats(int change) { /**phantoms gain +0.8 health and 0.06 damage per size and starts with 8 health and 1 damage at size 0*/
@@ -78,7 +81,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICommonCustomM
 
         if (this.attacks >= 40 || this.duplicate) { /**after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4*/
             if (this.getSize() > 7) {
-                new SpawnLivingEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
+                new SpawnEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
     }

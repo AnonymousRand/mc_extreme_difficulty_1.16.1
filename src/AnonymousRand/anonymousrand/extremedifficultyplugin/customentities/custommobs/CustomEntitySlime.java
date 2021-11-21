@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinder
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class CustomEntitySlime extends EntitySlime implements ICommonCustomMethods {
+public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private int attackCooldown;
@@ -26,10 +26,15 @@ public class CustomEntitySlime extends EntitySlime implements ICommonCustomMetho
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
+    public CustomEntitySlime(World world, int size) {
+        this(world);
+        this.setSize(size, true);
+    }
+
     @Override
     protected void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override

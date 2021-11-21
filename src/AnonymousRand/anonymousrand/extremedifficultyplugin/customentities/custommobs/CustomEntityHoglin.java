@@ -2,14 +2,11 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMethods {
+public class CustomEntityHoglin extends EntityHoglin implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
@@ -39,7 +36,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /**custom goal that breaks repellant blocks around the mob periodically*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -47,7 +44,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
         super.die();
 
         if (random.nextDouble() < (this.attacks < 70 ? 0.3 : 1.0)) { /**hoglins have a 30% chance to spawn a zoglin after death (100% chance after 70 attacks)*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
     }
 
@@ -62,7 +59,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
         if (this.attacks == 10 && !this.a10) { /**after 10 attacks, hoglins get regen 2*/
             this.a10 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
         if (this.attacks == 32 && !this.a32) { /**after 32 attacks, hoglins get regen 3*/
@@ -74,14 +71,14 @@ public class CustomEntityHoglin extends EntityHoglin implements ICommonCustomMet
             this.a42 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
-            new SpawnLivingEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
         }
 
         if (this.attacks == 70 && !this.a70) { /**after 70 attacks, hoglins summon 2 baby hoglins*/
             this.a70 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
-            new SpawnLivingEntity(this.getWorld(), newHoglin, 2, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), newHoglin, 2, null, null, this, false, true);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

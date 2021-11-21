@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomMethods {
+public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
 
     public int attacks;
     private boolean a50, a100;
@@ -40,7 +40,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomM
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
         this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, 10, true, false, this::j)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, this::j)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, true, false, EntityTurtle.bv));
     }
@@ -60,12 +60,12 @@ public class CustomEntityDrowned extends EntityDrowned implements ICommonCustomM
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, drowned summon a guardian*/
             this.a50 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 2, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 2, null, null, this, false, true);
         }
 
         if (this.attacks == 100 && !this.a100) { /**after 100 attacks, drowned summon an elder guardian*/
             this.a100 = true;
-            new SpawnLivingEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
         }
     }
 

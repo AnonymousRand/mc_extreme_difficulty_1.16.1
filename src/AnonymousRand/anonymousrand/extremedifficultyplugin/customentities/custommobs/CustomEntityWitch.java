@@ -6,17 +6,14 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinder
 import net.minecraft.server.v1_16_R1.*;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
 
-public class CustomEntityWitch extends EntityWitch implements ICommonCustomMethods {
+public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks, attackNum;
     private boolean a10, a30;
     private final CustomEntityAreaEffectCloud newAEC;
-    Field bx;
+    private static Field bx;
 
     public CustomEntityWitch(World world) {
         super(EntityTypes.WITCH, world);
@@ -30,10 +27,12 @@ public class CustomEntityWitch extends EntityWitch implements ICommonCustomMetho
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+    }
 
+    static {
         try {
-            this.bx = EntityWitch.class.getDeclaredField("bx");
-            this.bx.setAccessible(true);
+            bx = EntityWitch.class.getDeclaredField("bx");
+            bx.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -45,7 +44,7 @@ public class CustomEntityWitch extends EntityWitch implements ICommonCustomMetho
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 24.0F)); /**throws a potion every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -115,7 +114,7 @@ public class CustomEntityWitch extends EntityWitch implements ICommonCustomMetho
         }
 
         try { /**witches drink potions twice as fast*/
-            this.bx.setInt(this, this.bx.getInt(this) - 1);
+            bx.setInt(this, bx.getInt(this) - 1);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

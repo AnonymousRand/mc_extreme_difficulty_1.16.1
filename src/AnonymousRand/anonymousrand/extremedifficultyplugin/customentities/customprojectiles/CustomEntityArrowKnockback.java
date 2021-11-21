@@ -1,8 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.util.Vector;
 
 public class CustomEntityArrowKnockback extends CustomEntityArrow {
 

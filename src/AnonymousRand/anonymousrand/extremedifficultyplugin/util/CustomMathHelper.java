@@ -1,17 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.MobSpawnAndReplaceWithCustomListeners;
 import net.minecraft.server.v1_16_R1.BlockPosition;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import static java.lang.Math.PI;
@@ -52,7 +44,7 @@ public class CustomMathHelper {
         }
     }
 
-    public static Location coordsFromHypotenuseAndAngle(World world, BlockPosition origin, double hypotenuse, double y, double angle) {
+    public static Location coordsFromHypotenuseAndAngle(World bukkitWorld, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
             angle = Math.toRadians(random.nextDouble() * 360.0);
         } else {
@@ -65,13 +57,13 @@ public class CustomMathHelper {
         double z = hypotenuse * trigTableCos[(int)angle];
 
         if (angle >= 0 && angle < 180.0) {
-            return new Location(world, origin.getX() - x, y, origin.getZ() + z);
+            return new Location(bukkitWorld, origin.getX() - x, y, origin.getZ() + z);
         } else if (angle >= 180.0 && angle < 360.0) {
-            return new Location(world, origin.getX() - x, y, origin.getZ() - z);
+            return new Location(bukkitWorld, origin.getX() - x, y, origin.getZ() - z);
         } else if (angle >= 360.0 && angle < 540.0) {
-            return new Location(world, origin.getX() + x, y, origin.getZ() - z);
+            return new Location(bukkitWorld, origin.getX() + x, y, origin.getZ() - z);
         } else {
-            return new Location(world, origin.getX() + x, y, origin.getZ() + z);
+            return new Location(bukkitWorld, origin.getX() + x, y, origin.getZ() + z);
         }
     }
 

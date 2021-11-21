@@ -1,16 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomMethods {
+public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
-    public Field fuseTicks;
+    public static Field fuseTicks;
 
     public CustomEntityCreeper(World world, int fuse) {
         super(EntityTypes.CREEPER, world);
@@ -20,10 +20,12 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35); /**creepers move 40% faster but only have 12.75 health*/
         this.setHealth(12.75F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
+    }
 
+    static {
         try {
-            this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
-            this.fuseTicks.setAccessible(true);
+            fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
+            fuseTicks.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -40,16 +42,16 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
-        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) { /**creeper has a 50% chance to duplicate when hit by player and not killed (extra fuse on new creeper) (100% chance to duplicate into 10 if powered)*/
-            new SpawnLivingEntity(this.getWorld(), this.maxFuseTicks, new CustomEntityCreeper(this.getWorld(), 20), this.isPowered() ? 10 : 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), this.maxFuseTicks, new CustomEntityCreeper(this.getWorld(), 20), this.isPowered() ? 10 : 1, null, null, this, false, true);
         }
 
         return super.damageEntity(damagesource, f);
@@ -60,7 +62,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         if (this.getGoalTarget() != null) {
             if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 9.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 3
                 try {
-                    this.fuseTicks.setInt(this, 0);
+                    fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -92,7 +94,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICommonCustomM
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
         this.setHealth(100.0F);
         this.maxFuseTicks = 30;
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)); //updates follow range
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
     }
 
     private void createEffectCloud() {

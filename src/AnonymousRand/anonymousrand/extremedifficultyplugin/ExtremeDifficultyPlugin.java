@@ -63,6 +63,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     private void initializeListeners() { //registers the listeners
         getServer().getPluginManager().registerEvents(new BlockPlaceAndBreakListeners(), this);
+        getServer().getPluginManager().registerEvents(new DragonFightListeners(), this);
         getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
         getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
         getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);

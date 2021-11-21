@@ -3,22 +3,21 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityWither extends EntityWither implements ICommonCustomMethods {
+public class CustomEntityWither extends EntityWither implements ICustomMob {
 
-    private boolean dash;
+    protected boolean dash;
     private static Field bB, bC;
 
     public CustomEntityWither(World world) {
@@ -50,7 +49,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /**custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 25 seconds) that breaks blocks around it and does 6 damage to all nearby players*/
         this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /**main head shoots a skull every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
-        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**only attacks players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
@@ -61,20 +60,20 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         this.shootSkullToEntity(0, entityliving);
     }
 
-    private void shootSkullToEntity(int i, EntityLiving entityliving) {
+    protected void shootSkullToEntity(int i, EntityLiving entityliving) {
         this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), false);
     }
 
-    private void shootSkullToEntity(int i, EntityLiving entityliving, boolean alwaysBlue) {
+    protected void shootSkullToEntity(int i, EntityLiving entityliving, boolean alwaysBlue) {
         this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), alwaysBlue);
     }
 
-    private void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
+    protected void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
         if (this.dash) {
             return;
         }
 
-        if (!this.isSilent() && random.nextDouble() < 0.05) { /**wither only plays the skull shooting sound 5% of the time*/
+        if (!this.isSilent() && random.nextDouble() < 0.05) { /**withers only play the skull shooting sound 5% of the time*/
             this.world.a((EntityHuman)null, 1024, this.getChunkCoordinates(), 0);
         }
 
@@ -171,7 +170,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         super.tick();
 
         if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /**every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton*/
-            new SpawnLivingEntity(this.getWorld(), new CustomEntitySkeletonWither(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntitySkeletonWither(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {
@@ -197,7 +196,7 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         return d0 * d0 + d2 * d2;
     }
 
-    private double getHeadX(int i) { //util methods
+    protected double getHeadX(int i) { //util methods
         if (i <= 0) {
             return this.locX();
         } else {
@@ -208,11 +207,11 @@ public class CustomEntityWither extends EntityWither implements ICommonCustomMet
         }
     }
 
-    private double getHeadY(int i) {
+    protected double getHeadY(int i) {
         return i <= 0 ? this.locY() + 3.0D : this.locY() + 2.2D;
     }
 
-    private double getHeadZ(int i) {
+    protected double getHeadZ(int i) {
         if (i <= 0) {
             return this.locZ();
         } else {

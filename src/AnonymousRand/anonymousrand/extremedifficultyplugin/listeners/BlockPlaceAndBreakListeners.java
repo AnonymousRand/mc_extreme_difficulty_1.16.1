@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnLivingEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.Explosion;
@@ -19,7 +19,6 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -38,12 +37,15 @@ public class BlockPlaceAndBreakListeners implements Listener {
         if (event.getPlayer() != null) {
             if (bukkitBlock.getLocation().getY() >= 129.0) { /**can't build above y level 128 in all dimensions to prevent towering up etc. to avoid mobs*/
                 event.setCancelled(true);
-                Bukkit.broadcastMessage("Not so fast, smartypants");
                 Bukkit.broadcastMessage("You have reached the build height limit of 128 blocks :tf:");
             }
 
             if (type == Material.CONDUIT) { /**conduits spawn guardians every 5 seconds for 50 seconds*/
                 new RunnableConduitSummonGuardian(nmsWorld, loc, 10).runTaskTimer(StaticPlugin.plugin, 0L, 100L);
+            }
+
+            if (type == Material.PISTON || type == Material.STICKY_PISTON) { /**pistons and sticky pistons can't be placed*/
+                event.setCancelled(true);
             }
         } else {
             if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
@@ -62,8 +64,8 @@ public class BlockPlaceAndBreakListeners implements Listener {
 
         switch (type) {
             case ANCIENT_DEBRIS -> { /**breaking ancient debris spawns 6 silverfish and 2 bats*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 6, null, loc, true);
-                new SpawnLivingEntity(nmsWorld, new CustomEntityBat(nmsWorld), 2, null, loc, false);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 6, null, loc, true);
+                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 2, null, loc, false);
             }
             case ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, DEAD_BUSH, SMITHING_TABLE, TORCH ->  /**anvils, dead bushes, smithing tables, and torches explode when broken but don't break blocks*/
                     nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
@@ -79,12 +81,12 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 }
             }
             case BOOKSHELF, COBBLESTONE_STAIRS, CONDUIT, CRACKED_STONE_BRICKS, IRON_BARS, SPAWNER, STONE_BRICKS, MOSSY_STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /**breaking these blocks (all found in strongholds besides conduits) causes silverfish to spawn*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : (type == Material.SPAWNER ? 5 : 1), null, loc, true); /**breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50*/
             case COAL_ORE -> /**breaking coal ore has a 10% chance to spawn a silverfish*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), random.nextDouble() < 0.1 ? 1 : 0, null, loc, true);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), random.nextDouble() < 0.1 ? 1 : 0, null, loc, true);
             case DIAMOND_ORE -> { /**breaking diamond ore spawns 3 silverfish and a bat*/
-                new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 3, null, loc, true);
-                new SpawnLivingEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, loc, false);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 3, null, loc, true);
+                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, loc, false);
             }
         }
     }
@@ -105,7 +107,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 case DEAD_BUSH, TORCH -> /**dead bushes and torches explode when broken but don't break blocks*/
                     nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
                 case BOOKSHELF, COBBLESTONE_STAIRS, CRACKED_STONE_BRICKS, IRON_BARS, STONE_BRICKS, MOSSY_STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /**breaking these blocks (all found in strongholds besides conduits) causes a silverfish to spawn*/
-                    new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
+                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
             }
         }
     }
@@ -126,7 +128,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 case DEAD_BUSH, TORCH -> /**dead bushes and torches explode when broken but don't break blocks*/
                     nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
                 case BOOKSHELF, COBBLESTONE_STAIRS, CRACKED_STONE_BRICKS, IRON_BARS, STONE_BRICKS, MOSSY_STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /**breaking these blocks (all found in strongholds besides conduits) causes a silverfish to spawn*/
-                    new SpawnLivingEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
+                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
             }
         }
     }
@@ -152,7 +154,7 @@ public class BlockPlaceAndBreakListeners implements Listener {
                 return;
             }
 
-            new SpawnLivingEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true);
+            new SpawnEntity(this.nmsWorld, new CustomEntityGuardian(this.nmsWorld), 1, null, this.loc, true);
         }
     }
 }

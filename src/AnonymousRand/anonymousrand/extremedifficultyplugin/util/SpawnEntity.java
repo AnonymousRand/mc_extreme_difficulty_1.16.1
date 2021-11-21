@@ -6,23 +6,19 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Objects;
 
-public class SpawnLivingEntity extends BukkitRunnable {
+public class SpawnEntity extends BukkitRunnable {
 
     private int maxFuseTicksOrPhantomSize = 0;
-    private final EntityLiving firstEntityToSpawn;
+    private final Entity firstEntityToSpawn;
     private final int numToSpawn;
     private final CreatureSpawnEvent.SpawnReason spawnReason;
     private org.bukkit.entity.Entity bukkitOriginalEntity;
@@ -38,7 +34,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
     }
 
-    public SpawnLivingEntity(World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
@@ -51,7 +47,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.run();
     }
 
-    public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
         this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -65,7 +61,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.run();
     }
 
-    public SpawnLivingEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, boolean phantomDuplicate, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, boolean phantomDuplicate, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
         this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -79,7 +75,7 @@ public class SpawnLivingEntity extends BukkitRunnable {
         this.run();
     }
 
-    public SpawnLivingEntity(World nmsWorld, EntityLiving firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
