@@ -16,11 +16,6 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
     }
 
     @Override
-    public float i() { /**blue skulls move 120% faster if fired as part of the wither's dying phase*/
-        return this.isCharged() ? this.deathFireballs ? 1.606F : 0.73F : super.i();
-    }
-
-    @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         if (!this.world.isClientSide) {
             Entity entity = movingobjectpositionentity.getEntity();
@@ -67,6 +62,12 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /**blue skulls explode power 2*/
             this.die();
         }
+    }
+
+
+    @Override
+    public float i() { /**blue skulls move 120% faster if fired as part of the wither's dying phase*/
+        return this.isCharged() ? this.deathFireballs ? 1.606F : 0.73F : super.i();
     }
 
     @Override

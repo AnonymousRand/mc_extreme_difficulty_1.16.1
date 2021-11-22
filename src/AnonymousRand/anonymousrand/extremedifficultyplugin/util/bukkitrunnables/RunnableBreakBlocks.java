@@ -14,15 +14,15 @@ import java.util.function.Predicate;
 public class RunnableBreakBlocks extends BukkitRunnable {
 
     protected final Entity entity;
-    protected Location loc;
     protected final World bukkitWorld;
+    protected Location loc;
     protected final int radX, radY, radZ, yOffset;
     protected final boolean removeFluids;
     protected int cycles;
     protected final int maxCycles;
     protected int X, Y, Z;
     protected Predicate<Material> blockBreakable = (type) -> {
-        return type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
+        return type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
     };
     protected static final Random random = new Random();
 

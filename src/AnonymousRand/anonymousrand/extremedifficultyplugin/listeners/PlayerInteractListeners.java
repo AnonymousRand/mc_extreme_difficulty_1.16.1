@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -38,9 +39,8 @@ public class PlayerInteractListeners implements Listener {
 
             if (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) {
                 if (action == Action.LEFT_CLICK_BLOCK) {
-                    if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 3 for 5 seconds and mining fatigue 2 for 8 seconds*/
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 100, 2));
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 160, 1));
+                    if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 3 for 16 seconds*/
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 320, 2));
                     }
                 } else {
                     if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds*/
@@ -60,8 +60,21 @@ public class PlayerInteractListeners implements Listener {
                             bukkitBlock.setType(Material.AIR);
                         }, 200L);
                     }
+
+                    if (bukkitPlayer.getEquipment().getItemInMainHand().getType() == Material.FLINT_AND_STEEL && bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
+                        event.setCancelled(true);
+                        Bukkit.broadcastMessage("You can't place such bright blocks in the end");
+                    }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void playerPlaceLavaBucket(PlayerBucketEmptyEvent event) {
+        if (event.getBucket() == Material.LAVA_BUCKET && event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
+            event.setCancelled(true);
+            Bukkit.broadcastMessage("You can't place such bright blocks in the end");
         }
     }
 }

@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -65,7 +66,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
         if (this.attacks == 55 && !this.a55) { /**after 55 attacks, wither skeletons summon a mini wither*/
             this.a55 = true;
-            //todo: custom wither
+            new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
         }
     }
 

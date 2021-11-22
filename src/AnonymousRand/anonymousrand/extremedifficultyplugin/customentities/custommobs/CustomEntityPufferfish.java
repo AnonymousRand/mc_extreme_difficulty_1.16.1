@@ -3,12 +3,27 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 
+import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.List;
+
 public class CustomEntityPufferfish extends EntityPufferFish implements ICustomMob {
+
+    private static Field jumpTicks;
 
     public CustomEntityPufferfish(World world) {
         super(EntityTypes.PUFFERFISH, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+    }
+
+    static {
+        try {
+            jumpTicks = EntityLiving.class.getDeclaredField("jumpTicks");
+            jumpTicks.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -18,17 +33,6 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.WATER, 1)); /**custom goal that allows pufferfish to summon water on itself constantly*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.ticksLived % 3 == 0) {
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> {
-                this.pickup((EntityHuman)entity);
-            }); /**pufferfish have a poison/wither range of 5 blocks horizontally*/
-        }
     }
 
     @Override
@@ -46,6 +50,17 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     public double getFollowRange() { /**pufferfish have 32 block detection range (setting attribute doesn't work)*/
         return 32.0;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.ticksLived % 3 == 0) {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> {
+                this.pickup((EntityHuman)entity);
+            }); /**pufferfish have a poison/wither range of 5 blocks horizontally*/
+        }
     }
 
     @Override
@@ -93,5 +108,151 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public void movementTick() { /**uses the movementick() method from entityliving class so pufferfish no longer damage other mobs besides players*/
+        int jumpTicksTemp;
+
+        try {
+            jumpTicksTemp = jumpTicks.getInt(this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (jumpTicksTemp > 0) {
+            --jumpTicksTemp;
+        }
+
+        if (this.cr()) {
+            this.bb = 0;
+            this.c(this.locX(), this.locY(), this.locZ());
+        }
+
+        if (this.bb > 0) {
+            double d0 = this.locX() + (this.bc - this.locX()) / (double) this.bb;
+            double d1 = this.locY() + (this.bd - this.locY()) / (double) this.bb;
+            double d2 = this.locZ() + (this.be - this.locZ()) / (double) this.bb;
+            double d3 = MathHelper.g(this.bf - (double) this.yaw);
+
+            this.yaw = (float) ((double) this.yaw + d3 / (double) this.bb);
+            this.pitch = (float) ((double) this.pitch + (this.bg - (double) this.pitch) / (double) this.bb);
+            --this.bb;
+            this.setPosition(d0, d1, d2);
+            this.setYawPitch(this.yaw, this.pitch);
+        } else if (!this.doAITick()) {
+            this.setMot(this.getMot().a(0.98D));
+        }
+
+        if (this.bi > 0) {
+            this.aJ = (float) ((double) this.aJ + MathHelper.g(this.bh - (double) this.aJ) / (double) this.bi);
+            --this.bi;
+        }
+
+        Vec3D vec3d = this.getMot();
+        double d4 = vec3d.x;
+        double d5 = vec3d.y;
+        double d6 = vec3d.z;
+
+        if (Math.abs(vec3d.x) < 0.003D) {
+            d4 = 0.0D;
+        }
+
+        if (Math.abs(vec3d.y) < 0.003D) {
+            d5 = 0.0D;
+        }
+
+        if (Math.abs(vec3d.z) < 0.003D) {
+            d6 = 0.0D;
+        }
+
+        this.setMot(d4, d5, d6);
+        this.world.getMethodProfiler().enter("ai");
+        if (this.isFrozen()) {
+            this.jumping = false;
+            this.aY = 0.0F;
+            this.ba = 0.0F;
+        } else if (this.doAITick()) {
+            this.world.getMethodProfiler().enter("newAi");
+            this.doTick();
+            this.world.getMethodProfiler().exit();
+        }
+
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("jump");
+        if (this.jumping && this.cS()) {
+            double d7;
+
+            if (this.aN()) {
+                d7 = this.b((Tag) TagsFluid.LAVA);
+            } else {
+                d7 = this.b((Tag) TagsFluid.WATER);
+            }
+
+            boolean flag = this.isInWater() && d7 > 0.0D;
+            double d8 = this.cw();
+
+            if (flag && (!this.onGround || d7 > d8)) {
+                this.c((Tag) TagsFluid.WATER);
+            } else if (this.aN() && (!this.onGround || d7 > d8)) {
+                this.c((Tag) TagsFluid.LAVA);
+            } else if ((this.onGround || flag && d7 <= d8) && jumpTicksTemp == 0) {
+                this.jump();
+                jumpTicksTemp = 10;
+            }
+        } else {
+            jumpTicksTemp = 0;
+        }
+
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("travel");
+        this.aY *= 0.98F;
+        this.ba *= 0.98F;
+        this.t();
+        AxisAlignedBB axisalignedbb = this.getBoundingBox();
+
+        this.f(new Vec3D((double) this.aY, (double) this.aZ, (double) this.ba));
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("push");
+        if (this.bm > 0) {
+            --this.bm;
+            this.a(axisalignedbb, this.getBoundingBox());
+        }
+
+        this.collideNearby();
+
+        try {
+            jumpTicks.setInt(this, jumpTicksTemp);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        this.world.getMethodProfiler().exit();
+    }
+
+    private void t() { //util method from entityliving class
+        boolean flag = this.getFlag(7);
+
+        if (flag && !this.onGround && !this.isPassenger() && !this.hasEffect(MobEffects.LEVITATION)) {
+            ItemStack itemstack = this.getEquipment(EnumItemSlot.CHEST);
+
+            if (itemstack.getItem() == Items.ELYTRA && ItemElytra.d(itemstack)) {
+                flag = true;
+                if (!this.world.isClientSide && (this.bl + 1) % 20 == 0) {
+                    itemstack.damage(1, this, (entityliving) -> {
+                        entityliving.broadcastItemBreak(EnumItemSlot.CHEST);
+                    });
+                }
+            } else {
+                flag = false;
+            }
+        } else {
+            flag = false;
+        }
+
+        if (!this.world.isClientSide) {
+            this.setFlag(7, flag);
+        }
     }
 }

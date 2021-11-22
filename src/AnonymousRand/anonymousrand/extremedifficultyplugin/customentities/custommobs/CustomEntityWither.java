@@ -27,7 +27,6 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         double health = 200.0 + 70.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**withers have 70 more health per player online, and 200 starting health*/
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float)health);
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /**wither causes thunderstorm*/
     }
 
     static {
@@ -177,6 +176,10 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             if (!this.getEntitySenses().a(this.getGoalTarget()) && random.nextDouble() < 0.05) { /**if the wither can't see its target, it shoots a blue skull on average every second*/
                 this.shootSkullToEntity(0, this.getGoalTarget(), true);
             }
+        }
+
+        if (!(this instanceof CustomEntityWitherMini) && this.ticksLived == 5) {
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /**wither causes thunderstorm*/
         }
     }
 

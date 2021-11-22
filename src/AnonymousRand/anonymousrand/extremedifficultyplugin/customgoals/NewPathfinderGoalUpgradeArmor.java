@@ -67,7 +67,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
     @Override
     public void e() {
-        LivingEntity livingEntity = ((LivingEntity) this.entity.getBukkitEntity());
+        LivingEntity livingEntity = ((LivingEntity)this.entity.getBukkitEntity());
         int attacksLocal;
 
         try {

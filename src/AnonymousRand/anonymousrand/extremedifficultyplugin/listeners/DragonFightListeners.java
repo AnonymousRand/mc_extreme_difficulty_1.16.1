@@ -1,8 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableGenerateBarrierFountain;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,17 +39,18 @@ public class DragonFightListeners implements Listener {
 
     @EventHandler
     public void dragonSpawn(CreatureSpawnEvent event) {
-        if (event.getEntity() instanceof EnderDragon) {
+        if (event.getEntity() instanceof EnderDragon && (!(((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityEnderDragon))) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); //to make sure all the mob spawners can generate
-
+            Bukkit.broadcastMessage("You've made it this far. I hope you're ready.");
             org.bukkit.World bukkitWorld = event.getEntity().getWorld();
-            //do the replacement stuff
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
-                new RunnableGenerateBarrierFountain(bukkitWorld); /**center fountain is made of barriers instead of bedrock since wither can now break bedrock*/
+            World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
 
+            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld), 1, null, event.getEntity(), null, true, false);
+
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
                 for (int i = 1; i < 11; i++) {
-                    new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
-                    new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
+//                    new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run(); //todo: uncomment
+//                    new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
                 }
             }, 100);
         }
@@ -134,14 +136,15 @@ public class DragonFightListeners implements Listener {
                 }
             }
 
-            this.spawnCount *= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0);
+            this.spawnCount *= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0); /**spawns 50% more mobs on average per 4 players, up to 100% more*/
             this.spawnerBlock = new Location(this.bukkitWorld, this.highestBlock.getX(), this.highestBlock.getY() + 1, this.highestBlock.getZ()).getBlock();
             this.spawnerBlock.setType(org.bukkit.Material.SPAWNER);
             this.spawner = ((CreatureSpawner)this.spawnerBlock.getState());
             this.spawner.setSpawnedType(this.entityType);
             this.spawner.setSpawnCount(this.spawnCount);
             this.spawner.setSpawnRange(1);
-            this.spawner.setMaxNearbyEntities(25);
+            this.spawner.setMaxSpawnDelay(500); /**max spawn delay reduced to 25 seconds*/
+            this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
             new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /**every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs*/
 
@@ -225,7 +228,7 @@ public class DragonFightListeners implements Listener {
                 }
             }
 
-            this.minSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0);
+            this.minSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0); /**spawns 50% faster on average per 4 players, up to 100% faster*/
             this.maxSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0);
             this.spawnerBlock = new Location(this.bukkitWorld, this.highestBlock.getX(), this.highestBlock.getY(), this.highestBlock.getZ()).getBlock();
             this.spawnerBlock.setType(org.bukkit.Material.SPAWNER);
@@ -236,7 +239,7 @@ public class DragonFightListeners implements Listener {
             this.spawner.setRequiredPlayerRange(12);
             this.spawner.setMinSpawnDelay(this.minSpawnDelay);
             this.spawner.setMaxSpawnDelay(this.maxSpawnDelay);
-            this.spawner.setMaxNearbyEntities(35);
+            this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
             new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /**every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs*/
 
@@ -253,6 +256,7 @@ public class DragonFightListeners implements Listener {
         private final Block spawnerBlock;
         private final org.bukkit.World bukkitWorld;
         private final int radius, yRadius;
+        private Block targetBlock;
 
         public RunnableSpawnerBreakBlocksAbove(Block spawnerBlock, int radius, int yRadius) {
             this.spawnerBlock = spawnerBlock;
@@ -270,8 +274,10 @@ public class DragonFightListeners implements Listener {
             for (int x = -this.radius; x <= this.radius; x++) {
                 for (int y = 1; y <= this.yRadius; y++) {
                     for (int z = -this.radius; z <= this.radius; z++) {
-                        if (this.bukkitWorld.getBlockAt(this.spawnerBlock.getX() + x, this.spawnerBlock.getY() + y, this.spawnerBlock.getZ() + z).getType() != Material.AIR) {
-                            this.bukkitWorld.getBlockAt(this.spawnerBlock.getX() + x, this.spawnerBlock.getY() + y, this.spawnerBlock.getZ() + z).setType(Material.AIR);
+                        this.targetBlock = this.bukkitWorld.getBlockAt(this.spawnerBlock.getX() + x, this.spawnerBlock.getY() + y, this.spawnerBlock.getZ() + z);
+
+                        if (this.targetBlock.getType() != Material.AIR && this.targetBlock.getType() != Material.SPAWNER) {
+                            this.targetBlock.setType(Material.AIR);
                         }
                     }
                 }

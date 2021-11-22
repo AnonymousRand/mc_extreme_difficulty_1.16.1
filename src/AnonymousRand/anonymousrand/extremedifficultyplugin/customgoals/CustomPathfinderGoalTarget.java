@@ -40,6 +40,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case DROWNED -> {
                 return ((CustomEntityDrowned)this.e).getFollowRange();
             }
+            case ENDER_DRAGON -> {
+                return ((CustomEntityEnderDragon)this.e).getFollowRange();
+            }
             case ENDERMAN -> {
                 return ((CustomEntityEnderman)this.e).getFollowRange();
             }

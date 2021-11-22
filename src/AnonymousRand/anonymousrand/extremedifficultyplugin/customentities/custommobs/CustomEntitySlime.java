@@ -131,7 +131,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
         }
 
-        if (this.ticksLived == 10) {
+        if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
                 this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /**custom goal that breaks blocks around the mob periodically*/
             }

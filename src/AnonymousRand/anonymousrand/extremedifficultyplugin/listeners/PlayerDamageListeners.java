@@ -33,6 +33,9 @@ public class PlayerDamageListeners implements Listener {
                 case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
                 case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
                 case CHICKEN -> ((CustomEntityChickenAggressive)nmsDamager).attacks++;
+                case ENDER_DRAGON -> {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /**ender dragon flings players much further*/
+                }
                 case ENDERMAN -> ((CustomEntityEnderman)nmsDamager).attacks++;
                 case ENDERMITE -> ((CustomEntityEndermite)nmsDamager).attacks++;
                 case HOGLIN -> {

@@ -109,7 +109,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
-        if (this.ticksLived == 10) {
+        if (this.ticksLived == 5) {
             this.updateSizeStats(this.getSize());
         }
     }

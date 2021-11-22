@@ -43,6 +43,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 nmsEntity instanceof CustomEntityCow ||
                 nmsEntity instanceof CustomEntityCreeper ||
                 nmsEntity instanceof CustomEntityDrowned ||
+                nmsEntity instanceof CustomEntityEnderDragon ||
                 nmsEntity instanceof CustomEntityEnderman ||
                 nmsEntity instanceof CustomEntityEndermite ||
                 nmsEntity instanceof CustomEntityEvoker ||
@@ -200,9 +201,9 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                 case STRIDER -> new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
-                case VILLAGER -> { /**villagers spawn 15 at a time*/
+                case VILLAGER -> { /**villagers spawn 10 at a time*/
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
-                        new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 14, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                        new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 9, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
                     }
                 }
                 case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -236,10 +237,10 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
     @EventHandler
     public void chunkLoad(ChunkLoadEvent event) {
         for (Entity bukkitEntity : event.getChunk().getEntities()) {
-            if (!(bukkitEntity instanceof LivingEntity || bukkitEntity instanceof EntityEnderCrystal)) {
+            if (!(bukkitEntity instanceof LivingEntity || bukkitEntity instanceof EnderCrystal)) {
                 return;
             } else {
-                net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) bukkitEntity).getHandle();
+                net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity)bukkitEntity).getHandle();
                 EntityType type = bukkitEntity.getType();
                 World nmsWorld = nmsEntity.getWorld();
 
@@ -252,6 +253,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         nmsEntity instanceof CustomEntityCow ||
                         nmsEntity instanceof CustomEntityCreeper ||
                         nmsEntity instanceof CustomEntityEnderCrystal ||
+                        nmsEntity instanceof CustomEntityEnderDragon ||
                         nmsEntity instanceof CustomEntityEnderman ||
                         nmsEntity instanceof CustomEntityEndermite ||
                         nmsEntity instanceof CustomEntityEvoker ||
@@ -310,7 +312,6 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case DROWNED -> new SpawnEntity(nmsWorld, new CustomEntityDrowned(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ELDER_GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ENDER_CRYSTAL -> {
-                            Bukkit.broadcastMessage("chunk load crystal");
                             Location loc = bukkitEntity.getLocation();
 
                             CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(nmsWorld);
@@ -336,7 +337,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case PIG -> new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case RABBIT -> {
+                        case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/
                             if (((EntityRabbit) nmsEntity).getRabbitType() == 99) { //to avoid infinte duplication when joining world
                                 return;
                             }
@@ -358,7 +359,7 @@ public class MobSpawnAndReplaceWithCustomListeners implements Listener {
                         case STRIDER -> new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
-                        case VILLAGER -> new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 14, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false); /**villagers spawn 15 at a time*/
+                        case VILLAGER -> new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 9, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false); /**villagers spawn 10 at a time*/
                         case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITHER -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true);
