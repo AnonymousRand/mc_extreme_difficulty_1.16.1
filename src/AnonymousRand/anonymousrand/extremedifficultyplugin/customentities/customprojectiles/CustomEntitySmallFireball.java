@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 public class CustomEntitySmallFireball extends EntitySmallFireball {
 
@@ -14,6 +15,10 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         if (!this.world.isClientSide) {
             Entity entity = movingobjectpositionentity.getEntity();
+
+            if (!(entity instanceof EntityPlayer)) { /**small fireballs can only impact players*/
+                return;
+            }
 
             if (!entity.isFireProof()) {
                 Entity entity1 = this.getShooter();
@@ -32,10 +37,19 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     }
 
     @Override
+    protected void a(MovingObjectPosition movingobjectposition) { //most entity collisions are actually registered here
+        if (movingobjectposition instanceof MovingObjectPositionEntity) {
+            this.a((MovingObjectPositionEntity)movingobjectposition);
+        } else {
+            super.a(movingobjectposition);
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived > 70) { /**small fireballs despawn after 3.5 seconds to reduce lag*/
+        if (this.ticksLived > 80) { /**small fireballs despawn after 4 seconds to reduce lag*/
             this.die();
         }
     }

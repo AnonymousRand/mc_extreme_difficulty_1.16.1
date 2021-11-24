@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWither;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
@@ -40,7 +40,7 @@ public class RunnableTornado extends BukkitRunnable {
         this.loc = new Location(this.bukkitWorld, this.pos.getX(), this.pos.getY() + 1.0, this.pos.getZ());
         this.radius = radius;
         this.maxCycles = maxCycles;
-        LightningStrikeListeners.storm = true;
+        ListenerLightningStrike.storm = true;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class RunnableTornado extends BukkitRunnable {
             }
         } else if (this.cycles - 5 >= this.maxCycles) {
             this.cancel();
-            LightningStrikeListeners.storm = false;
+            ListenerLightningStrike.storm = false;
 
             for (Entity nmsEntity : this.nmsEntitiesAll) {
                 nmsEntity.noclip = false;

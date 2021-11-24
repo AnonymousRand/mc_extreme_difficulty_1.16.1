@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import org.bukkit.Location;
@@ -31,7 +31,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
         this.radius = 100.0;
         this.maxCycles = maxCycles;
         this.customLightning = true;
-        LightningStrikeListeners.storm = true;
+        ListenerLightningStrike.storm = true;
     }
 
     public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, double radius, int maxCycles, boolean customLightning) {
@@ -42,7 +42,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
         this.radius = radius;
         this.maxCycles = maxCycles;
         this.customLightning = customLightning;
-        LightningStrikeListeners.storm = true;
+        ListenerLightningStrike.storm = true;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
             }
         } else if (this.cycles - 5 >= this.maxCycles) {
             this.cancel();
-            LightningStrikeListeners.storm = false;
+            ListenerLightningStrike.storm = false;
         }
     }
 }

@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.MobSpawnAndReplaceWithCustomListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -34,7 +34,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         super(EntityTypes.PHANTOM, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        MobSpawnAndReplaceWithCustomListeners.phantomSize += 0.05 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.05*/
+        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.05 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.05*/
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /**phantoms can fly through blocks*/

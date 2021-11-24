@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
@@ -54,7 +54,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
     @Override
     public void die() {
         super.die();
-        LightningStrikeListeners.numberOfThors--;
+        ListenerLightningStrike.numberOfThors--;
     }
 
     public double getFollowRange() { /**thor zombies have 64 block detection range (setting attribute doesn't work)*/

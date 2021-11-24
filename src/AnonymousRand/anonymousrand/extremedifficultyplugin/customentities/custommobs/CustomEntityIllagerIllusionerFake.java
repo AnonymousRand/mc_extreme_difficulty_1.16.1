@@ -74,7 +74,7 @@ public class CustomEntityIllagerIllusionerFake extends CustomEntityIllagerIllusi
             this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 2, 32.0F));
         }
 
-        if (this.ticksLived >= 1600) { /**fake illusioners die after 80 seconds*/
+        if (this.ticksLived >= 1500) { /**fake illusioners die after 75 seconds*/
             this.die();
         }
     }

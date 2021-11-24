@@ -59,7 +59,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
                 }
             }
         } else {
-            if (type == Material.COBWEB) { /**spider-placed cobwebs are deleted after 2.5 seconds*/
+            if (type == Material.COBWEB || type == Material.SOUL_SOIL) { /**spider-placed cobwebs and wither skeleton-placed soul soil are deleted after 2.5 seconds*/
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitBlock.setType(Material.AIR), 50); //async thread is used so that the game doesn't pause completely for 2.5 seconds
             }
         }

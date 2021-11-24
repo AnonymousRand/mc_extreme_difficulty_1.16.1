@@ -1,24 +1,23 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 public class CustomEntityWitherSkull extends EntityWitherSkull {
 
-    private boolean deathFireballs;
-
     public CustomEntityWitherSkull(World world, EntityLiving entityliving, double d0, double d1, double d2) {
         super(world, entityliving, d0, d1, d2);
-        this.deathFireballs = false;
-    }
-
-    public void setDeathFireballs(boolean b) {
-        this.deathFireballs = b;
     }
 
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         if (!this.world.isClientSide) {
             Entity entity = movingobjectpositionentity.getEntity();
+
+            if (!(entity instanceof EntityPlayer)) { /**wither skulls can only impact players*/
+                return;
+            }
+
             Entity entity1 = this.getShooter();
             boolean flag;
 
@@ -37,8 +36,8 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
                 flag = entity.damageEntity(DamageSource.MAGIC, 5.0F);
             }
 
-            if (flag && entity instanceof EntityLiving) {
-                byte b0 = 0;
+            if (flag) {
+                byte b0;
 
                 if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /**wither skulls also inflict 10 seconds of wither 2 in easy mode and 20 seconds instead in hard mode*/
                     b0 = 20;
@@ -49,25 +48,30 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
                 }
 
                 ((EntityLiving)entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));
+
+                Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
+                this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /**blue skulls explode power 2*/
+
             }
         }
     }
 
     @Override
     protected void a(MovingObjectPosition movingobjectposition) {
-        super.a(movingobjectposition);
-        if (!this.world.isClientSide) {
-            Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
+        if (movingobjectposition instanceof MovingObjectPositionEntity) {
+            if (((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer) { /**wither skulls can only impact players*/
+                this.a((MovingObjectPositionEntity)movingobjectposition);
+            }
 
-            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /**blue skulls explode power 2*/
-            this.die();
+            return;
         }
-    }
 
-
-    @Override
-    public float i() { /**blue skulls move 120% faster if fired as part of the wither's dying phase*/
-        return this.isCharged() ? this.deathFireballs ? 1.606F : 0.73F : super.i();
+        //otherwise if hit block
+        super.a(movingobjectposition);
+        if (!this.world.isClientSide && this.isCharged()) {
+            Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /**blue skulls explode power 2*/
+        }
     }
 
     @Override

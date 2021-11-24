@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.LightningStrikeListeners;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Entity;
@@ -28,7 +28,7 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
         this.maxCycles = maxCycles;
         this.effect = true;
         this.thorGoal.storm = true;
-        LightningStrikeListeners.storm = true;
+        ListenerLightningStrike.storm = true;
     }
 
     public RunnableThorLightningEffectStorm(Entity entity, int maxCycles, boolean effect) {
@@ -38,7 +38,7 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
         this.cycles = 0;
         this.maxCycles = maxCycles;
         this.effect = effect;
-        LightningStrikeListeners.storm = true;
+        ListenerLightningStrike.storm = true;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
                 this.thorGoal.storm = false;
             }
 
-            LightningStrikeListeners.storm = false;
+            ListenerLightningStrike.storm = false;
         }
     }
 }

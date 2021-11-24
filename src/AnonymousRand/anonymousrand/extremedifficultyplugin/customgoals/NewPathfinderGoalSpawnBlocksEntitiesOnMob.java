@@ -143,8 +143,8 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
                                 if (this.loc.getBlock().getType() == org.bukkit.Material.AIR) {
                                     this.loc.getBlock().setType(this.material);
 
-                                    if (this.material == Material.COBWEB) {
-                                        Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 2.5 seconds
+                                    if (this.material == Material.COBWEB || this.material == Material.SOUL_SOIL) {
+                                        Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb or soul soil block can be broken after 2.5 seconds
                                     }
                                 }
                             }

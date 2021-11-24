@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class CustomEntityLargeFireball extends EntityLargeFireball {
@@ -31,18 +32,23 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
     @Override
     protected void a(MovingObjectPosition movingobjectposition) { //in order for the new yield value to register
+        if (movingobjectposition instanceof MovingObjectPositionEntity) {
+            if (((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer) { /**large fireballs can only impact players*/
+                this.a((MovingObjectPositionEntity)movingobjectposition);
+            }
+
+            return;
+        }
+
+        //otherwise if hit block
         super.a(movingobjectposition);
-
-        if (!this.world.isClientSide && this.yield != 1) {
+        if (!this.world.isClientSide && this.yield > 1) {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-
             this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && StaticPlugin.plugin != null) { //summon thor lightning
                 new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
-
-            this.die();
         }
     }
 
@@ -50,6 +56,11 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         if (!this.world.isClientSide) {
             Entity entity = movingobjectpositionentity.getEntity();
+
+            if (!(entity instanceof EntityPlayer)) { /**large fireballs can only impact players*/
+                return;
+            }
+
             Entity entity1 = this.getShooter();
 
             entity.damageEntity(DamageSource.fireball(this, entity1), 1.333333333F); /**large fireballs only do 1.333333333 direct damage*/
@@ -57,6 +68,12 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
                 this.a((EntityLiving) entity1, entity);
             }
 
+            boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+            this.world.createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+
+            if (this.summonLightning && StaticPlugin.plugin != null) { //summon thor lightning
+                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+            }
         }
     }
 

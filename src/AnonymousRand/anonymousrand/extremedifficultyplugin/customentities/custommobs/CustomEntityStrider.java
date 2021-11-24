@@ -15,8 +15,7 @@ public class CustomEntityStrider extends EntityStrider {
     public void tick() {
         super.tick();
 
-        if (this.hasSinglePlayerPassenger() && random.nextDouble() < 0.0006) { /**if they have a rider, striders have a 0.06% chance per tick to explode*/
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.5F, false, Explosion.Effect.DESTROY);
+        if (this.hasSinglePlayerPassenger() && random.nextDouble() < 0.0006) { /**if they have a rider, striders have a 0.06% chance per tick to disappear*/
             this.die();
         }
     }

@@ -31,8 +31,8 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 1, true)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new PathfinderGoalWitherSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.SOUL_SOIL, 1, 1, 0, 1, -1.0)); /**custom goal that allows wither skeleton to summon soul sand in a 3 by 3 beneath itself constantly*/
-        this.goalSelector.a(1, new PathfinderGoalWitherSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.WITHER_ROSE, 1, 0, 0, 0, 0)); /**custom goal that allows wither skeleton to summon wither roses on itself constantly*/
+        this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.SOUL_SOIL, 1, 1, 0, 1, -1.0, false)); /**custom goal that allows wither skeleton to summon soul sand in a 3 by 3 beneath itself constantly*/
+        this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.WITHER_ROSE, 1, 0, 0, 0, 0, false)); /**custom goal that allows wither skeleton to summon wither roses on itself constantly*/
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
@@ -122,24 +122,9 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         if (this.getGoalTarget() == null) {
             return 3;
         } else {
-            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+            int i = (int) (this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
 
             return i + 3;
-        }
-    }
-
-    static class PathfinderGoalWitherSpawnBlocksEntitiesOnMob extends NewPathfinderGoalSpawnBlocksEntitiesOnMob {
-        public PathfinderGoalWitherSpawnBlocksEntitiesOnMob(EntityInsentient entity, org.bukkit.Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double yOffset) {
-            super(entity, material, delayTimer, xRadius, yRadius, zRadius, yOffset, true);
-        }
-
-        @Override
-        public boolean a() { /**wither only creates soul soil bridge underneath itself if it doesn't need to get down to player*/
-            if (super.a()) {
-                return this.entity.getGoalTarget().locY() >= this.entity.locY();
-            }
-
-            return false;
         }
     }
 }

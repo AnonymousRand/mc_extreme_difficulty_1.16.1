@@ -9,8 +9,11 @@ import java.util.List;
 
 public class CustomEntityDragonFireball extends EntityDragonFireball {
 
-    public CustomEntityDragonFireball(World world, EntityLiving entityLiving, double d0, double d1, double d2) {
+    private final boolean spawnMobs;
+
+    public CustomEntityDragonFireball(World world, EntityLiving entityLiving, double d0, double d1, double d2, boolean spawnMobs) {
         super(world, entityLiving, d0, d1, d2);
+        this.spawnMobs = spawnMobs;
     }
 
     @Override
@@ -52,6 +55,36 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
         }
 
         this.die();
+    }
+
+    @Override
+    public void die() {
+        super.die();
+
+        if (this.spawnMobs) {
+            int playerMultiplier = Bukkit.getServer().getOnlinePlayers().size() < 7 ? 1 : 2;
+            double rand = random.nextDouble();
+
+            if (rand < 0.5) {
+
+            } else if (rand < 0.55) {
+
+            } else if (rand < 0.6) {
+
+            } else if (rand < 0.65) {
+
+            } else if (rand < 0.7) {
+
+            } else if (rand < 0.75) {
+
+            } else if (rand < 0.8) {
+
+            } else if (rand < 0.9) {
+
+            } else {
+
+            }
+        }
     }
 
     @Override

@@ -63,26 +63,26 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     private void initializeListeners() { //registers the listeners
         getServer().getPluginManager().registerEvents(new ListenerBlockPlaceAndBreak(), this);
-        getServer().getPluginManager().registerEvents(new DragonFightListeners(), this);
-        getServer().getPluginManager().registerEvents(new DropItemListeners(),this);
-        getServer().getPluginManager().registerEvents(new MobDamageListeners(), this);
-        getServer().getPluginManager().registerEvents(new MobDeathListeners(),this);
-        getServer().getPluginManager().registerEvents(new MobSpawnAndReplaceWithCustomListeners(), this);
-        getServer().getPluginManager().registerEvents(new LightningStrikeListeners(),this);
-        getServer().getPluginManager().registerEvents(new PiglinBarterListeners(), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerDeathAndRespawnListeners(), this);
-        getServer().getPluginManager().registerEvents(new PlayerEatListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListeners(),this);
-        getServer().getPluginManager().registerEvents(new PlayerMovementAndFallDamageListeners(), this);
-        getServer().getPluginManager().registerEvents(new PotionEffectListeners(), this);
-        getServer().getPluginManager().registerEvents(new ProjectileListeners(), this);
-        getServer().getPluginManager().registerEvents(new RaidAndVillagerListeners(),this);
-        getServer().getPluginManager().registerEvents(new SheepDyeListeners(), this);
-        getServer().getPluginManager().registerEvents(new SleepListeners(), this);
-        getServer().getPluginManager().registerEvents(new VehicleCreateListeners(), this);
-        getServer().getPluginManager().registerEvents(new VillagerTradeListeners(),this);
+        getServer().getPluginManager().registerEvents(new ListenerDragonFight(), this);
+        getServer().getPluginManager().registerEvents(new ListenerDropItem(),this);
+        getServer().getPluginManager().registerEvents(new ListenerMobDamage(), this);
+        getServer().getPluginManager().registerEvents(new ListenerMobDeath(),this);
+        getServer().getPluginManager().registerEvents(new ListenerMobSpawnAndReplaceWithCustom(), this);
+        getServer().getPluginManager().registerEvents(new ListenerLightningStrike(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPiglinBarter(), this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerDamage(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerDeathAndRespawn(), this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerEat(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerInteract(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerJoin(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerMovementAndFallDamage(), this);
+        getServer().getPluginManager().registerEvents(new ListenerPotionEffect(), this);
+        getServer().getPluginManager().registerEvents(new ListenerProjectile(), this);
+        getServer().getPluginManager().registerEvents(new ListenerRaidAndVillager(),this);
+        getServer().getPluginManager().registerEvents(new ListenerSheepDye(), this);
+        getServer().getPluginManager().registerEvents(new ListenerSleep(), this);
+        getServer().getPluginManager().registerEvents(new ListenerVehicleCreate(), this);
+        getServer().getPluginManager().registerEvents(new ListenerVillagerTrade(),this);
     }
 
     private void initializePluginFields() { //initializes static plugin fields

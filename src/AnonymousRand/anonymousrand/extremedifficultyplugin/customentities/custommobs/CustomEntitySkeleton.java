@@ -57,11 +57,11 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         this.attacks++;
 
         if (this.attacks >= 20 && this.attacks <= 45 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 10, 2, 45.0, 0, false, false);
+            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 45.0, 0, false, false).run();
         } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-            new RunnableMobShootArrowsNormally(this, entityliving, f, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
+            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18).run(); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
-            new RunnableSkeletonRapidFire(this, entityliving, this.attacks < 35 ? 8 : 40, f).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks >= 35 ? 1L : 5L); //custom repeating runnable class
+            new RunnableMobShootArrowsNormally(this, entityliving, this.attacks < 35 ? 10 : 1, 1, this.attacks < 35 ? 30.0 : 0.0, random.nextDouble() < 0.025 ? 1 : 0, true, this.attacks >= 35, this.attacks < 35 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 35 ? 5L : 1L);
         }
     }
 
@@ -129,57 +129,6 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
 
         } else {
             this.ticksFarFromPlayer = 0;
-        }
-    }
-
-    static class RunnableSkeletonRapidFire extends BukkitRunnable {
-
-        private final CustomEntitySkeleton skeleton;
-        private final EntityLiving target;
-        private int cycles;
-        private final int maxCycles;
-        private final float distance;
-        private static final Random random = new Random();
-
-        public RunnableSkeletonRapidFire(CustomEntitySkeleton skeleton, EntityLiving target, int maxCycles, float distance) {
-            this.skeleton = skeleton;
-            this.target = target;
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
-            this.distance = distance;
-        }
-
-        @Override
-        public void run() {
-            if (++this.cycles > this.maxCycles) {
-                this.cancel();
-                return;
-            }
-
-            for (int i = 0; i < (skeleton.attacks < 35 ? 10 : 1); i++) {
-                CustomEntityArrow entityArrow = new CustomEntityArrow(this.skeleton.getWorld());
-                entityArrow.a(this.target, this.distance);
-                entityArrow.setShooter(this.skeleton);
-                entityArrow.setPosition(this.skeleton.locX(), this.skeleton.locY() + 1.5, this.skeleton.locZ());
-
-                double d0 = target.locX() - skeleton.locX();
-                double d1 = target.locY() - skeleton.locY();
-                double d2 = target.locZ() - skeleton.locZ();
-
-                if (random.nextDouble() <= 0.02) { /**2% of arrows shot are piercing 1*/
-                    entityArrow.setPierceLevel((byte)1);
-                }
-
-                if (this.skeleton.attacks >= 35) { /**starting from the 35th attack, arrows do not lose y level*/
-                    entityArrow.setNoGravity(true);
-                }
-
-                entityArrow.setOnFire(50);
-
-                entityArrow.shoot(d0, d1, d2, 1.6F, skeleton.attacks < 35 ? (float)(30 - skeleton.world.getDifficulty().a() * 4) : 0.0F); /**no inaccuracy after 35 attacks*/
-                skeleton.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (skeleton.getRandom().nextFloat() * 0.4F + 0.8F));
-                skeleton.world.addEntity(entityArrow);
-            }
         }
     }
 }

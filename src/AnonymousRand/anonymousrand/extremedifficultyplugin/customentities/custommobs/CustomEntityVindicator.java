@@ -29,7 +29,8 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomM
         this.a10 = false;
         this.a25 = false;
         this.a35 = false;
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.6125); /**vindicators move 75% faster*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.665); /**vindicators move 90% faster and have strength 1*/
+        this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
@@ -58,17 +59,17 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomM
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, vindicators get strength 1*/
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, vindicators get strength 2*/
             this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
+            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, vindicators get netherite axes and strength 2*/
+        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, vindicators get netherite axes and strength 3*/
             this.a35 = true;
             this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.NETHERITE_AXE));
             this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.NETHERITE_AXE));
             this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.NETHERITE_AXE));
-            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
+            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
         }
     }
 
