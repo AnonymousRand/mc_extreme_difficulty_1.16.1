@@ -83,7 +83,7 @@ public class ListenerMobDeath implements Listener {
             }
             case WANDERING_TRADER -> { /**wandering traders spawn 2 evokers and illusioners when killed*/
                 new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);
-                new SpawnEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
+                new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 2, null, null, nmsEntity, false, true);
             }
             case WITHER -> {
                 if (nmsEntity instanceof CustomEntityWitherMini) { /**mini withers shoot less blue skulls in all directions and summon 3 wither skeletons when killed*/

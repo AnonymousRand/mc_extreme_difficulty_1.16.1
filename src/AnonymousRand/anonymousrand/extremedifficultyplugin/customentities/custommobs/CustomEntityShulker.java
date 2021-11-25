@@ -28,7 +28,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
         goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
-        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /**shulkers have 12 armor points, and even more when it is closed*/
+        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(10.0); /**shulkers have 10 armor points, and even more when it is closed*/
     }
 
     @Override

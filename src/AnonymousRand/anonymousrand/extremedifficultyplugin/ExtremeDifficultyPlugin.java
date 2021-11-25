@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Filter;
+import java.util.logging.LogRecord;
+
 public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     @Override
@@ -82,7 +85,6 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ListenerSheepDye(), this);
         getServer().getPluginManager().registerEvents(new ListenerSleep(), this);
         getServer().getPluginManager().registerEvents(new ListenerVehicleCreate(), this);
-        getServer().getPluginManager().registerEvents(new ListenerVillagerTrade(),this);
     }
 
     private void initializePluginFields() { //initializes static plugin fields

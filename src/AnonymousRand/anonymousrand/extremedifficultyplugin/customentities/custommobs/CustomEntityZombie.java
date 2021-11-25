@@ -170,7 +170,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
 
             new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
             new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 3, 40.0, 8).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 3, 40.0, 7).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
         }
     }
 

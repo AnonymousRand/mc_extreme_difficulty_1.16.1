@@ -71,7 +71,7 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 return ((CustomEntitySlimeMagmaCube)this.e).getFollowRange();
             }
             case ILLUSIONER -> {
-                return ((CustomEntityIllagerIllusioner)this.e).getFollowRange();
+                return ((CustomEntityIllusioner)this.e).getFollowRange();
             }
             case IRON_GOLEM -> {
                 return ((CustomEntityIronGolem)this.e).getFollowRange();

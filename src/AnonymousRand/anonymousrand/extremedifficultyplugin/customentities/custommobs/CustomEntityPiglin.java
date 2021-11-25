@@ -23,7 +23,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         double rand = random.nextDouble();
-        this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.96 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /**piglins have a 45% chance to be armed with a crossbow or a sword each, a 6% chance to have a netherite hoe, and a 4% chance to have a netherite sword*/
+        this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.95 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /**piglins have a 45% chance to be armed with a crossbow or a sword each, a 5% chance to have a netherite hoe, and a 5% chance to have a netherite sword*/
         Arrays.fill(this.dropChanceHand, 0.0f); /**piglins can't drop the items they are holding*/
         this.attacks = 0;
         this.a10 = false;
@@ -46,6 +46,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
 
         this.goalSelector.a(0, this.buffPiglins);
         this.goalSelector.a(0, this.buffMobs);
+    }
+
+    public CustomEntityPiglin(World world, boolean alwaysNetheriteSword) {
+        this(world);
+
+        if (alwaysNetheriteSword) {
+            this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.NETHERITE_SWORD));
+        }
     }
 
     static {

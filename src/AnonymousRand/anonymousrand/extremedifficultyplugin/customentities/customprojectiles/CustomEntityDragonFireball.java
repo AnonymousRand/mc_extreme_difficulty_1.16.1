@@ -1,6 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 
@@ -29,10 +31,11 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
         Entity shooter = this.getShooter();
         List<EntityLiving> entities;
         CustomEntityAreaEffectCloud entityareaeffectcloud;
+        boolean largerRadius = random.nextDouble() < 0.05;
 
-        for (int i = -3; i < 3; i++) { /**area effect clouds are 6 blocks high but only last 15 seconds and take 5 ticks less to start doing damage*/
+        for (int i = -3; i < 3; i++) { /**area effect clouds are 6 blocks high and take 5 ticks less to start doing damage, but only last 5 seconds; 5% chance to create a wider area effect cloud with radius 7*/
             entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
-            entityareaeffectcloud = new CustomEntityAreaEffectCloud(this.world, 3.0F, 300, 15);
+            entityareaeffectcloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
                 entityareaeffectcloud.setSource((EntityLiving)shooter);
@@ -40,7 +43,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
             entityareaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
             entityareaeffectcloud.setParticle(Particles.DRAGON_BREATH);
-            entityareaeffectcloud.setRadiusPerTick((7.0F - entityareaeffectcloud.getRadius()) / (float) entityareaeffectcloud.getDuration());
+            entityareaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityareaeffectcloud.getRadius()) / (float) entityareaeffectcloud.getDuration()); /**area effect clouds only expand to a max of radius 5 and wide clouds don't expand*/
             entityareaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityLiving entity : entities) {
@@ -61,28 +64,25 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
     public void die() {
         super.die();
 
-        if (this.spawnMobs) {
-            int playerMultiplier = Bukkit.getServer().getOnlinePlayers().size() < 7 ? 1 : 2;
+        if (this.spawnMobs) { /**most dragon fireballs have a chance to summon different mobs on impact*/
             double rand = random.nextDouble();
 
-            if (rand < 0.5) {
-
-            } else if (rand < 0.55) {
-
-            } else if (rand < 0.6) {
-
-            } else if (rand < 0.65) {
-
-            } else if (rand < 0.7) {
-
-            } else if (rand < 0.75) {
-
-            } else if (rand < 0.8) {
-
-            } else if (rand < 0.9) {
-
-            } else {
-
+            if (rand >= 0.55) {
+                if (rand < 0.65) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityEnderman(this.getWorld()), random.nextInt(2) + 1, null, null, this, false, true);
+                } else if (rand < 0.75) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityCreeper(this.getWorld(), 25), random.nextInt(2) + 1, null, null, this, false, true);
+                } else if (rand < 0.8) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityShulker(this.getWorld()), 1, null, null, this, false, false);
+                } else if (rand < 0.85) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityRabbit(this.getWorld()), random.nextInt(2) + 4, null, null, this, false, true);
+                } else if (rand < 0.9) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), random.nextInt(2) + 3, null, null, this, false, true);
+                } else if (rand < 0.95) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityLlama(this.getWorld()), 1, null, null, this, false, true);
+                } else {
+                    new SpawnEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld(), true), random.nextInt(2) + 1, null, null, this, false, true);
+                }
             }
         }
     }

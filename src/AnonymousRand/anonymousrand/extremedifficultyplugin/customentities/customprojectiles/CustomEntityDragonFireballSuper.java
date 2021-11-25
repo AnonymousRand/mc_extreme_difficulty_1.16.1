@@ -1,7 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Location;
 
 import java.util.List;
 
@@ -28,9 +34,9 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
         List<EntityLiving> entities;
         CustomEntityAreaEffectCloud entityareaeffectcloud;
 
-        for (int i = -3; i < 3; i++) { /**area effect clouds are 6 blocks high, 9 blocks wide and take 5 ticks less to start doing damage*/
+        for (int i = -3; i < 3; i++) { /**area effect clouds are 6 blocks high, 9 blocks wide and take 5 ticks less to start doing damage, but only last 10 seconds*/
             entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(17.0, 128.0, 17.0));
-            entityareaeffectcloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 600, 15);
+            entityareaeffectcloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 200, 15);
 
             if (shooter instanceof EntityLiving) {
                 entityareaeffectcloud.setSource((EntityLiving)shooter);
@@ -59,8 +65,38 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
     public void die() {
         super.die();
 
-        if (this.spawnMobs) {
+        if (this.spawnMobs) { /**most super fireballs summon different mobs/effects on impact*/
+            double rand = random.nextDouble();
 
+            if (rand < 0.125) {
+                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
+            } else if (rand < 0.225) {
+                new RunnableMeteorRain(this, 1, 40.0, 10).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableMeteorRain(this, 2, 40.0, 7).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableMeteorRain(this, 3, 40.0, 6).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+            } else if (rand < 0.325) {
+                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            } else if (rand < 0.425) {
+                new SpawnEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
+            } else if (rand < 0.525) {
+                new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 6, null, null, this, false, true);
+            } else if (rand < 0.625) {
+                new SpawnEntity(this.getWorld(), new CustomEntitySlimeMagmaCube(this.getWorld(), 16), 1, null, null, this, false, true);
+            } else if (rand < 0.725) {
+                new SpawnEntity(this.getWorld(), new CustomEntityBlaze(this.getWorld()), 4, null, null, this, false, false);
+            } else if (rand < 0.8) {
+                new SpawnEntity(this.getWorld(), new CustomEntityIllusioner(this.getWorld()), 2, null, null, this, false, true);
+            } else if (rand < 0.85) {
+                new SpawnEntity(this.getWorld(), new CustomEntityDrowned(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityWitch(this.getWorld()), 1, null, null, this, false, true);
+            } else if (rand < 0.9) {
+                new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityRavager(this.getWorld()), 1, null, null, this, false, true);
+            } else if (rand < 0.95) {
+                new SpawnEntity(this.getWorld(), new CustomEntitySheepAggressive(this.getWorld()), 1, null, null, this, false, true);
+            } else {
+                new SpawnEntity(this.getWorld(), new EntityEnderCrystal(EntityTypes.END_CRYSTAL, this.getWorld()), 1, null, null, this, false, true);
+            }
         }
     }
 

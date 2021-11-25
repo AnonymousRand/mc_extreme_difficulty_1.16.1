@@ -47,10 +47,10 @@ public class RunnableTornado extends BukkitRunnable {
     public void run() {
         if (++this.cycles <= this.maxCycles) { //continue the spinning motion of falling blocks every tick
             for (Map.Entry<FallingBlock, Integer> fallingBlockEntry : this.fallingBlocksAll.entrySet()) {
-                fallingBlockEntry.getKey().setVelocity(CustomMathHelper.spiralVector(13.0 + fallingBlockEntry.getValue() / 20.0, this.cycles - fallingBlockEntry.getValue(), 0.5 + random.nextDouble() * 0.75).multiply(0.3));
+                fallingBlockEntry.getKey().setVelocity(CustomMathHelper.spiralVector(13.0 + fallingBlockEntry.getValue() / 20.0, this.cycles - fallingBlockEntry.getValue(), 0.6 + random.nextDouble() * 0.75).multiply(0.25));
             }
 
-            if (this.cycles % 5 == 0) { //pull in entities every 5 ticks
+            if (this.cycles % 6 == 0) { //pull in entities every 6 ticks
                 this.nmsEntitiesTemp = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> ((entity instanceof EntityLiving || entity instanceof EntityEnderPearl) && !(entity instanceof CustomEntityEnderDragon || entity instanceof CustomEntityWither)));
                 this.nmsEntitiesAll.addAll(this.nmsEntitiesTemp);
                 for (Entity nmsEntity : this.nmsEntitiesTemp) {
@@ -69,12 +69,12 @@ public class RunnableTornado extends BukkitRunnable {
                 this.bukkitWorld.strikeLightningEffect(this.loc); //strike lightning every 2 ticks
 
                 this.bukkitBlocksTemp.clear();
-                for (int i = 0; i < random.nextInt(3) + 4; i++) { //pick up 4-6 new blocks every 2 ticks
+                for (int i = 0; i < random.nextInt(3) + 5; i++) { //pick up 5-7 new blocks every 2 ticks
                     randomLoc = new Location(this.bukkitWorld, this.pos.getX() + random.nextGaussian() * this.radius * 0.2, 0.0, this.pos.getZ() + random.nextGaussian() * this.radius * 0.2);
                     this.bukkitBlocksTemp.add(this.bukkitWorld.getHighestBlockAt(randomLoc));
                 }
 
-                this.vec = CustomMathHelper.spiralVector(13.0, this.cycles, 0.5 + random.nextDouble() * 0.75).multiply(0.3);
+                this.vec = CustomMathHelper.spiralVector(13.0, this.cycles, 0.6 + random.nextDouble() * 0.75).multiply(0.25);
                 randomLoc = new Location(this.bukkitWorld, this.loc.getX() + 13.0, this.loc.getY(), this.loc.getZ()); //so that after its first "toss" by the tornado, it will be perfectly centered on it
                 for (Block bukkitBlock : this.bukkitBlocksTemp) { //turn those new blocks into falling blocks
                     type = bukkitBlock.getType();

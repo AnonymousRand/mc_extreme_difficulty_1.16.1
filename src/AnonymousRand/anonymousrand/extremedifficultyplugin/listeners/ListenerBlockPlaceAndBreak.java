@@ -99,9 +99,9 @@ public class ListenerBlockPlaceAndBreak implements Listener {
                 new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 3, null, loc, true);
                 new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, loc, false);
             }
-            case SPAWNER -> { /**breaking a spawner spawns 10 mobs of its spawned type*/
+            case SPAWNER -> { /**breaking a spawner spawns 5 mobs of its spawned type*/
                 EntityTypes<? extends Entity> types = IRegistry.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(((CreatureSpawner)bukkitBlock.getState()).getSpawnedType().getKey())); //gets the spawned entity type from the spawner and converts it into nms
-                new SpawnEntity(nmsWorld, types.a(nmsWorld), 10, CreatureSpawnEvent.SpawnReason.SPAWNER, loc, true);
+                new SpawnEntity(nmsWorld, types.a(nmsWorld), 5, CreatureSpawnEvent.SpawnReason.SPAWNER, loc, true);
             }
         }
     }

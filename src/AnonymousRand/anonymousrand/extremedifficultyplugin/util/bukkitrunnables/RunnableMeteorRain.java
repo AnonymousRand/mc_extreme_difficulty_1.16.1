@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class RunnableMeteorRain extends BukkitRunnable {
 
-    private final LivingEntity bukkitShooter;
+    private final org.bukkit.entity.Entity bukkitShooter;
     private final int type;
     private final double maxRadius;
     private CustomEntityArrowExploding explodingArrow;
@@ -41,8 +41,8 @@ public class RunnableMeteorRain extends BukkitRunnable {
         this.vec = new Vector(0.0, -1.0, 0.0); //todo: delete if no need for wither skulls
     }
 
-    public RunnableMeteorRain(EntityLiving nmsEntity, int type, double maxRadius, int maxCycles) {
-        this.bukkitShooter = (LivingEntity)nmsEntity.getBukkitEntity();
+    public RunnableMeteorRain(Entity nmsEntity, int type, double maxRadius, int maxCycles) {
+        this.bukkitShooter = nmsEntity.getBukkitEntity();
         this.type = type;
         this.maxRadius = maxRadius;
         this.maxCycles = maxCycles;
@@ -64,7 +64,7 @@ public class RunnableMeteorRain extends BukkitRunnable {
                 for (int i = 0; i < 4; i++) {
                     pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 20.0 + 20.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to summon projectile at
 
-                    this.explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte)(random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter, 1.0F); /**25% of arrows are piecing 1*/
+                    this.explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte)(random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter instanceof LivingEntity ? (LivingEntity)this.bukkitShooter : null, 1.0F); /**25% of arrows are piecing 1*/
                     this.explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(this.explodingArrow);
                 }

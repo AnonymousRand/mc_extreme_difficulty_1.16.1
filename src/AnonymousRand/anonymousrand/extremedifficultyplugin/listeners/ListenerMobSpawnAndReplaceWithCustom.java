@@ -52,7 +52,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 nmsEntity instanceof CustomEntityGuardianElder ||
                 nmsEntity instanceof CustomEntityHoglin ||
                 nmsEntity instanceof EntityHorseSkeleton ||
-                nmsEntity instanceof CustomEntityIllagerIllusioner ||
+                nmsEntity instanceof CustomEntityIllusioner ||
                 nmsEntity instanceof CustomEntityIronGolem ||
                 nmsEntity instanceof CustomEntitySlimeMagmaCube ||
                 nmsEntity instanceof CustomEntityLlama ||
@@ -96,7 +96,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, bukkitEntity, null, true, false);
                     }
                 }
-                case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case BLAZE -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
                         CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
@@ -154,12 +154,12 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         new SpawnEntity(nmsWorld, new CustomEntitySlimeMagmaCube(nmsWorld, j), 1, null, bukkitEntity, null, true, true);
                     } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SLIME_SPLIT && orgSize >= 2) {
                         new SpawnEntity(nmsWorld, new CustomEntitySlimeMagmaCube(nmsWorld, orgSize), 1, null, bukkitEntity, null, true, true);
-                    } else { /**magma cubes can't exist at size 1 to prevent lag from too many cubes*/ //todo check
+                    } else { /**magma cubes can't exist at size 1 to prevent lag from too many cubes*/
                         bukkitEntity.remove();
                     }
                 }
                 case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case MUSHROOM_COW -> new SpawnEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PHANTOM -> {
@@ -262,7 +262,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntityGuardianElder ||
                         nmsEntity instanceof CustomEntityHoglin ||
                         nmsEntity instanceof EntityHorseSkeleton ||
-                        nmsEntity instanceof CustomEntityIllagerIllusioner ||
+                        nmsEntity instanceof CustomEntityIllusioner ||
                         nmsEntity instanceof CustomEntityIronGolem ||
                         nmsEntity instanceof CustomEntityLlama ||
                         nmsEntity instanceof CustomEntityLlamaTrader ||
@@ -298,7 +298,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntityZombiePig)) { //to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
                     switch (type) {
-                        case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, false);
+                        case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case BLAZE -> new SpawnEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case CHICKEN -> new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, true, true);
@@ -326,7 +326,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case HOGLIN -> new SpawnEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case HUSK -> new SpawnEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllagerIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case MUSHROOM_COW -> new SpawnEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true);

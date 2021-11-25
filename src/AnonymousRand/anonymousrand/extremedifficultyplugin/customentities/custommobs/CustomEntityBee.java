@@ -48,7 +48,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob {
 
             if (this.firstSting) { /**duplicates after the first time stinging*/
                 this.firstSting = false;
-                new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null, null, this, false, false);
+                new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }

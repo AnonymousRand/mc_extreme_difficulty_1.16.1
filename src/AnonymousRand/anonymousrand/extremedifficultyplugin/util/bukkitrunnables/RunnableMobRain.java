@@ -64,7 +64,7 @@ public class RunnableMobRain extends BukkitRunnable {
     }
 
     private void initArrayLists() {
-        ArrayList<EntityLiving> entitiesToSpawn1, entitiesToSpawn2, entitiesToSpawn3;
+        ArrayList<EntityLiving> entitiesToSpawn1, entitiesToSpawn2;
 
         entitiesToSpawn1 = new ArrayList<>(List.of(
                 new CustomEntityBat(this.nmsWorld),
@@ -95,7 +95,7 @@ public class RunnableMobRain extends BukkitRunnable {
                 new CustomEntityGuardian(this.nmsWorld),
                 new CustomEntityHoglin(this.nmsWorld),
                 new CustomEntityHoglin(this.nmsWorld),
-                new CustomEntityIllagerIllusioner(this.nmsWorld),
+                new CustomEntityIllusioner(this.nmsWorld),
                 new CustomEntityRabbit(this.nmsWorld),
                 new CustomEntityRabbit(this.nmsWorld),
                 new CustomEntityRabbit(this.nmsWorld),
@@ -169,12 +169,10 @@ public class RunnableMobRain extends BukkitRunnable {
                 new CustomEntityZombieVillager(this.nmsWorld)
         ));
 
-        entitiesToSpawn2 = new ArrayList<>(List.of(new CustomEntityWither(this.nmsWorld)));
-
-        entitiesToSpawn3 = new ArrayList<>(List.of(
+        entitiesToSpawn2 = new ArrayList<>(List.of(
                 new CustomEntityGuardianElder(nmsWorld),
-                new CustomEntityIllagerIllusioner(nmsWorld),
-                new CustomEntityIllagerIllusioner(nmsWorld),
+                new CustomEntityIllusioner(nmsWorld),
+                new CustomEntityIllusioner(nmsWorld),
                 new CustomEntityIronGolem(nmsWorld),
                 new CustomEntityRavager(nmsWorld),
                 new CustomEntitySheepAggressive(nmsWorld),
@@ -186,6 +184,5 @@ public class RunnableMobRain extends BukkitRunnable {
 
         this.entitesToSpawn.put(1, entitiesToSpawn1);
         this.entitesToSpawn.put(2, entitiesToSpawn2);
-        this.entitesToSpawn.put(3, entitiesToSpawn3);
     }
 }

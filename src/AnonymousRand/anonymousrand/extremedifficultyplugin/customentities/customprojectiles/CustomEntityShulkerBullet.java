@@ -28,25 +28,25 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
         EntityHuman entityHuman = (EntityHuman)entity;
         boolean shield = entityHuman.isBlocking();
 
-        if (entityHuman.hasEffect(MobEffects.LEVITATION) || shield) { /**levitation is only applied for 8 seconds*/
+        if (entityHuman.hasEffect(MobEffects.LEVITATION) || shield) { /**levitation is only applied for 7.5 seconds*/
             entityHuman.removeEffect(MobEffects.LEVITATION);
 
             if (this.getShooter() instanceof CustomEntityShulker) {
                 if (((CustomEntityShulker)this.getShooter()).attacks >= 70) { /**after 70 attacks, shulkers' bullets inflict levitation for 50% longer and also inflict blindness for 2.5 seconds*/
-                    entityHuman.addEffect(new MobEffect(MobEffects.LEVITATION, shield ? 180 : 240, shield ? 1 : 0));
+                    entityHuman.addEffect(new MobEffect(MobEffects.LEVITATION, shield ? 180 : 225, shield ? 1 : 0));
                     entityHuman.addEffect(new MobEffect(MobEffects.BLINDNESS, 50));
                     return;
                 }
             }
 
-            entityHuman.addEffect(new MobEffect(MobEffects.LEVITATION, shield ? 120 : 160, shield ? 1 : 0)); /**shulker bullets give levitation 2 when hitting a shield for 6 seconds*/
+            entityHuman.addEffect(new MobEffect(MobEffects.LEVITATION, shield ? 120 : 150, shield ? 1 : 0)); /**shulker bullets give levitation 2 when hitting a shield for 6 seconds*/
         }
     }
 
     @Override
     protected void a(MovingObjectPositionBlock movingobjectpositionblock) { /**shulker bullets explode when hitting a block*/
         super.a(movingobjectpositionblock);
-        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 3.0F, false, Explosion.Effect.DESTROY);
+        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.5F, false, Explosion.Effect.DESTROY);
     }
 
     @Override

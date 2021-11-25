@@ -54,7 +54,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
     @Override
     public void die() {
         super.die();
-        ListenerLightningStrike.numberOfThors--;
+        ListenerLightningStrike.numberOfThors = Math.max(0, ListenerLightningStrike.numberOfThors - 1); //to make sure nothing weird happens
     }
 
     public double getFollowRange() { /**thor zombies have 64 block detection range (setting attribute doesn't work)*/
@@ -64,6 +64,8 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
     @Override
     public void tick() {
         super.tick();
+
+        ListenerLightningStrike.storm = true; /**thors can't summon other thors*/
 
         if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /**doesn't convert to drowned*/
             this.drownedConversionTime = Integer.MAX_VALUE;
@@ -172,7 +174,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
 
             if (random.nextDouble() < 0.00333333333 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 35.0, 120).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 35.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             }
         }
     }

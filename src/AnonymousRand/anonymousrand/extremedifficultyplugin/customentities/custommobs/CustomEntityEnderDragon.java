@@ -17,8 +17,9 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public ArrayList<Entity> goalTargets = new ArrayList<>();
     public static Field phaseManager, dragonBattle;
 
-    public CustomEntityEnderDragon(World world) {
+    public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
+        this.uniqueID = uuid; //so that the dragon boss bar etc. still registers correctly
 
         try {
             ((DragonControllerManager)phaseManager.get(this)).setControllerPhase(DragonControllerPhase.HOLDING_PATTERN); //make sure it is moving and not perched when spawning
@@ -42,7 +43,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonFireball(this)); /**custom goal that allows the dragon to constantly shoot fireballs instead of only during the strafe phase*/
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityCow.class)); /**for the custom fireball goal; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /**for the custom fireball goal; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
     @Override
@@ -145,7 +146,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 8 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 110 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 160 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
                     new RunnableDragonShootProjectiles(this.dragon);
                 }
             } catch (IllegalAccessException e) {
@@ -203,7 +204,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                     this.rand = random.nextDouble();
                 }
 
-                if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment() != org.bukkit.World.Environment.THE_END) {
+                if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment() != org.bukkit.World.Environment.THE_END || ((EntityPlayer)entity).abilities.isInvulnerable) {
                     continue;
                 }
 
@@ -211,20 +212,20 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                 this.y = entity.e(0.5D) - this.dragon.e(0.5D);
                 this.z = entity.locZ() - this.dragon.locZ();
 
-                if (rand < 0.55) { /**dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 55% chance to shoot a custom normal fireball, 25% chance to shoot a power 2 ghast fireball, 10% chance to shoot a super fireball, and 10% chance to shoot an arrow barrage*/
+                if (rand < 0.6) { /**dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 60% chance to shoot a custom normal fireball, 24% chance to shoot a power 2 ghast fireball, 10% chance to shoot an arrow barrage, and 6% chance to shoot a super fireball*/
                     CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
-                } else if (rand < 0.8) {
+                } else if (rand < 0.84) {
                     CustomEntitySmallFireball newFireball = new CustomEntitySmallFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
-                } else if (rand < 0.9) {
+                } else if (rand < 0.94) {
+                    new RunnableMobShootArrowsNormally(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /**2 pierce; less cycles with more players to reduce lag*/
+                } else {
                     CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
-                } else {
-                    new RunnableMobShootArrowsNormally(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /**2 pierce; less cycles with more players to reduce lag*/
                 }
             }
         }

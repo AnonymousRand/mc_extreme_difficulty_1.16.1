@@ -19,7 +19,7 @@ public class CustomEntityLlamaSpit extends EntityLlamaSpit {
         Entity entity = this.getShooter();
 
         if (entity instanceof EntityLiving) {
-            movingobjectpositionentity.getEntity().damageEntity(DamageSource.a((Entity) this, (EntityLiving) entity).c(), (float)this.damage); /**llama spit does at least 18 damage*/
+            movingobjectpositionentity.getEntity().damageEntity(DamageSource.a((Entity) this, (EntityLiving) entity).c(), (float)this.damage); /**llama spit does at least 16 damage*/
         }
 
         if (this.getShooter() instanceof CustomEntityLlama) {

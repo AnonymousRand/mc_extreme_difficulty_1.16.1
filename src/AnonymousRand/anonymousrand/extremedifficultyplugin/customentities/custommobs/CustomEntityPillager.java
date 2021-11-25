@@ -30,7 +30,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomMob {
         if (random.nextDouble() < 0.25) { /**pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead*/
             new SpawnEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
         } else if (random.nextDouble() < 0.5) {
-            new SpawnEntity(this.getWorld(), new CustomEntityIllagerIllusioner(this.getWorld()), 1, null, null, this, true, true);
+            new SpawnEntity(this.getWorld(), new CustomEntityIllusioner(this.getWorld()), 1, null, null, this, true, true);
         }
     }
 

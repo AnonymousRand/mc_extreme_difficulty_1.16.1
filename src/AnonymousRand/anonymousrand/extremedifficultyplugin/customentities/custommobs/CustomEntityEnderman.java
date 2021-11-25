@@ -21,9 +21,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         this.a12 = false;
         this.a25 = false;
         this.a40 = false;
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0); /**endermen only have 25 health and 3 damage*/
-        this.setHealth(25.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0); /**endermen only have 20 health and 3 damage*/
+        this.setHealth(20.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 
     @Override
@@ -143,8 +143,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         }
     }
 
-    public double getFollowRange() { /**endermen have 20 block detection range (setting attribute doesn't work) (26 after 12 attacks, 32 after 25 attacks)*/
-        return this.attacks < 12 ? 20.0 : this.attacks < 25 ? 26.0 : 32.0;
+    public double getFollowRange() { /**endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks)*/
+        return this.attacks < 12 ? 16.0 : this.attacks < 25 ? 24.0 : 32.0;
     }
 
     @Override

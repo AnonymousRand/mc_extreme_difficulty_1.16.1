@@ -132,7 +132,7 @@ public class RemovePathfinderGoals {
                 pathfinderGoalField.setAccessible(true);
                 pathfinderGoal = (PathfinderGoal)pathfinderGoalField.get(pathfinderGoalWrapped);
 
-                if(pathfinderGoalClass.isInstance(pathfinderGoal)) {
+                if (pathfinderGoalClass.isInstance(pathfinderGoal)) {
                     goalsToRemove.add(pathfinderGoal);
                 }
             } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {

@@ -29,8 +29,8 @@ public class ListenerMobDamage implements Listener {
         switch (entityType) { //natural damage immunities by specific mobs
             case BAT, CHICKEN, HOGLIN, ZOGLIN -> /**bats, chickens, hoglins and zoglins don't take lava or explosion damage*/
                 event.setCancelled(cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case DROWNED, HUSK, IRON_GOLEM, PHANTOM, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, iron golems, phantoms, zombies, and zombie villagers don't take suffocation, or explosion damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+            case DROWNED, HUSK, IRON_GOLEM, PHANTOM, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, iron golems, phantoms, zombies, and zombie villagers don't take suffocation, lightning or explosion damage*/
+                event.setCancelled(cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
             case ENDER_DRAGON, WITHER -> {
                 if (checkCause) {
                     LivingEntity livingEntity = (LivingEntity)event.getEntity();

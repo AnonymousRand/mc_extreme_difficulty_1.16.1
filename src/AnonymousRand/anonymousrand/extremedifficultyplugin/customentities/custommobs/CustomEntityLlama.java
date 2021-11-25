@@ -49,10 +49,10 @@ public class CustomEntityLlama extends EntityLlama implements ICustomMob {
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
     }
 
-    public void a(EntityLiving entityliving, float f) { //shoots custom spit instead of vanilla
+    public void a(EntityLiving entityliving, float f) { //shoot
         this.attacks++;
 
-        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 18.0 : 26.0); /**after 6 attacks, trader llamas do 26 damage*/
+        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 16.0 : 24.0); /**after 6 attacks, trader llamas do 24 damage*/
         double d0 = entityliving.locX() - this.locX();
         double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
         double d2 = entityliving.locZ() - this.locZ();

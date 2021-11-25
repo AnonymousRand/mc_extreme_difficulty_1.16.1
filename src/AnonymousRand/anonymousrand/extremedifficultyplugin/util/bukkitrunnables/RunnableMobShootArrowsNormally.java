@@ -62,7 +62,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
             switch (this.arrowType) {
                 case 2 -> this.entityArrow = new CustomEntityArrowExploding(this.nmsWorld); //exploding arrows
                 case 3 -> { //stray spawn mob arrows
-                    this.entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 40) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
+                    this.entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 30) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld));
                 }
                 case 4 -> { //piglin spawn piglin arrows
                     if (rand < 0.0125) {
@@ -91,7 +91,7 @@ public class RunnableMobShootArrowsNormally extends BukkitRunnable {
 
             this.entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float)(this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /**mob-spawning arrows have no inaccuracy*/
 
-            if (this.entity instanceof CustomEntityIllagerIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
+            if (this.entity instanceof CustomEntityIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
                 this.entityArrow.setDamage(1.5); /**illusioners, piglins, pillagers, skeletons and strays always do 3 damage with arrows and distance does not play a factor in determining damage*/
             }
 

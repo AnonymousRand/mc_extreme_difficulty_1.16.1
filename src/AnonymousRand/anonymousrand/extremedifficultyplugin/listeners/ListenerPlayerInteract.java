@@ -39,8 +39,8 @@ public class ListenerPlayerInteract implements Listener {
 
             if (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) {
                 if (action == Action.LEFT_CLICK_BLOCK) {
-                    if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 3 for 16 seconds*/
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 320, 2));
+                    if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 3 for 15 seconds*/
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 300, 2));
                     }
                 } else {
                     if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds*/
