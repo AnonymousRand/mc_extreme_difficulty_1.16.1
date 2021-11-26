@@ -49,9 +49,11 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
         Player bukkitPlayer = event.getPlayer();
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
-            for (PotionEffect e : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { //only re-applies negative status effects
-                if (e.getType().equals(PotionEffectType.SLOW) || e.getType().equals(PotionEffectType.SLOW_DIGGING) || e.getType().equals(PotionEffectType.CONFUSION) || e.getType().equals(PotionEffectType.BLINDNESS) || e.getType().equals(PotionEffectType.HUNGER) || e.getType().equals(PotionEffectType.WEAKNESS) || e.getType().equals(PotionEffectType.POISON) || e.getType().equals(PotionEffectType.WITHER) || e.getType().equals(PotionEffectType.LEVITATION) || e.getType().equals(PotionEffectType.UNLUCK) || e.getType().equals(PotionEffectType.BAD_OMEN)) {
-                    bukkitPlayer.addPotionEffect(e);
+            for (PotionEffect effect : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { //only re-applies negative status effects
+                PotionEffectType type = effect.getType();
+
+                if (type.equals(PotionEffectType.SLOW) || type.equals(PotionEffectType.SLOW_DIGGING) || type.equals(PotionEffectType.CONFUSION) || type.equals(PotionEffectType.BLINDNESS) || type.equals(PotionEffectType.HUNGER) || type.equals(PotionEffectType.WEAKNESS) || type.equals(PotionEffectType.POISON) || type.equals(PotionEffectType.WITHER) || type.equals(PotionEffectType.LEVITATION) || type.equals(PotionEffectType.UNLUCK) || type.equals(PotionEffectType.BAD_OMEN)) {
+                    bukkitPlayer.addPotionEffect(effect);
                 }
             }
 

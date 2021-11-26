@@ -330,10 +330,6 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case MUSHROOM_COW -> new SpawnEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case PHANTOM -> {
-                            CustomEntityPhantom newPhantom = new CustomEntityPhantom(nmsWorld, (int) phantomSize);
-                            new SpawnEntity(nmsWorld, newPhantom, random.nextInt(4) + 12, null, bukkitEntity, null, true, false);
-                        }
                         case PIG -> new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);

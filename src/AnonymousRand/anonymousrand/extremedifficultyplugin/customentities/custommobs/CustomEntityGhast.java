@@ -65,7 +65,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.attacks < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /**when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks*/
+            new RunnableRingOfFireballs(this, 0.5, this.attacks < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /**when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks*/
         }
     }
 

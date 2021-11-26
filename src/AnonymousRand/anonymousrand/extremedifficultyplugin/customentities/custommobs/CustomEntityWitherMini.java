@@ -11,10 +11,20 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         super(world);
         this.setInvul(0); /**no birth animation/explosion*/
         this.dash = false;
-        double health = 50.0 + 6.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**mini withers have 6 more health per player online, and 50 starting health*/
+        double health = 50.0 + 5.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**mini withers have 5 more health per player online, and 50 starting health*/
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float)health);
     }
+
+    public CustomEntityWitherMini(World world, boolean scaleHealth) {
+        this(world);
+
+        if (!scaleHealth) { /**constant 50 health if spawning 1 for every player etc.*/
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+            this.setHealth(50.0F);
+        }
+    }
+
 
     @Override
     protected void initPathfinder() { /**no dash attack*/

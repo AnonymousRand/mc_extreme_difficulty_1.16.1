@@ -1,10 +1,18 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWither;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWitherMini;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
+import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Items;
+import net.minecraft.server.v1_16_R1.Vec3D;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -15,9 +23,11 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEnderDragon;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -32,6 +42,28 @@ import java.util.ArrayList;
 public class ListenerDragonFight implements Listener {
 
     private static ArrayList<Block> spawnerBlocks = new ArrayList<>();
+    public static int ticksAfterDragonDeath;
+
+    @EventHandler
+    public void dragonSpawn(CreatureSpawnEvent event) {
+        if (event.getEntity() instanceof EnderDragon && (!(((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityEnderDragon))) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); //to make sure all the mob spawners can generate
+            Bukkit.broadcastMessage("You've made it this far. I hope you're ready.");
+            org.bukkit.World bukkitWorld = event.getEntity().getWorld();
+            World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
+
+            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
+
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
+                for (int i = 1; i < 11; i++) {
+                    //new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run(); //todo uncomment
+                    //new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
+                }
+            }, 100);
+
+            ticksAfterDragonDeath = 0;
+        }
+    }
 
     @EventHandler
     public void endCrystalSpawn(EntitySpawnEvent event) {
@@ -48,28 +80,10 @@ public class ListenerDragonFight implements Listener {
     }
 
     @EventHandler
-    public void dragonSpawn(CreatureSpawnEvent event) {
-        if (event.getEntity() instanceof EnderDragon && (!(((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityEnderDragon))) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); //to make sure all the mob spawners can generate
-            Bukkit.broadcastMessage("You've made it this far. I hope you're ready.");
-            org.bukkit.World bukkitWorld = event.getEntity().getWorld();
-            World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
-
-            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
-
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
-                for (int i = 1; i < 11; i++) {
-                    new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
-                    new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
-                }
-            }, 100);
-        }
-    }
-
-    @EventHandler
     public void dragonDeath(EntityDeathEvent event) {
         if(event.getEntity() instanceof EnderDragon) {
             Bukkit.broadcastMessage("Impressive...most impressive.");
+            Bukkit.broadcastMessage("But you must survive for at least 30 more seconds before you can enter the end portal");
             CustomEntityEnderDragon nmsEntity = (CustomEntityEnderDragon)((CraftEnderDragon)event.getEntity()).getHandle();
             new RunnablePreventExitPortalGeneration(nmsEntity).runTaskTimer(StaticPlugin.plugin, 80L, 1L);
             new RunnableOnDragonDeath(nmsEntity).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
@@ -310,12 +324,11 @@ public class ListenerDragonFight implements Listener {
     static class RunnablePreventExitPortalGeneration extends BukkitRunnable {
 
         private final org.bukkit.World bukkitWorld;
-        private int cycles, yOfEndPortals;
+        private int yOfEndPortals;
         private boolean spawnersStillRemaining, endPortalBroken, gameEnd;
 
         public RunnablePreventExitPortalGeneration(CustomEntityEnderDragon dragon) {
             this.bukkitWorld = dragon.getWorld().getWorld();
-            this.cycles = 0;
             this.spawnersStillRemaining = true;
             this.endPortalBroken = false;
             this.gameEnd = false;
@@ -323,7 +336,6 @@ public class ListenerDragonFight implements Listener {
 
         @Override
         public void run() {
-            this.cycles++;
             this.spawnersStillRemaining = false;
 
             for (Block spawner : spawnerBlocks) {
@@ -338,7 +350,6 @@ public class ListenerDragonFight implements Listener {
                     if (this.bukkitWorld.getBlockAt(1, y, 0).getType() == Material.END_PORTAL) {
                         this.endPortalBroken = true;
                         this.yOfEndPortals = y;
-                        this.cycles = 0;
                         Bukkit.broadcastMessage("You're almost there...but you must break all the spawners to activate the end portal");
 
                         for (int x = -2; x <= 2; x++) {
@@ -367,7 +378,7 @@ public class ListenerDragonFight implements Listener {
                 }
             }
 
-            if (this.gameEnd && this.cycles > 600) { /**exit portals can only spawn 30 seconds after dragon is killed*/
+            if (this.gameEnd && ticksAfterDragonDeath > 600) { /**exit portals can only spawn 30 seconds after dragon is killed*/
                 this.cancel();
                 this.bukkitWorld.setDifficulty(Difficulty.PEACEFUL); /**kill everything when this goal has been achieved*/
                 this.printEndText();
@@ -383,7 +394,7 @@ public class ListenerDragonFight implements Listener {
             Bukkit.broadcastMessage("Congratulations to:");
 
             for (Player player : Bukkit.getServer().getOnlinePlayers()) { //separate for loops to prevent the advancements from preventing the names from being read
-                player.setItemInHand(dragonEgg);
+                //player.setItemInHand(dragonEgg); //todo uncomment
             }
 
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -413,17 +424,47 @@ public class ListenerDragonFight implements Listener {
 
     static class RunnableOnDragonDeath extends BukkitRunnable {
 
-        private final CustomEntityEnderDragon dragon;
-        private int cycles;
+        private final World nmsWorld;
+        private final Vec3D dragonPos;
+        private CustomEntityLightning lightning;
 
         public RunnableOnDragonDeath(CustomEntityEnderDragon dragon) {
-            this.dragon = dragon;
-            this.cycles = 0;
+            this.nmsWorld = dragon.getWorld();
+            this.dragonPos = dragon.getPositionVector();
         }
 
         @Override
         public void run() {
+            if (++ticksAfterDragonDeath > 600) {
+                this.cancel();
+                return;
+            }
 
+            if (ticksAfterDragonDeath == 1) { //immediately when dragon dies
+                for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                    for (PotionEffect effect : player.getActivePotionEffects()) { /**remove positive effects from all players*/
+                        PotionEffectType type = effect.getType();
+
+                        if (type.equals(PotionEffectType.ABSORPTION) || type.equals(PotionEffectType.CONDUIT_POWER) || type.equals(PotionEffectType.DAMAGE_RESISTANCE) || type.equals(PotionEffectType.DOLPHINS_GRACE) || type.equals(PotionEffectType.FAST_DIGGING) || type.equals(PotionEffectType.FIRE_RESISTANCE) || type.equals(PotionEffectType.HEAL) || type.equals(PotionEffectType.HEALTH_BOOST) || type.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || type.equals(PotionEffectType.INCREASE_DAMAGE) || type.equals(PotionEffectType.INVISIBILITY) || type.equals(PotionEffectType.JUMP) || type.equals(PotionEffectType.LUCK) || type.equals(PotionEffectType.NIGHT_VISION) || type.equals(PotionEffectType.REGENERATION) || type.equals(PotionEffectType.SATURATION) || type.equals(PotionEffectType.SLOW_FALLING) || type.equals(PotionEffectType.SPEED) || type.equals(PotionEffectType.WATER_BREATHING)) {
+                            player.removePotionEffect(type);
+                        }
+                    }
+
+                    new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, player.getLocation(), false); /**summon a mini wither at every player's location*/
+                }
+
+                this.lightning = new CustomEntityLightning(this.nmsWorld, 10.0F); /**summon a power 10 custom lightning strike on dragon's location*/
+                this.lightning.setPosition(this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ());
+                this.nmsWorld.addEntity(this.lightning);
+
+                /**summon mob rain*/ //todo uncomment
+                //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 300L, 10L);
+
+                if (Bukkit.getServer().getOnlinePlayers().size() > 5) { /**repeat second wave after 20 seconds if more than 5 players online*/
+                    //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 700L, 10L);
+                }
+            }
         }
     }
 }

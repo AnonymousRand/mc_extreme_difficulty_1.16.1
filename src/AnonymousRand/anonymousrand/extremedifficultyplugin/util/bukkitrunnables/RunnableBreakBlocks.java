@@ -21,7 +21,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected int cycles;
     protected final int maxCycles;
     protected int X, Y, Z;
-    protected Predicate<Material> blockBreakable = (type) -> {
+    public static Predicate<Material> blockBreakable = (type) -> {
         return type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
     };
     protected static final Random random = new Random();
@@ -94,7 +94,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
                     int x1 = this.X + x, y1 = this.Y + y, z1 = this.Z + z;
                     Material type = this.bukkitWorld.getBlockAt(x1, y1, z1).getType();
 
-                    if (this.blockBreakable.test(type) && (this.removeFluids ? true : (type != Material.WATER && type != Material.LAVA))) { //as long as it isn't one of these blocks
+                    if (blockBreakable.test(type) && (this.removeFluids ? true : (type != Material.WATER && type != Material.LAVA))) { //as long as it isn't one of these blocks
                         this.bukkitWorld.getBlockAt(x1, y1, z1).setType(Material.AIR);
                     } else if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.RESPAWN_ANCHOR || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { //50% chance to break these blocks
                         if (random.nextDouble() < 0.5) {
