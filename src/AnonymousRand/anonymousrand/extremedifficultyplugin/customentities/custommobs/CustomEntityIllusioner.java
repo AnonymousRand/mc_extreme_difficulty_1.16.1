@@ -164,8 +164,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
 
         @Override
-        protected void j() { /**only applies blindness for 5 seconds (7.5 seconds after 40 attacks)*/
-            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.attacks < 40 ? 100 : 150));
+        protected void j() { /**only applies blindness for 4.5 seconds (7 seconds after 40 attacks)*/
+            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.attacks < 40 ? 90 : 140));
         }
 
         @Override

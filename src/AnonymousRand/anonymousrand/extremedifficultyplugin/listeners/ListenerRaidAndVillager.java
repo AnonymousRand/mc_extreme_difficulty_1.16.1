@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -83,7 +84,7 @@ public class ListenerRaidAndVillager implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
             if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new RunnableTornado(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new BlockPosition(event.getClickedBlock().getLocation().getX(), event.getClickedBlock().getLocation().getY(), event.getClickedBlock().getLocation().getZ()), 50.0, 150).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new SpawnEntity(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new CustomEntityLightning(((CraftWorld)event.getPlayer().getWorld()).getHandle()), 1, null, event.getPlayer().getLocation(), false);
             }
         }
     }

@@ -43,7 +43,7 @@ public class ListenerMobDeath implements Listener {
                 bukkitWorld.dropItem(loc, new ItemStack(Material.EGG, 20));
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
-                    if (random.nextDouble() < 0.2) { /**aggressive chickens have a 20% chance to explode into 12-18 normal chickens*/
+                    if (random.nextDouble() < 0.15) { /**aggressive chickens have a 15% chance to explode into 12-18 more chickens*/
                         new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(7) + 12, null, null, nmsEntity, false, true);
                     }
                 } else if (nmsEntity instanceof CustomEntityChickenAggressiveExploding) { /**aggressive exploding chickens explode with power 1 after 20 seconds or when killed*/
@@ -110,13 +110,9 @@ public class ListenerMobDeath implements Listener {
                         bukkitWorld.strikeLightning(loc2);
                     }
 
-                    CustomEntityLightning newLightning;
                     for (int i = 0; i < 20; i++) {
                         loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(loc), i * 18.0);
-
-                        newLightning = new CustomEntityLightning(nmsWorld);
-                        newLightning.setPosition(loc2.getX(), loc2.getY(), loc2.getZ());
-                        nmsWorld.addEntity(newLightning);
+                        new SpawnEntity(nmsWorld, new CustomEntityLightning(nmsWorld), 1, null, loc2, false);
                     }
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     ListenerPlayerDeathAndRespawn.superZombies.remove(nmsEntity);

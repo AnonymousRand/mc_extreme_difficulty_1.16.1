@@ -69,8 +69,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
                 }
 
                 this.setGoalTarget((EntityLiving)null);
-            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /**gives slowness 2 instead of slowness 1 up to 6 blocks away*/
-                potionregistry = Potions.STRONG_SLOWNESS;
+            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /**gives slowness 1 up to 6 blocks away*/
+                potionregistry = Potions.SLOWNESS;
             } else if (f1 < 5.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /**100% to give weakness when player within 5 blocks*/
                 potionregistry = Potions.WEAKNESS;
             } else if (f1 >= 4.0F) { /**gives poison for 90 seconds instead of 45 but poison range increased to anything beyond 4 blocks; within 4 blocks witches start spamming harming 1*/

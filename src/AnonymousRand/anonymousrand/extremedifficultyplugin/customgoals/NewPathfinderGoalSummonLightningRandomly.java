@@ -2,13 +2,15 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Random;
 
 public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
-    public EntityInsentient entity;
+    private final EntityInsentient entity;
+    private final World nmsWorld;
     private final double chanceMultiplier;
     private BlockPosition pos;
     private CustomEntityLightning lightning;
@@ -16,6 +18,7 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     public NewPathfinderGoalSummonLightningRandomly(EntityInsentient entity, double chanceMultiplier) {
         this.entity = entity;
+        this.nmsWorld = entity.getWorld();
         this.chanceMultiplier = chanceMultiplier;
     }
 
@@ -37,9 +40,6 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
     public void e() {
         double hypo = random.nextDouble() * 50.0;
         this.pos = new BlockPosition(CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ()),  hypo, this.entity.locY(), 361.0));
-
-        this.lightning = new CustomEntityLightning(this.entity.getWorld());
-        this.lightning.setPosition(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-        this.entity.world.addEntity(this.lightning);
+        new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, null, this.entity, false, false);
     }
 }

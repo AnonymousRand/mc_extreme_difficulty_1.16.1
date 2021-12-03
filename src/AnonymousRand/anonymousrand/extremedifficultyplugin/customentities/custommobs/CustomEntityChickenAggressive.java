@@ -32,8 +32,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /**aggressive chickens move twice as fast and do 3 damage*/
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /**aggressive chickens move twice as fast and do 3.5 damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.5);
     }
 
     //registers new attributes via reflection; code from Spigot forums

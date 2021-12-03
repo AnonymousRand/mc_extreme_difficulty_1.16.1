@@ -57,7 +57,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     protected void mobTick() {
         super.mobTick();
 
-        if ((this.ticksLived  + this.getId()) % 20 == 0) { /**applies mining fatigue every second, but effect duration decreased to 1 minute*/
+        if ((this.ticksLived  + this.getId()) % 40 == 0) { /**applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute*/
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
             List<EntityPlayer> list = ((WorldServer)this.getWorld()).a((entityplayer) -> {
                 return this.h((Entity)entityplayer) < 2500.0D && entityplayer.playerInteractManager.d();

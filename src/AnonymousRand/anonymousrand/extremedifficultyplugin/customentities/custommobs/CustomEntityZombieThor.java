@@ -34,7 +34,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
         this.setHealth(55.0F);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         new RunnableThorLightningEffectStorm(this, 20, true).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /**thor summons a vanilla lightning storm around it when first spawned for 2 seconds*/
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather rain"); /**thor causes rain*/
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /**thor causes thunderstorm*/
     }
 
     @Override

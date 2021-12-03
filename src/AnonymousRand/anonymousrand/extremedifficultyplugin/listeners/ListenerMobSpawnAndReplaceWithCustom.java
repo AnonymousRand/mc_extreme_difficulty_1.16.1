@@ -128,7 +128,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 }
                 case DROWNED -> new SpawnEntity(nmsWorld, new CustomEntityDrowned(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ELDER_GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case ENDERMAN -> new SpawnEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case ENDERMAN -> new SpawnEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), random.nextInt(2), null, bukkitEntity, null, true, true); /**only 50% of endermen spawn*/
                 case ENDERMITE -> new SpawnEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case EVOKER -> new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case GHAST -> new SpawnEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);
@@ -319,7 +319,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                             nmsWorld.addEntity(newCrystal);
                             bukkitEntity.remove();
                         }
-                        case ENDERMAN -> new SpawnEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                        case ENDERMAN -> new SpawnEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), random.nextInt(2), null, bukkitEntity, null, true, true); /**only 50% of endermen spawn*/
                         case ENDERMITE -> new SpawnEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case EVOKER -> new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case GHAST -> new SpawnEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);

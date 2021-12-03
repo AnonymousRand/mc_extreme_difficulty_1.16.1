@@ -146,7 +146,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 160 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 180 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
                     new RunnableDragonShootProjectiles(this.dragon);
                 }
             } catch (IllegalAccessException e) {
@@ -212,15 +212,15 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                 this.y = entity.e(0.5D) - this.dragon.e(0.5D);
                 this.z = entity.locZ() - this.dragon.locZ();
 
-                if (rand < 0.6) { /**dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 60% chance to shoot a custom normal fireball, 24% chance to shoot a power 2 ghast fireball, 10% chance to shoot an arrow barrage, and 6% chance to shoot a super fireball*/
+                if (rand < 0.65) { /**dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 65% chance to shoot a custom normal fireball, 22.5% chance to shoot a power 2 ghast fireball, 8.5% chance to shoot an arrow barrage, and 4% chance to shoot a super fireball*/
                     CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
-                } else if (rand < 0.84) {
+                } else if (rand < 0.875) {
                     CustomEntitySmallFireball newFireball = new CustomEntitySmallFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
-                } else if (rand < 0.94) {
+                } else if (rand < 0.96) {
                     new RunnableMobShootArrowsNormally(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /**2 pierce; less cycles with more players to reduce lag*/
                 } else {
                     CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);

@@ -56,8 +56,8 @@ public class ListenerDragonFight implements Listener {
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
                 for (int i = 1; i < 11; i++) {
-                    //new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run(); //todo uncomment
-                    //new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
+                    new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
+                    new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
                 }
             }, 100);
 
@@ -205,57 +205,57 @@ public class ListenerDragonFight implements Listener {
                 case 1 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 12.0, 0.0, 0.0));
                     this.entityType = EntityType.ZOGLIN;
-                    this.minSpawnDelay = 100;
+                    this.minSpawnDelay = 120;
                     this.maxSpawnDelay = 180;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 case 2 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -12.0, 0.0, 0.0));
                     this.entityType = EntityType.SPIDER;
-                    this.minSpawnDelay = 55;
+                    this.minSpawnDelay = 70;
                     this.maxSpawnDelay = 160;
                     this.yRadiusForBreakingBlocks = 1;
                 }
                 case 3 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -8.0, 0.0, -8.0));
                     this.entityType = EntityType.GHAST;
-                    this.minSpawnDelay = 130;
+                    this.minSpawnDelay = 160;
                     this.maxSpawnDelay = 220;
                     this.yRadiusForBreakingBlocks = 5;
                 }
                 case 4 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 0.0, 0.0, -12.0));
                     this.entityType = EntityType.ILLUSIONER;
-                    this.minSpawnDelay = 130;
-                    this.maxSpawnDelay = 220;
+                    this.minSpawnDelay = 160;
+                    this.maxSpawnDelay = 230;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 case 5 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 8.0, 0.0, 8.0));
                     this.entityType = EntityType.PHANTOM;
-                    this.minSpawnDelay = 70;
+                    this.minSpawnDelay = 90;
                     this.maxSpawnDelay = 150;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 case 6 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -8.0, 0.0, 8.0));
                     this.entityType = EntityType.SHULKER;
-                    this.minSpawnDelay = 115;
+                    this.minSpawnDelay = 145;
                     this.maxSpawnDelay = 210;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 case 7 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 0.0, 0.0, 12.0));
                     this.entityType = EntityType.BLAZE;
-                    this.minSpawnDelay = 75;
+                    this.minSpawnDelay = 95;
                     this.maxSpawnDelay = 160;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 case 8 -> {
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 8.0, 0.0, -8.0));
                     this.entityType = EntityType.WITCH;
-                    this.minSpawnDelay = 120;
-                    this.maxSpawnDelay = 220;
+                    this.minSpawnDelay = 160;
+                    this.maxSpawnDelay = 230;
                     this.yRadiusForBreakingBlocks = 2;
                 }
                 default -> {
@@ -394,7 +394,7 @@ public class ListenerDragonFight implements Listener {
             Bukkit.broadcastMessage("Congratulations to:");
 
             for (Player player : Bukkit.getServer().getOnlinePlayers()) { //separate for loops to prevent the advancements from preventing the names from being read
-                //player.setItemInHand(dragonEgg); //todo uncomment
+                player.setItemInHand(dragonEgg);
             }
 
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -426,7 +426,6 @@ public class ListenerDragonFight implements Listener {
 
         private final World nmsWorld;
         private final Vec3D dragonPos;
-        private CustomEntityLightning lightning;
 
         public RunnableOnDragonDeath(CustomEntityEnderDragon dragon) {
             this.nmsWorld = dragon.getWorld();
@@ -453,16 +452,12 @@ public class ListenerDragonFight implements Listener {
                     new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, player.getLocation(), false); /**summon a mini wither at every player's location*/
                 }
 
-                this.lightning = new CustomEntityLightning(this.nmsWorld, 10.0F); /**summon a power 10 custom lightning strike on dragon's location*/
-                this.lightning.setPosition(this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ());
-                this.nmsWorld.addEntity(this.lightning);
-
-                /**summon mob rain*/ //todo uncomment
-                //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
-                //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 300L, 10L);
+                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld, 10.0F), 1, null, new Location(this.nmsWorld.getWorld(), this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ()), false); /**summon a power 10 custom lightning strike on dragon's location*/
+                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /**summon mob rain*/
+                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 300L, 10L);
 
                 if (Bukkit.getServer().getOnlinePlayers().size() > 5) { /**repeat second wave after 20 seconds if more than 5 players online*/
-                    //new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 700L, 10L);
+                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 700L, 10L);
                 }
             }
         }

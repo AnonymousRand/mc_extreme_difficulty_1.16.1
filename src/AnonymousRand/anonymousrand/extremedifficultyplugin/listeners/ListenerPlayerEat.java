@@ -19,7 +19,7 @@ public class ListenerPlayerEat implements Listener {
         Material type = event.getItem().getType();
 
         switch (type) {
-            case CHICKEN, COOKED_CHICKEN -> player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 400, 0)); /**eating chicken meat gives you hunger for 20 seconds*/
+            case CHICKEN, COOKED_CHICKEN -> player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /**eating chicken meat gives you hunger for 60 seconds*/
             case HONEY_BOTTLE, MILK_BUCKET -> { /**milk and poison extends negative potion effect durations by 4 times and +1 amplifier instead of removing them*/
                 //delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {

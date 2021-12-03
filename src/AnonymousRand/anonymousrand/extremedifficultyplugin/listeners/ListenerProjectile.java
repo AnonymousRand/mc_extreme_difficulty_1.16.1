@@ -30,7 +30,7 @@ public class ListenerProjectile implements Listener {
         Projectile bukkitProjectile = event.getEntity();
         Entity nmsProjectile = ((CraftEntity)bukkitProjectile).getHandle();
 
-        if (nmsProjectile instanceof CustomEntityArrow || nmsProjectile instanceof CustomEntityDragonFireball || nmsProjectile instanceof CustomEntityLlamaSpit || nmsProjectile instanceof CustomEntitySmallFireball || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityThrownTrident) { //reduce lag and null pointers
+        if (nmsProjectile instanceof CustomEntityArrow || nmsProjectile instanceof CustomEntityDragonFireball || nmsProjectile instanceof EntityEgg || nmsProjectile instanceof CustomEntityLlamaSpit || nmsProjectile instanceof CustomEntitySmallFireball || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityThrownTrident) { //reduce lag and null pointers
             return;
         }
 
@@ -80,7 +80,7 @@ public class ListenerProjectile implements Listener {
         Projectile bukkitProjectile = event.getEntity();
         Entity nmsProjectile = ((CraftEntity)bukkitProjectile).getHandle();
 
-        if (nmsProjectile instanceof CustomEntityDragonFireball || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityLlamaSpit) { //reduce lag and null pointers
+        if (nmsProjectile instanceof CustomEntityDragonFireball || nmsProjectile instanceof EntityEgg || nmsProjectile instanceof CustomEntityLargeFireball || nmsProjectile instanceof CustomEntityLlamaSpit) { //reduce lag and null pointers
             return;
         }
 

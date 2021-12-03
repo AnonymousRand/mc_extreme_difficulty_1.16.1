@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,9 +52,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
             this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
 
             if (this.customLightning) {
-                this.newLightning = new CustomEntityLightning(this.nmsWorld);
-                this.newLightning.setPosition(this.loc2.getX(), this.loc2.getY(), this.loc2.getZ());
-                this.nmsWorld.addEntity(this.newLightning);
+                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, this.loc2, false);
             } else {
                 this.bukkitWorld.strikeLightning(this.loc2);
             }

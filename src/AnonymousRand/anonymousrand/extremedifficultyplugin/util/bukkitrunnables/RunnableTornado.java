@@ -69,7 +69,7 @@ public class RunnableTornado extends BukkitRunnable {
                 this.bukkitWorld.strikeLightningEffect(this.loc); //strike lightning every 2 ticks
 
                 this.bukkitBlocksTemp.clear();
-                for (int i = 0; i < random.nextInt(3) + 5; i++) { //pick up 5-7 new blocks every 2 ticks
+                for (int i = 0; i < random.nextInt(2) + 5; i++) { //pick up 5-6 new blocks every 2 ticks
                     randomLoc = new Location(this.bukkitWorld, this.pos.getX() + random.nextGaussian() * this.radius * 0.2, 0.0, this.pos.getZ() + random.nextGaussian() * this.radius * 0.2);
                     this.bukkitBlocksTemp.add(this.bukkitWorld.getHighestBlockAt(randomLoc));
                 }
@@ -79,13 +79,13 @@ public class RunnableTornado extends BukkitRunnable {
                 for (Block bukkitBlock : this.bukkitBlocksTemp) { //turn those new blocks into falling blocks
                     type = bukkitBlock.getType();
 
-                    if (type != org.bukkit.Material.AIR && type != org.bukkit.Material.BEDROCK && type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.NETHER_PORTAL && type != org.bukkit.Material.COMMAND_BLOCK && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA && type != org.bukkit.Material.END_STONE && type != org.bukkit.Material.OBSIDIAN && type != org.bukkit.Material.CRYING_OBSIDIAN && type != org.bukkit.Material.RESPAWN_ANCHOR && type != org.bukkit.Material.ANCIENT_DEBRIS && type != org.bukkit.Material.NETHERITE_BLOCK) { //as long as it isn't one of these blocks
+                    if (type != org.bukkit.Material.AIR && type != org.bukkit.Material.BEDROCK && type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.NETHER_PORTAL && type != org.bukkit.Material.COMMAND_BLOCK && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA && type != org.bukkit.Material.OBSIDIAN && type != org.bukkit.Material.CRYING_OBSIDIAN && type != org.bukkit.Material.RESPAWN_ANCHOR && type != org.bukkit.Material.ANCIENT_DEBRIS && type != org.bukkit.Material.NETHERITE_BLOCK) { //as long as it isn't one of these blocks
                         FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
                         fallingBlock.setGravity(false);
                         fallingBlock.setVelocity(this.vec);
                         this.fallingBlocksAll.put(fallingBlock, this.cycles);
                         bukkitBlock.setType(org.bukkit.Material.AIR);
-                    } else if (type == org.bukkit.Material.END_STONE || type == org.bukkit.Material.OBSIDIAN || type == org.bukkit.Material.CRYING_OBSIDIAN || type == org.bukkit.Material.RESPAWN_ANCHOR || type == org.bukkit.Material.ANCIENT_DEBRIS || type == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to pick up these blocks
+                    } else if (type == org.bukkit.Material.OBSIDIAN || type == org.bukkit.Material.CRYING_OBSIDIAN || type == org.bukkit.Material.RESPAWN_ANCHOR || type == org.bukkit.Material.ANCIENT_DEBRIS || type == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to pick up these blocks
                         if (random.nextDouble() < 0.5) {
                             FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
                             fallingBlock.setGravity(false);

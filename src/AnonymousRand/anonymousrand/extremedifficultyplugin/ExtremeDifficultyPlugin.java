@@ -69,6 +69,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ListenerBlockPlaceAndBreak(), this);
         getServer().getPluginManager().registerEvents(new ListenerDragonFight(), this);
         getServer().getPluginManager().registerEvents(new ListenerDropItem(),this);
+        getServer().getPluginManager().registerEvents(new ListenerEggs(), this);
         getServer().getPluginManager().registerEvents(new ListenerMobDamage(), this);
         getServer().getPluginManager().registerEvents(new ListenerMobDeath(),this);
         getServer().getPluginManager().registerEvents(new ListenerMobSpawnAndReplaceWithCustom(), this);
