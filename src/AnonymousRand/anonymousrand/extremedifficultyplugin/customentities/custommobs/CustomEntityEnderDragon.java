@@ -17,9 +17,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public ArrayList<Entity> goalTargets = new ArrayList<>();
     public static Field phaseManager, dragonBattle;
 
-    public CustomEntityEnderDragon(World world, UUID uuid) {
+    public CustomEntityEnderDragon(World world) {
         super(EntityTypes.ENDER_DRAGON, world);
-        this.uniqueID = uuid; //so that the dragon boss bar etc. still registers correctly
 
         try {
             ((DragonControllerManager)phaseManager.get(this)).setControllerPhase(DragonControllerPhase.HOLDING_PATTERN); //make sure it is moving and not perched when spawning
@@ -146,7 +145,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 180 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 175 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /**shoots faster when there are less crystals and less players*/
                     new RunnableDragonShootProjectiles(this.dragon);
                 }
             } catch (IllegalAccessException e) {

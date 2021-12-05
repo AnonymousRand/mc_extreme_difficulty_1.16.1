@@ -75,7 +75,7 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
             this.a45 = true;
             this.setHealth(11.0F);
 
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof CustomEntityEvoker)).forEach(entity -> {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> {
                 ((EntityLiving)entity).setHealth(11.0F);
             });
         }

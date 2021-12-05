@@ -84,17 +84,14 @@ public class RunnableMeteorRain extends BukkitRunnable {
             }
             case 4 -> { //dragon's breath clouds
                 this.pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
-                this.newAEC = new CustomEntityAreaEffectCloud(this.nmsWorld, 4, 120, 15);
-                this.newAEC.setParticle(Particles.DRAGON_BREATH);
-                this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
-                this.newAEC.setPosition(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-                this.nmsWorld.addEntity(this.newAEC);
 
-                this.newAEC = new CustomEntityAreaEffectCloud(this.nmsWorld, 4, 120, 15);
-                this.newAEC.setParticle(Particles.DRAGON_BREATH);
-                this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
-                this.newAEC.setPosition(this.pos.getX(), this.pos.getY() + 1.0, this.pos.getZ());
-                this.nmsWorld.addEntity(this.newAEC);
+                for (int i = 0; i < 3; i++) {
+                    this.newAEC = new CustomEntityAreaEffectCloud(this.nmsWorld, random.nextInt(2) + 4, 120, 15);
+                    this.newAEC.setParticle(Particles.DRAGON_BREATH);
+                    this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
+                    this.newAEC.setPosition(this.pos.getX(), this.pos.getY() + i, this.pos.getZ());
+                    this.nmsWorld.addEntity(this.newAEC);
+                }
             }
         }
     }

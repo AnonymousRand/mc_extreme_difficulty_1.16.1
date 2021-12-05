@@ -58,25 +58,26 @@ public class ListenerRaidAndVillager implements Listener {
         if (event.getEntityType() == VILLAGER) {
             LivingEntity bukkitVillager = event.getEntity();
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
-            World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
-            double rand = random.nextDouble();
 
-            new SpawnEntity(nmsWorld, rand < 0.25 ? new CustomEntityPillager(nmsWorld) : rand < 0.5 ? new CustomEntityVindicator(nmsWorld) : rand < 0.7 ? new CustomEntityWitch(nmsWorld) : rand < 0.875 ? new CustomEntityEvoker(nmsWorld) : new CustomEntityIllusioner(nmsWorld), 1, null, bukkitVillager.getLocation(), true); /**when killed, villagers have a 25% chance to summon a pillager, a 25% chance to summon a vindicator, a 20% chance to summon a witch, a 17.5% chance to summon an evoker, and a 12.5% chance to summon an illusioner*/
+            if (!(nmsEntity instanceof CustomEntityVillagerAggressive) || !(nmsEntity.getLastDamager() instanceof EntityPlayer)) { /**when killed, villagers summon an aggressive villager (aggressive villagers can continue to respawn if they are not killed by a player)*/
+                World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
+                new SpawnEntity(nmsWorld, new CustomEntityVillagerAggressive(nmsWorld), 1, null, bukkitVillager.getLocation(), true);
 
-            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /**golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds*/
-                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                new RunnableThorLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
-            });
+                nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /**golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds*/
+                    ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
+                    new RunnableThorLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                });
+            }
         }
     }
 
     @EventHandler
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
-        Player player = event.getWinners().get(random.nextInt(event.getWinners().size()));
+        Player bukkitPlayer = event.getWinners().get(random.nextInt(event.getWinners().size()));
 
-        new RunnableMeteorRain(player, 1, 70.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-        new RunnableMeteorRain(player, 2, 70.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-        new RunnableMeteorRain(player, 3, 70.0, 120).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 1, 70.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 2, 70.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 3, 70.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
     }
 
     //temp, todo end: delete

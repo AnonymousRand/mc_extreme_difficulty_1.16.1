@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityVex;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWitherMini;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -36,7 +37,7 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
 
         /**end crystals summon a mini wither, 8 phantoms, 5 silverfish and 4 vexes when destroyed*/
         new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
-        new SpawnEntity(this.getWorld(), new CustomEntityPhantom(this.getWorld()), 8, null, null, this, false, false);
+        new SpawnEntity(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), 8, null, null, this, false, false);
         new SpawnEntity(this.getWorld(), new CustomEntitySilverfish(this.getWorld()), 5, null, null, this, false, false);
         new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 4, null, null, this, false, false);
     }

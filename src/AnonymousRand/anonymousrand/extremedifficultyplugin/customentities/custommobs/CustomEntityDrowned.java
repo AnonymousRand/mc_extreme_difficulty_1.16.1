@@ -24,8 +24,6 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         this.attacks = 0;
         this.a50 = false;
         this.a100 = false;
-        this.setHealth(13.5F); /**drowned only have 13.5 health*/
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(13.5);
     }
 
     @Override

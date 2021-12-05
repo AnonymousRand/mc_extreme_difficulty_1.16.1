@@ -1,10 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import net.minecraft.server.v1_16_R1.EntityInsentient;
-import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.EntityEquipment;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -12,12 +12,15 @@ import java.util.HashMap;
 
 public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
-    private final EntityInsentient entity;
+    private final EntityInsentient nmsEntity;
+    private final LivingEntity bukkitEntity;
+    private EntityEquipment bukkitEquipment;
     private HashMap<Integer, Boolean> attackBooleans = new HashMap<>();
     private Field attacks;
 
-    public NewPathfinderGoalUpgradeArmor(EntityInsentient entity) {
-        this.entity = entity;
+    public NewPathfinderGoalUpgradeArmor(EntityInsentient nmsEntity) {
+        this.nmsEntity = nmsEntity;
+        this.bukkitEntity = ((LivingEntity)this.nmsEntity.getBukkitEntity());
         this.attackBooleans.put(4, false);
         this.attackBooleans.put(8, false);
         this.attackBooleans.put(11, false);
@@ -31,10 +34,10 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
         this.attackBooleans.put(39, false);
         this.attackBooleans.put(42, false);
         this.attackBooleans.put(50, false);
-        Arrays.fill(this.entity.dropChanceArmor, 0.0f);  /**entity can't drop the items in their armor slots*/
+        Arrays.fill(this.nmsEntity.dropChanceArmor, 0.0f);  /**entity can't drop the items in their armor slots*/
 
         try {
-            this.attacks = this.entity.getClass().getDeclaredField("attacks");
+            this.attacks = this.nmsEntity.getClass().getDeclaredField("attacks");
             this.attacks.setAccessible(true);
         } catch (NoSuchFieldException e) {}
     }
@@ -44,7 +47,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
         int attacksLocal;
 
         try {
-            attacksLocal = this.attacks.getInt(this.entity);
+            attacksLocal = this.attacks.getInt(this.nmsEntity);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return false;
@@ -67,11 +70,11 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
     @Override
     public void e() {
-        LivingEntity livingEntity = ((LivingEntity)this.entity.getBukkitEntity());
         int attacksLocal;
+        this.bukkitEquipment = this.bukkitEntity.getEquipment();
 
         try {
-            attacksLocal = this.attacks.getInt(this.entity);
+            attacksLocal = this.attacks.getInt(this.nmsEntity);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return;
@@ -79,13 +82,13 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
         switch (attacksLocal) {
             case 4 -> {
-                if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.IRON_CHESTPLATE) {
-                    livingEntity.getEquipment().setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_CHESTPLATE));
+                if (this.bukkitEquipment.getChestplate().getType() != org.bukkit.Material.IRON_CHESTPLATE) {
+                    this.bukkitEquipment.setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_CHESTPLATE));
                 }
             }
             case 8 -> {
-                if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.IRON_LEGGINGS) {
-                    livingEntity.getEquipment().setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_LEGGINGS));
+                if (this.bukkitEquipment.getLeggings().getType() != org.bukkit.Material.IRON_LEGGINGS) {
+                    this.bukkitEquipment.setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_LEGGINGS));
                 }
             }
             case 11 -> {
@@ -93,22 +96,22 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
-                if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.IRON_HELMET) {
-                    livingEntity.getEquipment().setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_HELMET));
+                if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.IRON_HELMET) {
+                    this.bukkitEquipment.setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_HELMET));
                 }
 
-                if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.IRON_BOOTS) {
-                    livingEntity.getEquipment().setBoots(boots);
+                if (this.bukkitEquipment.getBoots().getType() != org.bukkit.Material.IRON_BOOTS) {
+                    this.bukkitEquipment.setBoots(boots);
                 }
             }
             case 15 -> {
-                if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.DIAMOND_CHESTPLATE) {
-                    livingEntity.getEquipment().setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_CHESTPLATE));
+                if (this.bukkitEquipment.getChestplate().getType() != org.bukkit.Material.DIAMOND_CHESTPLATE) {
+                    this.bukkitEquipment.setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_CHESTPLATE));
                 }
             }
             case 19 -> {
-                if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.DIAMOND_LEGGINGS) {
-                    livingEntity.getEquipment().setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_LEGGINGS));
+                if (this.bukkitEquipment.getLeggings().getType() != org.bukkit.Material.DIAMOND_LEGGINGS) {
+                    this.bukkitEquipment.setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_LEGGINGS));
                 }
             }
             case 22 -> {
@@ -116,28 +119,28 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
-                if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.DIAMOND_HELMET) {
-                    livingEntity.getEquipment().setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_HELMET));
+                if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.DIAMOND_HELMET) {
+                    this.bukkitEquipment.setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_HELMET));
                 }
 
-                if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.DIAMOND_BOOTS) {
-                    livingEntity.getEquipment().setBoots(boots);
+                if (this.bukkitEquipment.getBoots().getType() != org.bukkit.Material.DIAMOND_BOOTS) {
+                    this.bukkitEquipment.setBoots(boots);
                 }
             }
             case 26 -> {
                 org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
 
-                if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                    livingEntity.getEquipment().setChestplate(chestplate);
+                if (this.bukkitEquipment.getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
+                    this.bukkitEquipment.setChestplate(chestplate);
                 }
             }
             case 29 -> {
                 org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
 
-                if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                    livingEntity.getEquipment().setLeggings(leggings);
+                if (this.bukkitEquipment.getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
+                    this.bukkitEquipment.setLeggings(leggings);
                 }
             }
             case 32 -> {
@@ -149,28 +152,28 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
-                if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                    livingEntity.getEquipment().setHelmet(helmet);
+                if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
+                    this.bukkitEquipment.setHelmet(helmet);
                 }
 
-                if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                    livingEntity.getEquipment().setBoots(boots);
+                if (this.bukkitEquipment.getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
+                    this.bukkitEquipment.setBoots(boots);
                 }
             }
             case 36 -> {
                 org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
 
-                if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                    livingEntity.getEquipment().setChestplate(chestplate);
+                if (this.bukkitEquipment.getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
+                    this.bukkitEquipment.setChestplate(chestplate);
                 }
             }
             case 39 -> {
                 org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
 
-                if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                    livingEntity.getEquipment().setLeggings(leggings);
+                if (this.bukkitEquipment.getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
+                    this.bukkitEquipment.setLeggings(leggings);
                 }
             }
             case 42 -> {
@@ -182,27 +185,27 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
-                if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                    livingEntity.getEquipment().setHelmet(helmet);
+                if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
+                    this.bukkitEquipment.setHelmet(helmet);
                 }
 
-                if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                    livingEntity.getEquipment().setBoots(boots);
+                if (this.bukkitEquipment.getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
+                    this.bukkitEquipment.setBoots(boots);
                 }
             }
             case 50 -> {
                 org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
 
-                if (livingEntity.getEquipment().getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
-                    livingEntity.getEquipment().setChestplate(chestplate);
+                if (this.bukkitEquipment.getChestplate().getType() != org.bukkit.Material.NETHERITE_CHESTPLATE) {
+                    this.bukkitEquipment.setChestplate(chestplate);
                 }
 
                 org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
 
-                if (livingEntity.getEquipment().getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
-                    livingEntity.getEquipment().setLeggings(leggings);
+                if (this.bukkitEquipment.getLeggings().getType() != org.bukkit.Material.NETHERITE_LEGGINGS) {
+                    this.bukkitEquipment.setLeggings(leggings);
                 }
 
                 org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
@@ -213,12 +216,12 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
                 boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
-                if (livingEntity.getEquipment().getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
-                    livingEntity.getEquipment().setHelmet(helmet);
+                if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
+                    this.bukkitEquipment.setHelmet(helmet);
                 }
 
-                if (livingEntity.getEquipment().getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
-                    livingEntity.getEquipment().setBoots(boots);
+                if (this.bukkitEquipment.getBoots().getType() != org.bukkit.Material.NETHERITE_BOOTS) {
+                    this.bukkitEquipment.setBoots(boots);
                 }
             }
         }

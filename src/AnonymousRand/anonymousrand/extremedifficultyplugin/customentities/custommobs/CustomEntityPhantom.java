@@ -34,7 +34,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         super(EntityTypes.PHANTOM, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.05 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.05*/
+        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.06 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.06*/
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /**phantoms can fly through blocks*/
@@ -94,7 +94,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.attacks < 5 ? 240 : this.attacks < 20 ? 180 : this.attacks < 30 ? 150 : 110) == 0 && this.ticksLived != 0) { /**phantoms increase in size by 1 every 12 seconds (9 seconds after 5 attacks, 7.5 seconds after 20 attacks, 5.5 seconds after 30 attacks)*/
+        if (this.ticksLived % (this.attacks < 5 ? 220 : this.attacks < 20 ? 180 : this.attacks < 30 ? 150 : 110) == 0 && this.ticksLived != 0) { /**phantoms increase in size by 1 every 11 seconds (9 seconds after 5 attacks, 7.5 seconds after 20 attacks, 5.5 seconds after 30 attacks)*/
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }

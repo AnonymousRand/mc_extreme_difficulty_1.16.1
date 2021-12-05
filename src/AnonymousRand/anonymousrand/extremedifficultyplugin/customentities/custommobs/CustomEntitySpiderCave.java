@@ -53,7 +53,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
 
         if (this.ticksLived == 400) { /**duplicates if it has been alive for 20 seconds*/
             new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
-            this.getBukkitEntity().setCustomName("Haha good luck making me despawn"); //doesn't despawn and doesn't count towards mob cap
+            this.getBukkitEntity().setCustomName("Good luck making me despawn"); //doesn't despawn and doesn't count towards mob cap
         } else if (this.ticksLived == 6000) { /**explodes and dies after 5 minutes to reduce lag*/
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
             this.die();

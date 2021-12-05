@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.lang.reflect.Field;
@@ -11,7 +12,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks, attackNum;
-    private boolean a10, a30;
+    private boolean a12, a30;
     private final CustomEntityAreaEffectCloud newAEC;
     private static Field bx;
 
@@ -22,7 +23,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.attackNum = 0;
-        this.a10 = false;
+        this.a12 = false;
         this.a30 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
@@ -113,8 +114,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             }
         }
 
-        try { /**witches drink potions twice as fast*/
-            bx.setInt(this, bx.getInt(this) - 1);
+        try { /**witches drink potions 2-3 times as fast*/
+            bx.setInt(this, bx.getInt(this) - random.nextInt(2) + 1);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -128,9 +129,9 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 10 && !this.a10) { /**after 10 attakcs, witches summon a ring of dragon fireballs*/
-            this.a10 = true;
-            //todo:
+        if (this.attacks == 12 && !this.a12) { /**after 12 attakcs, witches summon a ring of dragon fireballs*/
+            this.a12 = true;
+            new RunnableRingOfFireballs(this, 1.0, 2, 1).run();
         }
 
         if (this.attacks == 30 && !this.a30) { /**after 30 attacks, witches summon area effect clouds wherever it goes*/

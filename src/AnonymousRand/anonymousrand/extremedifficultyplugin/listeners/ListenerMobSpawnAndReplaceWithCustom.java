@@ -130,7 +130,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case ELDER_GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case ENDERMAN -> new SpawnEntity(nmsWorld, new CustomEntityEnderman(nmsWorld), random.nextInt(2), null, bukkitEntity, null, true, true); /**only 50% of endermen spawn*/
                 case ENDERMITE -> new SpawnEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case EVOKER -> new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case EVOKER -> new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case GHAST -> new SpawnEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardian(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case HOGLIN -> new SpawnEntity(nmsWorld, new CustomEntityHoglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -159,19 +159,18 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     }
                 }
                 case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case ILLUSIONER -> new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case MUSHROOM_COW -> new SpawnEntity(nmsWorld, new CustomEntityMushroomCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PHANTOM -> {
-                    int rand = spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER ? 1 : random.nextInt(4) + 12;
-                    CustomEntityPhantom newPhantom = new CustomEntityPhantom(nmsWorld, (int)phantomSize);
-                    new SpawnEntity(nmsWorld, (int)phantomSize, newPhantom, rand, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 12-15 at a time (12-30 on easy, 12-45 on medium, 12-60 on hard)*/
+                    int rand = spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER ? 1 : random.nextInt(3) + 10;
+                    new SpawnEntity(nmsWorld, (int)phantomSize, new CustomEntityPhantom(nmsWorld, (int)phantomSize), rand, null, bukkitEntity, null, true, false); /**when phantoms spawn naturally at night, they spawn random 10-12 at a time (10-24 on easy, 10-36 on medium, 10-48 on hard)*/
                 }
                 case PIG -> new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case RABBIT -> new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true); /**rabbits are spawned in as 5-10 killer bunnies instead*/
-                case RAVAGER -> new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case RAVAGER -> new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
                     if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
                         new SpawnEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
@@ -202,12 +201,12 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case VILLAGER -> { /**villagers spawn 10 at a time*/
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED) {
-                        new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 9, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED && !(nmsEntity instanceof CustomEntityVillagerAggressive)) {
+                        new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
                     }
                 }
-                case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
+                case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
+                case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case WITHER -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true), 1); //delay by 1 tick so that soul sand/soil and skulls are deleted
                 case WITHER_SKELETON -> {
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /**wither skeletons not spawned from spawners have a 10% chance to spawn as a magma cube instead*/
@@ -355,7 +354,11 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case STRIDER -> new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
-                        case VILLAGER -> new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 9, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false); /**villagers spawn 10 at a time*/
+                        case VILLAGER -> { /**villagers spawn 10 at a time*/
+                            if (!(nmsEntity instanceof CustomEntityVillagerAggressive)) {
+                                new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                            }
+                        }
                         case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITHER -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true);

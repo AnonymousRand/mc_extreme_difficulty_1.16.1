@@ -43,8 +43,8 @@ public class ListenerMobDeath implements Listener {
                 bukkitWorld.dropItem(loc, new ItemStack(Material.EGG, 20));
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
-                    if (random.nextDouble() < 0.15) { /**aggressive chickens have a 15% chance to explode into 12-18 more chickens*/
-                        new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(7) + 12, null, null, nmsEntity, false, true);
+                    if (random.nextDouble() < 0.05) { /**aggressive chickens have a 5% chance to explode into 15-20 more chickens*/
+                        new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(6) + 15, null, null, nmsEntity, false, true);
                     }
                 } else if (nmsEntity instanceof CustomEntityChickenAggressiveExploding) { /**aggressive exploding chickens explode with power 1 after 20 seconds or when killed*/
                     bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.0F, false);

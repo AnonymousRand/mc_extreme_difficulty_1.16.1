@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class SpawnEntity extends BukkitRunnable {
@@ -27,11 +29,19 @@ public class SpawnEntity extends BukkitRunnable {
     private World nmsWorld;
     private Location loc;
     private static org.bukkit.inventory.ItemStack boots;
+    private static Field uniqueID;
 
     static {
         boots = new ItemStack(Material.LEATHER_BOOTS);
         boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
+
+        try {
+            uniqueID = Entity.class.getDeclaredField("uniqueID");
+            uniqueID.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
@@ -106,6 +116,21 @@ public class SpawnEntity extends BukkitRunnable {
         this.run();
     }
 
+    public SpawnEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+        this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
+        this.nmsWorld = nmsWorld;
+        this.firstEntityToSpawn = firstEntityToSpawn;
+        this.numToSpawn = numToSpawn;
+        this.spawnReason = spawnReason == null ? CreatureSpawnEvent.SpawnReason.NATURAL : spawnReason;
+        this.bukkitOriginalEntity = null;
+        this.phantomDuplicate = false;
+        this.removeOriginal = false;
+        this.equipBoots = equipBoots;
+        this.setNametag = false;
+        this.loc = loc;
+        this.run();
+    }
+
     @Override
     public void run() {
         for (int i = 0; i < this.numToSpawn; i++) {
@@ -130,6 +155,14 @@ public class SpawnEntity extends BukkitRunnable {
             if (this.entityToSpawn != null) {
                 if (this.setNametag) {
                     this.entityToSpawn.getBukkitEntity().setCustomName("Won't despawn");
+                }
+
+                if (this.bukkitOriginalEntity != null) { /**new entity has the same uuid to make sure raids and dragon fights etc. don't break*/
+                    try {
+                        uniqueID.set(this.entityToSpawn, this.bukkitOriginalEntity.getUniqueId());
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 this.entityToSpawn.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());

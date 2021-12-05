@@ -52,7 +52,7 @@ public class ListenerDragonFight implements Listener {
             org.bukkit.World bukkitWorld = event.getEntity().getWorld();
             World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
 
-            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
+            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld), 1, null, event.getEntity(), null, true, false);
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
                 for (int i = 1; i < 11; i++) {
@@ -440,16 +440,16 @@ public class ListenerDragonFight implements Listener {
             }
 
             if (ticksAfterDragonDeath == 1) { //immediately when dragon dies
-                for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                    for (PotionEffect effect : player.getActivePotionEffects()) { /**remove positive effects from all players*/
+                for (Player bukkitPlayer : Bukkit.getServer().getOnlinePlayers()) {
+                    for (PotionEffect effect : bukkitPlayer.getActivePotionEffects()) { /**remove positive effects from all players*/
                         PotionEffectType type = effect.getType();
 
                         if (type.equals(PotionEffectType.ABSORPTION) || type.equals(PotionEffectType.CONDUIT_POWER) || type.equals(PotionEffectType.DAMAGE_RESISTANCE) || type.equals(PotionEffectType.DOLPHINS_GRACE) || type.equals(PotionEffectType.FAST_DIGGING) || type.equals(PotionEffectType.FIRE_RESISTANCE) || type.equals(PotionEffectType.HEAL) || type.equals(PotionEffectType.HEALTH_BOOST) || type.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || type.equals(PotionEffectType.INCREASE_DAMAGE) || type.equals(PotionEffectType.INVISIBILITY) || type.equals(PotionEffectType.JUMP) || type.equals(PotionEffectType.LUCK) || type.equals(PotionEffectType.NIGHT_VISION) || type.equals(PotionEffectType.REGENERATION) || type.equals(PotionEffectType.SATURATION) || type.equals(PotionEffectType.SLOW_FALLING) || type.equals(PotionEffectType.SPEED) || type.equals(PotionEffectType.WATER_BREATHING)) {
-                            player.removePotionEffect(type);
+                            bukkitPlayer.removePotionEffect(type);
                         }
                     }
 
-                    new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, player.getLocation(), false); /**summon a mini wither at every player's location*/
+                    new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, bukkitPlayer.getLocation(), false); /**summon a mini wither at every player's location*/
                 }
 
                 new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld, 10.0F), 1, null, new Location(this.nmsWorld.getWorld(), this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ()), false); /**summon a power 10 custom lightning strike on dragon's location*/

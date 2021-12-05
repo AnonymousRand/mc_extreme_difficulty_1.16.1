@@ -14,12 +14,12 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.targetSelectorVanilla = super.targetSelector;
-        this.setBaby(false); /**super zombies move 3x faster, always summon a reinforcement when hit, and have 40 health*/
+        this.setBaby(false); /**super zombies move 3x faster, always summon a reinforcement when hit, and have 35 base health*/
         this.setCanPickupLoot(true);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69);
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(1.0);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-        this.setHealth(40.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(35.0);
+        this.setHealth(35.0F);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 

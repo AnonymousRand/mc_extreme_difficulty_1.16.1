@@ -9,6 +9,7 @@ import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,15 +33,17 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
         Player bukkitPlayer = event.getEntity();
-
         collections.put(bukkitPlayer, bukkitPlayer.getActivePotionEffects()); /**negative status effects now last after respawning*/
 
         if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /**when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc*/
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
-            CustomEntityZombieSuper newZombie = new CustomEntityZombieSuper(nmsWorld);
-            newZombie.getBukkitEntity().setCustomName("Dinnerbone");
-            new SpawnEntity(nmsWorld, newZombie, 1, null, bukkitPlayer.getLocation(), true);
-            superZombies.add(newZombie);
+            CustomEntityZombieSuper nmsNewZombie = new CustomEntityZombieSuper(nmsWorld);
+            LivingEntity bukkitNewZombie = ((LivingEntity)nmsNewZombie.getBukkitEntity());
+            bukkitNewZombie.setMaxHealth(bukkitNewZombie.getMaxHealth() + bukkitPlayer.getTotalExperience() / 50.0); /**super zombies gain health according to the player's XP when they died*/
+            nmsNewZombie.setHealth(nmsNewZombie.getHealth() + bukkitPlayer.getTotalExperience() / 50.0F);
+            nmsNewZombie.getBukkitEntity().setCustomName("Dinnerbone");
+            new SpawnEntity(nmsWorld, nmsNewZombie, 1, null, bukkitPlayer.getLocation(), true);;
+            superZombies.add(nmsNewZombie);
         }
     }
 
@@ -65,7 +68,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
 
             if (respawnCount.get(bukkitPlayer) % 5 == 0) { /**summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5*/
                 World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
-                new SpawnEntity(nmsWorld, new CustomEntityPhantom(nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
+                new SpawnEntity(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
             }
 
             if (superZombies.size() >= (3 * Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0))) { /**don't have more than 3 super zombies per player in the world at a time to avoid lag*/

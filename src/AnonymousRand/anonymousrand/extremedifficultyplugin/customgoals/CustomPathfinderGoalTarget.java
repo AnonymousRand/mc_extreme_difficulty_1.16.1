@@ -128,6 +128,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
             case VEX -> {
                 return ((CustomEntityVex)this.e).getFollowRange();
             }
+            case VILLAGER -> {
+                return ((CustomEntityVillagerAggressive)this.e).getFollowRange();
+            }
             case VINDICATOR -> {
                 return ((CustomEntityVindicator)this.e).getFollowRange();
             }
