@@ -80,16 +80,6 @@ public class ListenerRaidAndVillager implements Listener {
         new RunnableMeteorRain(bukkitPlayer, 3, 70.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
     }
 
-    //temp, todo end: delete
-    @EventHandler
-    public void playerInteract(PlayerInteractEvent event) {
-        if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
-            if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new SpawnEntity(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new CustomEntityLightning(((CraftWorld)event.getPlayer().getWorld()).getHandle()), 1, null, event.getPlayer().getLocation(), false);
-            }
-        }
-    }
-
     @EventHandler
     public void openVillagerInventory(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof AbstractVillager) { /**replaces villager trades with these troll trades*/

@@ -25,7 +25,6 @@ public class ListenerPlayerJoin implements Listener {
     public void playerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();
 
-        bukkitPlayer.getWorld().setDifficulty(Difficulty.EASY); //todo temp
         if (bukkitPlayer.getServer().getOnlinePlayers().size() == 1) { /**remove projectiles etc to reduce lag if this is the first player to join the server*/
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=arrow]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=small_fireball]");
