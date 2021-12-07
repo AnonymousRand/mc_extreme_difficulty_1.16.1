@@ -141,7 +141,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
                 if (d0 < 4.0D) {
                     if (this.c <= 0) {
-                        this.c = 80; /**only melees every 4 seconds*/
+                        this.c = 20; /**only melees every second and meleeing creates a 1 second period of no fireball attacks*/
                         this.blaze.attackEntity(entityliving);
                         this.blaze.getWorld().createExplosion(this.blaze, entityliving.locX(), entityliving.locY(), entityliving.locZ(), 0.4F, false, Explosion.Effect.DESTROY); /**melee attack creates a power 0.4 explosion on player's location*/
                     }
@@ -158,9 +158,9 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                             this.c = 0; /**no pause between each volley; shoots constantly*/
                         } else if (this.b <= 4) {
                             if (this.blaze.rapidFireTracker == 0) {
-                                this.c = 2; /**tripled attack speed*/
+                                this.c = 3; /**doubled attack speed*/
                             } else {
-                                this.c = 1; /**6x attack speed during rapidfire*/
+                                this.c = 2; /**tripled attack speed during rapidfire*/
                             }
                         } else {
                             this.c = 0; /**no pause between each volley; shoots constantly*/
@@ -174,13 +174,13 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                                 this.nmsWorld.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
                             }
 
-                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 400) {
-                                if (this.blaze.attacks % 160 == 0 && this.blaze.attacks != 0) { /**every 160 shots, the blaze shoots a fireball with explosion power 2*/
+                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 200) {
+                                if (this.blaze.attacks % 80 == 0 && this.blaze.attacks != 0) { /**every 80 shots, the blaze shoots a fireball with explosion power 2*/
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                     this.nmsWorld.addEntity(entityLargeFireball);
                                     this.blaze.attacks++;
-                                } else if (this.blaze.attacks % 60 == 0 && this.blaze.attacks != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
+                                } else if (this.blaze.attacks % 30 == 0 && this.blaze.attacks != 0) { /**every 30 shots, the blaze shoots a fireball with explosion power 1*/
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                     this.nmsWorld.addEntity(entityLargeFireball);
@@ -192,23 +192,23 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                                     this.blaze.attacks++;
                                 }
 
-                                if (this.blaze.attacks % 15 == 0) { /**every 15 shots, the blaze shoots a ring of fireballs*/
+                                if (this.blaze.attacks % 20 == 0) { /**every 20 shots, the blaze shoots a ring of fireballs*/
                                     new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                                 }
 
-                            } else { /**rapid fire phase for 50 shots after 400 normal shots*/
-                                if (this.blaze.attacks >= 400) { /**first entering rapid fire phase*/
+                            } else { /**rapid fire phase for 25 shots after 200 normal shots*/
+                                if (this.blaze.attacks >= 200) { /**first entering rapid fire phase*/
                                     this.blaze.attacks = 0;
-                                    this.blaze.rapidFireTracker = 50;
+                                    this.blaze.rapidFireTracker = 25;
                                 } else {
                                     new RunnableBlazeRapidFire(this.blaze, d1, d2, d3, (double)f).run();
                                     if (this.blaze.rapidFireTracker == 1) { /**shoots a large fireball with explosion power 3 and a ring of fireballs when this phase ends*/
                                         CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 3);
                                         entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                         this.nmsWorld.addEntity(entityLargeFireball);
-                                        new RunnableRingOfFireballs(this.blaze, 0.4, 1).run();
-                                    } else if (this.blaze.rapidFireTracker % 17 == 0) { /**every 17 shots, the blaze shoots a ring of fireballs*/
-                                        new RunnableRingOfFireballs(this.blaze, 0.4, 1).run();
+                                        new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
+                                    } else if (this.blaze.rapidFireTracker % 13 == 0) { /**every 13 shots, the blaze shoots a ring of fireballs*/
+                                        new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                                     }
 
                                     this.blaze.rapidFireTracker--;

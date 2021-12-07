@@ -16,14 +16,14 @@ import java.util.Random;
 public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     public int attacks;
-    private boolean a15, deathFireballs;
+    private boolean a20, deathFireballs;
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
-        this.a15 = false;
+        this.a20 = false;
         this.deathFireballs = false;
     }
 
@@ -57,8 +57,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, ghasts get 16 max health and health*/
-            this.a15 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, ghasts get 16 max health and health*/
+            this.a20 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
             this.setHealth(16.0F);
         }

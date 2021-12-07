@@ -40,10 +40,6 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         int i = this.getPuffState() + 1;
 
         if (entityhuman instanceof EntityPlayer) {
-            if (!this.isSilent()) {
-                ((EntityPlayer)entityhuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
-            }
-
             entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 50 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3*/
         }
     }

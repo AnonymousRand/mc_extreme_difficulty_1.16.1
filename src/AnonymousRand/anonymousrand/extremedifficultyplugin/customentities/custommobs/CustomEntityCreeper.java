@@ -60,7 +60,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 9.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 3
+            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 16.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 4
                 try {
                     fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
@@ -74,7 +74,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
         if (!this.getWorld().isClientSide) {
             if (this.isPowered()) {
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 15.0F, true, Explosion.Effect.DESTROY); /**charged creepers explode with power 15*/
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 50.0F, true, Explosion.Effect.DESTROY); /**charged creepers explode with power 50*/
             } else {
                 Explosion.Effect explosion_effect = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)this.explosionRadius, false, explosion_effect);

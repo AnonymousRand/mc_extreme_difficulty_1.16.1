@@ -50,7 +50,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     @Override
     public void a(EntityLiving entityliving, float f) { //shoot
-        if (++this.attackNum % 8 == 0) { //attacks only count every 2 seconds, or 8 shots
+        if (++this.attackNum % 6 == 0) { //attacks only count every 1.5 seconds, or 6 shots
             this.attacks++;
         }
 
@@ -60,7 +60,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             double d1 = entityliving.getHeadY() - 1.100000023841858D - this.locY();
             double d2 = entityliving.locZ() + vec3d.z - this.locZ();
             float f1 = MathHelper.sqrt(d0 * d0 + d2 * d2);
-            PotionRegistry potionregistry = Potions.HARMING;
+            PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /**after 45 attacks, witches throw harming 2 instead of 1*/
 
             if (entityliving instanceof EntityRaider) {
                 if (entityliving.getHealth() <= 10.0F) { /**gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts*/
@@ -70,12 +70,12 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
                 }
 
                 this.setGoalTarget((EntityLiving)null);
-            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /**gives slowness 1 up to 6 blocks away*/
-                potionregistry = Potions.SLOWNESS;
-            } else if (f1 < 5.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /**100% to give weakness when player within 5 blocks*/
+            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /**gives slowness 2 up to 6 blocks away*/
+                potionregistry = Potions.STRONG_SLOWNESS;
+            } else if (f1 < 6.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /**100% to give weakness when player within 6 blocks*/
                 potionregistry = Potions.WEAKNESS;
-            } else if (f1 >= 4.0F) { /**gives poison for 90 seconds instead of 45 but poison range increased to anything beyond 4 blocks; within 4 blocks witches start spamming harming 1*/
-                potionregistry = Potions.LONG_POISON;
+            } else if (f1 >= 5.0F) { /**gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming*/
+                potionregistry = Potions.STRONG_POISON;
             }
 
             EntityPotion entitypotion = new EntityPotion(this.world, this);
@@ -102,8 +102,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
                 /**witches don't drink water breathing potions as they no longer take drowning damage*/
                 if ((this.isBurning() || this.dl() != null && this.dl().isFire()) && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) { /**witches always drink fire resistance when they are burning*/
                     potionregistry = Potions.FIRE_RESISTANCE;
-                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /**below 5.2 health, witches always drink turtle master 1*/
-                    potionregistry = this.attacks < 45 ? Potions.TURTLE_MASTER : Potions.STRONG_TURTLE_MASTER; /**after 45 attacks, witches get turtle master 2 instead of 1*/
+                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /**below 5.2 health, witches always drink turtle master 2*/
+                    potionregistry = Potions.STRONG_TURTLE_MASTER;
                 } else if (this.getHealth() < this.getMaxHealth() * 0.5) { /**below 13 health, witches always drink instant health 2*/
                     potionregistry = Potions.STRONG_HEALING;
                 }
@@ -114,8 +114,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             }
         }
 
-        try { /**witches drink potions 2-3 times as fast*/
-            bx.setInt(this, bx.getInt(this) - random.nextInt(2) + 1);
+        try { /**witches drink potions 3 times as fast*/
+            bx.setInt(this, bx.getInt(this) - 2);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

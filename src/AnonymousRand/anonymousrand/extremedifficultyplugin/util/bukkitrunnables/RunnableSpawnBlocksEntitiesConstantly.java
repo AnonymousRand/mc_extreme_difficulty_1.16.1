@@ -70,7 +70,7 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
                         if (this.terraform) {
                             Material type = this.loc.getBlock().getType();
 
-                            if (type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB) { //as long as it isn't one of these blocks) {
+                            if (type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.WATER && type != Material.LAVA) { //as long as it isn't one of these blocks) {
                                 this.loc.getBlock().setType(this.material);
 
                                 if (this.material == Material.COBWEB) {
