@@ -76,6 +76,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityStrider ||
                 nmsEntity instanceof CustomEntityVex ||
+                nmsEntity instanceof CustomEntityVillagerAggressive ||
                 nmsEntity instanceof CustomEntityVindicator ||
                 nmsEntity instanceof CustomEntityWitch ||
                 nmsEntity instanceof CustomEntityWither ||
@@ -284,6 +285,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityStrider ||
                         nmsEntity instanceof CustomEntityVex ||
+                        nmsEntity instanceof CustomEntityVillagerAggressive ||
                         nmsEntity instanceof CustomEntityVindicator ||
                         nmsEntity instanceof CustomEntityWitch ||
                         nmsEntity instanceof CustomEntityWither ||
