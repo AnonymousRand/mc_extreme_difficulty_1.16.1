@@ -161,7 +161,7 @@ public class SpawnEntity extends BukkitRunnable {
                     this.entityToSpawn.getBukkitEntity().setCustomName("Won't despawn");
                 }
 
-                if (this.bukkitOriginalEntity != null && this.removeOriginal) { /**new entity has the same uuid to make sure dragon fights etc. don't break*/
+                if (this.bukkitOriginalEntity != null && this.removeOriginal && i == 0) { /**new entity has the same uuid to make sure dragon fights etc. don't break*/
                     try {
                         uniqueID.set(this.entityToSpawn, this.bukkitOriginalEntity.getUniqueId());
                     } catch (IllegalAccessException e) {
