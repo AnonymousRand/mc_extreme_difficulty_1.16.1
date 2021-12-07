@@ -2,7 +2,8 @@
 
 **Spigot servers, version 1.16.1**
 
-# Finally done
+**Warning: plugin is pretty heavyweight, do not run on a server with low RAM allocation**
+
 # Installation instructions:
 
 1. Click on "Releases" near the right side of the screen
@@ -11,3 +12,5 @@
 4. Run your server
 
 This is a plugin made with Spigot NMS and Bukkit API.
+
+# Finally done
