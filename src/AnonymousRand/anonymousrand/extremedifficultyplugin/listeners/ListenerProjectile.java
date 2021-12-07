@@ -43,7 +43,7 @@ public class ListenerProjectile implements Listener {
             CustomEntityArrow newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity(), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
 
             if (nmsShooter instanceof EntityPlayer) { /**player-shot arrows have more inaccuracy*/
-                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
+                newArrow = new CustomEntityArrow(nmsWorld, bukkitArrow.getVelocity().add(new Vector(random.nextDouble() - 0.4, random.nextDouble() - 0.4, random.nextDouble() - 0.4)), (byte)bukkitArrow.getPierceLevel(), bukkitArrow.getShooter());
             }
 
             if (nmsProjectile.isBurning()) { //carries over burning arrows

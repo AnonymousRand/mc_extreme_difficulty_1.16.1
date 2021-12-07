@@ -134,6 +134,7 @@ public class SpawnEntity extends BukkitRunnable {
     @Override
     public void run() {
         for (int i = 0; i < this.numToSpawn; i++) {
+            Bukkit.broadcastMessage("spawn2");
             if (i > 0) {
                 try {
                     if (this.firstEntityToSpawn instanceof CustomEntityCreeper || (this.firstEntityToSpawn instanceof CustomEntityPhantom && !this.phantomDuplicate)) {
@@ -152,12 +153,16 @@ public class SpawnEntity extends BukkitRunnable {
                 this.entityToSpawn = this.firstEntityToSpawn;
             }
 
+            if (this.removeOriginal) {
+                this.bukkitOriginalEntity.remove();
+            }
+
             if (this.entityToSpawn != null) {
                 if (this.setNametag) {
                     this.entityToSpawn.getBukkitEntity().setCustomName("Won't despawn");
                 }
 
-                if (this.bukkitOriginalEntity != null) { /**new entity has the same uuid to make sure raids and dragon fights etc. don't break*/
+                if (this.bukkitOriginalEntity != null && this.removeOriginal) { /**new entity has the same uuid to make sure dragon fights etc. don't break*/
                     try {
                         uniqueID.set(this.entityToSpawn, this.bukkitOriginalEntity.getUniqueId());
                     } catch (IllegalAccessException e) {
@@ -169,13 +174,9 @@ public class SpawnEntity extends BukkitRunnable {
                 this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
 
                 if (this.equipBoots) {
-                    ((LivingEntity) this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
+                    ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
                 }
             }
-        }
-
-        if (this.removeOriginal) {
-            this.bukkitOriginalEntity.remove();
         }
     }
 }

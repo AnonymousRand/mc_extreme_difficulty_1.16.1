@@ -2,6 +2,8 @@
 
 **Spigot servers, version 1.16.1**
 
+**Java version 14**
+
 **Warning: plugin is pretty heavyweight, do not run on a server with low RAM allocation**
 
 # Installation instructions:
