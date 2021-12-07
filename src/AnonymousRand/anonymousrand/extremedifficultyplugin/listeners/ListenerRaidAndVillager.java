@@ -71,16 +71,6 @@ public class ListenerRaidAndVillager implements Listener {
         }
     }
 
-    //temp, todo end: delete
-    @EventHandler
-    public void playerInteract(PlayerInteractEvent event) {
-        if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) && event.hasBlock()) {
-            if (event.getClickedBlock().getType().equals(Material.OAK_SIGN)) {
-                new SpawnEntity(((CraftWorld)event.getPlayer().getWorld()).getHandle(), new CustomEntityLightning(((CraftWorld)event.getPlayer().getWorld()).getHandle()), 1, null, event.getPlayer().getLocation(), false);
-            }
-        }
-    }
-
     @EventHandler
     public void raidFinish(RaidFinishEvent event) { /**summon meteor rain when raid ends on random player*/
         Player bukkitPlayer = event.getWinners().get(random.nextInt(event.getWinners().size()));
