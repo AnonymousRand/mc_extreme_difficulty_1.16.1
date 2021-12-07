@@ -32,8 +32,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /**aggressive chickens move twice as fast and do 1.5 damage*/
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.5);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /**aggressive chickens move twice as fast and do 2 damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
     }
 
     //registers new attributes via reflection; code from Spigot forums
@@ -94,6 +94,10 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     @Override
     public void tick() {
         super.tick();
+
+        if (this.ticksLived == 600) { /**aggressive chickens die after 30 sec*/
+            this.die();
+        }
 
         if (this.attacks == 15 && !this.a15) { /**after 15 attacks, aggressive chicken get 5 damage and regen 1*/
             this.a15 = true;
