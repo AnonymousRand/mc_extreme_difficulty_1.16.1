@@ -134,7 +134,6 @@ public class SpawnEntity extends BukkitRunnable {
     @Override
     public void run() {
         for (int i = 0; i < this.numToSpawn; i++) {
-            Bukkit.broadcastMessage("spawn2");
             if (i > 0) {
                 try {
                     if (this.firstEntityToSpawn instanceof CustomEntityCreeper || (this.firstEntityToSpawn instanceof CustomEntityPhantom && !this.phantomDuplicate)) {
