@@ -33,7 +33,7 @@ public class CustomEntityWolf extends EntityWolf implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.isTamed()) { /**wolves can't be tamed*/
+        if (this.isTamed() && this.ticksLived % 10 == 0) { /**wolves can't be tamed*/
             this.setTamed(false);
             this.setOwnerUUID(UUID.randomUUID());
         }
