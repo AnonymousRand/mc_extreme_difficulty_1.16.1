@@ -31,10 +31,8 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
         this.a40 = false;
         this.a50 = false;
         this.setBaby(true);
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player, but only have 12 health*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player*/
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);
-        this.setHealth(12.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 

@@ -41,8 +41,6 @@ public class ListenerRaidAndVillager implements Listener {
         Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
 
         if ((event.getEntityType() == VILLAGER)) {
-            event.setDamage(event.getDamage() * 2.0); /**villagers take twice as much damage from everything*/
-
             if (nmsDamager instanceof EntityPlayer) { /**villagers give players bad omen if they are hit by a player*/
                 ((EntityPlayer)nmsDamager).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
             } else if (nmsDamager instanceof CustomEntityArrow) {

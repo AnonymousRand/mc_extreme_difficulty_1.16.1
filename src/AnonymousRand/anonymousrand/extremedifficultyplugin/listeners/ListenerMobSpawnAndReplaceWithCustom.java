@@ -76,6 +76,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityStrider ||
                 nmsEntity instanceof CustomEntityVex ||
+                nmsEntity instanceof CustomEntityVillager ||
                 nmsEntity instanceof CustomEntityVillagerAggressive ||
                 nmsEntity instanceof CustomEntityVindicator ||
                 nmsEntity instanceof CustomEntityWitch ||
@@ -202,8 +203,8 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
                 case VILLAGER -> { /**villagers spawn 10 at a time*/
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED && !(nmsEntity instanceof CustomEntityVillagerAggressive)) {
-                        new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED && ((EntityVillager)nmsEntity).dropChanceArmor[0] != 100) {
+                        new SpawnEntity(nmsWorld, new CustomEntityVillager(nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
                     }
                 }
                 case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
@@ -285,6 +286,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityStrider ||
                         nmsEntity instanceof CustomEntityVex ||
+                        nmsEntity instanceof CustomEntityVillager ||
                         nmsEntity instanceof CustomEntityVillagerAggressive ||
                         nmsEntity instanceof CustomEntityVindicator ||
                         nmsEntity instanceof CustomEntityWitch ||
@@ -357,8 +359,8 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case VILLAGER -> { /**villagers spawn 10 at a time*/
-                            if (!(nmsEntity instanceof CustomEntityVillagerAggressive)) {
-                                new SpawnEntity(nmsWorld, new EntityVillager(EntityTypes.VILLAGER, nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
+                            if (((EntityVillager)nmsEntity).dropChanceArmor[0] != 100) {
+                                new SpawnEntity(nmsWorld, new CustomEntityVillager(nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
                             }
                         }
                         case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
