@@ -30,10 +30,10 @@ public class ListenerPlayerJoin implements Listener {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=small_fireball]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=fireball]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=falling_block]");
-        } else { /**when players join, they get blindness 255, slowness 255 and weakness 255 for 10 seconds to prevent exploits*/
-            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 255));
-            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 255));
-            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 255));
+        } else { /**when players join, they get blindness 255, slowness 255 and weakness 255 for 15 seconds to prevent exploits*/
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 300, 255));
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 300, 255));
+            bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 300, 255));
         }
 
         if (RunnableMobRain.permanentEntitiesToSpawn.isEmpty()) { //init here to avoid lag spikes as filling in the arraylists takes quite a while

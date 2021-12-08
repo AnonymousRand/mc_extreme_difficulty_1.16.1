@@ -36,7 +36,7 @@ public class ListenerPotionEffect implements Listener {
 
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                             ((LivingEntity) bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int) (bukkitNewEffect.getDuration() * 0.025), bukkitNewEffect.getAmplifier()));
-                            Bukkit.broadcastMessage("Enjoy your " + (int) (bukkitNewEffect.getDuration() * 0.025 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " "));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + bukkitEntity.getName() + " Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.025 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " "));
                         }, 1);
                     }
                 } else {

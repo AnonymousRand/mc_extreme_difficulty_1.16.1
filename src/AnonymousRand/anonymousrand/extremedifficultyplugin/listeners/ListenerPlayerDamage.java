@@ -86,7 +86,6 @@ public class ListenerPlayerDamage implements Listener {
                     ravager.attacks++;
 
                     if (ravager.launchHigh) {
-                        Bukkit.broadcastMessage("You really thought you could get away with that?");
                         ravager.launchHigh = false;
                         event.setDamage(6.0);
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
@@ -107,7 +106,6 @@ public class ListenerPlayerDamage implements Listener {
                     sheep.attacks++;
 
                     if (sheep.launchHigh) {
-                        Bukkit.broadcastMessage("You really thought you could get away with that?");
                         sheep.launchHigh = false;
                         event.setDamage(9.0);
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0)), 2L);

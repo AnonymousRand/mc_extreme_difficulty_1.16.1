@@ -9,12 +9,14 @@ import java.util.List;
 
 public class CustomEntityPufferfish extends EntityPufferFish implements ICustomMob {
 
+    private int lastStingTicks;
     private static Field jumpTicks;
 
     public CustomEntityPufferfish(World world) {
         super(EntityTypes.PUFFERFISH, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.lastStingTicks = 0;
     }
 
     static {
@@ -39,9 +41,12 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
     public void pickup(EntityHuman entityhuman) { //onCollideWithPlayer
         int i = this.getPuffState() + 1;
 
-        if (entityhuman instanceof EntityPlayer) {
-            entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 50 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3*/
+        if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 20) {
+            this.lastStingTicks = this.ticksLived; /**only plays sting sound once per second*/
+            ((EntityPlayer)entityhuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
         }
+
+        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 70 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 70*/
     }
 
     public double getFollowRange() { /**pufferfish have 32 block detection range (setting attribute doesn't work)*/

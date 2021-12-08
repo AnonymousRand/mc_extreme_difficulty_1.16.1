@@ -63,7 +63,7 @@ public class ListenerPlayerInteract implements Listener {
 
                     if (bukkitPlayer.getEquipment().getItemInMainHand().getType() == Material.FLINT_AND_STEEL && bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
                         event.setCancelled(true);
-                        Bukkit.broadcastMessage("You can't place such bright blocks in the end");
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + bukkitPlayer.getName() + " You can't place such bright blocks in the end");
                     }
                 }
             }
@@ -74,7 +74,7 @@ public class ListenerPlayerInteract implements Listener {
     public void playerPlaceLavaBucket(PlayerBucketEmptyEvent event) {
         if (event.getBucket() == Material.LAVA_BUCKET && event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
             event.setCancelled(true);
-            Bukkit.broadcastMessage("You can't place such bright blocks in the end");
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + event.getPlayer().getName() + " You can't place such bright blocks in the end");
         }
     }
 }

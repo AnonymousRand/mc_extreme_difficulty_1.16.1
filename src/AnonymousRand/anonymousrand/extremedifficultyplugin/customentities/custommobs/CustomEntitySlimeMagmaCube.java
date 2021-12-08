@@ -67,8 +67,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         return random.nextInt(4) + 9;
     }
 
-    public int getBlazeFireballGoalAttackCooldown() { /**after 20 attacks, magma cubes shoot a ring of blaze fireballs every 11 seconds (6.5 seconds after 40 attacks)*/
-        return this.attacks < 20 ? Integer.MAX_VALUE : this.attacks < 40 ? 220 : 130;
+    public int getBlazeFireballGoalAttackCooldown() { /**after 20 attacks, magma cubes shoot a ring of blaze fireballs every 10 seconds (6 seconds after 40 attacks)*/
+        return this.attacks < 20 ? Integer.MAX_VALUE : this.attacks < 40 ? 200 : 120;
     }
 
     public double getFollowRange() { /**magma cubes have 40 block detection range (setting attribute doesn't work)*/
@@ -104,7 +104,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /**custom goal that breaks blocks around the mob periodically*/
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /**custom goal that breaks blocks around the mob periodically*/
             }
         }
     }
@@ -190,7 +190,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         @Override
         public void e() {
             if (this.cube.isOnGround() && this.firstLand > 0) { /**magma cube spawns fire on it while on the ground and magma blocks below it*/
-                this.firstLand = -15; //to reduce lag, this can only happen every 15 ticks
+                this.firstLand = -10; //to reduce lag, this can only happen every 10 ticks
                 double diameterDecimal = this.cube.getBoundingBox().maxX - this.cube.getBoundingBox().minX;
                 int diameter = (int)(Math.floor(diameterDecimal) + 2);
 
@@ -223,7 +223,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         @Override
         public void e() {
             if (this.cube.ticksLived % this.cube.getBlazeFireballGoalAttackCooldown() == 0) {
-                new RunnableRingOfFireballs(this.cube, 0.4, 1).run();
+                new RunnableRingOfFireballs(this.cube, 0.5, 1).run();
             }
         }
     }

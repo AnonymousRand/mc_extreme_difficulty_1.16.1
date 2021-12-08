@@ -16,6 +16,7 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -40,17 +41,19 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         Material type = bukkitBlock.getType();
 
         if (event.getPlayer() != null) {
+            Player bukkitPlayer = event.getPlayer();
+
             if (bukkitBlock.getLocation().getY() >= 129.0) { /**can't build above y level 128 in all dimensions to prevent towering up etc. to avoid mobs*/
                 event.setCancelled(true);
-                Bukkit.broadcastMessage("You have reached the build height limit of 128 blocks :tf:");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + bukkitPlayer.getName() + " You have reached the build height limit of 128 blocks :tf:");
                 return;
             }
 
             switch (type) {
                 case BEACON, BLAST_FURNACE, CAMPFIRE, CAULDRON,  END_ROD, FURNACE, GLOWSTONE, JACK_O_LANTERN, LANTERN, REDSTONE_LAMP, REDSTONE_ORE, REDSTONE_TORCH, RESPAWN_ANCHOR, SEA_LANTERN, SEA_PICKLE, SHROOMLIGHT, SMOKER, SOUL_CAMPFIRE, SOUL_LANTERN, SOUL_TORCH, TORCH -> {
-                    if (event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
+                    if (bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
                         event.setCancelled(true);
-                        Bukkit.broadcastMessage("You can't place such bright blocks in the end");
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + bukkitPlayer.getName() + " You can't place such bright blocks in the end:");
                     }
                 }
                 case CONDUIT -> new RunnableConduitSummonMobs(nmsWorld, loc, 20).runTaskTimer(StaticPlugin.plugin, 0L, 100L); /**conduits spawn pufferfish and drowned every 5 seconds for 100 seconds*/
