@@ -30,6 +30,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
         this.a25 = false;
         this.a40 = false;
         this.a50 = false;
+        this.expToDrop = 1; //to differentiate between vanilla villagers in listenermobspawnandreplace to avoid potential infinite loops
         this.setBaby(true);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player*/
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);

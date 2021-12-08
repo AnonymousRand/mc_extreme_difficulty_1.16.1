@@ -76,8 +76,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 nmsEntity instanceof CustomEntitySpider ||
                 nmsEntity instanceof CustomEntityStrider ||
                 nmsEntity instanceof CustomEntityVex ||
-                nmsEntity instanceof CustomEntityVillager ||
-                nmsEntity instanceof CustomEntityVillagerAggressive ||
+                nmsEntity instanceof EntityVillager ||
                 nmsEntity instanceof CustomEntityVindicator ||
                 nmsEntity instanceof CustomEntityWitch ||
                 nmsEntity instanceof CustomEntityWither ||
@@ -202,11 +201,6 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case STRIDER -> new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
-                case VILLAGER -> { /**villagers spawn 10 at a time*/
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.DROWNED && ((EntityVillager)nmsEntity).dropChanceArmor[0] != 100) {
-                        new SpawnEntity(nmsWorld, new CustomEntityVillager(nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
-                    }
-                }
                 case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case WITHER -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true), 1); //delay by 1 tick so that soul sand/soil and skulls are deleted
@@ -286,8 +280,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntitySpider ||
                         nmsEntity instanceof CustomEntityStrider ||
                         nmsEntity instanceof CustomEntityVex ||
-                        nmsEntity instanceof CustomEntityVillager ||
-                        nmsEntity instanceof CustomEntityVillagerAggressive ||
+                        nmsEntity instanceof EntityVillager ||
                         nmsEntity instanceof CustomEntityVindicator ||
                         nmsEntity instanceof CustomEntityWitch ||
                         nmsEntity instanceof CustomEntityWither ||
@@ -337,7 +330,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/
-                            if (((EntityRabbit) nmsEntity).getRabbitType() == 99) { //to avoid infinte duplication when joining world
+                            if (((EntityRabbit) nmsEntity).getRabbitType() == 99) { //to avoid infinite duplication when joining world
                                 return;
                             }
 
@@ -358,11 +351,6 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case STRIDER -> new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case TRADER_LLAMA -> new SpawnEntity(nmsWorld, new CustomEntityLlamaTrader(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case VEX -> new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
-                        case VILLAGER -> { /**villagers spawn 10 at a time*/
-                            if (((EntityVillager)nmsEntity).dropChanceArmor[0] != 100) {
-                                new SpawnEntity(nmsWorld, new CustomEntityVillager(nmsWorld), 10, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitEntity, null, false, false);
-                            }
-                        }
                         case VINDICATOR -> new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITCH -> new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case WITHER -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true);
