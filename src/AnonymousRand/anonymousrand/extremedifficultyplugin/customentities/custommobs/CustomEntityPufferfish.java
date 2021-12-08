@@ -39,6 +39,10 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     @Override
     public void pickup(EntityHuman entityhuman) { //onCollideWithPlayer
+        if (entityhuman.abilities.isInvulnerable) {
+            return;
+        }
+
         int i = this.getPuffState() + 1;
 
         if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 20) {

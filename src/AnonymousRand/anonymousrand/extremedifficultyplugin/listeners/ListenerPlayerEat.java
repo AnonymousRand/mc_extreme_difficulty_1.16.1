@@ -33,7 +33,7 @@ public class ListenerPlayerEat implements Listener {
                     if (effect.getType().equals(PotionEffectType.SLOW) || effect.getType().equals(PotionEffectType.SLOW_DIGGING) || effect.getType().equals(PotionEffectType.CONFUSION) || effect.getType().equals(PotionEffectType.BLINDNESS) || effect.getType().equals(PotionEffectType.HUNGER) || effect.getType().equals(PotionEffectType.WEAKNESS) || effect.getType().equals(PotionEffectType.POISON) || effect.getType().equals(PotionEffectType.WITHER) || effect.getType().equals(PotionEffectType.LEVITATION) || effect.getType().equals(PotionEffectType.UNLUCK) || effect.getType().equals(PotionEffectType.BAD_OMEN)) {
                         if (!milkTest) {
                             milkTest = true;
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "msg " + bukkitPlayer.getName() + " You thought...");
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You thought...\"");
                         }
 
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.addPotionEffect(new PotionEffect(effect.getType(), effect.getDuration() * 2, effect.getAmplifier() + 1)), 1);
