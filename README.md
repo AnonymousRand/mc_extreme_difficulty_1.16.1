@@ -14,7 +14,7 @@ Warning: plugin is pretty heavyweight, do not run on a server with low RAM alloc
 4. Run your server
 5. Join the server in creative mode because every player after the first one that joins gets debuffed for 15 seconds to prevent relog exploits
 
-# Java 14 setup guide
+# Java 14 setup guide:
 
 Follow this guide if the plugin doesn't seem to be doing anything and the server log has an error about mismatched/unsupported Java versions
 
