@@ -17,9 +17,9 @@ import java.util.Map;
 public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     public int attacks;
-    private boolean a5, a10, a20, a32, a45, firstDuplicate;
+    private boolean a3, a7, a12, a24, a32, firstDuplicate;
     private BlockPosition d;
-    private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 5, 200, 101);
+    private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 3, 200, 101);
     private static final CustomPathfinderTargetCondition c = (new CustomPathfinderTargetCondition()).a(4.0D).b();
     private static Field attributeMap;
 
@@ -28,11 +28,11 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
-        this.a5 = false;
-        this.a10 = false;
-        this.a20 = false;
+        this.a3 = false;
+        this.a7 = false;
+        this.a12 = false;
+        this.a24 = false;
         this.a32 = false;
-        this.a45 = false;
         this.firstDuplicate = true;
 
         try { //register attack attributes
@@ -72,37 +72,38 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
-    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 5 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 1 for 4 minutes. After 20 attacks, all mobs within 64 block sphere shoot an arrow every 20 ticks. After 32 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 45 attacks, all mobs within 64 block sphere get regen 2 for 4 minutes and shoot an arrow every 8 ticks*/
+    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 1 for 4 minutes. After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks. After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 32 attacks, all mobs within 64 block sphere get regen 2 for 4 minutes and shoot an arrow every 8 ticks*/
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
-        ArrayList<MobEffect> attacks5 = new ArrayList<>();
-        ArrayList<MobEffect> attacks20 = new ArrayList<>();
+        ArrayList<MobEffect> attacks3 = new ArrayList<>();
+        ArrayList<MobEffect> attacks12 = new ArrayList<>();
+        ArrayList<MobEffect> attacks24 = new ArrayList<>();
         ArrayList<MobEffect> attacks32 = new ArrayList<>();
-        ArrayList<MobEffect> attacks45 = new ArrayList<>();
 
-        attacks5.add(new MobEffect(MobEffects.REGENERATION, 4800, 0));
-        attacks5.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
-        attacks5.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
-        attacks20.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
-        attacks20.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
-        attacks32.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
-        attacks45.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
+        attacks3.add(new MobEffect(MobEffects.REGENERATION, 4800, 0));
+        attacks3.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
+        attacks3.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
+        attacks12.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
+        attacks12.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 1));
+        attacks12.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
+        attacks24.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
+        attacks32.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
 
-        buffs.put(5, attacks5);
-        buffs.put(20, attacks20);
+        buffs.put(3, attacks3);
+        buffs.put(12, attacks12);
+        buffs.put(24, attacks24);
         buffs.put(32, attacks32);
-        buffs.put(45, attacks45);
 
         return buffs;
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) { /**summons 15-20 bats when hit by player and not killed for the first time (also 2 aggressive bats after 45 attacks)*/
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) { /**summons 10-15 bats when hit by player and not killed for the first time (also 2 aggressive bats after 32 attacks)*/
             this.firstDuplicate = false;
-            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(6) + 15, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
+            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(6) + 10, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
-            if (this.attacks >= 45) {
+            if (this.attacks >= 32) {
                 new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 2, null, null, this, false, false);
             }
         }
@@ -173,24 +174,24 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 5 && !this.a5) {
-            this.a5 = true;
+        if (this.attacks == 3 && !this.a3) {
+            this.a3 = true;
             buffMobs.e(); /**buffs are immediately applied the first time*/
         }
 
-        if (this.attacks == 10 && !this.a10) { /**after 10 attacks, bats gain regen 2, speed 1, and 10 max health and health*/
-            this.a10 = true;
+        if (this.attacks == 7 && !this.a7) { /**after 7 attacks, bats gain regen 2, speed 1, and 12 max health and health*/
+            this.a7 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
-            this.setHealth(10.0F);
-        }
-
-        if (this.attacks == 20 && !this.a20) { /**after 25 attacks, bats gain speed 2 and 12 max health and health*/
-            this.a20 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
             this.setHealth(12.0F);
+        }
+
+        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, bats gain speed 2 and 15 max health and health*/
+            this.a12 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
+            this.setHealth(15.0F);
 
             this.goalSelector.a(this.buffMobs); //remove goal and replace
             this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(), 64, 20, 200, 101);
@@ -198,13 +199,13 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
             this.buffMobs.e(); /**buffs are immediately applied the first time*/
         }
 
-        if (this.attacks == 32 && !this.a32) {
-            this.a32 = true;
+        if (this.attacks == 24 && !this.a24) {
+            this.a24 = true;
             this.buffMobs.e(); /**buffs are immediately applied the first time*/
         }
 
-        if (this.attacks == 45 && !this.a45) { /**bats can duplicate again one time after 45 attacks*/
-            this.a45 = true;
+        if (this.attacks == 32 && !this.a32) { /**bats can duplicate again one time after 45 attacks*/
+            this.a32 = true;
             this.firstDuplicate = true;
             this.buffMobs.e(); /**buffs are immediately applied the first time*/
         }

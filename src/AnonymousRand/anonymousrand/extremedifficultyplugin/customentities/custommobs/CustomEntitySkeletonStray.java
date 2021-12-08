@@ -23,8 +23,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         this.attacks = 0;
         this.a25 = false;
         this.a60 = false;
-        this.setHealth(15.0F); /**strays only have 15 health*/
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15);
     }
 
     @Override

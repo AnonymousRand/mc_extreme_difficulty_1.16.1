@@ -45,12 +45,12 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
         int i = this.getPuffState() + 1;
 
-        if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 20) {
-            this.lastStingTicks = this.ticksLived; /**only plays sting sound once per second*/
+        if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 100) {
+            this.lastStingTicks = this.ticksLived; /**only plays sting sound once per 5 seconds*/
             ((EntityPlayer)entityhuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
         }
 
-        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 70 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 70*/
+        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80*/
     }
 
     public double getFollowRange() { /**pufferfish have 32 block detection range (setting attribute doesn't work)*/

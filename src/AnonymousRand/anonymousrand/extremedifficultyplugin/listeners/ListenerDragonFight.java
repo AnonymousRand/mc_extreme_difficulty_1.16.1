@@ -52,7 +52,7 @@ public class ListenerDragonFight implements Listener {
             org.bukkit.World bukkitWorld = event.getEntity().getWorld();
             World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
 
-            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld), 1, null, event.getEntity(), null, true, false);
+            new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
                 for (int i = 1; i < 11; i++) {

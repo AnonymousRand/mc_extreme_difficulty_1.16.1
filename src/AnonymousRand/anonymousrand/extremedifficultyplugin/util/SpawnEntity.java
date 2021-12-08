@@ -29,19 +29,11 @@ public class SpawnEntity extends BukkitRunnable {
     private World nmsWorld;
     private Location loc;
     private static org.bukkit.inventory.ItemStack boots;
-    private static Field uniqueID;
 
     static {
         boots = new ItemStack(Material.LEATHER_BOOTS);
         boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
-
-        try {
-            uniqueID = Entity.class.getDeclaredField("uniqueID");
-            uniqueID.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
 
     public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nullable org.bukkit.entity.Entity bukkitOriginalEntity, @Nullable Entity nmsOriginalEntity, boolean removeOriginal, boolean equipBoots) {
@@ -157,20 +149,12 @@ public class SpawnEntity extends BukkitRunnable {
             }
 
             if (this.entityToSpawn != null) {
+                this.entityToSpawn.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());
+                this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
+
                 if (this.setNametag) {
                     this.entityToSpawn.getBukkitEntity().setCustomName("Won't despawn");
                 }
-
-                if (this.bukkitOriginalEntity != null && this.removeOriginal && i == 0) { /**new entity has the same uuid to make sure dragon fights etc. don't break*/
-                    try {
-                        uniqueID.set(this.entityToSpawn, this.bukkitOriginalEntity.getUniqueId());
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                this.entityToSpawn.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());
-                this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
 
                 if (this.equipBoots) {
                     ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);

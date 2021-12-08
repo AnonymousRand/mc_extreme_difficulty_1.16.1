@@ -33,8 +33,6 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         this.attacks = 0;
         this.a25 = false;
         this.a90 = false;
-        this.setHealth(15.0F); /**skeletons only have 15 health*/
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     public ArrayList<CustomEntityIllusionerFake> fakeIllusioners = new ArrayList<>();
     public int attacks;
-    private boolean a55;
+    private boolean a40;
 
     public CustomEntityIllusioner(World world) {
         super(EntityTypes.ILLUSIONER, world);
@@ -20,8 +20,10 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.attacks = 0;
-        this.a55 = false;
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0)); /**illusioners and fake illusioners have regen 1*/
+        this.a40 = false;
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0); /**illusioners have 40 health*/
+        this.setHealth(40.0F);
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1)); /**illusioners and fake illusioners have regen 2*/
     }
 
     @Override
@@ -37,7 +39,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(4, new PathfinderGoalIllusionerDuplicationSpell());
-        this.goalSelector.a(5, new PathfinderGoalIllusionerBlindessSpell());
+        this.goalSelector.a(5, new PathfinderGoalIllusionerBlindnessSpell());
         this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, 25, 24.0F)); /**illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
@@ -71,11 +73,11 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     public void tick() {
         super.tick();
 
-        if (this.attacks == 55 && !this.a55) { /**after 55 attacks, illusioners get regen 2, and 40 max health and health*/
-            this.a55 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-            this.setHealth(40.0F);
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, illusioners get regen 3, and 50 max health and health*/
+            this.a40 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+            this.setHealth(50.0F);
         }
     }
 
@@ -137,9 +139,9 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
     }
 
-    class PathfinderGoalIllusionerBlindessSpell extends EntityIllagerWizard.c {
+    class PathfinderGoalIllusionerBlindnessSpell extends EntityIllagerWizard.c {
 
-        private PathfinderGoalIllusionerBlindessSpell() {
+        private PathfinderGoalIllusionerBlindnessSpell() {
             super();
         }
 
@@ -159,13 +161,13 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
 
         @Override
-        protected int h() { /**delay between each blindness spell increased to 16 seconds*/
-            return 320;
+        protected int h() { /**delay between each blindness spell increased to 15 seconds*/
+            return 300;
         }
 
         @Override
-        protected void j() { /**only applies blindness for 4.5 seconds (7 seconds after 40 attacks)*/
-            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.attacks < 40 ? 90 : 140));
+        protected void j() { /**only applies blindness for 5 seconds (8 seconds after 40 attacks)*/
+            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.attacks < 40 ? 100 : 160));
         }
 
         @Override

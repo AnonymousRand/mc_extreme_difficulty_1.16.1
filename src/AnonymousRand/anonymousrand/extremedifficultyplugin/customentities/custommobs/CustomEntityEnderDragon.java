@@ -17,8 +17,9 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public ArrayList<Entity> goalTargets = new ArrayList<>();
     public static Field phaseManager, dragonBattle;
 
-    public CustomEntityEnderDragon(World world) {
+    public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
+        this.uniqueID = uuid; //to make sure bossbar etc. doesn't break
 
         try {
             ((DragonControllerManager)phaseManager.get(this)).setControllerPhase(DragonControllerPhase.HOLDING_PATTERN); //make sure it is moving and not perched when spawning

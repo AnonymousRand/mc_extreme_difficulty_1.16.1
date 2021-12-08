@@ -17,9 +17,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.maxFuseTicks = fuse;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.35); /**creepers move 40% faster but only have 12.75 health*/
-        this.setHealth(12.75F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.75);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375); /**creepers move 50% faster but only have 15 health*/
+        this.setHealth(15.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
     }
 
     static {

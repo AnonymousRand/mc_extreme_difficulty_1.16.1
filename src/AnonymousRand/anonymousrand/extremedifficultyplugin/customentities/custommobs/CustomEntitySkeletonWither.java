@@ -43,7 +43,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
             return false;
         } else {
             if (entity instanceof EntityHuman) {
-                ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.WITHER, this.attacks < 12 ? 400 : this.attacks < 35 ? 600 : 900)); /**wither skeletons apply wither for 20 seconds instead of 10 (30 seconds after 12 attacks, 45 seconds after 35 attacks0*/
+                ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.WITHER, this.attacks < 12 ? 400 : this.attacks < 35 ? 600 : 900, 1)); /**wither skeletons apply wither 2 instead of wither 1 for 20 seconds instead of 10 (30 seconds after 12 attacks, 45 seconds after 35 attacks0*/
             }
 
             return true;

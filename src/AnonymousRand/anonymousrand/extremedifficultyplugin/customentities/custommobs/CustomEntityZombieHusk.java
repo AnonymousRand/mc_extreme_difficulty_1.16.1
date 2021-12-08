@@ -30,8 +30,8 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.WEAKNESS, 120, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 120, 1));
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**husks move 2.5x faster and always have regen 2*/
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**husks move 2.5x faster and always have regen 3*/
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 160)); /**custom goal that allows husk to summon area effect clouds on itself every 8 seconds that also give the player weakness 1 and slowness 2 for 6 seconds*/
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
@@ -73,9 +73,9 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
             this.setHealth(30.0F);
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, husks get regen 3*/
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, husks get regen 4*/
             this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
         }
     }
 

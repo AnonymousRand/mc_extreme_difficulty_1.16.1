@@ -26,9 +26,9 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
         this.a45 = false;
         this.a60 = false;
         this.getBukkitEntity().setCustomName("Am I worse than phantoms?");
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0); /**vexes only have 11 health and do 1 damage*/
-        this.setHealth(11.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(11.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0); /**vexes only have 12 health and do 2 damage*/
+        this.setHealth(12.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 

@@ -61,7 +61,7 @@ public class RunnableTornado extends BukkitRunnable {
                         new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, this.maxCycles - this.cycles).runTaskTimer(StaticPlugin.plugin, 0L, 1L); //because a player's noclip is instantly turned off if not in spectator
                     }
 
-                    nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 8.0, (this.pos.getY() - nmsEntity.locY()) / 8.0, (this.pos.getZ() - nmsEntity.locZ()) / 8.0));
+                    nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 15.0, (this.pos.getY() - nmsEntity.locY()) / 15.0, (this.pos.getZ() - nmsEntity.locZ()) / 15.0));
                 }
             }
 

@@ -94,7 +94,7 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
         Vec3D lookDirection = this.entity.getGoalTarget().getPositionVector().d(pos).d(); //d(pos) is subtract, d() is normalize
 
         double d0 = lookDirection.getX();
-        double d1 = lookDirection.getY() + random.nextDouble() * 0.02 + 0.02;
+        double d1 = lookDirection.getY() + random.nextDouble() * 0.01 + 0.01;
         double d2 = lookDirection.getZ();
         double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
