@@ -46,7 +46,7 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
         if (++this.cycles <= this.maxCycles) {
             this.loc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), 3.0, this.loc.getY(), this.cycles * 13.0 + i * 60.0);
 
                 if (this.effect) {

@@ -44,7 +44,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300, 0.004)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
-        this.goalSelector.a(0, new CustomEntityZombieThor.PathfinderGoalThorSummonLightning(this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every 1.666666666 seconds (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 14 seconds and a tornado once on average after 15 seconds*/
+        this.goalSelector.a(0, new CustomEntityZombieThor.PathfinderGoalThorSummonLightning(this)); /**custom goal that spawns lightning randomly within 20 blocks of thor on average every a second (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 16 seconds and a tornado once on average after 20 seconds*/
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this, 80, 0, true)); /**custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning*/
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
@@ -162,7 +162,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
 
         @Override
         public void e() {
-            if (random.nextDouble() < 0.03) {
+            if (random.nextDouble() < 0.05) {
                 this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.blockPosition, 20.0, this.bukkitWorld.getHighestBlockYAt(new Location(this.bukkitWorld, this.blockPosition.getX(), this.blockPosition.getY(), this.blockPosition.getZ())), 361.0);
                 if (random.nextDouble() < 0.25) {
                     this.bukkitWorld.strikeLightning(this.loc2);
@@ -171,13 +171,13 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
                 }
             }
 
-            if (random.nextDouble() < 0.00357142857 && !this.storm) {
-                new RunnableThorLightningEffectStorm(this, random.nextInt(9) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+            if (random.nextDouble() < 0.003125 && !this.storm) {
+                new RunnableThorLightningEffectStorm(this, random.nextInt(6) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
             }
 
-            if (random.nextDouble() < 0.00333333333 && !this.storm && !this.tornado) {
+            if (random.nextDouble() < 0.002 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 35.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             }
         }
     }

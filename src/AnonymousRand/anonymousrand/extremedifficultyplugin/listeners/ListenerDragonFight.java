@@ -406,19 +406,19 @@ public class ListenerDragonFight implements Listener {
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("Through pain, through death, through the endless challenges that I have thrown at you......you've come through.");
                 Bukkit.broadcastMessage("");
-            }, 60);
+            }, 100);
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("This is it. It's over.");
                 Bukkit.broadcastMessage("");
-            }, 130);
+            }, 170);
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("And...");
                 Bukkit.broadcastMessage("");
-            }, 215);
+            }, 255);
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("I'm sorry.");
                 Bukkit.broadcastMessage("");
-            }, 295);
+            }, 335);
         }
     }
 

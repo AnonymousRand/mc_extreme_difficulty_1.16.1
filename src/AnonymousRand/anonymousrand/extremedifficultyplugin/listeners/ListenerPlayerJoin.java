@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ListenerPlayerJoin implements Listener {
@@ -24,6 +25,10 @@ public class ListenerPlayerJoin implements Listener {
     @EventHandler
     public void playerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();
+
+        if (bukkitPlayer.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+            bukkitPlayer.getWorld().setDifficulty(Difficulty.EASY);
+        }
 
         if (bukkitPlayer.getServer().getOnlinePlayers().size() == 1) { /**remove projectiles etc to reduce lag if this is the first player to join the server*/
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=arrow]");
@@ -35,136 +40,5 @@ public class ListenerPlayerJoin implements Listener {
             bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 300, 255));
             bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 300, 255));
         }
-
-        if (RunnableMobRain.permanentEntitiesToSpawn.isEmpty()) { //init here to avoid lag spikes as filling in the arraylists takes quite a while
-            initMobRainArrayLists(((CraftWorld)bukkitPlayer.getWorld()).getHandle());
-        }
-    }
-
-    public static void initMobRainArrayLists(World nmsWorld) {
-        ArrayList<EntityLiving> entitiesToSpawn1, entitiesToSpawn2;
-
-        entitiesToSpawn1 = new ArrayList<>(List.of(
-                new CustomEntityBat(nmsWorld),
-                new CustomEntityBat(nmsWorld),
-                new CustomEntityBat(nmsWorld),
-                new CustomEntityBee(nmsWorld),
-                new CustomEntityBee(nmsWorld),
-                new CustomEntityBlaze(nmsWorld),
-                new CustomEntityBlaze(nmsWorld),
-                new CustomEntityCow(nmsWorld),
-                new CustomEntityCow(nmsWorld),
-                new CustomEntityCreeper(nmsWorld, 20),
-                new CustomEntityCreeper(nmsWorld, 20),
-                new CustomEntityDrowned(nmsWorld),
-                new CustomEntityEnderman(nmsWorld),
-                new CustomEntityEnderman(nmsWorld),
-                new CustomEntityEnderman(nmsWorld),
-                new CustomEntityEnderman(nmsWorld),
-                new CustomEntityEnderman(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEndermite(nmsWorld),
-                new CustomEntityEvoker(nmsWorld),
-                new CustomEntityGhast(nmsWorld),
-                new CustomEntityGuardian(nmsWorld),
-                new CustomEntityHoglin(nmsWorld),
-                new CustomEntityHoglin(nmsWorld),
-                new CustomEntityIllusioner(nmsWorld),
-                new CustomEntityRabbit(nmsWorld),
-                new CustomEntityRabbit(nmsWorld),
-                new CustomEntityRabbit(nmsWorld),
-                new CustomEntityRabbit(nmsWorld),
-                new CustomEntityRabbit(nmsWorld),
-                new CustomEntityLlama(nmsWorld),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
-                new CustomEntityPiglin(nmsWorld),
-                new CustomEntityPiglin(nmsWorld),
-                new CustomEntityPiglin(nmsWorld),
-                new CustomEntityPillager(nmsWorld),
-                new CustomEntityPillager(nmsWorld),
-                new CustomEntitySheep(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySilverfish(nmsWorld),
-                new CustomEntitySkeleton(nmsWorld),
-                new CustomEntitySkeleton(nmsWorld),
-                new CustomEntitySkeleton(nmsWorld),
-                new CustomEntitySlime(nmsWorld, 8),
-                new CustomEntitySlime(nmsWorld, 4),
-                new CustomEntitySlime(nmsWorld, 4),
-                new CustomEntitySlimeMagmaCube(nmsWorld, 16),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntitySpiderCave(nmsWorld),
-                new CustomEntitySkeletonStray(nmsWorld),
-                new CustomEntitySkeletonStray(nmsWorld),
-                new CustomEntitySkeletonWither(nmsWorld),
-                new CustomEntitySkeletonWither(nmsWorld),
-                new CustomEntityVex(nmsWorld),
-                new CustomEntityVex(nmsWorld),
-                new CustomEntityVex(nmsWorld),
-                new CustomEntityVex(nmsWorld),
-                new EntityVillager(EntityTypes.VILLAGER, nmsWorld),
-                new EntityVillager(EntityTypes.VILLAGER, nmsWorld),
-                new CustomEntityVindicator(nmsWorld),
-                new CustomEntityVindicator(nmsWorld),
-                new CustomEntityVindicator(nmsWorld),
-                new CustomEntityVindicator(nmsWorld),
-                new CustomEntityWitch(nmsWorld),
-                new CustomEntityZombie(nmsWorld),
-                new CustomEntityZombie(nmsWorld),
-                new CustomEntityZombie(nmsWorld),
-                new CustomEntityZombie(nmsWorld),
-                new CustomEntityZombie(nmsWorld),
-                new CustomEntityZombieHusk(nmsWorld),
-                new CustomEntityZombieHusk(nmsWorld),
-                new CustomEntityZombieHusk(nmsWorld),
-                new CustomEntityZombieHusk(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombiePig(nmsWorld),
-                new CustomEntityZombieVillager(nmsWorld),
-                new CustomEntityZombieVillager(nmsWorld),
-                new CustomEntityZombieVillager(nmsWorld)
-        ));
-
-        entitiesToSpawn2 = new ArrayList<>(List.of(
-                new CustomEntityGuardianElder(nmsWorld),
-                new CustomEntityIllusioner(nmsWorld),
-                new CustomEntityIllusioner(nmsWorld),
-                new CustomEntityIronGolem(nmsWorld),
-                new CustomEntityRavager(nmsWorld),
-                new CustomEntitySheepAggressive(nmsWorld),
-                new CustomEntityShulker(nmsWorld),
-                new CustomEntityShulker(nmsWorld),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntitySpider(nmsWorld),
-                new CustomEntityZoglin(nmsWorld),
-                new CustomEntityZombieThor(nmsWorld)
-        ));
-
-        RunnableMobRain.permanentEntitiesToSpawn.put(1, entitiesToSpawn1);
-        RunnableMobRain.permanentEntitiesToSpawn.put(2, entitiesToSpawn2);
     }
 }
