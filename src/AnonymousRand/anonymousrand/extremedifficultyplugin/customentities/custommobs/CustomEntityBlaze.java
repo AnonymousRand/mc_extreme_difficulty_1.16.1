@@ -29,8 +29,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.rapidFireTracker = 0;
-        this.setHealth(8.0F); /**blazes only have 8 health*/
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
+        this.setHealth(12.5F); /**blazes only have 12.5 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
@@ -141,7 +141,6 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
                 if (d0 < 4.0D) {
                     if (this.c <= 0) {
-                        this.c = 20; /**only melees every second and meleeing creates a 1 second period of no fireball attacks*/
                         this.blaze.attackEntity(entityliving);
                         this.blaze.getWorld().createExplosion(this.blaze, entityliving.locX(), entityliving.locY(), entityliving.locZ(), 0.4F, false, Explosion.Effect.DESTROY); /**melee attack creates a power 0.4 explosion on player's location*/
                     }
@@ -153,66 +152,56 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                     double d3 = entityliving.locZ() - this.blaze.locZ();
 
                     if (this.c <= 0) {
-                        ++this.b;
-                        if (this.b == 1) {
-                            this.c = 0; /**no pause between each volley; shoots constantly*/
-                        } else if (this.b <= 4) {
-                            if (this.blaze.rapidFireTracker == 0) {
-                                this.c = 3; /**doubled attack speed*/
-                            } else {
-                                this.c = 2; /**tripled attack speed during rapidfire*/
-                            }
+                        if (this.blaze.rapidFireTracker == 0) { /**no pause between each volley; shoots constantly*/
+                            this.c = 3; /**doubled attack speed*/
                         } else {
-                            this.c = 0; /**no pause between each volley; shoots constantly*/
-                            this.b = 0;
+                            this.c = 2; /**tripled attack speed during rapidfire*/
                         }
 
-                        if (this.b > 1) {
-                            float f = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
+                        float f = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
 
-                            if (!this.blaze.isSilent()) {
-                                this.nmsWorld.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
+                        if (!this.blaze.isSilent()) {
+                            this.nmsWorld.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
+                        }
+
+                        if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 400) {
+                            if (this.blaze.attacks % 150 == 0 && this.blaze.attacks != 0) { /**every 150 shots, the blaze shoots a fireball with explosion power 2*/
+                                CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
+                                entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                this.nmsWorld.addEntity(entityLargeFireball);
+                                this.blaze.attacks++;
+                            } else if (this.blaze.attacks % 60 == 0 && this.blaze.attacks != 0) { /**every 60 shots, the blaze shoots a fireball with explosion power 1*/
+                                CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
+                                entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                this.nmsWorld.addEntity(entityLargeFireball);
+                                this.blaze.attacks++;
+                            } else {
+                                CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /**blaze has no inaccuracy*/
+                                entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                this.nmsWorld.addEntity(entitySmallFireball);
+                                this.blaze.attacks++;
                             }
 
-                            if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 200) {
-                                if (this.blaze.attacks % 80 == 0 && this.blaze.attacks != 0) { /**every 80 shots, the blaze shoots a fireball with explosion power 2*/
-                                    CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
-                                    entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
-                                    this.nmsWorld.addEntity(entityLargeFireball);
-                                    this.blaze.attacks++;
-                                } else if (this.blaze.attacks % 30 == 0 && this.blaze.attacks != 0) { /**every 30 shots, the blaze shoots a fireball with explosion power 1*/
-                                    CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
-                                    entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
-                                    this.nmsWorld.addEntity(entityLargeFireball);
-                                    this.blaze.attacks++;
-                                } else {
-                                    CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /**blaze has no inaccuracy*/
-                                    entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
-                                    this.nmsWorld.addEntity(entitySmallFireball);
-                                    this.blaze.attacks++;
-                                }
+                            if (this.blaze.attacks % 40 == 0) { /**every 40 shots, the blaze shoots a ring of fireballs*/
+                                new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
+                            }
 
-                                if (this.blaze.attacks % 20 == 0) { /**every 20 shots, the blaze shoots a ring of fireballs*/
+                        } else { /**rapid fire phase for 50 shots after 400 normal shots*/
+                            if (this.blaze.attacks >= 400) { /**first entering rapid fire phase*/
+                                this.blaze.attacks = 0;
+                                this.blaze.rapidFireTracker = 50;
+                            } else {
+                                new RunnableBlazeRapidFire(this.blaze, d1, d2, d3, (double)f).run();
+                                if (this.blaze.rapidFireTracker == 1) { /**shoots a large fireball with explosion power 3 and a ring of fireballs when this phase ends*/
+                                    CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 3);
+                                    entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                                    this.nmsWorld.addEntity(entityLargeFireball);
+                                    new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
+                                } else if (this.blaze.rapidFireTracker % 26 == 0) { /**every 26 shots, the blaze shoots a ring of fireballs*/
                                     new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                                 }
 
-                            } else { /**rapid fire phase for 25 shots after 200 normal shots*/
-                                if (this.blaze.attacks >= 200) { /**first entering rapid fire phase*/
-                                    this.blaze.attacks = 0;
-                                    this.blaze.rapidFireTracker = 25;
-                                } else {
-                                    new RunnableBlazeRapidFire(this.blaze, d1, d2, d3, (double)f).run();
-                                    if (this.blaze.rapidFireTracker == 1) { /**shoots a large fireball with explosion power 3 and a ring of fireballs when this phase ends*/
-                                        CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 3);
-                                        entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
-                                        this.nmsWorld.addEntity(entityLargeFireball);
-                                        new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
-                                    } else if (this.blaze.rapidFireTracker % 13 == 0) { /**every 13 shots, the blaze shoots a ring of fireballs*/
-                                        new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
-                                    }
-
-                                    this.blaze.rapidFireTracker--;
-                                }
+                                this.blaze.rapidFireTracker--;
                             }
                         }
                     }

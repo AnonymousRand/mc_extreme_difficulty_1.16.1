@@ -55,7 +55,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     public void a(EntityLiving entityliving, float f) { //shoots custom spit instead of vanilla
         this.attacks++;
 
-        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 18.0 : 26.0); /**after 6 attacks, trader llamas do 26 damage*/
+        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 12.0 : 18.0); /**after 6 attacks, trader llamas do 18 damage*/
         double d0 = entityliving.locX() - this.locX();
         double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
         double d2 = entityliving.locZ() - this.locZ();

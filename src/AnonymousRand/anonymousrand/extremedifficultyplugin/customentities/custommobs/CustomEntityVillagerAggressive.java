@@ -15,6 +15,8 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
 
     public CustomEntityVillagerAggressive(World world) {
         super(EntityTypes.VILLAGER, world);
+        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);

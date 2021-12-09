@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,9 +34,7 @@ public class ListenerPlayerDamage implements Listener {
                 case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
                 case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
                 case CHICKEN -> ((CustomEntityChickenAggressive)nmsDamager).attacks++;
-                case ENDER_DRAGON -> {
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /**ender dragon flings players much further*/
-                }
+                case ENDER_DRAGON -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /**ender dragon flings players much further*/
                 case ENDERMAN -> ((CustomEntityEnderman)nmsDamager).attacks++;
                 case ENDERMITE -> ((CustomEntityEndermite)nmsDamager).attacks++;
                 case HOGLIN -> {
@@ -159,6 +158,10 @@ public class ListenerPlayerDamage implements Listener {
                 case ZOMBIE_VILLAGER -> ((CustomEntityZombieVillager)nmsDamager).attacks++;
                 case ZOMBIFIED_PIGLIN -> ((CustomEntityZombiePig)nmsDamager).attacks++;
             }
+
+            if (bukkitPlayer.isBlocking()) { /**all mob attacks damage shields twice as much (at least 4 damage)*/
+                event.setDamage(Math.max(event.getDamage() * 2.0, 4.0));
+            }
         }
     }
 
@@ -189,7 +192,6 @@ public class ListenerPlayerDamage implements Listener {
                 }
                 case LIGHTNING -> event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
                 case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
-                case PROJECTILE -> event.setDamage(damage * 0.75); /**projectiles do 25% less damage, including llama spit and fireballs*/
                 case SUFFOCATION -> event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
             }
         }

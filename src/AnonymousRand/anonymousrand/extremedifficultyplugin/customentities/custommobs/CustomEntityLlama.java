@@ -52,7 +52,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomMob {
     public void a(EntityLiving entityliving, float f) { //shoot
         this.attacks++;
 
-        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 16.0 : 24.0); /**after 6 attacks, trader llamas do 24 damage*/
+        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 12.0 : 18.0); /**after 6 attacks, trader llamas do 18 damage*/
         double d0 = entityliving.locX() - this.locX();
         double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
         double d2 = entityliving.locZ() - this.locZ();
