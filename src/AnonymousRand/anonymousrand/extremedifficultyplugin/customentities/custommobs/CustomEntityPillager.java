@@ -51,7 +51,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomMob {
             this.attacks++;
         }
 
-        new RunnableMobShootArrowsNormally(this, entityliving, 1, this.attackNum % 24 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 0.75 : 0.05) ? 1 : 0, false, true).run(); /**shoots a knockback arrow every 24th attack; 5% of arrows shot are piercing 1 (75% for knockback arrow); arrows do not lose y level*/
+        new RunnableMobShootArrowsNormally(this, entityliving, 1, this.attackNum % 18 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 1.0 : 0.075) ? 1 : 0, false, true).run(); /**shoots a knockback arrow every 18th attack; 7.5% of arrows shot are piercing 1 (100% for knockback arrow); arrows do not lose y level*/
     }
 
     public double getFollowRange() { /**pillagers have 24 block detection range (setting attribute doesn't work)*/

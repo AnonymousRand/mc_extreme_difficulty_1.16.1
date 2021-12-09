@@ -68,8 +68,8 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         return this.cJ().a(dynamic);
     }
 
-    public double getFollowRange() { /**zoglins have 128 block detection range (setting attribute doesn't work)*/
-        return 128.0;
+    public double getFollowRange() { /**zoglins have 64 block detection range (setting attribute doesn't work)*/
+        return 64.0;
     }
 
     @Override

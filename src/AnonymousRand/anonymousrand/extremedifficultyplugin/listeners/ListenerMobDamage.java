@@ -26,44 +26,17 @@ public class ListenerMobDamage implements Listener {
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
         boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING);
 
-        switch (entityType) { //natural damage immunities by specific mobs
-            case BAT, CHICKEN, HOGLIN, ZOGLIN -> /**bats, chickens, hoglins and zoglins don't take lava or explosion damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case DROWNED, HUSK, IRON_GOLEM, PHANTOM, ZOMBIE, ZOMBIE_VILLAGER -> /**drowned, husks, iron golems, phantoms, zombies, and zombie villagers don't take suffocation, lightning or explosion damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LIGHTNING || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case ENDER_DRAGON, WITHER -> {
-                if (checkCause) {
-                    LivingEntity livingEntity = (LivingEntity)event.getEntity();
-                    livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.25); //increase max health by 25% of the damage dealt
-                    livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.25); //ender dragon and wither heal 25%
-                    event.setDamage(0.0);
-                }
+        if (checkCause) {
+            if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /**all non-player mobs take no damage from these sources*/
+                event.setCancelled(true);
+                return;
+            } else if (entityType == ENDER_DRAGON || entityType == WITHER) { /**ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes*/
+                LivingEntity livingEntity = (LivingEntity)event.getEntity();
+                livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.2);
+                livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.2);
+                event.setDamage(0.0);
+                return;
             }
-            case ENDERMAN, SHEEP -> /**endermen and sheep don't take lava, explosion,or fall damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case ENDERMITE, SILVERFISH -> /**endermites and silverfish don't take lava, or suffocation damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
-            case GHAST, LLAMA, SHULKER, TRADER_LLAMA -> /**ghasts, llamas, shulkers, and trader llamas don't take explosion damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
-            case ILLUSIONER -> /**illusioners don't take explosion and projectile damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.PROJECTILE);
-            case MAGMA_CUBE, SLIME -> /**magma cubes and slimes don't take explosion, fall or suffocation damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.SUFFOCATION);
-            case PIGLIN -> /**piglins don't take lava, explosion, suffocation, or projectile damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.PROJECTILE);
-            case PLAYER -> {
-                if (((EntityPlayer)nmsEntity).isBlocking()) { /**all attacks damage shields 50% more (at least 4 damage)*/
-                    event.setDamage(Math.max(event.getDamage() * 1.5, 4.0));
-                }
-            }
-            case VEX -> /**vexes don't take starvation damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.STARVATION);
-            case WITCH -> /**witches don't take drowning damage*/
-                event.setCancelled(cause == EntityDamageEvent.DamageCause.DROWNING);
-        }
-
-        if (event.isCancelled()) {
-            return;
         }
 
         switch (cause) {
@@ -76,12 +49,6 @@ public class ListenerMobDamage implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            }
-        }
-
-        if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /**all non-player mobs take 95% less damage from these sources*/
-            if (checkCause) {
-                event.setDamage(event.getDamage() * 0.05);
             }
         }
 
@@ -107,9 +74,9 @@ public class ListenerMobDamage implements Listener {
             event.setCancelled(true);
         }
 
-        if (nmsDamager instanceof CustomEntityEnderDragon) {
+        if (nmsDamager instanceof CustomEntityEnderDragon) { //just to make sure
             if (!(nmsEntity instanceof EntityPlayer)) { /**ender dragon can't fling non-player mobs*/
-                event.setCancelled(true); //just to make sure
+                event.setCancelled(true);
                 nmsEntity.setMot(0.0, 0.0, 0.0);
             }
         }

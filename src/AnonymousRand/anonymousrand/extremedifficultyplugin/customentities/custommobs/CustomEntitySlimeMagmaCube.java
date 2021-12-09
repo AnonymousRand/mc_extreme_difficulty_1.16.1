@@ -52,7 +52,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     @Override
     protected void j(EntityLiving entityliving) {
-        if (this.isAlive() && this.attackCooldown <= 0) { /**magma cubes attack every 20 ticks instead of every tick (which is effectively every 10 ticks due to damage immunity)*/
+        if (this.isAlive() && this.attackCooldown <= 0) { /**magma cubes attack every 20 ticks instead of every tick*/
             int i = this.getSize();
 
             if (this.h((Entity)entityliving) < 0.6D * (double)i * 0.6D * (double)i && entityliving.damageEntity(DamageSource.mobAttack(this), this.eN())) { /**magma cubes don't need line of sight to attack player*/

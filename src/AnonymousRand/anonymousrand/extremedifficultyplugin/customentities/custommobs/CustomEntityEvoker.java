@@ -73,14 +73,15 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers spawn 3 vexes*/
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers summon 3 vexes and gain regen 2*/
             this.a25 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 2*/
+        if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 3*/
             this.a36 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
         if (this.attacks == 60 && !this.a60) { /**after 60 attacks, evokers gain speed 1 and regen 3*/
@@ -173,7 +174,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
             } else {
                 int i = CustomEntityEvoker.this.getWorld().a(EntityVex.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().g(28.0D)).size();
 
-                return 24 > i; //evoker can have up to 24 vexes in its vicinity (28 blocks)
+                return 25 > i; //evoker can have up to 25 vexes in its vicinity (28 blocks)
             }
         }
 
@@ -227,8 +228,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         }
 
         @Override
-        protected int h() { /**summons fangs every 90 ticks instead of 100*/
-            return 90;
+        protected int h() { /**summons fangs every 85 ticks instead of 100*/
+            return 85;
         }
 
         @Override
@@ -260,7 +261,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityliving, 7).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.05 seconds*/
+            new RunnableEvokerStopPlayer(entityliving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /**every time the fangs attack, the player is slowed for 1.2 seconds*/
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {

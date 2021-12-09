@@ -18,9 +18,9 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.a20 = false;
         this.a40 = false;
         this.deathExplosion = false;
-        float health = (float)(random.nextFloat() * 15.0 + 20.0);
+        float health = (float)(random.nextDouble() * 12.0 + 20.0); /**fake illusioners have anywhere between 20 and 32 health*/
         this.setHealth(health);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health); /**fake illusioners have anywhere between 20 and 35 health*/
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(1, new EntityIllagerWizard.b());
-        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(16) + 15, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -49,7 +49,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
         this.attacks = 0; //no attack system
 
-        if (this.getHealth() <= 0.0 && this.parentIllusioner.attacks >= 12 && !this.deathExplosion) { /**after 12 attacks, summoned fake illusioners explode when killed/replaced*/
+        if (this.getHealth() <= 0.0 && this.parentIllusioner.attacks >= 12 && !this.deathExplosion) { /**after 12 attacks, summoned fake illusioners explode when killed*/
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.NONE);
         }
@@ -61,7 +61,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
                 this.goalSelector.a(goal);
             }
 
-            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(11) + 10, 32.0F)); //use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
+            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 12, 32.0F)); //use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
         }
 
         if (this.parentIllusioner.attacks == 40 && !this.a40) { /**after 40 attacks, summoned fake illusioners attack even faster*/
@@ -71,7 +71,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
                 this.goalSelector.a(goal);
             }
 
-            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 2, 32.0F));
+            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(4) + 5, 32.0F));
         }
 
         if (this.ticksLived >= 1500) { /**fake illusioners die after 75 seconds*/

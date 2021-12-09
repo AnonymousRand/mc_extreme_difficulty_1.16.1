@@ -23,7 +23,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.a40 = false;
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0); /**illusioners have 40 health*/
         this.setHealth(40.0F);
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1)); /**illusioners and fake illusioners have regen 2*/
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2)); /**illusioners and fake illusioners have regen 3*/
     }
 
     @Override
@@ -73,9 +73,9 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     public void tick() {
         super.tick();
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, illusioners get regen 3, and 50 max health and health*/
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, illusioners get regen 4, and 50 max health and health*/
             this.a40 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
             this.setHealth(50.0F);
         }
@@ -219,7 +219,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             CustomEntityIllusioner.this.fakeIllusioners.clear();
             CustomEntityIllusionerFake fakeIllusioner;
 
-            for (int i = 0; i < (CustomEntityIllusioner.this.attacks < 10 ? 3 : 4); i++) { /**summons 3 additional fake illusioners that actually shoot arrows as well with varying speeds (4 after 10 attacks)*/
+            for (int i = 0; i < (CustomEntityIllusioner.this.attacks < 12 ? 4 : 5); i++) { /**summons 4 additional fake illusioners that actually shoot arrows as well with varying speeds (5 after 12 attacks)*/
                 fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.getWorld(), CustomEntityIllusioner.this);
                 fakeIllusioner.setPosition(CustomEntityIllusioner.this.locX(), CustomEntityIllusioner.this.locY(), CustomEntityIllusioner.this.locZ());
                 CustomEntityIllusioner.this.getWorld().addEntity(fakeIllusioner);
