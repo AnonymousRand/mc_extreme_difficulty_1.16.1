@@ -24,7 +24,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0); /**aggressive villagers do 10 damage*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(12.0); /**aggressive villagers do 12 damage*/
     }
 
     static {

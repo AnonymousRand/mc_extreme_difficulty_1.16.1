@@ -67,7 +67,7 @@ public class ListenerPlayerDamage implements Listener {
                 case IRON_GOLEM -> {
                     CustomEntityIronGolem ironGolem = (CustomEntityIronGolem)nmsDamager;
                     ironGolem.attacks++;
-                    ironGolem.increaseStatsAdd(1.0, 0.25, 0.015);
+                    ironGolem.increaseStatsAdd(2.0, 0.5, 0.025);
 
                     if (ironGolem.attacks == 10 || ironGolem.attacks == 20 || ironGolem.attacks == 25 || ironGolem.attacks == 30 || ironGolem.attacks == 35 || ironGolem.attacks == 40 || ironGolem.attacks == 43 || ironGolem.attacks == 46 || ironGolem.attacks == 49 || ironGolem.attacks >= 50) { /**on these attacks, iron golems knock players high into the air*/
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);

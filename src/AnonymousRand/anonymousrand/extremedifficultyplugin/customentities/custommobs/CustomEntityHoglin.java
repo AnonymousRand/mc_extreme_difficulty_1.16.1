@@ -10,7 +10,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a8, a16, a28, a40;
+    private boolean a8, a15, a25, a40;
 
     public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
@@ -19,12 +19,12 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob {
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a8 = false;
-        this.a16 = false;
-        this.a28 = false;
+        this.a15 = false;
+        this.a25 = false;
         this.a40 = false;
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /**hoglins move 75% faster (125% faster for babies), do 3 damage (6 for babies), and have extra knockback*/
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 6.0 : 3.0);
-        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /**hoglins move 75% faster (125% faster for babies), do 5 damage (10 for babies), and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 10.0 : 5.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
@@ -62,13 +62,13 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob {
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 16 && !this.a16) { /**after 16 attacks, hoglins get regen 3*/
-            this.a16 = true;
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, hoglins get regen 3*/
+            this.a15 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
-        if (this.attacks == 28 && !this.a28) { /**after 28 attacks, hoglins summon a baby hoglin*/
-            this.a28 = true;
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, hoglins summon a baby hoglin*/
+            this.a25 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
             new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);

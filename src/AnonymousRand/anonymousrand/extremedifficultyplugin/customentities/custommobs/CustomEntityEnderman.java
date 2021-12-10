@@ -21,8 +21,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         this.a12 = false;
         this.a25 = false;
         this.a40 = false;
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0); /**endermen only have 20 health and 3 damage*/
-        this.setHealth(20.0F);
+        this.setHealth(20.0F); /**endermen only have 20 health*/
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 

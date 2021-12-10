@@ -39,12 +39,12 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (flag) {
                 byte b0;
 
-                if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /**wither skulls also inflict 10 seconds of wither 2 in easy mode and 20 seconds instead in hard mode*/
-                    b0 = 20;
+                if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /**wither skulls also inflict 25 seconds of wither 2 in easy difficulty, 45 in normal and 60 in hard*/
+                    b0 = 45;
                 } else if (this.world.getDifficulty() == EnumDifficulty.HARD) {
-                    b0 = 40;
+                    b0 = 60;
                 } else {
-                    b0 = 10;
+                    b0 = 25;
                 }
 
                 ((EntityLiving)entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));

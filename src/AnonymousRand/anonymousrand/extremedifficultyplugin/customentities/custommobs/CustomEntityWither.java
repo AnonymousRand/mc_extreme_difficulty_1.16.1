@@ -286,7 +286,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             newRunnableWitherBreakBlocks.run();
 
             if (this.wither.ticksLived % 2 == 0) {
-                this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(8.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 8.0F));
+                this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(8.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 10.0F));
             }
 
             if (this.wither.getNormalDistanceSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {

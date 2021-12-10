@@ -15,16 +15,16 @@ import java.util.function.Predicate;
 public class CustomEntityGuardian extends EntityGuardian implements ICustomMob {
 
     public int attacks;
-    private boolean a10, a25, a75;
+    private boolean a8, a12, a40;
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
-        this.a10 = false;
-        this.a25 = false;
-        this.a75 = false;
+        this.a8 = false;
+        this.a12 = false;
+        this.a40 = false;
     }
 
     @Override
@@ -47,10 +47,10 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob {
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) damagesource.j();
+            EntityLiving entityliving = (EntityLiving)damagesource.j();
 
             if (!damagesource.isExplosion()) {
-                entityliving.damageEntity(DamageSource.a(this), 4.0F); /**thorns damage increased from 2 to 4*/
+                entityliving.damageEntity(DamageSource.a(this), f * 0.5F); /**thorns damage increased from 2 to 50% of the damage dealt*/
                 entityliving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.attacks < 55 ? 0 : 1)); /**guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds*/
             }
         }
@@ -62,27 +62,27 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob {
         return super.damageEntity(damagesource, f);
     }
 
-    public double getFollowRange() { /**guardians have 24 block detection range (setting attribute doesn't work) (32 after 10 attacks)*/
-        return this.attacks < 10 ? 24.0 : 32.0;
+    public double getFollowRange() { /**guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks)*/
+        return this.attacks < 8 ? 24.0 : 32.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.attacks == 10 && !this.a10) {
-            this.a10 = true;
+        if (this.attacks == 8 && !this.a8) {
+            this.a8 = true;
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, guardians gain regen 3 and 40 max health*/
-            this.a25 = true;
+        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, guardians gain regen 3 and 40 max health*/
+            this.a12 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, guardians summon an elder guardian*/
-            this.a75 = true;
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, guardians summon an elder guardian*/
+            this.a40 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
         }
     }

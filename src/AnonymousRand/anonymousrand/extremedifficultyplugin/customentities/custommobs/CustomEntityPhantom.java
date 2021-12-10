@@ -34,7 +34,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         super(EntityTypes.PHANTOM, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.06 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned increases the server-wide size of future phantom spawns by 0.06*/
+        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07*/
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /**phantoms can fly through blocks*/
@@ -64,11 +64,11 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
-    private void updateSizeStats(int change) { /**phantoms gain +0.8 health and 0.06 damage per size and starts with 8 health and 1 damage at size 0*/
+    private void updateSizeStats(int change) { /**phantoms gain +0.3 health and 0.125 damage per size and starts with 12 health and 2 damage at size 0*/
         this.updateSize();
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0 + 0.06 * this.getSize());
-        double maxHealth = 8.0 + 0.8 * this.getSize();
-        double health = this.getHealth() + 0.8 * change;
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0 + 0.125 * this.getSize());
+        double maxHealth = 12.0 + 0.3 * this.getSize();
+        double health = this.getHealth() + 0.3 * change;
 
         this.setHealth((float)health);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(maxHealth);
@@ -94,7 +94,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.attacks < 5 ? 220 : this.attacks < 20 ? 180 : this.attacks < 30 ? 150 : 110) == 0 && this.ticksLived != 0) { /**phantoms increase in size by 1 every 11 seconds (9 seconds after 5 attacks, 7.5 seconds after 20 attacks, 5.5 seconds after 30 attacks)*/
+        if (this.ticksLived % (this.attacks < 5 ? 160 : this.attacks < 20 ? 140 : this.attacks < 30 ? 110 : 90) == 0 && this.ticksLived != 0) { /**phantoms increase in size by 1 every 8 seconds (7 seconds after 5 attacks, 5.5 seconds after 20 attacks, 4.5 seconds after 30 attacks)*/
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }

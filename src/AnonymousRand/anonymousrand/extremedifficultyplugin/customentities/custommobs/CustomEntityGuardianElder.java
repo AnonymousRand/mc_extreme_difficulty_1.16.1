@@ -42,7 +42,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
             EntityLiving entityliving = (EntityLiving) damagesource.j();
 
             if (!damagesource.isExplosion()) {
-                entityliving.damageEntity(DamageSource.a(this), 6.0F); /**thorns damage increased from 2 to 6*/
+                entityliving.damageEntity(DamageSource.a(this), f); /**thorns damage increased from 2 to 100% of the damage dealt*/
             }
         }
 
