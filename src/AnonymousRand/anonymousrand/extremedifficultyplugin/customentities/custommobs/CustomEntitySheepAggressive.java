@@ -37,10 +37,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);/**aggressive sheep move 2.1x as fast, do 10 damage, have extra knockback, have 125 health, and have regen 2*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);/**aggressive sheep move 2.1x as fast, do 10 damage, have extra knockback, have 125 health, and have regen 3*/
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(125.0);
         this.setHealth(125.0F);
     }
@@ -94,10 +94,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 3*/
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4*/
             this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
         }
 
         if (this.attacks == 65 && !this.a65) { /**after 65 attacks, aggressive sheep get extra knockback*/

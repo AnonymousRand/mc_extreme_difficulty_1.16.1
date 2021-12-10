@@ -41,7 +41,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     public void setSize(int i, boolean flag) { /**toned down stats a bit to account for potential size 8 slimes*/
         super.setSize(i, flag);
         this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(1.0 + ((Math.log10(i) / Math.log10(2)) * ((2 * Math.log10(i) + 1) / (Math.log10(1.6))))); //approx: 1 health for size 1, 8.849 health for size 2, 22.596 health for size 4, 42.243 health for size 8
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.3F + 0.05F * (float)i)); //0.35 for 1, 0.4 for 2, 0.5 for 4, 0.7 for 8
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.325F + 0.05F * (float)i)); //0.375 for 1, 0.425 for 2, 0.525 for 4, 0.725 for 8
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(Math.ceil(i / 1.5)); //1 for 1, 2 for 2, 3 for 4, 6 for 8
         if (flag) {
             this.setHealth(this.getMaxHealth());

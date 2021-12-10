@@ -68,13 +68,13 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, shulkers get 15 armor points and regen 1*/
+        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, shulkers get 15 armor points and regen 2*/
             this.a12 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(15.0);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 22 && !this.a22) { /**after 22 attacks, shulkers summon area effect clouds whereever it is that give levitation 1 for 8 seconds*/
+        if (this.attacks == 22 && !this.a22) { /**after 22 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds*/
             this.a22 = true;
             this.goalSelector.a(1, goal1);
         }

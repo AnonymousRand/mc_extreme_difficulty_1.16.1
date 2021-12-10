@@ -15,7 +15,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a10, a25;
+    private boolean a8, a20;
     private final CustomEntityAreaEffectCloud newAEC;
 
     public CustomEntityZombieHusk(World world) {
@@ -24,14 +24,14 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
-        this.a10 = false;
-        this.a25 = false;
+        this.a8 = false;
+        this.a20 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F, 100, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.WEAKNESS, 120, 0));
         this.newAEC.addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 120, 1));
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**husks move 2.5x faster and always have regen 3*/
-        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**husks move 2.5x faster and always have regen 4*/
+        this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 160)); /**custom goal that allows husk to summon area effect clouds on itself every 8 seconds that also give the player weakness 1 and slowness 2 for 6 seconds*/
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
@@ -56,7 +56,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     }
 
     public int getSandStormAttackCooldown() {
-        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 15 ? 180 : this.attacks < 25 ? 140 : 6;
+        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 170 : this.attacks < 20 ? 130 : 6;
     }
 
     public double getFollowRange() { /**husks have 40 block detection range (setting attribute doesn't work)*/
@@ -67,15 +67,15 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     public void tick() {
         super.tick();
 
-        if (this.attacks == 10 && !this.a10) { /**after 10 attacks, husks get 30 max health and health*/
-            this.a10 = true;
+        if (this.attacks == 8 && !this.a8) { /**after 8 attacks, husks get 30 max health and health*/
+            this.a8 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0F);
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, husks get regen 4*/
-            this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, husks get regen 5*/
+            this.a20 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 4));
         }
     }
 
@@ -126,7 +126,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
                             this.blockData = org.bukkit.Material.ANVIL.createBlockData();
                         }
 
-                        if (this.husk.attacks >= 25) {
+                        if (this.husk.attacks >= 20) { /**after 20 attacks, sand rains are always anvil rais*/
                             this.blockData = org.bukkit.Material.ANVIL.createBlockData();
                         }
 

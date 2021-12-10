@@ -73,10 +73,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers summon 3 vexes and gain regen 2*/
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, evokers summon 3 vexes and gain regen 3*/
             this.a25 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
 
         if (this.attacks == 36 && !this.a36) { /**after 36 attacks, evokers gain regen 3*/

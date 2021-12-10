@@ -42,8 +42,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     public void setSize(int i, boolean flag) { /**toned down stats a bit to account for potential size 16 magma cubes*/
         super.setSize(i, flag);
         this.getAttributeInstance(GenericAttributes.ARMOR).setValue(0.0); /**magma cubes don't have armor*/
-        this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(1.0 + ((Math.log10(i) / Math.log10(2)) * ((Math.log10(i) + 0.6) / (Math.log10(1.4))))); //approx: 7.166 health for size 2, 17.452 health for size 4, 31.858 health for size 8, 50.385 health for size 16
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.325F + 0.025F * (float)i)); //0.375 for 2, 0.425 for 4, 0.525 for 8, 0.725 for 16
+        this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(1.0 + ((Math.log10(i) / Math.log10(2.15)) * ((Math.log10(i) + 0.6) / (Math.log10(1.4))))); //approx: 6.58 health for size 2, 15.9 health for size 4, 28.94 health for size 8, 45.72 health for size 16
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.375F + 0.025F * (float)i)); //0.425 for 2, 0.475 for 4, 0.575 for 8, 0.775 for 16
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(Math.floor(((0.4 + Math.log10(i)) / (Math.log10(2))) * Math.pow(1.03, i))); //2 for 2, 3 for 4, 5 for 8, 8 for 16
         if (flag) {
             this.setHealth(this.getMaxHealth());

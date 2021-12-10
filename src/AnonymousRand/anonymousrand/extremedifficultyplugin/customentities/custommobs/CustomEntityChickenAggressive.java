@@ -13,17 +13,12 @@ import java.util.Map;
 
 public class CustomEntityChickenAggressive extends EntityChicken implements ICustomMob { //can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
-    public int attacks;
-    private boolean a15, a30;
     private static Field attributeMap;
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        this.attacks = 0;
-        this.a15 = false;
-        this.a30 = false;
 
         try { //register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -74,19 +69,6 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
     }
 
-    @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.attacks >= 45) { /**after 45 attacks, aggressive chickens create a power 1 explosion on their location when hit and not killed*/
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
-
-            if (this.attacks >= 60) { /**after 60 attacks, aggressive chickens also duplicate into a custom exploding aggressive chicken when hit and not killed*/
-                new SpawnEntity(this.getWorld(), new CustomEntityChickenAggressiveExploding(this.getWorld()), 1, null, null, this, false, true);
-            }
-        }
-
-        return super.damageEntity(damagesource, f);
-    }
-
     public double getFollowRange() { /**aggressive chickens have 16 block detection range (setting attribute doesn't work)*/
         return 16.0;
     }
@@ -97,19 +79,6 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
 
         if (this.ticksLived == 600) { /**aggressive chickens die after 30 sec*/
             this.die();
-        }
-
-        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, aggressive chicken get 5 damage and regen 1*/
-            this.a15 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 0));
-        }
-
-        if (this.attacks == 30 && !this.a30) { /**after 30 attacks, aggressive chickens gain regen 2 and 10 max health*/
-            this.a30 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
-            this.setHealth(10.0F);
         }
     }
 

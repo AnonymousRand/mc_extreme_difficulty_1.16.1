@@ -1,21 +1,17 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Random;
 
 public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
 
     public boolean spawnExplodingArrow;
     public int attacks;
-    private boolean a25, a90;
+    private boolean a20, a60;
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
@@ -31,8 +27,8 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); //makes sure that it has a bow
         this.spawnExplodingArrow = false;
         this.attacks = 0;
-        this.a25 = false;
-        this.a90 = false;
+        this.a20 = false;
+        this.a60 = false;
     }
 
     @Override
@@ -68,27 +64,27 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         return ProjectileHelper.a(this, itemstack, f);
     }
 
-    public double getFollowRange() { /**skeletons have 22 block detection range (setting attribute doesn't work) (32 after 25 attacks)*/
-        return this.attacks < 25 ? 22.0 : 32.0;
+    public double getFollowRange() { /**skeletons have 24 block detection range (setting attribute doesn't work) (32 after 20 attacks)*/
+        return this.attacks < 20 ? 24.0 : 32.0;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, skeletons get 30 max health and health*/
-            this.a25 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
-            this.setHealth(30.0F);
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, skeletons get 40 max health and health*/
+            this.a20 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
+            this.setHealth(40.0F);
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 90 && !this.a90) { /**after 90 attacks, skeletons summon an iron golem*/
-            this.a90 = true;
+        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, skeletons summon an iron golem*/
+            this.a60 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
         }
 
-        if (this.ticksLived % 10 == 2) {
+        if (this.ticksLived % 2 == 0) {
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 

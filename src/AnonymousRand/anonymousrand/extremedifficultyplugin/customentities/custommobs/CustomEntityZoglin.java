@@ -17,7 +17,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a8, a40;
+    private boolean a8, a30;
 
     public CustomEntityZoglin(World world) {
         super(EntityTypes.ZOGLIN, world);
@@ -26,7 +26,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
         this.a8 = false;
-        this.a40 = false;
+        this.a30 = false;
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /**zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies)*/
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
@@ -76,14 +76,14 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 8 && !this.a8) { /**after 8 attacks, zoglins gain regen 2*/
+        if (this.attacks == 8 && !this.a8) { /**after 8 attacks, zoglins gain regen 2 and shoot a power 1 ghast fireball every 5 seconds*/
             this.a8 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false)); /**after 8 attacks, zoglins shoot a power 1 ghast fireball every 5 seconds*/
+            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false));
         }
 
-        if (this.attacks == 40 &&!this.a40) { /**after 40 attacks, zoglins gain speed 5*/
-            this.a40 = true;
+        if (this.attacks == 30 &&!this.a30) { /**after 30 attacks, zoglins gain speed 5*/
+            this.a30 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
         }
 
@@ -91,7 +91,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
             Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
 
             if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**zoglins create a path of power 1 tnt on itself as long as it is inside an air block*/
-                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /**after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds*/
+                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 80 == 0) ? 2.0F : 1.0F); /**after 15 attacks, zoglins spawn a power 2 tnt instead every 4 seconds*/
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newTNT);
             }

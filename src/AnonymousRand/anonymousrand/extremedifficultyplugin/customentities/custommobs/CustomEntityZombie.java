@@ -144,19 +144,19 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.7);
         }
 
-        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, zombies get regen 2, 16 max health and summon 2 vanilla zombies*/
+        if (this.attacks == 15 && !this.a15) { /**after 15 attacks, zombies get regen 2, 30 max health and summon 2 vanilla zombies*/
             this.a15 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
-            this.setHealth(16.0F);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
+            this.setHealth(30.0F);
             new SpawnEntity(this.getWorld(), new EntityZombie(EntityTypes.ZOMBIE, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, zombies get 25 max health and health and summon 2 zombies*/
+        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, zombies get 40 max health and health and summon another baby zombie*/
             this.a25 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(25.0);
-            this.setHealth(25.0F);
-            new SpawnEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 2, null, null, this, false, true);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
+            this.setHealth(40.0F);
+            new SpawnEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.attacks == 50 && !this.a50) { /**after 50 attacks, zombies summon thor*/

@@ -10,7 +10,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a25, a55;
+    private boolean a5, a50;
 
     public CustomEntitySkeletonWither(World world) {
         super(EntityTypes.WITHER_SKELETON, world);
@@ -18,8 +18,8 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_SWORD)); //makes sure that it has a sword
         this.attacks = 0;
-        this.a25 = false;
-        this.a55 = false;
+        this.a5 = false;
+        this.a50 = false;
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0); /**wither skeletons twice as fast and have extra knockback*/
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
@@ -43,7 +43,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
             return false;
         } else {
             if (entity instanceof EntityHuman) {
-                ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.WITHER, this.attacks < 12 ? 400 : this.attacks < 35 ? 600 : 900, 1)); /**wither skeletons apply wither 2 instead of wither 1 for 20 seconds instead of 10 (30 seconds after 12 attacks, 45 seconds after 35 attacks0*/
+                ((EntityHuman)entity).addEffect(new MobEffect(MobEffects.WITHER, this.attacks < 8 ? 400 : this.attacks < 25 ? 600 : 900, 1)); /**wither skeletons apply wither 2 instead of wither 1 for 20 seconds instead of 10 (30 seconds after 8 attacks, 45 seconds after 25 attacks0*/
             }
 
             return true;
@@ -58,14 +58,14 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
     public void tick() {
         super.tick();
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, wither skeletons get regen 2 and 30 max health*/
-            this.a25 = true;
+        if (this.attacks == 5 && !this.a5) { /**after 5 attacks, wither skeletons get regen 2 and 30 max health*/
+            this.a5 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
         }
 
-        if (this.attacks == 55 && !this.a55) { /**after 55 attacks, wither skeletons summon a mini wither*/
-            this.a55 = true;
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, wither skeletons summon a mini wither*/
+            this.a50 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
         }
     }

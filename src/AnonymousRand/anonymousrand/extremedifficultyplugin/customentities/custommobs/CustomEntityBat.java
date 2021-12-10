@@ -72,7 +72,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
     }
 
-    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 1 for 4 minutes. After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks. After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 32 attacks, all mobs within 64 block sphere get regen 2 for 4 minutes and shoot an arrow every 8 ticks*/
+    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /**buffs: after 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes. After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks. After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 32 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 8 ticks*/
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
         ArrayList<MobEffect> attacks3 = new ArrayList<>();
@@ -80,12 +80,12 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
         ArrayList<MobEffect> attacks24 = new ArrayList<>();
         ArrayList<MobEffect> attacks32 = new ArrayList<>();
 
-        attacks3.add(new MobEffect(MobEffects.REGENERATION, 4800, 0));
+        attacks3.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
         attacks3.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
         attacks3.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
         attacks12.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
         attacks12.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 1));
-        attacks12.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
+        attacks12.add(new MobEffect(MobEffects.REGENERATION, 4800, 2));
         attacks24.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
         attacks32.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
 
