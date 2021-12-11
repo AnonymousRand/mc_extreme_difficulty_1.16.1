@@ -24,7 +24,7 @@ public class ListenerPotionEffect implements Listener {
 
         if (bukkitNewEffect != null) {
             if (bukkitNewEffect.getType().equals(PotionEffectType.DOLPHINS_GRACE)) { /**dolphin's grace drags down the player*/
-                bukkitEntity.setVelocity(new Vector(0.0, -0.25, 0.0));
+                bukkitEntity.setVelocity(new Vector(0.0, -0.3, 0.0));
             }
 
             if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD)) { /**positive potion effects applied via potions last 40 times shorter*/

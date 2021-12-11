@@ -32,7 +32,7 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
                 player.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 1200, 255));
             }
 
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 15.0F, false, Explosion.Effect.DESTROY); /**mooshrooms explode massively and die when they are milked/sheared*/
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY); /**mooshrooms explode massively and die when they are milked/sheared*/
             this.die();
         }
 

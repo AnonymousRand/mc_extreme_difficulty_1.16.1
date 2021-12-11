@@ -17,9 +17,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.maxFuseTicks = fuse;
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375); /**creepers move 50% faster but only have 15 health*/
-        this.setHealth(15.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375); /**creepers move 75% faster*/
     }
 
     static {
@@ -36,7 +34,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.0004)); /**custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large*/
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /**custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large*/
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0025)); /**custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds*/
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
@@ -60,21 +58,21 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 25.0 : 16.0)) { //charged creepers still only explode within 5 blocks of player and normal creepers only explode within 4
+            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 16.0 : 7.5625)) { //charged creepers still only explode within 4 blocks of player and normal creepers only explode within 2.75
                 try {
                     fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
 
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 20, 1)); /**creepers gain speed 2 for 1 second if they inflated and then deflated again*/
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 30, 1)); /**creepers gain speed 2 for 1.5 seconds if they inflated and then deflated again*/
                 return;
             }
         }
 
         if (!this.getWorld().isClientSide) {
             if (this.isPowered()) {
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 50.0F, true, Explosion.Effect.DESTROY); /**charged creepers explode with power 50*/
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 75.0F, true, Explosion.Effect.DESTROY); /**charged creepers explode with power 75*/
             } else {
                 Explosion.Effect explosion_effect = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)this.explosionRadius, false, explosion_effect);
@@ -89,11 +87,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     @Override
     public void onLightningStrike(EntityLightning entitylightning) {
         super.onLightningStrike(entitylightning);
-
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /**charged creepers move 60% faster and have 100 health, but a longer fuse*/
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(100.0);
-        this.setHealth(100.0F);
-        this.maxFuseTicks = 30;
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(200.0); /**charged creepers have 200 health*/
+        this.setHealth(200.0F);
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
     }
 

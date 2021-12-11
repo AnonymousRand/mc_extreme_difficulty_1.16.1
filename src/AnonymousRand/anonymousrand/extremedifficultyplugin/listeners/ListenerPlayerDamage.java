@@ -158,8 +158,8 @@ public class ListenerPlayerDamage implements Listener {
                 case ZOMBIFIED_PIGLIN -> ((CustomEntityZombiePig)nmsDamager).attacks++;
             }
 
-            if (bukkitPlayer.isBlocking()) { /**all mob attacks damage shields twice as much (at least 4 damage)*/
-                event.setDamage(Math.max(event.getDamage() * 2.0, 4.0));
+            if (bukkitPlayer.isBlocking()) { /**all mob attacks damage shields 75% more (at least 4 damage)*/
+                event.setDamage(Math.max(event.getDamage() * 1.75, 4.0));
             }
         }
     }
@@ -189,7 +189,6 @@ public class ListenerPlayerDamage implements Listener {
                         nmsPlayer.setFireTicks(12000);
                     }
                 }
-                case LIGHTNING -> event.setDamage(1.5); /**lightning only does 1.5 damage instead of 5*/
                 case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
                 case SUFFOCATION -> event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
             }

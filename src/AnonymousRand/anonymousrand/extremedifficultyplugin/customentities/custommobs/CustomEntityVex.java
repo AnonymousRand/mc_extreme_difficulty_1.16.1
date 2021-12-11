@@ -42,7 +42,7 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < 0.5) { /**vexes have a 50% chance to duplicate when hit by player and not killed*/
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < 0.75) { /**vexes have a 75% chance to duplicate when hit by player and not killed*/
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 1, null, null, this, false, false);
         }
 

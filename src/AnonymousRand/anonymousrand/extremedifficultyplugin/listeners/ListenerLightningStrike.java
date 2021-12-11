@@ -6,11 +6,15 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.BlockPosition;
+import net.minecraft.server.v1_16_R1.DamageSource;
+import net.minecraft.server.v1_16_R1.EntityLiving;
+import net.minecraft.server.v1_16_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,24 +35,19 @@ public class ListenerLightningStrike implements Listener {
             World bukkitWorld = bukkitLightning.getWorld();
             net.minecraft.server.v1_16_R1.World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
             Location loc = bukkitLightning.getLocation();
-            Location entityLoc;
 
-            if (loc.getBlock().getType() == Material.WATER) { /**lightning damage radiates through water up to a 42 by 42 box (max dist about 60 blocks), with lower damage the further from the strike from about 1-4*/
-                for (Entity entity : bukkitWorld.getNearbyEntities(bukkitLightning.getBoundingBox().expand(42.0, 128.0, 42.0))) {
-                    if (!(entity instanceof Player) && !(entity instanceof Fish)) {
-                        continue;
-                    }
-
-                    entityLoc = entity.getLocation();
+            if (loc.getBlock().getType() == Material.WATER) { /**lightning damage radiates through water up to a 28.3 by 28.3 box (max dist about 40 blocks), with lower damage the further from the strike from about 2-5*/
+                nmsWorld.getEntities(null, ((CraftEntity)bukkitLightning).getHandle().getBoundingBox().grow(28.3, 64.0, 28.3), entity -> entity instanceof EntityPlayer).forEach(entity -> {
+                    Location entityLoc = entity.getBukkitEntity().getLocation();
 
                     if (entityLoc.getBlock().getType() == Material.WATER) {
-                        ((LivingEntity)entity).damage(4 - (loc.distance(entityLoc) / 20.0));
+                        entity.damageEntity(DamageSource.LIGHTNING, (float)(5.0 - (loc.distance(entityLoc) / 13.333333333)));
                     }
-                }
+                });
             }
 
             if (!storm && random.nextDouble() < 0.025) { /**non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
-                new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 40).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                new RunnableLightningStorm(nmsWorld, loc, random.nextInt(11) + 45).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
 
             if (!storm && random.nextDouble() < 0.02 && numberOfThors < Bukkit.getOnlinePlayers().size()) { /**non-storm lightning has a 2% chance to summon thor, up to 1 thor per player*/

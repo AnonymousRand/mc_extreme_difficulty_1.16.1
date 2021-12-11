@@ -102,7 +102,7 @@ public class ListenerMobDeath implements Listener {
             }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /**thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed*/
-                    new RunnableLightningStorm(nmsWorld, loc, random.nextInt(21) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
+                    new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 55).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
                     Location loc2;
 
                     for (int i = 0; i < 8; i++) {
