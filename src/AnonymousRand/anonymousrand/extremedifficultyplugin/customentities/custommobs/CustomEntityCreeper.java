@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
@@ -58,29 +59,30 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 16.0 : 7.5625)) { //charged creepers still only explode within 4 blocks of player and normal creepers only explode within 2.75
+            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 36.0 : 25.0)) { //charged creepers only explode within 6 blocks of player and normal creepers only explode within 5
                 try {
                     fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
 
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 30, 1)); /**creepers gain speed 2 for 1.5 seconds if they inflated and then deflated again*/
                 return;
             }
-        }
 
-        if (!this.getWorld().isClientSide) {
-            if (this.isPowered()) {
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 75.0F, true, Explosion.Effect.DESTROY); /**charged creepers explode with power 75*/
-            } else {
-                Explosion.Effect explosion_effect = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)this.explosionRadius, false, explosion_effect);
+            if (!this.getWorld().isClientSide) {
+                if (this.isPowered()) {
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(75.0F + Math.max(((Math.sqrt(this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), true, Explosion.Effect.DESTROY); /**charged creepers explode with power 75; creepers explode more powerfully the more th player tried to distance themselves from the creeper*/
+                } else {
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(this.explosionRadius + Math.max(((Math.sqrt(this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), false, this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+                }
+
+                this.killed = true;
+                this.die();
+
+                if (this.getEffects().size() > 0) {
+                    this.createEffectCloud();
+                }
             }
-
-            this.killed = true;
-            this.die();
-            this.createEffectCloud();
         }
     }
 
@@ -120,17 +122,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
     public double getFollowRange() { /**creepers have 28 block detection range (64 if powered)*/
         return this.isPowered() ? 64.0 : 28.0;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.isPowered() && this.getGoalTarget() != null && !this.isIgnited()) { /**charged creepers detonate starting 5 blocks away*/
-            if (getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) <= 25.0) {
-                this.ignite();
-            }
-        }
     }
 
     @Override
@@ -182,12 +173,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
     @Override
     public int bL() { //getMaxFallHeight
-        if (this.getGoalTarget() == null) {
-            return 3;
-        } else {
-            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
-
-            return i + 3;
-        }
+        return Integer.MAX_VALUE; /**mobs are willing to take any fall to reach the player as they don't take fall damage*/
     }
 }
