@@ -13,6 +13,7 @@ Warning: plugin is pretty heavyweight, do not run on a server with low RAM alloc
 3. Put the jar file into your plugin folder in your server folder
 4. Run your server
 5. Join the server in creative mode because every player after the first one that joins gets debuffed for 15 seconds to prevent relog exploits
+6. Don't cheat using relogging/glitches/exploits. Just don't.
 
 # Java 14 setup guide:
 
