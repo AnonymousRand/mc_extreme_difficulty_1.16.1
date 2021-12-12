@@ -183,14 +183,14 @@ public class ListenerPlayerDamage implements Listener {
 
             switch (cause) {
                 case CONTACT -> event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
-                case FALLING_BLOCK -> event.setDamage(damage * 0.4); /**anvils do 60% less damage*/
+                case FALLING_BLOCK -> event.setDamage(damage * 0.5); /**anvils do 50% less damage*/
                 case FIRE -> { /**soul fire sets players on fire for 10 minutes*/
                     if (event.getEntity().getWorld().getBlockAt((int)nmsPlayer.locX(), (int)nmsPlayer.locY(), (int)nmsPlayer.locZ()).getType() == org.bukkit.Material.SOUL_FIRE) {
                         nmsPlayer.setFireTicks(12000);
                     }
                 }
                 case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
-                case SUFFOCATION -> event.setDamage(6.0); /**suffocation does 6 damage instead of 1*/
+                case SUFFOCATION -> event.setDamage(5.0); /**suffocation does 5 damage instead of 1*/
             }
         }
     }

@@ -39,7 +39,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     @Override
     protected void initPathfinder() { /**no longer targets iron golems*/
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /**custom goal that breaks blocks around the mob periodically*/
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 1, 1, 1, false)); /**custom goal that breaks blocks around the mob periodically*/
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /**custom goal that spawns lightning randomly*/
@@ -52,11 +52,11 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     }
 
     public double getSandStormStrength() {
-        return this.attacks < 5 ? 0.0 : this.attacks < 12 ? 10.0 : this.attacks < 20 ? 15.0 : 0.5;
+        return this.attacks < 5 ? 0.0 : this.attacks < 12 ? 11.0 : this.attacks < 20 ? 16.0 : 0.6;
     }
 
     public int getSandStormAttackCooldown() {
-        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 170 : this.attacks < 20 ? 130 : 6;
+        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 180 : this.attacks < 20 ? 120 : 6;
     }
 
     public double getFollowRange() { /**husks have 40 block detection range (setting attribute doesn't work)*/
@@ -114,23 +114,23 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
                 for (int i = 0; i < Math.ceil(this.husk.getSandStormStrength() / 5.0); i++) {
                     for (int j = 0; j < this.husk.getSandStormStrength() * 8.0; j++) {
                         randomDouble = random.nextDouble();
-                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(this.husk.attacks < 25.0 ? 16 : 21), this.husk.getGoalTarget().locY() + 8.0 + i, 361.0);
+                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + this.husk.attacks < 20 ? 8.0 : 9.0 + random.nextInt(2) + i, 361.0);
 
-                        if (randomDouble < 0.5) {
-                            this.blockData = org.bukkit.Material.SAND.createBlockData();
-                        } else if (randomDouble < 0.85) {
-                            this.blockData = org.bukkit.Material.STONE.createBlockData();
-                        } else if (randomDouble < 0.95) {
-                            this.blockData = org.bukkit.Material.INFESTED_STONE.createBlockData();
-                        } else {
-                            this.blockData = org.bukkit.Material.ANVIL.createBlockData();
+                        if (this.husk.attacks < 20) {
+                            if (randomDouble < 0.5) {
+                                this.blockData = org.bukkit.Material.SAND.createBlockData();
+                            } else if (randomDouble < 0.85) {
+                                this.blockData = org.bukkit.Material.STONE.createBlockData();
+                            } else if (randomDouble < 0.95) {
+                                this.blockData = org.bukkit.Material.INFESTED_STONE.createBlockData();
+                            } else {
+                                this.blockData = org.bukkit.Material.ANVIL.createBlockData();
+                            }
+
+                            this.bukkitWorld.spawnFallingBlock(new Location(this.bukkitWorld, (int)locTemp.getX() + 0.5, (int)locTemp.getY() + 0.5, (int)locTemp.getZ() + 0.5), this.blockData);
+                        } else { /**after 20 attacks, sand rains are always anvil rains*/
+                            this.bukkitWorld.getBlockAt(this.locTemp).setType(org.bukkit.Material.DAMAGED_ANVIL);
                         }
-
-                        if (this.husk.attacks >= 20) { /**after 20 attacks, sand rains are always anvil rains*/
-                            this.blockData = org.bukkit.Material.ANVIL.createBlockData();
-                        }
-
-                        this.bukkitWorld.spawnFallingBlock(new Location(this.bukkitWorld, (int)locTemp.getX() + 0.5, (int)locTemp.getY() + 0.5, (int)locTemp.getZ() + 0.5), this.blockData);
                     }
                 }
             }

@@ -24,7 +24,7 @@ public class ListenerMobDamage implements Listener {
         EntityType entityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
-        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING);
+        boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON) || cause.equals(EntityDamageEvent.DamageCause.CRAMMING);
 
         if (checkCause) {
             if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /**all non-player mobs take no damage from these sources*/
@@ -36,19 +36,6 @@ public class ListenerMobDamage implements Listener {
                 livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.2);
                 event.setDamage(0.0);
                 return;
-            }
-        }
-
-        switch (cause) {
-            case CRAMMING -> { /**no entity cramming to make sure that duplicating mobs when killed don't cause an endless cycle*/
-                event.setCancelled(true);
-                return;
-            }
-            case DRAGON_BREATH, FALLING_BLOCK, FIRE, FIRE_TICK, MAGIC, POISON -> { /**non-player mobs do not take damage from area effect clouds, fire, falling anvils, or poison/harm potions*/
-                if (entityType != PLAYER) {
-                    event.setCancelled(true);
-                    return;
-                }
             }
         }
 
