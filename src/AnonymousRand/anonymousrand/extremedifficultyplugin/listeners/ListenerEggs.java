@@ -147,7 +147,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.7385) {
                     ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
                     ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, false);
+                    itemMeta.addEnchant(Enchantment.DIG_SPEED, 1, false);
                     itemStack.setItemMeta(itemMeta);
                     this.bukkitWorld.dropItem(this.eggLoc, itemStack);
                 } else if (rand < 0.7485) {
@@ -161,7 +161,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.7885) {
                     ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
                     ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.SWEEPING_EDGE, 1, false);
+                    itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, false);
                     itemStack.setItemMeta(itemMeta);
                     this.bukkitWorld.dropItem(this.eggLoc, itemStack);
                 } else if (rand < 0.7985) {
@@ -187,11 +187,7 @@ public class ListenerEggs implements Listener {
                         }
                     });
                 } else if (rand < 0.867) {
-                    ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-                    itemStack.setItemMeta(itemMeta);
-                    this.bukkitWorld.dropItem(this.eggLoc, itemStack);
+                    new SpawnEntity(this.nmsWorld, new CustomEntityBlaze(this.nmsWorld), 3, null, this.eggLoc, true);
                 } else if (rand < 0.873) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityIllusioner(this.nmsWorld), 1, null, this.eggLoc, true);
                 } else if (rand < 0.878) {
@@ -203,7 +199,11 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.893) {
                     new RunnableLightningStorm(this.nmsWorld, this.eggLoc, random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
                 } else if (rand < 0.898) {
-                    new SpawnEntity(this.nmsWorld, new CustomEntityBlaze(this.nmsWorld), 3, null, this.eggLoc, true);
+                    ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+                    itemMeta.addEnchant(Enchantment.SWEEPING_EDGE, 1, false);
+                    itemStack.setItemMeta(itemMeta);
+                    this.bukkitWorld.dropItem(this.eggLoc, itemStack);
                 } else if (rand < 0.903) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityPig(this.nmsWorld), 20, null, this.eggLoc, true);
                 } else if (rand < 0.908) {
@@ -213,7 +213,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.916) {
                     ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
                     ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 2, false);
+                    itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
                     itemStack.setItemMeta(itemMeta);
                     this.bukkitWorld.dropItem(this.eggLoc, itemStack);
                 } else if (rand < 0.92) {

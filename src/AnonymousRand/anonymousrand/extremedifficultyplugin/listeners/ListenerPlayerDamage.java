@@ -40,9 +40,9 @@ public class ListenerPlayerDamage implements Listener {
                     CustomEntityHoglin hoglin = (CustomEntityHoglin)nmsDamager;
                     hoglin.attacks++;
 
-                    if (hoglin.attacks >= 25 && hoglin.attacks < 59 && (hoglin.attacks - 25) % 3 == 0) { /**from 25 to 59 attacks, hoglins gain 4 max health every 3 attacks*/
-                        hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, (hoglin.attacks - 25) / 3));
-                    } else if (hoglin.attacks >= 59 && hoglin.attacks < 70) { /**from 59 to 70 attacks, hoglin loses 4 max health but gains 1.2 damage per attack*/
+                    if (hoglin.attacks >= 10 && hoglin.attacks < 44 && (hoglin.attacks - 15) % 3 == 0) { /**from 10 to 44 attacks, hoglins gain 4 max health every 3 attacks*/
+                        hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, (hoglin.attacks - 15) / 3));
+                    } else if (hoglin.attacks >= 44 && hoglin.attacks < 55) { /**from 44 to 55 attacks, hoglin loses 4 max health but gains 1.2 damage per attack*/
                         int amp = hoglin.getEffect(MobEffects.HEALTH_BOOST).getAmplifier();
                         hoglin.removeEffect(MobEffects.HEALTH_BOOST);
                         hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, amp - 1));

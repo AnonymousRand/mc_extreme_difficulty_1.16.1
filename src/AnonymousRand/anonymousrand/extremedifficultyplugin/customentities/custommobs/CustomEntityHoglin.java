@@ -74,11 +74,11 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob {
             new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
         }
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, hoglins summon 2 baby hoglins*/
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, hoglins summon another baby hoglin*/
             this.a40 = true;
             CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
             newHoglin.a(true);
-            new SpawnEntity(this.getWorld(), newHoglin, 2, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
         }
 
         Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
