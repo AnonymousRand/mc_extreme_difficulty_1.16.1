@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
@@ -16,7 +17,6 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
     private boolean a8, a20;
-    private final CustomEntityAreaEffectCloud newAEC;
 
     public CustomEntityZombieHusk(World world) {
         super(EntityTypes.HUSK, world);
@@ -26,13 +26,8 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
         this.attacks = 0;
         this.a8 = false;
         this.a20 = false;
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F, 100, 0);
-        this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
-        this.newAEC.addEffect(new MobEffect(MobEffects.WEAKNESS, 120, 0));
-        this.newAEC.addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 120, 1));
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /**husks move 2.5x faster and always have regen 4*/
         this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
-        this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 160)); /**custom goal that allows husk to summon area effect clouds on itself every 8 seconds that also give the player weakness 1 and slowness 2 for 6 seconds*/
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
@@ -56,7 +51,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     }
 
     public int getSandStormAttackCooldown() {
-        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 180 : this.attacks < 20 ? 120 : 6;
+        return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 185 : this.attacks < 20 ? 130 : 6;
     }
 
     public double getFollowRange() { /**husks have 40 block detection range (setting attribute doesn't work)*/
@@ -113,15 +108,15 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
 
                 for (int i = 0; i < Math.ceil(this.husk.getSandStormStrength() / 5.0); i++) {
                     for (int j = 0; j < this.husk.getSandStormStrength() * 8.0; j++) {
-                        randomDouble = random.nextDouble();
-                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + this.husk.attacks < 20 ? 8.0 : 9.0 + random.nextInt(2) + i, 361.0);
+                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + (this.husk.attacks < 20 ? 8.0 : 9.0) + i, 361.0);
+                        this.randomDouble = random.nextDouble();
 
                         if (this.husk.attacks < 20) {
-                            if (randomDouble < 0.5) {
+                            if (this.randomDouble < 0.5) {
                                 this.blockData = org.bukkit.Material.SAND.createBlockData();
-                            } else if (randomDouble < 0.85) {
+                            } else if (this.randomDouble < 0.85) {
                                 this.blockData = org.bukkit.Material.STONE.createBlockData();
-                            } else if (randomDouble < 0.95) {
+                            } else if (this.randomDouble < 0.95) {
                                 this.blockData = org.bukkit.Material.INFESTED_STONE.createBlockData();
                             } else {
                                 this.blockData = org.bukkit.Material.ANVIL.createBlockData();

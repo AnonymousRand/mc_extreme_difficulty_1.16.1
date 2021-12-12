@@ -41,7 +41,9 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     @Override
     public void c() {
         if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
-            this.e.setGoalTarget(this.nearestTarget); //must have this to work; keeps giving null pointer warnings for some reason
+            try {
+                this.e.setGoalTarget(this.nearestTarget); //must have this to work; keeps giving null pointer warnings for some reason
+            } catch (Exception e) {}
         }
     }
 
