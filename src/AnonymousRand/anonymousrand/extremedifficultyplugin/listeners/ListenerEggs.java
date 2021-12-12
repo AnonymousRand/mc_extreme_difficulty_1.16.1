@@ -130,7 +130,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.63) {
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.ARROW, random.nextInt(3) + 1));
                 } else if (rand < 0.65) {
-                    this.bukkitWorld.spawn(this.eggLoc, ExperienceOrb.class).setExperience(random.nextInt(326) + 150);
+                    this.bukkitWorld.spawn(this.eggLoc, ExperienceOrb.class).setExperience(random.nextInt(251) + 150);
                 } else if (rand < 0.67) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityCreeper(this.nmsWorld, 25), 1, null, this.playerLoc, true);
                 } else if (rand < 0.69) {

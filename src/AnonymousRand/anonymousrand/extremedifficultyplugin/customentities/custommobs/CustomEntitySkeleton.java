@@ -50,12 +50,12 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
     public void a(EntityLiving entityliving, float f) { //shoot
         this.attacks++;
 
-        if (this.attacks >= 20 && this.attacks <= 45 && this.attacks % 8 == 0) { /**between these attack counts, shoot exploding arrows every 8 shots*/
-            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 45.0, 0, false, false).run();
+        if (this.attacks >= 14 && this.attacks <= 30 && this.attacks % 8 == 6) { /**between these attack counts, shoot exploding arrows every 8 shots*/
+            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 40.0, 0, false, false).run();
         } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 18, this.attacks >= 18).run(); /**2.5% of arrows shot are piercing 1, and after 18 attacks, arrows are on fire and do not lose y level*/
-        } else { /**if more than 30 attacks, rapidfire; if more than 45, even faster rapidfire*/
-            new RunnableMobShootArrowsNormally(this, entityliving, this.attacks < 35 ? 10 : 1, 1, this.attacks < 35 ? 30.0 : 0.0, random.nextDouble() < 0.025 ? 1 : 0, true, this.attacks >= 35, this.attacks < 35 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 35 ? 5L : 1L);
+            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 30.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /**2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level*/
+        } else { /**if more than 30 attacks, rapidfire; if more than 40, even faster rapidfire*/
+            new RunnableMobShootArrowsNormally(this, entityliving, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /**5% of arrows shot are piercing 1*/
         }
     }
 

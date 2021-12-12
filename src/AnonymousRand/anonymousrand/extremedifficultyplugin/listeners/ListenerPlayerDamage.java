@@ -190,7 +190,7 @@ public class ListenerPlayerDamage implements Listener {
                     }
                 }
                 case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
-                case SUFFOCATION -> event.setDamage(2.5); /**suffocation does 2.5 damage instead of 1*/
+                case SUFFOCATION -> event.setDamage(6.0); /**suffocation does 6 damage instead of 1*/
             }
         }
     }

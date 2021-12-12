@@ -52,7 +52,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     }
 
     public double getSandStormStrength() {
-        return this.attacks < 5 ? 0.0 : this.attacks < 15 ? 10.0 : this.attacks < 25 ? 15.0 : 0.5;
+        return this.attacks < 5 ? 0.0 : this.attacks < 12 ? 10.0 : this.attacks < 20 ? 15.0 : 0.5;
     }
 
     public int getSandStormAttackCooldown() {
@@ -118,7 +118,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
 
                         if (randomDouble < 0.5) {
                             this.blockData = org.bukkit.Material.SAND.createBlockData();
-                        } else if (randomDouble < 0.9) {
+                        } else if (randomDouble < 0.85) {
                             this.blockData = org.bukkit.Material.STONE.createBlockData();
                         } else if (randomDouble < 0.95) {
                             this.blockData = org.bukkit.Material.INFESTED_STONE.createBlockData();
@@ -126,7 +126,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
                             this.blockData = org.bukkit.Material.ANVIL.createBlockData();
                         }
 
-                        if (this.husk.attacks >= 20) { /**after 20 attacks, sand rains are always anvil rais*/
+                        if (this.husk.attacks >= 20) { /**after 20 attacks, sand rains are always anvil rains*/
                             this.blockData = org.bukkit.Material.ANVIL.createBlockData();
                         }
 

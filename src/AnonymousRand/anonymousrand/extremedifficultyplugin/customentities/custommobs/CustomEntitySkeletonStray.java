@@ -48,9 +48,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
 
         if (rand < (this.attacks < 20 ? 0.9 : this.attacks < 30 ? 0.85 : this.attacks < 40 ? 0.8 : 0.7)) { /**strays have 4 choices of attack: 70% (50% if more than 12 attacks) chance to shoot 70 normal slowness arrows, 20% (40% if more than 12 attacks) chance to shoot 70 flaming slowness arrows, 5% chance to shoot 10 power 1 exploding arrows, 5% chance to shoot a custom arrow that spawns a mob on impact*/
             boolean fire = random.nextDouble() < (this.attacks < 12 ? 0.222222222 : 0.444444444);
-            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 35.0, random.nextDouble() < 0.025 ? 1 : 0, fire, false).run(); /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone; 2.5% of arrows shot are piercing 1*/
+            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 30.0, random.nextDouble() < 0.025 ? 1 : 0, fire, false).run(); /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone; 2.5% of arrows shot are piercing 1*/
         } else if (rand < (this.attacks < 30 ? 0.95 : 0.9)) { /**increase chances of mob and exploding arrows as more attacks go on*/
-            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 45.0, 0, false, false).run();
+            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 40.0, 0, false, false).run();
         } else {
             new RunnableMobShootArrowsNormally(this, entityliving, 1, 3, 0.0, 0, false, true).run(); /**no inaccuracy or less in y level for this arrow*/
         }

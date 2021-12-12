@@ -11,7 +11,7 @@ import java.util.EnumSet;
 public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
     public int attacks;
-    private boolean a12, a22, a50;
+    private boolean a10, a21, a40;
     private CustomEntityAreaEffectCloud newAEC;
     private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal1;
     private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal2;
@@ -19,16 +19,16 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
     public CustomEntityShulker(World world) {
         super(EntityTypes.SHULKER, world);
         this.attacks = 0;
-        this.a12 = false;
-        this.a22 = false;
-        this.a50 = false;
+        this.a10 = false;
+        this.a21 = false;
+        this.a40 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F,20, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
         goal1 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
         goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
-        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(10.0); /**shulkers have 10 armor points, and even more when it is closed*/
+        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /**shulkers have 12 armor points, and even more when it is closed*/
     }
 
     @Override
@@ -68,19 +68,19 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, shulkers get 15 armor points and regen 2*/
-            this.a12 = true;
+        if (this.attacks == 10 && !this.a10) { /**after 10 attacks, shulkers get 15 armor points and regen 2*/
+            this.a10 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(15.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 22 && !this.a22) { /**after 22 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds*/
-            this.a22 = true;
+        if (this.attacks == 21 && !this.a21) { /**after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds*/
+            this.a21 = true;
             this.goalSelector.a(1, goal1);
         }
 
-        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks*/
-            this.a50 = true;
+        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks*/
+            this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
             this.goalSelector.a(goal1);
             this.goalSelector.a(1, goal2);
