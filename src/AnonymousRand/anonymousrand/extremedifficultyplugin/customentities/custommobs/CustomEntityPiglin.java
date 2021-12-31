@@ -13,7 +13,7 @@ import java.util.*;
 public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
 
     public int attacks, veryAngryTicks;
-    private boolean a10, a20, a35, a50, a75;
+    private boolean a10, a20, a35, a50;
     private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
     private static Field goalTarget;
@@ -30,10 +30,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
         this.a20 = false;
         this.a50 = false;
         this.a35 = false;
-        this.a75 = false;
         this.veryAngryTicks = 0;
-        this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /**piglins have speed 1 and 40 max health*/
-        ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(40.0);
+        this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /**piglins have speed 1, 50 max health and 30 health*/
+        ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(50.0);
+        this.setHealth(30.0F);
 
         if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /**piglins continue attacking while trading*/
             this.goalSelector.a(1, new CustomPathfinderGoalCrossbowAttack<>(this, 1.0, 32.0F)); /**uses the custom goal that attacks even when line of sight is broken; since the behavior-controlled crossbow shots have not been removed, this can cause a faster, more irregular attacking rhythm (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
@@ -206,9 +206,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
             this.buffPiglins.e(); /**buffs are immediately applied the first time*/
         }
 
-        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, piglins get 80 max health*/
+        if (this.attacks == 35 && !this.a35) { /**after 35 attacks, piglins get 75 max health*/
             this.a35 = true;
-            ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(80.0);
+            ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(75.0);
             this.buffPiglins.e(); /**buffs are immediately applied the first time*/
         }
 
@@ -228,13 +228,6 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
             if (livingEntity.getEquipment().getLeggings().getType() == org.bukkit.Material.AIR) {
                 livingEntity.getEquipment().setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLDEN_LEGGINGS));
             }
-        }
-
-        if (this.attacks == 75 && !this.a75) { /**after 75 attacks, piglins duplicate all piglins excluding itself within 30 blocks*/
-            this.a75 = true;
-            this.getWorld().getEntities(this, this.getBoundingBox().g(30.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
-                new SpawnEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld()), 1, null, null, entity, false, true);
-            });
         }
     }
 
