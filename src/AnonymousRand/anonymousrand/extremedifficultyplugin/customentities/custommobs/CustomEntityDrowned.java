@@ -31,7 +31,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /**custom goal that spawns lightning randomly*/
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 2, 40.0F)); /**throws a trident every 2 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 3, 40.0F)); /**throws a trident every 3 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D, false)); /**uses the custom melee attack goal that attacks even when line of sight is broken*/
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
@@ -44,8 +44,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
     }
 
     @Override
-    public boolean j(@Nullable EntityLiving entityliving) {
-        return true; /**always attacks even in the day*/
+    public boolean j(@Nullable EntityLiving entityliving) { /**always attacks even in the day*/
+        return true;
     }
 
     public double getFollowRange() { /**drowned have 40 block detection range (setting attribute doesn't work)*/
@@ -337,7 +337,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
 
         @Override
         public void e() {
-            for (int i = 0; i < (this.drowned.attacks < 30 ? 1 : this.drowned.attacks < 70 ? 3 : 6); i++) { /**shoots 1, 3 or 6 tridents at a time depending on attack count*/
+            for (int i = 0; i < (this.drowned.attacks < 30 ? 1 : this.drowned.attacks < 70 ? 3 : 5); i++) { /**shoots 1, 3 or 5 tridents at a time depending on attack count*/
                 super.e();
             }
 
