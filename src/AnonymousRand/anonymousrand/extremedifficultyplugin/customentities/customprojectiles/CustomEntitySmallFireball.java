@@ -49,7 +49,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived > 80) { /**small fireballs despawn after 4 seconds to reduce lag*/
+        if (this.ticksLived > 70) { /**small fireballs despawn after 3.5 seconds to reduce lag*/
             this.die();
         }
     }

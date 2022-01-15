@@ -80,8 +80,8 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
                 int j = i / 2;
 
                 for (int l = 0; l < 4; ++l) {
-                    float f1 = ((float) (l % 2) - 0.5F) * f;
-                    float f2 = ((float) (l / 2) - 0.5F) * f;
+                    float f1 = ((float)(l % 2) - 0.5F) * f;
+                    float f2 = ((float)(l / 2) - 0.5F) * f;
                     EntitySlime entityslime = (EntitySlime)this.getEntityType().a(this.world);
 
                     if (this.isPersistent()) {

@@ -82,7 +82,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
             entitypotion.setItem(PotionUtil.a(new ItemStack(Items.SPLASH_POTION), potionregistry));
             entitypotion.pitch -= -20.0F;
-            entitypotion.shoot(d0, d1 + (double) (f1 * 0.2F), d2, 0.75F, 8.0F);
+            entitypotion.shoot(d0, d1 + (double)(f1 * 0.2F), d2, 0.75F, 8.0F);
             if (!this.isSilent()) {
                 this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
             }

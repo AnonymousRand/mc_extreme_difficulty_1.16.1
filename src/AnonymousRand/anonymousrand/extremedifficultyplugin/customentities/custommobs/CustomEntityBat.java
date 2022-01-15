@@ -158,7 +158,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
             Vec3D vec3d1 = vec3d.add((Math.signum(d0) * 0.5D - vec3d.x) * 0.10000000149011612D, (Math.signum(d1) * 0.699999988079071D - vec3d.y) * 0.10000000149011612D, (Math.signum(d2) * 0.5D - vec3d.z) * 0.10000000149011612D);
 
             this.setMot(vec3d1);
-            float f = (float) (MathHelper.d(vec3d1.z, vec3d1.x) * 57.2957763671875D) - 90.0F;
+            float f = (float)(MathHelper.d(vec3d1.z, vec3d1.x) * 57.2957763671875D) - 90.0F;
             float f1 = MathHelper.g(f - this.yaw);
 
             this.ba = 0.5F;

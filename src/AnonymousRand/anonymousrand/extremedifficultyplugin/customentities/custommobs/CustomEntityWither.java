@@ -203,7 +203,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         if (i <= 0) {
             return this.locX();
         } else {
-            float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
+            float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.cos(f);
 
             return this.locX() + (double) f1 * 1.3D;
@@ -218,7 +218,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         if (i <= 0) {
             return this.locZ();
         } else {
-            float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
+            float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.sin(f);
 
             return this.locZ() + (double) f1 * 1.3D;

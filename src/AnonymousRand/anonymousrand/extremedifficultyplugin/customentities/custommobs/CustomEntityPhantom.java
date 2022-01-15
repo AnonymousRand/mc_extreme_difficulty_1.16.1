@@ -373,7 +373,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
                 }
 
                 this.c += this.f * 15.0F * 0.017453292F;
-                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b((BaseBlockPosition)orbitPos).add((double) (this.d * MathHelper.cos(this.c)), (double) (-4.0F + this.e), (double) (this.d * MathHelper.sin(this.c))));
+                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b((BaseBlockPosition)orbitPos).add((double)(this.d * MathHelper.cos(this.c)), (double)(-4.0F + this.e), (double)(this.d * MathHelper.sin(this.c))));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

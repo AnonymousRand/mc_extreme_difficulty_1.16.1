@@ -103,7 +103,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
     @Override
     public void a(EntityLiving entityliving, float f) { //shoot
         this.attacks++;
-        this.setHealth((float) (this.getHealth() + 0.75)); /**piglins heal by 0.75 every time its attacks increase by 1*/
+        this.setHealth((float)(this.getHealth() + 0.75)); /**piglins heal by 0.75 every time its attacks increase by 1*/
 
         if (this.attacks == 1) { /**first attack always shoots knockback arrows*/
             new RunnableMobShootArrowsNormally(this, entityliving, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();

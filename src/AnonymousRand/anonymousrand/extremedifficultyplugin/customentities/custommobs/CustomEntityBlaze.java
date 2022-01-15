@@ -182,7 +182,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                                 this.blaze.attacks++;
                             }
 
-                            if (this.blaze.attacks % 40 == 0) { /**every 40 shots, the blaze shoots a ring of fireballs*/
+                            if (this.blaze.attacks % 45 == 0) { /**every 45 shots, the blaze shoots a ring of fireballs*/
                                 new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                             }
 
@@ -237,8 +237,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
         @Override
         public void run() {
-            for (int i = 0; i < 6; i++) { /**shoots 6 fireballs at a time during this phase*/
-                CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * f * 0.5, d2, d3 + this.blaze.getRandom().nextGaussian() * (double)f * 0.5); /**blaze has 0.5x default inaccuracy in this phase*/
+            for (int i = 0; i < 5; i++) { /**shoots 5 fireballs at a time during this phase*/
+                CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * f * 0.5, d2, d3 + this.blaze.getRandom().nextGaussian() * f * 0.6); /**blaze has 0.6x default inaccuracy in this phase*/
 
                 entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                 this.nmsWorld.addEntity(entitySmallFireball);

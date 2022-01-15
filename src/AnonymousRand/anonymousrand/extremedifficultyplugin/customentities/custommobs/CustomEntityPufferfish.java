@@ -141,8 +141,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
             double d2 = this.locZ() + (this.be - this.locZ()) / (double) this.bb;
             double d3 = MathHelper.g(this.bf - (double) this.yaw);
 
-            this.yaw = (float) ((double) this.yaw + d3 / (double) this.bb);
-            this.pitch = (float) ((double) this.pitch + (this.bg - (double) this.pitch) / (double) this.bb);
+            this.yaw = (float)((double) this.yaw + d3 / (double) this.bb);
+            this.pitch = (float)((double) this.pitch + (this.bg - (double) this.pitch) / (double) this.bb);
             --this.bb;
             this.setPosition(d0, d1, d2);
             this.setYawPitch(this.yaw, this.pitch);
@@ -151,7 +151,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         }
 
         if (this.bi > 0) {
-            this.aJ = (float) ((double) this.aJ + MathHelper.g(this.bh - (double) this.aJ) / (double) this.bi);
+            this.aJ = (float)((double) this.aJ + MathHelper.g(this.bh - (double) this.aJ) / (double) this.bi);
             --this.bi;
         }
 

@@ -122,7 +122,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         if (this.getGoalTarget() == null) {
             return 3;
         } else {
-            int i = (int) (this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
+            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
 
             return i + 3;
         }

@@ -92,6 +92,16 @@ public class ListenerProjectile implements Listener {
             nmsShooter = ((CraftEntity)bukkitShooter).getHandle();
         }
 
+        if (nmsProjectile instanceof CustomEntitySmallFireball) { /**blaze fireballs when shot by ghasts and dragons still explode like large fireballs; the reason I use small fireballs instead is because large fireballs keep hitting each other as they are spawned on the same spot*/
+            if (nmsShooter instanceof CustomEntityGhast) {
+                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
+            } else if (nmsShooter instanceof CustomEntityEnderDragon) {
+                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
+            }
+
+            return;
+        }
+
         if (event.getHitBlock() != null) {
             Block hitBlock = event.getHitBlock();
             Material type = hitBlock.getType();
@@ -105,6 +115,7 @@ public class ListenerProjectile implements Listener {
 
                 if (type != Material.COBWEB) {
                     nmsProjectile.die(); /**arrows die on block hit as long as it isn't a cobweb*/
+                    return;
                 }
             }
 
@@ -116,6 +127,7 @@ public class ListenerProjectile implements Listener {
                 }
 
                 nmsProjectile.die(); /**tridents die on block hit*/
+                return;
             }
         }
 
@@ -125,6 +137,7 @@ public class ListenerProjectile implements Listener {
             if (nmsProjectile instanceof CustomEntityArrow) {
                 if (((CustomEntityArrow)nmsProjectile).getPierceLevel() == 0) { /**0 pierce arrows die on entity impact*/
                     nmsProjectile.die();
+                    return;
                 }
 
                 if (nmsHitEntity instanceof EntityPlayer && nmsShooter instanceof EntitySkeletonStray && !(nmsProjectile instanceof CustomEntityArrowExploding) && !(nmsProjectile instanceof CustomEntityArrowSpawnMob)) { /**normal arrows shot by strays inflict slowness 2 for 30 seconds*/
@@ -133,24 +146,13 @@ public class ListenerProjectile implements Listener {
             }
         }
 
-        if (nmsProjectile instanceof CustomEntityArrowExploding) { /**meteor rain arrows explode on any impact and die*/
+        if (nmsProjectile instanceof CustomEntityArrowExploding || nmsProjectile instanceof CustomEntityArrowSpawnMob) { /**meteor rain arrows explode on any impact and die, spawn mob arrows spawn their mob on any impact and die*/
             nmsProjectile.die();
-        }
-
-        if (nmsProjectile instanceof CustomEntityArrowSpawnMob) { /**spawn mob arrows spawn their mob on any impact and die*/
-            nmsProjectile.die();
+            return;
         }
 
         if (nmsProjectile instanceof EntityEnderPearl) { /**ender pearls spawn an endermite on landing (with now a 5% chance to spawn 2 due to the original vanilla spawning)*/
             new SpawnEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, null, nmsProjectile, false, true);
-        }
-
-        if (nmsProjectile instanceof CustomEntitySmallFireball) { /**blaze fireballs when shot by ghasts and dragons still explode like large fireballs; the reason I use small fireballs instead is because large fireballs keep hitting each other as they are spawned on the same spot*/
-            if (nmsShooter instanceof CustomEntityGhast) {
-                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
-            } else if (nmsShooter instanceof CustomEntityEnderDragon) {
-                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
-            }
         }
     }
 }
