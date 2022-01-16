@@ -53,7 +53,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
                 case BEACON, BLAST_FURNACE, CAMPFIRE, CAULDRON,  END_ROD, FURNACE, GLOWSTONE, JACK_O_LANTERN, LANTERN, REDSTONE_LAMP, REDSTONE_ORE, REDSTONE_TORCH, RESPAWN_ANCHOR, SEA_LANTERN, SEA_PICKLE, SHROOMLIGHT, SMOKER, SOUL_CAMPFIRE, SOUL_LANTERN, SOUL_TORCH, TORCH -> {
                     if (bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
                         event.setCancelled(true);
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You can't place such bright blocks in the end:\"");
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You can't place such bright blocks in the end\"");
                     }
                 }
                 case CONDUIT -> new RunnableConduitSummonMobs(nmsWorld, loc, 20).runTaskTimer(StaticPlugin.plugin, 0L, 100L); /**conduits spawn pufferfish and drowned every 5 seconds for 100 seconds*/
