@@ -24,7 +24,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (entity1 instanceof EntityLiving) {
                 EntityLiving entityliving = (EntityLiving) entity1;
 
-                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 0.5F); /**wither skulls only do 0.5 direct damage*/
+                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 2.0F); /**wither skulls only do 2 direct damage*/
                 if (flag) {
                     if (entity.isAlive()) {
                         this.a(entityliving, entity);

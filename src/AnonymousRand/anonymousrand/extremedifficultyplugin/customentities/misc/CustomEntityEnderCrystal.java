@@ -35,9 +35,9 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
         super.die();
         this.onCrystalDestroyed(DamageSource.GENERIC); //make sure to update dragon fight
 
-        /**end crystals summon a mini wither, 4 phantoms and 3 vexes when destroyed*/
+        /**end crystals summon a mini wither, 3 phantoms and 3 vexes when destroyed*/
         new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
-        new SpawnEntity(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), 4, null, null, this, false, false);
+        new SpawnEntity(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.getWorld(), (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), 3, null, null, this, false, false);
         new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
     }
 

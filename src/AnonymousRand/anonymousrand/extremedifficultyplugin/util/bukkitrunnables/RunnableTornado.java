@@ -50,9 +50,10 @@ public class RunnableTornado extends BukkitRunnable {
                 fallingBlockEntry.getKey().setVelocity(CustomMathHelper.spiralVector(13.0 + fallingBlockEntry.getValue() / 20.0, this.cycles - fallingBlockEntry.getValue(), 0.6 + random.nextDouble() * 0.75).multiply(0.25));
             }
 
-            if (this.cycles % 6 == 0) { //pull in entities every 6 ticks
+            if (this.cycles % 7 == 0) { //pull in entities every 7 ticks
                 this.nmsEntitiesTemp = this.nmsWorld.getEntities(null, new AxisAlignedBB(this.pos).g(this.radius), entity -> ((entity instanceof EntityLiving || entity instanceof EntityEnderPearl) && !(entity instanceof CustomEntityEnderDragon || entity instanceof CustomEntityWither)));
                 this.nmsEntitiesAll.addAll(this.nmsEntitiesTemp);
+
                 for (Entity nmsEntity : this.nmsEntitiesTemp) {
                     nmsEntity.noclip = true;
 
@@ -70,24 +71,24 @@ public class RunnableTornado extends BukkitRunnable {
 
                 this.bukkitBlocksTemp.clear();
                 for (int i = 0; i < random.nextInt(2) + 5; i++) { //pick up 5-6 new blocks every 2 ticks
-                    randomLoc = new Location(this.bukkitWorld, this.pos.getX() + random.nextGaussian() * this.radius * 0.2, 0.0, this.pos.getZ() + random.nextGaussian() * this.radius * 0.2);
-                    this.bukkitBlocksTemp.add(this.bukkitWorld.getHighestBlockAt(randomLoc));
+                    this.randomLoc = new Location(this.bukkitWorld, this.pos.getX() + random.nextGaussian() * this.radius * 0.2, 0.0, this.pos.getZ() + random.nextGaussian() * this.radius * 0.2);
+                    this.bukkitBlocksTemp.add(this.bukkitWorld.getHighestBlockAt(this.randomLoc));
                 }
 
                 this.vec = CustomMathHelper.spiralVector(13.0, this.cycles, 0.6 + random.nextDouble() * 0.75).multiply(0.25);
-                randomLoc = new Location(this.bukkitWorld, this.loc.getX() + 13.0, this.loc.getY(), this.loc.getZ()); //so that after its first "toss" by the tornado, it will be perfectly centered on it
+                this.randomLoc = new Location(this.bukkitWorld, this.loc.getX() + 13.0, this.loc.getY(), this.loc.getZ()); //so that after its first "toss" by the tornado, it will be perfectly centered on it
                 for (Block bukkitBlock : this.bukkitBlocksTemp) { //turn those new blocks into falling blocks
                     type = bukkitBlock.getType();
 
                     if (type != org.bukkit.Material.AIR && type != org.bukkit.Material.BEDROCK && type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.NETHER_PORTAL && type != org.bukkit.Material.COMMAND_BLOCK && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA && type != org.bukkit.Material.OBSIDIAN && type != org.bukkit.Material.CRYING_OBSIDIAN && type != org.bukkit.Material.RESPAWN_ANCHOR && type != org.bukkit.Material.ANCIENT_DEBRIS && type != org.bukkit.Material.NETHERITE_BLOCK) { //as long as it isn't one of these blocks
-                        FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
+                        FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(this.randomLoc, bukkitBlock.getBlockData());
                         fallingBlock.setGravity(false);
                         fallingBlock.setVelocity(this.vec);
                         this.fallingBlocksAll.put(fallingBlock, this.cycles);
                         bukkitBlock.setType(org.bukkit.Material.AIR);
                     } else if (type == org.bukkit.Material.OBSIDIAN || type == org.bukkit.Material.CRYING_OBSIDIAN || type == org.bukkit.Material.RESPAWN_ANCHOR || type == org.bukkit.Material.ANCIENT_DEBRIS || type == org.bukkit.Material.NETHERITE_BLOCK) { //50% chance to pick up these blocks
                         if (random.nextDouble() < 0.5) {
-                            FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
+                            FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(this.randomLoc, bukkitBlock.getBlockData());
                             fallingBlock.setGravity(false);
                             fallingBlock.setVelocity(this.vec);
                             this.fallingBlocksAll.put(fallingBlock, this.cycles);
