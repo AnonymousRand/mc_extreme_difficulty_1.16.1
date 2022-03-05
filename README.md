@@ -1,5 +1,7 @@
 # 1.16.1-Extreme-Difficulty
 
+**Plugin trailer on Iseburg's channel: https://www.youtube.com/watch?v=7Kl9jtCHIGg**
+
 **Spigot servers, version 1.16.1**
 
 **Java version 14 (see below for setup guide)**
