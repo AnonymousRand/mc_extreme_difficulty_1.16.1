@@ -32,8 +32,8 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
         this.a50 = false;
         this.expToDrop = 1; //to differentiate between vanilla villagers in listenermobspawnandreplace to avoid potential infinite loops
         this.setBaby(true);
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.69); /**zombies are always babies, move 3x faster, and have a 50% chance to summon a reinforcement when hit by a player*/
-        this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.5);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /**zombies are always babies, move 2x faster, and have a 25% chance to summon a reinforcement when hit by a player*/
+        this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.25);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
@@ -78,29 +78,27 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
             }
 
             if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /**zombies can now spawn reinforcements on any difficulty*/
-                for (int ii = 0; ii < (random.nextDouble() < 0.985 ? 1 : 30); ii++) { /**1.5% chance to make 30 spawn attempts instead of 1 (on average, about half of them succeed)*/
-                    int i = MathHelper.floor(this.locX());
-                    int j = MathHelper.floor(this.locY());
-                    int k = MathHelper.floor(this.locZ());
-                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
+                int i = MathHelper.floor(this.locX());
+                int j = MathHelper.floor(this.locY());
+                int k = MathHelper.floor(this.locZ());
+                CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
 
-                    for (int l = 0; l < 50; ++l) {
-                        int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                        int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                        int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                        BlockPosition blockposition = new BlockPosition(i1, j1, k1);
-                        EntityTypes<?> entitytypes = newZombie.getEntityType();
-                        EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
+                for (int l = 0; l < 50; ++l) {
+                    int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                    int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                    int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                    BlockPosition blockposition = new BlockPosition(i1, j1, k1);
+                    EntityTypes<?> entitytypes = newZombie.getEntityType();
+                    EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
 
-                        if (SpawnerCreature.a(entitypositiontypes_surface, (IWorldReader) this.getWorld(), blockposition, entitytypes) && EntityPositionTypes.a(entitytypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockposition, this.getWorld().random)) {
-                            newZombie.setPosition((double) i1, (double) j1, (double) k1);
-                            if (!this.getWorld().isPlayerNearby((double) i1, (double) j1, (double) k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
-                                this.getWorld().addEntity(newZombie);
-                                newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, (GroupDataEntity) null, (NBTTagCompound) null);
-                                this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", this.attacks < 7 ? -0.125 : -0.15, AttributeModifier.Operation.ADDITION)); /**zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement (15% after 7 attacks)*/
-                                newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.15, AttributeModifier.Operation.ADDITION));
-                                break;
-                            }
+                    if (SpawnerCreature.a(entitypositiontypes_surface, (IWorldReader) this.getWorld(), blockposition, entitytypes) && EntityPositionTypes.a(entitytypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockposition, this.getWorld().random)) {
+                        newZombie.setPosition((double) i1, (double) j1, (double) k1);
+                        if (!this.getWorld().isPlayerNearby((double) i1, (double) j1, (double) k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
+                            this.getWorld().addEntity(newZombie);
+                            newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, (GroupDataEntity) null, (NBTTagCompound) null);
+                            this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /**zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement*/
+                            newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.15, AttributeModifier.Operation.ADDITION));
+                            break;
                         }
                     }
                 }

@@ -4,7 +4,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.BlockOverride;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,9 +11,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
 
@@ -28,7 +24,9 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
         this.initializeListeners();
         this.initializePluginFields();
+        this.initializeExplosionVolume();
         this.addEyeOfEnderRecipe();
+        this.getCommand("explosionvolume").setExecutor(new CommandExplosionVolume()); /**run "/explosionvolume [set/get] [decimal]" to set the volume of explosions*/
     }
 
     @Override
@@ -79,7 +77,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ListenerPlayerDeathAndRespawn(), this);
         getServer().getPluginManager().registerEvents(new ListenerPlayerEat(),this);
         getServer().getPluginManager().registerEvents(new ListenerPlayerInteract(),this);
-        getServer().getPluginManager().registerEvents(new ListenerPlayerJoin(),this);
+        getServer().getPluginManager().registerEvents(new ListenerPlayerJoinAndQuit(),this);
         getServer().getPluginManager().registerEvents(new ListenerPlayerMovementAndFallDamage(), this);
         getServer().getPluginManager().registerEvents(new ListenerPotionEffect(), this);
         getServer().getPluginManager().registerEvents(new ListenerProjectile(), this);
@@ -91,6 +89,11 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     private void initializePluginFields() { //initializes static plugin fields
         StaticPlugin.plugin = this;
+    }
+
+    private void initializeExplosionVolume() { //initializes static explosion volume
+        ListenerPlayerJoinAndQuit.explosionVolumeMultipier = 1.0;
+        ListenerPlayerJoinAndQuit.firstExplosion = true;
     }
 
     private void addEyeOfEnderRecipe() { /**changes eye of ender recipe*/
