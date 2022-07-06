@@ -11,7 +11,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
 
     public boolean spawnExplodingArrow;
     public int attacks;
-    private boolean a20, a60;
+    private boolean a20, a80;
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
@@ -28,7 +28,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         this.spawnExplodingArrow = false;
         this.attacks = 0;
         this.a20 = false;
-        this.a60 = false;
+        this.a80 = false;
     }
 
     @Override
@@ -52,8 +52,8 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
 
         if (this.attacks >= 14 && this.attacks <= 30 && this.attacks % 8 == 6) { /**between these attack counts, shoot exploding arrows every 8 shots*/
             new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 40.0, 0, false, false).run();
-        } else if (this.attacks < 30) { /**shoots 75 arrows at a time with increased inaccuracy to seem like a cone*/
-            new RunnableMobShootArrowsNormally(this, entityliving, 75, 1, 30.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /**2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level*/
+        } else if (this.attacks < 30) { /**shoots 50 arrows at a time with increased inaccuracy to seem like a cone*/
+            new RunnableMobShootArrowsNormally(this, entityliving, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /**2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level*/
         } else { /**if more than 30 attacks, rapidfire; if more than 40, even faster rapidfire*/
             new RunnableMobShootArrowsNormally(this, entityliving, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /**5% of arrows shot are piercing 1*/
         }
@@ -72,15 +72,15 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, skeletons get 40 max health and health*/
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, skeletons get 35 max health and health*/
             this.a20 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-            this.setHealth(40.0F);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(35.0);
+            this.setHealth(35.0F);
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
         }
 
-        if (this.attacks == 60 && !this.a60) { /**after 60 attacks, skeletons summon an iron golem*/
-            this.a60 = true;
+        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, skeletons summon an iron golem*/
+            this.a80 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
         }
 

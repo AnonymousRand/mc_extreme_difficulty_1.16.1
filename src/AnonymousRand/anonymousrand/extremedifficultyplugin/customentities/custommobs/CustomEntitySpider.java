@@ -10,21 +10,21 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     public int attacks;
-    private boolean a18, a20, a50, a80;
+    private boolean a20, a25, a50, a80;
 
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
         this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.attacks = 0;
-        this.a18 = false;
         this.a20 = false;
+        this.a25 = false;
         this.a50 = false;
         this.a80 = false;
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /**spiders move 70% faster but only do 1 damage and have 12.5 health*/
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /**spiders move 70% faster but only do 1 damage and have 10 health*/
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-        this.setHealth(12.5F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
+        this.setHealth(10.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
     }
 
     @Override
@@ -51,28 +51,28 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks % 19 == 0 && this.a20) { //reset right before the next cycle
-            this.a20 = false;
+        if (this.attacks % 24 == 0 && this.a25) { //reset right before the next cycle
+            this.a25 = false;
         }
 
-        if (this.attacks % 20 == 0 && this.attacks != 0 && !this.a20) { /**every 20 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself*/
-            this.a20 = true;
+        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) { /**every 25 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself*/
+            this.a25 = true;
             new RunnableSpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.COBWEB, 1).run();
         }
 
-        if (this.attacks == 18 && !this.a18) { /**after 18 attacks, spiders gain speed 1*/
-            this.a18 = true;
+        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, spiders gain speed 1*/
+            this.a20 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
         }
 
-        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders summon 3 vanilla cave spiders*/
+        if (this.attacks == 50 && !this.a50) { /**after 50 attacks, spiders summon 2 vanilla cave spiders*/
             this.a50 = true;
-            new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 3, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
-        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, spiders summon 5 cave spiders*/
+        if (this.attacks == 80 && !this.a80) { /**after 80 attacks, spiders summon 4 cave spiders*/
             this.a80 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 5, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 4, null, null, this, false, true);
         }
     }
 

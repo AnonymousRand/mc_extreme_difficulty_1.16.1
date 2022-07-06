@@ -119,7 +119,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     }
                 }
                 case CHICKEN -> new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, true, true); /**all fish spawn in as 4 pufferfish*/
+                case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, false, true); /**all fish spawn in an additional 4 pufferfish*/
                 case COW -> new SpawnEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case CREEPER -> new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
                 case DONKEY, HORSE, MULE -> { /**donkeys, horses and mules spawn in as a skeleton horse trap instead; becuase of this listener, the skeletons and horses are separate, not rider-passenger*/
@@ -170,7 +170,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case PIG -> new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                 case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
-                case RABBIT -> new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true); /**rabbits are spawned in as 5-10 killer bunnies instead*/
+                case RABBIT -> new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), 5, null, bukkitEntity, null, true, true); /**rabbits are spawned in as 5 killer bunnies instead*/
                 case RAVAGER -> new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /**raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed)*/
                 case SHEEP -> { /**pink sheep are spawned in as 2 aggressive pink sheep instead*/
                     if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
@@ -297,7 +297,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case BLAZE -> new SpawnEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case CHICKEN -> new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, true, true);
+                        case COD, PUFFERFISH, SALMON, SQUID, TROPICAL_FISH -> new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, false, true);
                         case COW -> new SpawnEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case CREEPER -> new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
                         case DONKEY, HORSE, MULE -> {
@@ -329,12 +329,12 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case PIG -> new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PIGLIN -> new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case PILLAGER -> new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
-                        case RABBIT -> { /**rabbits are spawned in as 5-10 killer bunnies instead*/
+                        case RABBIT -> { /**rabbits are spawned in as 5 killer bunnies instead*/
                             if (((EntityRabbit) nmsEntity).getRabbitType() == 99) { //to avoid infinite duplication when joining world
                                 return;
                             }
 
-                            new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), random.nextInt(6) + 5, null, bukkitEntity, null, true, true);
+                            new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), 5, null, bukkitEntity, null, true, true);
                         }
                         case RAVAGER -> new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case SHEEP -> {

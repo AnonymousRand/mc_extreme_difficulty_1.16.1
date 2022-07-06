@@ -87,11 +87,11 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
         }
 
-        if (this.ticksLived % 6 == 0 && this.getGoalTarget() != null) {
+        if (this.ticksLived % 10 == 0 && this.getGoalTarget() != null) {
             Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
 
             if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /**zoglins create a path of power 1 tnt on itself as long as it is inside an air block*/
-                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 80 == 0) ? 2.0F : 1.0F); /**after 15 attacks, zoglins spawn a power 2 tnt instead every 4 seconds*/
+                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /**after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds*/
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newTNT);
             }
