@@ -4,3 +4,7 @@ author: AnonymousRand
 main: AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin
 api-version: 1.16
 load: STARTUP
+commands:
+  explosionvolume:
+    description: Set or get the volume for explosion sounds
+    usage: /explosionvolume

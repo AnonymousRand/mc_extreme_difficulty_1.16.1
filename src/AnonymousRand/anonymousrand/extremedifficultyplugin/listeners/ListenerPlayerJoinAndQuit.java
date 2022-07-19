@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 
 public class ListenerPlayerJoinAndQuit implements Listener {
 
-    public static double explosionVolumeMultipier, defaultVolume;
+    public static double explosionVolumeMultiplier, defaultVolume;
     public static boolean firstExplosion;
     private static Field c;
 
@@ -74,7 +74,7 @@ public class ListenerPlayerJoinAndQuit implements Listener {
                         defaultVolume = c.getDouble(packet);
                     }
 
-                    c.setDouble(packet, defaultVolume * (0.16 * Math.max(explosionVolumeMultipier, 1.0) + 0.84)); //volume is effectively 0 at a value of 0.84, so scale accordingly
+                    c.setDouble(packet, defaultVolume * (0.16 * Math.max(explosionVolumeMultiplier, 1.0) + 0.84)); //volume is effectively 0 at a value of 0.84, so scale accordingly
                 }
 
                 super.write(channelHandlerContext, packet, channelPromise);

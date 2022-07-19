@@ -51,7 +51,6 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /**fall d
             arrTemp[0] = y;                                                                 //set previous y level as the current y level in preparation for next tick
             arrTemp[1] = -65.0;                                                             //empty the current y level slot in preparation for next tick
         } else {                                                                            //fall ended or no change in y level
-
             if (fallHeightTemp == 0.0) {                                                    //avoid lag from all the calculations if player is not going to be taking damage
                 arr.replace(bukkitPlayer, new double[]{-65.0, -65.0});
                 return;
@@ -64,14 +63,11 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /**fall d
             int level = -1;
 
             if (b instanceof Levelled) {                                                    //get whether the block that the player currently is in is fluid
-                Levelled lv = (Levelled)b;
-                level = lv.getLevel();                                                      //fluid level 0 = source block, 1-7 = non-falling, 8-15 = falling
-            } else {
-                if (fallHeightTemp < 2.1) {                                                 //if player is not swimming up/inside a fluid and is not going to be taking damage
-                    arr.replace(bukkitPlayer, new double[]{-65.0, -65.0});
-                    fallHeight.replace(bukkitPlayer, 0.0);
-                    return;
-                }
+                level = ((Levelled)b).getLevel();                                           //fluid level 0 = source block, 1-7 = non-falling, 8-15 = falling
+            } else if (fallHeightTemp < 2.1) {                                              //if player is not swimming up/inside a fluid and is not going to be taking damage
+                arr.replace(bukkitPlayer, new double[]{-65.0, -65.0});
+                fallHeight.replace(bukkitPlayer, 0.0);
+                return;
             }
 
             if (level <= 7) {                                                               //if the current block is a solid block/air or a liquid source block or a non-falling liquid block

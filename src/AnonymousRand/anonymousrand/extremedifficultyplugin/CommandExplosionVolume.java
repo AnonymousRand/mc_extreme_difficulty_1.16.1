@@ -18,9 +18,9 @@ public class CommandExplosionVolume implements CommandExecutor {
                 return false;
             }
 
-            ListenerPlayerJoinAndQuit.explosionVolumeMultipier = tempMultiplier;
+            ListenerPlayerJoinAndQuit.explosionVolumeMultiplier = tempMultiplier;
         } else if (args[0].equals("get")) {
-            Bukkit.broadcastMessage("The volume for explosion sounds is currently set at " + Math.max(ListenerPlayerJoinAndQuit.explosionVolumeMultipier, 1.0) * 100.0 + "%");
+            Bukkit.broadcastMessage("The volume for explosion sounds is currently set at " + Math.max(ListenerPlayerJoinAndQuit.explosionVolumeMultiplier, 1.0) * 100.0 + "%");
         } else {
             return false;
         }

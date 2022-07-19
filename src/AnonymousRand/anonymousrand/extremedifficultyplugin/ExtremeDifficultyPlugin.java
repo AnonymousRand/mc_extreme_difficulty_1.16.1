@@ -92,7 +92,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     }
 
     private void initializeExplosionVolume() { //initializes static explosion volume
-        ListenerPlayerJoinAndQuit.explosionVolumeMultipier = 1.0;
+        ListenerPlayerJoinAndQuit.explosionVolumeMultiplier = 1.0;
         ListenerPlayerJoinAndQuit.firstExplosion = true;
     }
 

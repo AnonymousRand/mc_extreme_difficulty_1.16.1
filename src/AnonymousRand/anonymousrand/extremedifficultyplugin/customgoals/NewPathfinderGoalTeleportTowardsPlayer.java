@@ -73,10 +73,11 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
         for (int x = -2; x < 3; x++) {
             for (int y = -2; y < 3; y++) {
                 for (int z = -2; z < 3; z++) {
+                    loc.setX(initX + x);
+                    loc.setY(initY + y);
+                    loc.setZ(initZ + z);
+
                     if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
-                        loc.setX(initX + x);
-                        loc.setY(initY + y);
-                        loc.setZ(initZ + z);
                         loc.getBlock().setType(org.bukkit.Material.AIR);
                     }
                 }
