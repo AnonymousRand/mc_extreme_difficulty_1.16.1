@@ -10,7 +10,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     public PathfinderGoalSelector targetSelectorVanilla;
     public int attacks;
-    private boolean a5, a50;
+    private boolean a12, a50;
 
     public CustomEntitySkeletonWither(World world) {
         super(EntityTypes.WITHER_SKELETON, world);
@@ -18,9 +18,9 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_SWORD)); //makes sure that it has a sword
         this.attacks = 0;
-        this.a5 = false;
+        this.a12 = false;
         this.a50 = false;
-        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(5.0); /**wither skeletons twice as fast and have extra knockback*/
+        this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.0); /**wither skeletons twice as fast and have extra knockback*/
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
         RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
@@ -58,8 +58,8 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
     public void tick() {
         super.tick();
 
-        if (this.attacks == 5 && !this.a5) { /**after 5 attacks, wither skeletons get regen 2 and 30 max health*/
-            this.a5 = true;
+        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, wither skeletons get regen 2 and 30 max health*/
+            this.a12 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
         }
@@ -119,12 +119,6 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     @Override
     public int bL() { //getMaxFallHeight
-        if (this.getGoalTarget() == null) {
-            return 3;
-        } else {
-            int i = (int)(this.getHealth() * 20.0); /**mobs are willing to take 20 times the fall distance (same damage) to reach and do not stop taking falls if it is at less than 33% health*/
-
-            return i + 3;
-        }
+        return Integer.MAX_VALUE; /**mobs are willing to take any fall to reach the player as they don't take fall damage*/
     }
 }

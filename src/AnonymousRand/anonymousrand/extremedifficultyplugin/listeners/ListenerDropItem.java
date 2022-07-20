@@ -44,7 +44,7 @@ public class ListenerDropItem implements Listener {
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, item::remove, 100);
         }
 
-        if (type.toString().contains("_BED") || type.toString().contains("VINE")) {  /**delete bed and vine items immediately when they are spawned (eg. broken or thrown out)*/
+        if (type.toString().contains("_BED") || type.toString().contains("VINE") || type.toString().contains("ROSE")) {  /**delete bed, vine, and rose (for wither roses) items immediately when they are spawned (eg. broken or thrown out)*/
             item.remove();
         }
     }

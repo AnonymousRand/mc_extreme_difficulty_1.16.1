@@ -51,7 +51,7 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomM
     public void tick() {
         super.tick();
 
-        if (this.attacks == 10 && !this.a10) { /**after 101 attacks, vindicators get diamond axes which increases damage by 0-1*/
+        if (this.attacks == 10 && !this.a10) { /**after 10 attacks, vindicators get diamond axes which increases damage by 0-1*/
             this.a10 = true;
             this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
             this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.DIAMOND_AXE));
