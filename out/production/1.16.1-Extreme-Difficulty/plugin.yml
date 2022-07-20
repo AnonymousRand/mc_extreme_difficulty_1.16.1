@@ -6,5 +6,5 @@ api-version: 1.16
 load: STARTUP
 commands:
   explosionvolume:
-    description: Set or get the volume for explosion sounds
+    description: Set or get the volume for explosion sounds (min 0, max 1)
     usage: /explosionvolume

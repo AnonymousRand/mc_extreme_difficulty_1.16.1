@@ -25,6 +25,10 @@ public class ListenerPlayerJoinAndQuit implements Listener {
     public void playerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();
 
+        if (!ListenerPlayerMovementAndFallDamage.fallHeight.containsKey(bukkitPlayer)) { //initialize players in fall damage calculation hashmap
+            ListenerPlayerMovementAndFallDamage.fallHeight.put(bukkitPlayer, 0.0);
+        }
+
         if (bukkitPlayer.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             bukkitPlayer.getWorld().setDifficulty(Difficulty.EASY);
         }
@@ -45,13 +49,13 @@ public class ListenerPlayerJoinAndQuit implements Listener {
 
     @EventHandler
     public void playerQuit(PlayerQuitEvent event){
-        removePlayer(event.getPlayer());
-    }
+        Player bukkitPlayer = event.getPlayer();
 
-    private void removePlayer(Player player) {
-        Channel channel = ((CraftPlayer)player).getHandle().playerConnection.networkManager.channel;
+        ListenerPlayerMovementAndFallDamage.fallHeight.put(bukkitPlayer, 0.0); //delete player from fall damage calculation hashmap
+
+        Channel channel = ((CraftPlayer)bukkitPlayer).getHandle().playerConnection.networkManager.channel; //code from YouTube
         channel.eventLoop().submit(() -> {
-            channel.pipeline().remove(player.getName());
+            channel.pipeline().remove(bukkitPlayer.getName());
             return null;
         });
     }

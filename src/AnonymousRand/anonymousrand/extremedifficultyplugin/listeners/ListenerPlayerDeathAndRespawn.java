@@ -33,8 +33,6 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
         Player bukkitPlayer = event.getEntity();
-        ListenerPlayerMovementAndFallDamage.fallHeight.put(bukkitPlayer, 0.0); //reset fall heights
-        ListenerPlayerMovementAndFallDamage.MLG.put(bukkitPlayer, false);
         collections.put(bukkitPlayer, bukkitPlayer.getActivePotionEffects()); /**negative status effects now last after respawning*/
 
         if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /**when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc*/
