@@ -16,7 +16,7 @@ public class CustomMathHelper {
     private static final Random random = new Random();
 
     public static void initTrigTables() {
-        for (int angle = 0; angle < 720; angle++) {
+        for (int angle = 0; angle < 720; angle++) { //each index = +1/360 pi radians or +0.5 degrees
             trigTableSin[angle] = Math.abs(Math.sin(angle * PI / 360.0)); //absval because Minecraft does not follow the same quadrants (ie. Minecraft is not pos pos for quadrant 1, neg pos for quadrant 2 etc. as the sin/cos functions would return)
             trigTableCos[angle] = Math.abs(Math.cos(angle * PI / 360.0));
         }
@@ -24,13 +24,11 @@ public class CustomMathHelper {
 
     public static BlockPosition coordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(random.nextDouble() * 360.0);
+            angle = random.nextInt(720);
         } else {
-            angle = Math.toRadians(angle % 360.0);
+            angle *= 2;
         }
 
-        angle *= 360.0;
-        angle /= PI; //convert to indexing used by trig tables, where each index = +1/360 pi radians or +0.5 degrees
         double x = Math.floor(hypotenuse * trigTableSin[(int)angle]); //in Minecraft, x direction/coordinate is y-axis, but negative
         double z = Math.floor(hypotenuse * trigTableCos[(int)angle]);
 
@@ -47,9 +45,9 @@ public class CustomMathHelper {
 
     public static Location coordsFromHypotenuseAndAngle(World bukkitWorld, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle == 361.0) { //random angle
-            angle = Math.toRadians(random.nextDouble() * 360.0);
+            angle = random.nextInt(720);
         } else {
-            angle = Math.toRadians(angle % 360.0);
+            angle *= 2;
         }
 
         angle *= 360.0;
