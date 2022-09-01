@@ -16,10 +16,10 @@ public class RemovePathfinderGoals {
         ArrayList<PathfinderGoal> goalsToRemove = new ArrayList<>();
 
         try {
-            goalSet = PathfinderGoalSelector.class.getDeclaredField("d"); //get list of goals from original entity (not just running/active goals)
+            goalSet = PathfinderGoalSelector.class.getDeclaredField("d"); // get list of goals from original entity (not just running/active goals)
             goalSet.setAccessible(true);
 
-            switch (entity.getBukkitEntity().getType()) { //need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
+            switch (entity.getBukkitEntity().getType()) { // need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
                 case BEE -> {
                     goalsToRemove = removePathfinderGoal((Set)goalSet.get(((CustomEntityBee)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(removePathfinderGoal((Set)goalSet.get(((CustomEntityBee)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
@@ -110,14 +110,14 @@ public class RemovePathfinderGoals {
         }
 
         if (goalsToRemove.size() > 0) {
-            for (PathfinderGoal goal : goalsToRemove) { //but somehow removing vanilla goals from custom target selectors still works
+            for (PathfinderGoal goal : goalsToRemove) { // but somehow removing vanilla goals from custom target selectors still works
                 if (!(goal instanceof CustomPathfinderGoalHurtByTarget) && !(goal instanceof CustomPathfinderGoalNearestAttackableTarget)) {
-                    entity.targetSelector.a(goal); //remove goal
+                    entity.targetSelector.a(goal); // remove goal
                 }
             }
 
             if (entity instanceof EntityCreature) {
-                entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+                entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
             }
         }
     }
@@ -128,7 +128,7 @@ public class RemovePathfinderGoals {
 
         for (Object pathfinderGoalWrapped : goalSet) {
             try {
-                Field pathfinderGoalField = pathfinderGoalWrapped.getClass().getDeclaredField("a"); //a is the field that contains the pathfinder goal in the wrapped pathfinder goal object
+                Field pathfinderGoalField = pathfinderGoalWrapped.getClass().getDeclaredField("a"); // a is the field that contains the pathfinder goal in the wrapped pathfinder goal object
                 pathfinderGoalField.setAccessible(true);
                 pathfinderGoal = (PathfinderGoal)pathfinderGoalField.get(pathfinderGoalWrapped);
 

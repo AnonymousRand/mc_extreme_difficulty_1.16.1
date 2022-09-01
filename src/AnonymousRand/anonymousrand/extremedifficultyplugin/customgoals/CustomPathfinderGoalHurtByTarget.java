@@ -13,7 +13,7 @@ public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget
     public boolean a() {
         super.a();
 
-        if (this.e.getLastDamager() instanceof EntityPlayer) { //only retaliates against players in survival
+        if (this.e.getLastDamager() instanceof EntityPlayer) { // only retaliates against players in survival
             return !((EntityPlayer)this.e.getLastDamager()).abilities.isInvulnerable;
         }
 
@@ -21,7 +21,7 @@ public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget
     }
 
     @Override
-    protected void a(EntityInsentient entityinsentient, EntityLiving entityliving) { //some mobs like bees use this method instead
+    protected void a(EntityInsentient entityinsentient, EntityLiving entityliving) { // some mobs like bees use this method instead
         if (entityliving instanceof EntityPlayer) {
             entityinsentient.setGoalTarget(entityliving, EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
         }

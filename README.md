@@ -23,8 +23,8 @@ WARNING: plugin is pretty heavyweight, do not run on a server with low RAM alloc
 Follow this guide if the plugin doesn't seem to be doing anything and the server log has an error about mismatched/unsupported Java versions
 
 1. Go to [AdoptOpenJDK's releases page](https://adoptopenjdk.net/releases.html) and select OpenJDK 14 Hotspot
-2. Scroll down. Windows/Mac operating systems has 4 download options while Linux has 2. Find your operating system and download the first option which should be labeled as JDK
-3. Click on the downloaded file to install the JDK (if you are using Linux, the installation is a bit more complicated but I hope that you know how to use your own operating system)
+2. Scroll down. Windows/Mac operating systems have 4 download options while Linux has 2. Find your operating system and download the first option which should be labeled as JDK
+3. Click on the downloaded file to install the JDK (if you are using Linux, the installation is a bit more complicated but. You're using Linux. You should know what you're doing.)
 4. At a certain step during the installation, you will see an option on the left side of the window for "set JAVA_HOME variable". Click the icon next to it and select "local drive only" (wording not exact)
     * If you don't see this, take note of which folder the JDK is being installed into, finish the installation and search up a tutorial online for changing Java versions for your operating system
 5. Finish the installation process and you should now be running Java 14

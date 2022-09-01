@@ -42,7 +42,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     public void c() {
         if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
             try {
-                this.e.setGoalTarget(this.nearestTarget); //must have this to work; keeps giving null pointer warnings for some reason
+                this.e.setGoalTarget(this.nearestTarget); // must have this to work; keeps giving null pointer warnings for some reason
             } catch (Exception e) {}
         }
     }
@@ -59,7 +59,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         if (this.targetClass != EntityHuman.class && this.targetClass != EntityPlayer.class) {
             this.nearestTarget = this.e.world.b(this.targetClass, this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ(), this.a(this.k()));
         } else {
-            this.nearestTarget = this.customFindPlayers(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ()); //passes to custom a() function (findPlayer()) in CustomIEntityAccess which bypasses line of sight requirement to intially find a target player
+            this.nearestTarget = this.customFindPlayers(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ()); // passes to custom a() function (findPlayer()) in CustomIEntityAccess which bypasses line of sight requirement to intially find a target player
         }
     }
 }

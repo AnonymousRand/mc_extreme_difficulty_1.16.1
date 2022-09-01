@@ -82,7 +82,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
 
         if (this.entity instanceof EntityInsentient) {
             if (((EntityInsentient)this.entity).getGoalTarget() != null) {
-                if (((EntityInsentient)this.entity).getGoalTarget().locY() < this.entity.locY()) { //move downwards if player is below entity
+                if (((EntityInsentient)this.entity).getGoalTarget().locY() < this.entity.locY()) { // move downwards if player is below entity
                     this.Y--;
                 }
             }
@@ -94,9 +94,9 @@ public class RunnableBreakBlocks extends BukkitRunnable {
                     int x1 = this.X + x, y1 = this.Y + y, z1 = this.Z + z;
                     Material type = this.bukkitWorld.getBlockAt(x1, y1, z1).getType();
 
-                    if (blockBreakable.test(type) && (this.removeFluids ? true : (type != Material.WATER && type != Material.LAVA))) { //as long as it isn't one of these blocks
+                    if (blockBreakable.test(type) && (this.removeFluids ? true : (type != Material.WATER && type != Material.LAVA))) { // as long as it isn't one of these blocks
                         this.bukkitWorld.getBlockAt(x1, y1, z1).setType(Material.AIR);
-                    } else if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.RESPAWN_ANCHOR || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { //50% chance to break these blocks
+                    } else if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.RESPAWN_ANCHOR || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { // 50% chance to break these blocks
                         if (random.nextDouble() < 0.5) {
                             this.bukkitWorld.getBlockAt(x1, y1, z1).setType(Material.AIR);
                         }

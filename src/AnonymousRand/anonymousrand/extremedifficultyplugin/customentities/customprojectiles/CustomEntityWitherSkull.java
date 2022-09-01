@@ -14,7 +14,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
         if (!this.world.isClientSide) {
             Entity entity = movingobjectpositionentity.getEntity();
 
-            if (!(entity instanceof EntityPlayer)) { /**wither skulls can only impact players*/
+            if (!(entity instanceof EntityPlayer)) { /** wither skulls can only impact players */
                 return;
             }
 
@@ -24,12 +24,12 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (entity1 instanceof EntityLiving) {
                 EntityLiving entityliving = (EntityLiving) entity1;
 
-                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 2.0F); /**wither skulls only do 2 direct damage*/
+                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 2.0F); /** wither skulls only do 2 direct damage */
                 if (flag) {
                     if (entity.isAlive()) {
                         this.a(entityliving, entity);
                     } else {
-                        entityliving.heal(20.0F); /**withers heal 20 health per entity killed instead of 5 since they only attack players*/
+                        entityliving.heal(20.0F); /** withers heal 20 health per entity killed instead of 5 since they only attack players */
                     }
                 }
             } else {
@@ -39,7 +39,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (flag) {
                 byte b0;
 
-                if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /**wither skulls also inflict 25 seconds of wither 2 in easy difficulty, 45 in normal and 60 in hard*/
+                if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /** wither skulls also inflict 25 seconds of wither 2 in easy difficulty, 45 in normal and 60 in hard */
                     b0 = 45;
                 } else if (this.world.getDifficulty() == EnumDifficulty.HARD) {
                     b0 = 60;
@@ -50,7 +50,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
                 ((EntityLiving)entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));
 
                 Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
-                this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /**blue skulls explode power 2*/
+                this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /** blue skulls explode power 2 */
 
             }
         }
@@ -59,18 +59,18 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
     @Override
     protected void a(MovingObjectPosition movingobjectposition) {
         if (movingobjectposition instanceof MovingObjectPositionEntity) {
-            if (((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer) { /**wither skulls can only impact players*/
+            if (((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer) { /** wither skulls can only impact players */
                 this.a((MovingObjectPositionEntity)movingobjectposition);
             }
 
             return;
         }
 
-        //otherwise if hit block
+        // otherwise if hit block
         super.a(movingobjectposition);
         if (!this.world.isClientSide && this.isCharged()) {
             Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
-            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /**blue skulls explode power 2*/
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /** blue skulls explode power 2 */
         }
     }
 
@@ -78,7 +78,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived >= 200) { /**wither skulls despawn after 10 seconds to reduce lag*/
+        if (this.ticksLived >= 200) { /** wither skulls despawn after 10 seconds to reduce lag */
             this.die();
         }
     }

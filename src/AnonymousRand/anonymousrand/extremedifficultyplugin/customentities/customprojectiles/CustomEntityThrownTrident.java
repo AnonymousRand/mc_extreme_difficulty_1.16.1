@@ -16,7 +16,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     public CustomEntityThrownTrident(World world, Vector a, byte pierce, @Nullable ProjectileSource source) {
         super(EntityTypes.TRIDENT, world);
 
-        double x = a.getX(), y = a.getY(), z = a.getZ(); //similar code from projectile's shoot method; passing in a vec3d directly to this constructor doesn't seem to get the correct vector so must convert vector to vec3d instead
+        double x = a.getX(), y = a.getY(), z = a.getZ(); // similar code from projectile's shoot method; passing in a vec3d directly to this constructor doesn't seem to get the correct vector so must convert vector to vec3d instead
         Vec3D v = (new Vec3D(x, y, z).d());
         this.setMot(v);
         this.setPierceLevel(pierce);
@@ -38,7 +38,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     @Override
     protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
         net.minecraft.server.v1_16_R1.Entity entity = movingobjectpositionentity.getEntity();
-        float f = 4.0F; /**trident damage decreased from 8 to 4.0*/
+        float f = 4.0F; /** trident damage decreased from 8 to 4.0 */
 
         if (entity instanceof EntityLiving) {
             EntityLiving entityliving = (EntityLiving) entity;
@@ -98,7 +98,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived >= 120) { /**tridents despawn after 6 seconds*/
+        if (this.ticksLived >= 120) { /** tridents despawn after 6 seconds */
             this.die();
         }
     }
@@ -108,7 +108,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         super.die();
 
         if (random.nextDouble() < 0.2) {
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.5F, false, Explosion.Effect.DESTROY); /**tridents have a 20% chance to explode when they die*/
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.5F, false, Explosion.Effect.DESTROY); /** tridents have a 20% chance to explode when they die */
         }
     }
 }

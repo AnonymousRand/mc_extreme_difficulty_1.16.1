@@ -33,7 +33,7 @@ public class RunnableSpiderSilverfishSummonMaterialBlock extends BukkitRunnable 
                         this.loc.getBlock().setType(this.material);
 
                         if (this.material == Material.COBWEB) {
-                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
+                            Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb block can be broken after 4 seconds
                         }
                     }
                 }

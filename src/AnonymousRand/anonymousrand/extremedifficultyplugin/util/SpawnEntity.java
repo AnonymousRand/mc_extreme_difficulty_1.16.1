@@ -32,7 +32,7 @@ public class SpawnEntity extends BukkitRunnable {
 
     static {
         boots = new ItemStack(Material.LEATHER_BOOTS);
-        boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+        boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
     }
 
@@ -133,9 +133,9 @@ public class SpawnEntity extends BukkitRunnable {
                     } else if (this.firstEntityToSpawn instanceof CustomEntityPhantom) {
                         this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class, int.class, boolean.class).newInstance(this.nmsWorld, this.maxFuseTicksOrPhantomSize, this.phantomDuplicate);
                     } else if (this.firstEntityToSpawn.getClass().getName().toLowerCase().contains("custom")) {
-                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class).newInstance(this.nmsWorld); //create a new instance of the same class as the first entity if spawning multiple
+                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(World.class).newInstance(this.nmsWorld); // create a new instance of the same class as the first entity if spawning multiple
                     } else {
-                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(EntityTypes.class, World.class).newInstance(this.firstEntityToSpawn.getEntityType(), this.nmsWorld); //for vanilla mobs that use a different constructor: create a new instance of the same class as the first entity if spawning multiple
+                        this.entityToSpawn = this.firstEntityToSpawn.getClass().getConstructor(EntityTypes.class, World.class).newInstance(this.firstEntityToSpawn.getEntityType(), this.nmsWorld); // for vanilla mobs that use a different constructor: create a new instance of the same class as the first entity if spawning multiple
                     }
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();

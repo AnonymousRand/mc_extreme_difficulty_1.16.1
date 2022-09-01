@@ -47,14 +47,14 @@ public class ListenerDragonFight implements Listener {
     @EventHandler
     public void dragonSpawn(CreatureSpawnEvent event) {
         if (event.getEntity() instanceof EnderDragon && (!(((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityEnderDragon))) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); //to make sure all the mob spawners can generate
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); // to make sure all the mob spawners can generate
             Bukkit.broadcastMessage("You've made it this far. I hope you're ready.");
             org.bukkit.World bukkitWorld = event.getEntity().getWorld();
             World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
 
             new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /**obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on*/
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /** obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on */
                 for (int i = 1; i < 11; i++) {
                     new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
                     new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
@@ -170,17 +170,17 @@ public class ListenerDragonFight implements Listener {
                 }
             }
 
-            this.spawnCount *= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.25), 1.5); /**spawns 25% more mobs on average per 4 players, up to 50% more*/
+            this.spawnCount *= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.25), 1.5); /** spawns 25% more mobs on average per 4 players, up to 50% more */
             this.spawnerBlock = new Location(this.bukkitWorld, this.highestBlock.getX(), this.highestBlock.getY() + 1, this.highestBlock.getZ()).getBlock();
             this.spawnerBlock.setType(Material.SPAWNER);
             this.spawner = ((CreatureSpawner)this.spawnerBlock.getState());
             this.spawner.setSpawnedType(this.entityType);
             this.spawner.setSpawnCount(this.spawnCount);
             this.spawner.setSpawnRange(1);
-            this.spawner.setMaxSpawnDelay(550); /**max spawn delay reduced to 37.5 seconds*/
+            this.spawner.setMaxSpawnDelay(550); /** max spawn delay reduced to 37.5 seconds */
             this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
-            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /**every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs*/
+            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /** every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
             spawnerBlocks.add(this.spawnerBlock);
 
             for (int x = -1; x <= 1; x++) {
@@ -263,7 +263,7 @@ public class ListenerDragonFight implements Listener {
                 }
             }
 
-            this.minSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0); /**spawns 50% faster on average per 4 players, up to 100% faster*/
+            this.minSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0); /** spawns 50% faster on average per 4 players, up to 100% faster */
             this.maxSpawnDelay /= Math.min((1.0 + Math.floor(Bukkit.getServer().getOnlinePlayers().size() / 4.0) * 0.5), 2.0);
             this.spawnerBlock = new Location(this.bukkitWorld, this.highestBlock.getX(), this.highestBlock.getY(), this.highestBlock.getZ()).getBlock();
             this.spawnerBlock.setType(Material.SPAWNER);
@@ -276,7 +276,7 @@ public class ListenerDragonFight implements Listener {
             this.spawner.setMaxSpawnDelay(this.maxSpawnDelay);
             this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
-            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /**every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs*/
+            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /** every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
             spawnerBlocks.add(this.spawnerBlock);
 
             for (int x = -4; x <= 4; x++) {
@@ -345,7 +345,7 @@ public class ListenerDragonFight implements Listener {
                 }
             }
 
-            if (this.spawnersStillRemaining && !this.endPortalBroken) { /**end portal only generates when all spawners have been broken*/
+            if (this.spawnersStillRemaining && !this.endPortalBroken) { /** end portal only generates when all spawners have been broken */
                 for (int y = 0; y <= 256; y++) {
                     if (this.bukkitWorld.getBlockAt(1, y, 0).getType() == Material.END_PORTAL) {
                         this.endPortalBroken = true;
@@ -359,7 +359,7 @@ public class ListenerDragonFight implements Listener {
                         }
                     }
                 }
-            } else if (!this.spawnersStillRemaining) { //all spawners destroyed
+            } else if (!this.spawnersStillRemaining) { // all spawners destroyed
                 this.gameEnd = true;
 
                 for (int x = -2; x <= 2; x++) {
@@ -378,9 +378,9 @@ public class ListenerDragonFight implements Listener {
                 }
             }
 
-            if (this.gameEnd && ticksAfterDragonDeath > 600) { /**exit portals can only spawn 30 seconds after dragon is killed*/
+            if (this.gameEnd && ticksAfterDragonDeath > 600) { /** exit portals can only spawn 30 seconds after dragon is killed */
                 this.cancel();
-                this.bukkitWorld.setDifficulty(Difficulty.PEACEFUL); /**kill everything when this goal has been achieved*/
+                this.bukkitWorld.setDifficulty(Difficulty.PEACEFUL); /** kill everything when this goal has been achieved */
                 this.printEndText();
             }
         }
@@ -393,7 +393,7 @@ public class ListenerDragonFight implements Listener {
 
             Bukkit.broadcastMessage("Congratulations to:");
 
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) { //separate for loops to prevent the advancements from preventing the names from being read
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) { // separate for loops to prevent the advancements from preventing the names from being read
                 player.setItemInHand(dragonEgg);
             }
 
@@ -439,9 +439,9 @@ public class ListenerDragonFight implements Listener {
                 return;
             }
 
-            if (ticksAfterDragonDeath == 1) { //immediately when dragon dies
+            if (ticksAfterDragonDeath == 1) { // immediately when dragon dies
                 for (Player bukkitPlayer : Bukkit.getServer().getOnlinePlayers()) {
-                    for (PotionEffect effect : bukkitPlayer.getActivePotionEffects()) { /**remove positive effects from all players*/
+                    for (PotionEffect effect : bukkitPlayer.getActivePotionEffects()) { /** remove positive effects from all players */
                         PotionEffectType type = effect.getType();
 
                         if (type.equals(PotionEffectType.ABSORPTION) || type.equals(PotionEffectType.CONDUIT_POWER) || type.equals(PotionEffectType.DAMAGE_RESISTANCE) || type.equals(PotionEffectType.DOLPHINS_GRACE) || type.equals(PotionEffectType.FAST_DIGGING) || type.equals(PotionEffectType.FIRE_RESISTANCE) || type.equals(PotionEffectType.HEAL) || type.equals(PotionEffectType.HEALTH_BOOST) || type.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || type.equals(PotionEffectType.INCREASE_DAMAGE) || type.equals(PotionEffectType.INVISIBILITY) || type.equals(PotionEffectType.JUMP) || type.equals(PotionEffectType.LUCK) || type.equals(PotionEffectType.NIGHT_VISION) || type.equals(PotionEffectType.REGENERATION) || type.equals(PotionEffectType.SATURATION) || type.equals(PotionEffectType.SLOW_FALLING) || type.equals(PotionEffectType.SPEED) || type.equals(PotionEffectType.WATER_BREATHING)) {
@@ -449,14 +449,14 @@ public class ListenerDragonFight implements Listener {
                         }
                     }
 
-                    new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, bukkitPlayer.getLocation(), false); /**summon a mini wither at every player's location*/
+                    new SpawnEntity(this.nmsWorld, new CustomEntityWitherMini(this.nmsWorld, false), 1, null, bukkitPlayer.getLocation(), false); /** summon a mini wither at every player's location */
                 }
 
-                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld, 10.0F), 1, null, new Location(this.nmsWorld.getWorld(), this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ()), false); /**summon a power 10 custom lightning strike on dragon's location*/
-                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /**summon mob rain*/
+                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld, 10.0F), 1, null, new Location(this.nmsWorld.getWorld(), this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ()), false); /** summon a power 10 custom lightning strike on dragon's location */
+                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /** summon mob rain */
                 new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 300L, 10L);
 
-                if (Bukkit.getServer().getOnlinePlayers().size() > 5) { /**repeat second wave after 20 seconds if more than 5 players online*/
+                if (Bukkit.getServer().getOnlinePlayers().size() > 5) { /** repeat second wave after 20 seconds if more than 5 players online */
                     new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 700L, 10L);
                 }
             }

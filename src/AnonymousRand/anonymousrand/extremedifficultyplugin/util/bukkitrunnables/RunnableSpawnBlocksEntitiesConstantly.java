@@ -70,11 +70,11 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
                         if (this.terraform) {
                             Material type = this.loc.getBlock().getType();
 
-                            if (type != this.material && type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.WATER && type != Material.LAVA) { //as long as it isn't one of these blocks) {
+                            if (type != this.material && type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.WATER && type != Material.LAVA) { // as long as it isn't one of these blocks) {
                                 this.loc.getBlock().setType(this.material);
 
                                 if (this.material == Material.COBWEB) {
-                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb block can be broken after 2.5 seconds
+                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb block can be broken after 2.5 seconds
                                 }
                             }
                         } else {
@@ -82,7 +82,7 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
                                 this.loc.getBlock().setType(this.material);
 
                                 if (this.material == Material.COBWEB || this.material == Material.SOUL_SOIL) {
-                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); //fire event that would otherwise not be fired so that the cobweb or soul soil block can be broken after 2.5 seconds
+                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb or soul soil block can be broken after 2.5 seconds
                                 }
                             }
                         }

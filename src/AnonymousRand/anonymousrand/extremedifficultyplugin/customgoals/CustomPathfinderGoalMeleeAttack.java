@@ -23,10 +23,10 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public boolean a() { //copied in because first two attacks are rapidfire otherwise
+    public boolean a() { // copied in because first two attacks are rapidfire otherwise
         long i = this.a.world.getTime();
 
-        if (i - this.k < 20L) { //this line dictates attack cooldown
+        if (i - this.k < 20L) { // this line dictates attack cooldown
             return false;
         } else {
             this.k = i;
@@ -45,7 +45,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public void c() { //copied in because mobs doesn't attack regularly otherwise
+    public void c() { // copied in because mobs doesn't attack regularly otherwise
         this.a.getNavigation().a(this.d, this.b);
         this.a.setAggressive(true);
         this.h = 0;
@@ -64,7 +64,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         double d0 = this.entity.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
 
         this.h = Math.max(this.h - 1, 0);
-        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /**no longer requires line of sight to continue attacking*/
+        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /** no longer requires line of sight to continue attacking */
             this.e = entityliving.locX();
             this.f = entityliving.locY();
             this.g = entityliving.locZ();
@@ -84,7 +84,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         this.a(entityliving, d0);
     }
 
-    protected void a(EntityLiving entityliving, double d0) { //these four methods copied in as mobs hit multiple times per attack otherwise
+    protected void a(EntityLiving entityliving, double d0) { // these four methods copied in as mobs hit multiple times per attack otherwise
         double d1 = this.a(entityliving);
 
         if (d0 <= d1 && this.i <= 0) {

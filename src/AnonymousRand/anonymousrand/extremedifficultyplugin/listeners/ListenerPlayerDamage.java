@@ -24,25 +24,25 @@ public class ListenerPlayerDamage implements Listener {
     private static final Random random = new Random();
 
     @EventHandler
-    public void playerDamageByEntity(EntityDamageByEntityEvent event) { //change mob damage effects and attack counts etc. if it is hard to do in their custom entity classes
+    public void playerDamageByEntity(EntityDamageByEntityEvent event) { // change mob damage effects and attack counts etc. if it is hard to do in their custom entity classes
         if (event.getEntityType() == PLAYER) {
             Player bukkitPlayer = (Player)event.getEntity();
             Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
             World nmsWorld = nmsDamager.getWorld();
 
             switch (event.getDamager().getType()) {
-                case BAT -> ((CustomEntityBat)nmsDamager).attacks++; //increase attack count by 1
+                case BAT -> ((CustomEntityBat)nmsDamager).attacks++; // increase attack count by 1
                 case CAVE_SPIDER -> ((CustomEntitySpiderCave)nmsDamager).attacks++;
-                case ENDER_DRAGON -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /**ender dragon flings players much further*/
+                case ENDER_DRAGON -> Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /** ender dragon flings players much further */
                 case ENDERMAN -> ((CustomEntityEnderman)nmsDamager).attacks++;
                 case ENDERMITE -> ((CustomEntityEndermite)nmsDamager).attacks++;
                 case HOGLIN -> {
                     CustomEntityHoglin hoglin = (CustomEntityHoglin)nmsDamager;
                     hoglin.attacks++;
 
-                    if (hoglin.attacks >= 10 && hoglin.attacks < 44 && (hoglin.attacks - 15) % 3 == 0) { /**from 10 to 44 attacks, hoglins gain 4 max health every 3 attacks*/
+                    if (hoglin.attacks >= 10 && hoglin.attacks < 44 && (hoglin.attacks - 15) % 3 == 0) { /** from 10 to 44 attacks, hoglins gain 4 max health every 3 attacks */
                         hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, (hoglin.attacks - 15) / 3));
-                    } else if (hoglin.attacks >= 44 && hoglin.attacks < 55) { /**from 44 to 55 attacks, hoglin loses 4 max health but gains 1.2 damage per attack*/
+                    } else if (hoglin.attacks >= 44 && hoglin.attacks < 55) { /** from 44 to 55 attacks, hoglin loses 4 max health but gains 1.2 damage per attack */
                         int amp = hoglin.getEffect(MobEffects.HEALTH_BOOST).getAmplifier();
                         hoglin.removeEffect(MobEffects.HEALTH_BOOST);
                         hoglin.addEffect(new MobEffect(MobEffects.HEALTH_BOOST, Integer.MAX_VALUE, amp - 1));
@@ -50,15 +50,15 @@ public class ListenerPlayerDamage implements Listener {
                         hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + 1.2);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0)), 2L); /**hoglins launch players into air, doubled if baby*/ //delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.8 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0)), 2L); /** hoglins launch players into air, doubled if baby */ // delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
                 }
                 case HUSK -> {
                     CustomEntityZombieHusk husk = (CustomEntityZombieHusk)nmsDamager;
                     husk.attacks++;
 
                     if (husk.attacks < 30) {
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /**husks apply hunger for 1 minute instead*/
-                    } else { /**after 30 attacks, husks apply hunger 100 for 5 seconds instead*/
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /** husks apply hunger for 1 minute instead */
+                    } else { /** after 30 attacks, husks apply hunger 100 for 5 seconds instead */
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 100, 99));
                     }
                 }
@@ -68,7 +68,7 @@ public class ListenerPlayerDamage implements Listener {
                     ironGolem.attacks++;
                     ironGolem.increaseStatsAdd(2.0, 0.5, 0.025);
 
-                    if (ironGolem.attacks == 10 || ironGolem.attacks == 20 || ironGolem.attacks == 25 || ironGolem.attacks == 30 || ironGolem.attacks == 35 || ironGolem.attacks == 40 || ironGolem.attacks == 43 || ironGolem.attacks == 46 || ironGolem.attacks == 49 || ironGolem.attacks >= 50) { /**on these attacks, iron golems knock players high into the air*/
+                    if (ironGolem.attacks == 10 || ironGolem.attacks == 20 || ironGolem.attacks == 25 || ironGolem.attacks == 30 || ironGolem.attacks == 35 || ironGolem.attacks == 40 || ironGolem.attacks == 43 || ironGolem.attacks == 46 || ironGolem.attacks == 49 || ironGolem.attacks >= 50) { /** on these attacks, iron golems knock players high into the air */
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
                     }
                 }
@@ -76,7 +76,7 @@ public class ListenerPlayerDamage implements Listener {
                 case PIGLIN -> {
                     CustomEntityPiglin piglin = (CustomEntityPiglin)nmsDamager;
                     piglin.attacks++;
-                    piglin.setHealth((float)(piglin.getHealth() + 0.75)); /**piglins heal by 0.75 every time its attacks increase by 1*/
+                    piglin.setHealth((float)(piglin.getHealth() + 0.75)); /** piglins heal by 0.75 every time its attacks increase by 1 */
                 }
                 case RABBIT -> ((CustomEntityRabbit)nmsDamager).attacks++;
                 case RAVAGER -> {
@@ -90,7 +90,7 @@ public class ListenerPlayerDamage implements Listener {
                     }
 
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
-                        if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6*/
+                        if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /** if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6 */
                             ravager.launchHigh = true;
                         }
                     }, 5L);
@@ -109,13 +109,13 @@ public class ListenerPlayerDamage implements Listener {
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0)), 2L);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> sheep.launchHigh = Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14, 5L); /**if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 9*/
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> sheep.launchHigh = Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14, 5L); /** if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 9 */
                 }
                 case SILVERFISH -> {
                     CustomEntitySilverfish silverfish = (CustomEntitySilverfish)nmsDamager;
                     silverfish.attacks++;
 
-                    if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /**silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks*/
+                    if (silverfish.attacks > 60 && random.nextDouble() < 0.2) { /** silverfish hava a 20% chance to duplicate when hitting a player after 60 attacks */
                         new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, null, null, silverfish, false, true);
                     }
                 }
@@ -123,10 +123,10 @@ public class ListenerPlayerDamage implements Listener {
                 case SPIDER -> {
                     CustomEntitySpider spider = (CustomEntitySpider)nmsDamager;
                     spider.attacks++;
-                    bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /**spiders inflict slowness 1 for 1.5 secondS on hit*/
+                    bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 0)); /** spiders inflict slowness 1 for 1.5 secondS on hit */
 
                     if ((spider).attacks >= 25) {
-                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /**spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times*/
+                        bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 0)); /** spiders inflict poison 1 for 2 damage ticks on hit if it has attacked more than 25 times */
                     }
                 }
                 case VEX -> ((CustomEntityVex)nmsDamager).attacks++;
@@ -137,7 +137,7 @@ public class ListenerPlayerDamage implements Listener {
                     zoglin.attacks++;
 
                     if (zoglin.attacks >= 40) {
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)), 2L); /**after 40 attacks, zoglins throw players into the air when it hits the player*/
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)), 2L); /** after 40 attacks, zoglins throw players into the air when it hits the player */
                     }
                 }
                 case ZOMBIE -> {
@@ -149,7 +149,7 @@ public class ListenerPlayerDamage implements Listener {
                         CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
                         zombie.attacks++;
 
-                        if (zombie.attacks >= 30) { /**after 30 attacks, zombies summon vanilla lightning on the player when it hits the player*/
+                        if (zombie.attacks >= 30) { /** after 30 attacks, zombies summon vanilla lightning on the player when it hits the player */
                             bukkitWorld.strikeLightning(bukkitPlayer.getLocation());
                         }
                     }
@@ -158,7 +158,7 @@ public class ListenerPlayerDamage implements Listener {
                 case ZOMBIFIED_PIGLIN -> ((CustomEntityZombiePig)nmsDamager).attacks++;
             }
 
-            if (bukkitPlayer.isBlocking()) { /**all mob attacks damage shields 75% more (at least 4 damage)*/
+            if (bukkitPlayer.isBlocking()) { /** all mob attacks damage shields 75% more (at least 4 damage) */
                 event.setDamage(Math.max(event.getDamage() * 1.75, 4.0));
             }
         }
@@ -171,7 +171,7 @@ public class ListenerPlayerDamage implements Listener {
             EntityPlayer nmsPlayer = (EntityPlayer)((CraftEntity) event.getEntity()).getHandle();
             double damage = event.getDamage();
 
-            if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /**drowning damage has a 50% chance to spawn a pufferfish, and a 15% chance to spawn a guardian*/
+            if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /** drowning damage has a 50% chance to spawn a pufferfish, and a 15% chance to spawn a guardian */
                 World nmsWorld = nmsPlayer.getWorld();
 
                 if (random.nextDouble() < 0.5) {
@@ -182,22 +182,22 @@ public class ListenerPlayerDamage implements Listener {
             }
 
             switch (cause) {
-                case CONTACT -> event.setDamage(10.0); /**cactus do 10 damage instead of 1*/
-                case FALLING_BLOCK -> event.setDamage(damage * 0.5); /**anvils do 50% less damage*/
-                case FIRE -> { /**soul fire sets players on fire for 10 minutes*/
+                case CONTACT -> event.setDamage(10.0); /** cactus do 10 damage instead of 1 */
+                case FALLING_BLOCK -> event.setDamage(damage * 0.5); /** anvils do 50% less damage */
+                case FIRE -> { /** soul fire sets players on fire for 10 minutes */
                     if (event.getEntity().getWorld().getBlockAt((int)nmsPlayer.locX(), (int)nmsPlayer.locY(), (int)nmsPlayer.locZ()).getType() == org.bukkit.Material.SOUL_FIRE) {
                         nmsPlayer.setFireTicks(12000);
                     }
                 }
-                case MAGIC -> event.setDamage(damage * 0.333333333); /**harming potions and area effect clouds do 67% less damage*/
-                case SUFFOCATION -> event.setDamage(5.0); /**suffocation does 5 damage instead of 1*/
+                case MAGIC -> event.setDamage(damage * 0.333333333); /** harming potions and area effect clouds do 67% less damage */
+                case SUFFOCATION -> event.setDamage(5.0); /** suffocation does 5 damage instead of 1 */
             }
         }
     }
 
     @EventHandler
     public void entityAirChange(EntityAirChangeEvent event) {
-        if (event.getEntityType() == PLAYER && event.getAmount() >= 2) { /**player air goes down 2 times as fast*/
+        if (event.getEntityType() == PLAYER && event.getAmount() >= 2) { /** player air goes down 2 times as fast */
             event.setAmount(event.getAmount() - 1);
         }
     }

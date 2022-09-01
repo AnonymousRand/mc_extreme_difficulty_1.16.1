@@ -64,18 +64,18 @@ public class RunnableMobRain extends BukkitRunnable {
             return;
         }
 
-        if (this.cycles == 1) { /**to reduce lag*/
+        if (this.cycles == 1) { /** to reduce lag */
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill @e[type=enderman]");
         }
 
         int loopCounter = 0;
-        do { /**mobs can't spawn within an 8 block radius of 0,0 to prevent them from just falling into the end portal and they can't spawn into the void*/
-            loopCounter++; //to prevent rare infinite loops
+        do { /** mobs can't spawn within an 8 block radius of 0,0 to prevent them from just falling into the end portal and they can't spawn into the void */
+            loopCounter++; // to prevent rare infinite loops
             this.loc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.originPos, random.nextDouble() * this.radius, this.target != null ? this.target.locY() + 35.0 : this.y + 35.0, 361.0);
         } while ((Math.abs(this.loc.getX() - 0.0) < 8.0 || Math.abs(this.loc.getY() - 0.0) < 8.0 || this.bukkitWorld.getHighestBlockYAt(this.loc) < 10.0) && loopCounter < 20);
 
         this.index = random.nextInt(this.entitiesToSpawn.get(this.wave).size());
-        new SpawnEntity(this.nmsWorld, this.entitiesToSpawn.get(this.wave).get(this.index), 1, CreatureSpawnEvent.SpawnReason.DROWNED, this.loc, true, true); /**these mobs have nametags so they don't despawn or take up mob cap*/
+        new SpawnEntity(this.nmsWorld, this.entitiesToSpawn.get(this.wave).get(this.index), 1, CreatureSpawnEvent.SpawnReason.DROWNED, this.loc, true, true); /** these mobs have nametags so they don't despawn or take up mob cap */
         this.entitiesToSpawn.get(this.wave).remove(this.index);
     }
 

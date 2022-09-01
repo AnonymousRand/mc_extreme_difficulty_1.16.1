@@ -23,11 +23,11 @@ public class ListenerPotionEffect implements Listener {
         EntityPotionEffectEvent.Cause bukkitCause = event.getCause();
 
         if (bukkitNewEffect != null) {
-            if (bukkitNewEffect.getType().equals(PotionEffectType.DOLPHINS_GRACE)) { /**dolphin's grace drags down the player*/
+            if (bukkitNewEffect.getType().equals(PotionEffectType.DOLPHINS_GRACE)) { /** dolphin's grace drags down the player */
                 bukkitEntity.setVelocity(new Vector(0.0, -0.3, 0.0));
             }
 
-            if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD)) { /**positive potion effects applied via potions last 40 times shorter*/
+            if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD)) { /** positive potion effects applied via potions last 40 times shorter */
                 PotionEffectType type = bukkitNewEffect.getType();
 
                 if (type.equals(PotionEffectType.ABSORPTION) || type.equals(PotionEffectType.CONDUIT_POWER) || type.equals(PotionEffectType.DAMAGE_RESISTANCE) || type.equals(PotionEffectType.DOLPHINS_GRACE) || type.equals(PotionEffectType.FAST_DIGGING) || type.equals(PotionEffectType.FIRE_RESISTANCE) || type.equals(PotionEffectType.HEAL) || type.equals(PotionEffectType.HEALTH_BOOST) || type.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || type.equals(PotionEffectType.INCREASE_DAMAGE) || type.equals(PotionEffectType.INVISIBILITY) || type.equals(PotionEffectType.JUMP) || type.equals(PotionEffectType.LUCK) || type.equals(PotionEffectType.NIGHT_VISION) || type.equals(PotionEffectType.REGENERATION) || type.equals(PotionEffectType.SATURATION) || type.equals(PotionEffectType.SLOW_FALLING) || type.equals(PotionEffectType.SPEED) || type.equals(PotionEffectType.WATER_BREATHING)) {
@@ -40,7 +40,7 @@ public class ListenerPotionEffect implements Listener {
                         }, 1);
                     }
                 } else {
-                    if (!(bukkitEntity instanceof Player)) { /**non-player mobs are not affected by negative splash/lingering potions*/
+                    if (!(bukkitEntity instanceof Player)) { /** non-player mobs are not affected by negative splash/lingering potions */
                         event.setCancelled(true);
                     }
                 }

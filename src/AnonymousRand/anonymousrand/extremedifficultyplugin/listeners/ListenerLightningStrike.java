@@ -36,7 +36,7 @@ public class ListenerLightningStrike implements Listener {
             net.minecraft.server.v1_16_R1.World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
             Location loc = bukkitLightning.getLocation();
 
-            if (loc.getBlock().getType() == Material.WATER) { /**lightning damage radiates through water up to a 28.3 by 28.3 box (max dist about 40 blocks), with lower damage the further from the strike from about 2-5*/
+            if (loc.getBlock().getType() == Material.WATER) { /** lightning damage radiates through water up to a 28.3 by 28.3 box (max dist about 40 blocks), with lower damage the further from the strike from about 2-5 */
                 nmsWorld.getEntities(null, ((CraftEntity)bukkitLightning).getHandle().getBoundingBox().grow(28.3, 64.0, 28.3), entity -> entity instanceof EntityPlayer).forEach(entity -> {
                     Location entityLoc = entity.getBukkitEntity().getLocation();
 
@@ -46,11 +46,11 @@ public class ListenerLightningStrike implements Listener {
                 });
             }
 
-            if (!storm && random.nextDouble() < 0.025) { /**non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike*/
+            if (!storm && random.nextDouble() < 0.025) { /** non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike */
                 new RunnableLightningStorm(nmsWorld, loc, random.nextInt(11) + 45).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
 
-            if (!storm && random.nextDouble() < 0.02 && numberOfThors < Bukkit.getOnlinePlayers().size()) { /**non-storm lightning has a 2% chance to summon thor, up to 1 thor per player*/
+            if (!storm && random.nextDouble() < 0.02 && numberOfThors < Bukkit.getOnlinePlayers().size()) { /** non-storm lightning has a 2% chance to summon thor, up to 1 thor per player */
                 new SpawnEntity(nmsWorld, new CustomEntityZombieThor(nmsWorld), 1, null, loc, true);
                 numberOfThors++;
             }

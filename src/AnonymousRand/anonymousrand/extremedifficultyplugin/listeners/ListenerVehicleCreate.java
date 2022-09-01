@@ -14,7 +14,7 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 public class ListenerVehicleCreate implements Listener {
 
     @EventHandler
-    public void vehicleCreate(VehicleCreateEvent event) { //replace boats with custom boats
+    public void vehicleCreate(VehicleCreateEvent event) { // replace boats with custom boats
         Vehicle bukkitVehicle = event.getVehicle();
         World nmsWorld = ((CraftWorld)bukkitVehicle.getWorld()).getHandle();
         Location loc = bukkitVehicle.getLocation();

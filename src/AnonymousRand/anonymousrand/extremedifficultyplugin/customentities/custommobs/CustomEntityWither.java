@@ -22,9 +22,9 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     public CustomEntityWither(World world) {
         super(EntityTypes.WITHER, world);
-        this.setInvul(100); /**withers only take 5 seconds to explode when spawned*/
+        this.setInvul(100); /** withers only take 5 seconds to explode when spawned */
         this.dash = false;
-        double health = 200.0 + 70.0 * this.getWorld().getServer().getOnlinePlayers().size(); /**withers have 70 more health per player online, and 200 starting health*/
+        double health = 200.0 + 70.0 * this.getWorld().getServer().getOnlinePlayers().size(); /** withers have 70 more health per player online, and 200 starting health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float)health);
     }
@@ -42,20 +42,20 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     protected void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new PathfinderGoalWitherDoNothingWhileInvulnerable());
-        this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /**custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 25 seconds) that breaks blocks around it and does 6 damage to all nearby players*/
-        this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /**main head shoots a skull every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
+        this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /** custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 25 seconds) that breaks blocks around it and does 6 damage to all nearby players */
+        this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /** main head shoots a skull every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**only attacks players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** only attacks players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { //shoot for main head
+    public void a(EntityLiving entityliving, float f) { // shoot for main head
         this.shootSkullToEntity(0, entityliving);
     }
 
@@ -72,11 +72,11 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             return;
         }
 
-        if (!this.isSilent() && random.nextDouble() < 0.05) { /**withers only play the skull shooting sound 5% of the time*/
+        if (!this.isSilent() && random.nextDouble() < 0.05) { /** withers only play the skull shooting sound 5% of the time */
             this.world.a((EntityHuman)null, 1024, this.getChunkCoordinates(), 0);
         }
 
-        /**withers have higher chances to shoot blue skulls the more players are online*/
+        /** withers have higher chances to shoot blue skulls the more players are online */
         boolean flag = this.random.nextFloat() < ((-0.3 + (Math.log10(this.getWorld().getServer().getOnlinePlayers().size() + 3.0) / (Math.log10(3.0) - 0.15))) / 150.0);
         double d3 = this.getHeadX(i);
         double d4 = this.getHeadY(i);
@@ -97,7 +97,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (super.damageEntity(damagesource, f)) { /**wither now breaks all usual blocks including bedrock when damaged*/
+        if (super.damageEntity(damagesource, f)) { /** wither now breaks all usual blocks including bedrock when damaged */
             new RunnableWitherBreakBlocks(this, 1, 2, 1, 2, true).run();
             return true;
         }
@@ -107,7 +107,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public void setMot(double x, double y, double z) {
-        if (this.dash && this.getGoalTarget() != null) { /**when wither is dashing, always move towards player*/
+        if (this.dash && this.getGoalTarget() != null) { /** when wither is dashing, always move towards player */
             EntityLiving target = this.getGoalTarget();
             super.setMot((target.locX() - this.locX()) / 14.0, (target.locY() - this.locY()) / 14.0, (target.locZ() - this.locZ()) / 14.0);
         } else {
@@ -129,8 +129,8 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             i = this.getInvul() - 1;
 
             if (i <= 0) {
-                this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /**withers explode with power 12 instead of 7 when spawned and sets blocks on fire*/
-                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /**withers summon a tornado after the spawn explosion*/
+                this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /** withers explode with power 12 instead of 7 when spawned and sets blocks on fire */
+                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /** withers summon a tornado after the spawn explosion */
 
                 if (!this.isSilent()) {
                     this.world.b(1023, this.getChunkCoordinates(), 0);
@@ -139,11 +139,11 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
             this.setInvul(i);
         } else {
-            for (i = 1; i < 3; ++i) { //main head: 0, right head: 1, left head: 2
+            for (i = 1; i < 3; ++i) { // main head: 0, right head: 1, left head: 2
                 if (this.getGoalTarget() instanceof EntityPlayer) {
                     this.setHeadTarget(i, this.getGoalTarget().getId());
 
-                    if (this.ticksLived % 5 == 0) { /**side heads also shoot a skull every 5 ticks*/
+                    if (this.ticksLived % 5 == 0) { /** side heads also shoot a skull every 5 ticks */
                         this.setHeadTarget(i, 0);
                         this.shootSkullToEntity(i, (EntityLiving)this.getGoalTarget());
                     }
@@ -160,7 +160,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         }
     }
 
-    public double getFollowRange() { /**withers have 80 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /** withers have 80 block detection range (setting attribute doesn't work) */
         return 80.0;
     }
 
@@ -168,24 +168,24 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /**every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton*/
+        if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /** every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton */
             new SpawnEntity(this.getWorld(), new CustomEntitySkeletonWither(this.getWorld()), 1, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {
-            if (!this.getEntitySenses().a(this.getGoalTarget()) && random.nextDouble() < 0.05) { /**if the wither can't see its target, it shoots a blue skull on average every second*/
+            if (!this.getEntitySenses().a(this.getGoalTarget()) && random.nextDouble() < 0.05) { /** if the wither can't see its target, it shoots a blue skull on average every second */
                 this.shootSkullToEntity(0, this.getGoalTarget(), true);
             }
         }
 
         if (!(this instanceof CustomEntityWitherMini) && this.ticksLived == 5) {
-            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /**wither causes thunderstorm*/
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /** wither causes thunderstorm */
         }
     }
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -193,13 +193,13 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
-    protected double getHeadX(int i) { //util methods
+    protected double getHeadX(int i) { // util methods
         if (i <= 0) {
             return this.locX();
         } else {
@@ -299,7 +299,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
     static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
         public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
-            blockBreakable = (type) -> { /**wither can now break bedrock*/
+            blockBreakable = (type) -> { /** wither can now break bedrock */
                 return type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.COMMAND_BLOCK  && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.FIRE && type != org.bukkit.Material.WITHER_ROSE && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA;
             };
         }
@@ -307,7 +307,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         @Override
         public void run() {
             this.cycles = 0;
-            this.entity.getWorld().createExplosion(this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), 0.0F, false, Explosion.Effect.NONE); //constant explosion noises
+            this.entity.getWorld().createExplosion(this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), 0.0F, false, Explosion.Effect.NONE); // constant explosion noises
             super.run();
         }
     }

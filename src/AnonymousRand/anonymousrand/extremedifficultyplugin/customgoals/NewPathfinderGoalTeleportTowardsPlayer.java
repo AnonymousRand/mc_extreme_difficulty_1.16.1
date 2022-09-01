@@ -32,7 +32,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
     }
 
     @Override
-    public void d() { //reset task
+    public void d() { // reset task
         this.teleportToPlayer = 0;
     }
 
@@ -47,15 +47,15 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
     protected void initiateTeleport(double h) {
         double hypo = h;
-        EntityPlayer player = this.entity.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), this.entity.getBoundingBox().grow(128.0, 128.0, 128.0)); //get closest player within 128 sphere radius of this.entity
+        EntityPlayer player = this.entity.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), this.entity.getBoundingBox().grow(128.0, 128.0, 128.0)); // get closest player within 128 sphere radius of this.entity
 
         if (player != null) {
-            BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.entity.locY() + 2.0, 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-            BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
+            BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+            BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
-            if (pos2 != null && pos2.getY() < 128.0) { //teleport to highest block if there is one in that location
+            if (pos2 != null && pos2.getY() < 128.0) { // teleport to highest block if there is one in that location
                 this.teleportTo(pos2);
-            } else { //clear out 5 by 5 by 5 area around teleport destination before teleporting there
+            } else { // clear out 5 by 5 by 5 area around teleport destination before teleporting there
                 this.initiateTeleportBreakBlocks(pos);
             }
 
@@ -77,7 +77,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
                     loc.setY(initY + y);
                     loc.setZ(initZ + z);
 
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { //as long as it isn't one of these blocks
+                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { // as long as it isn't one of these blocks
                         loc.getBlock().setType(org.bukkit.Material.AIR);
                     }
                 }
@@ -110,7 +110,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
         }
     }
 
-    protected boolean teleportHelper(double d0, double d1, double d2, boolean flag) { //called a() in original living entity/whatever class
+    protected boolean teleportHelper(double d0, double d1, double d2, boolean flag) { // called a() in original living entity/whatever class
         double d3 = this.entity.locX();
         double d4 = this.entity.locY();
         double d5 = this.entity.locZ();
@@ -136,7 +136,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
             if (flag2) {
                 this.entity.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this.entity)) { /**can teleport onto fluids*/
+                if (world.getCubes(this.entity)) { /** can teleport onto fluids */
                     flag1 = true;
                 }
             }

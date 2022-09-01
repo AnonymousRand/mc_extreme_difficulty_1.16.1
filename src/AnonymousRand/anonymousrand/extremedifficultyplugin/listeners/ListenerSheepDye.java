@@ -12,7 +12,7 @@ import org.bukkit.event.entity.SheepDyeWoolEvent;
 public class ListenerSheepDye implements Listener {
 
     @EventHandler
-    public void sheepDyeWool(SheepDyeWoolEvent event) { /**sheep turn aggressive and pink when dyed*/
+    public void sheepDyeWool(SheepDyeWoolEvent event) { /** sheep turn aggressive and pink when dyed */
         EntitySheep nmsSheep = ((CraftSheep)event.getEntity()).getHandle();
         World nmsWorld = nmsSheep.getWorld();
 

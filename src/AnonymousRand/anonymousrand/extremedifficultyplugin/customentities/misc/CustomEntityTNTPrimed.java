@@ -6,7 +6,7 @@ public class CustomEntityTNTPrimed extends EntityTNTPrimed {
 
     protected float explosionPower;
 
-    public CustomEntityTNTPrimed(World world, int fuseLength, float explosionPower) { //adjustable fuse length and explosion power
+    public CustomEntityTNTPrimed(World world, int fuseLength, float explosionPower) { // adjustable fuse length and explosion power
         super(EntityTypes.TNT, world);
 
         this.setFuseTicks(fuseLength);

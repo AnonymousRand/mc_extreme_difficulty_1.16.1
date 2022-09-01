@@ -39,29 +39,29 @@ public class ListenerPlayerInteract implements Listener {
 
             if (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) {
                 if (action == Action.LEFT_CLICK_BLOCK) {
-                    if (type == Material.SPAWNER) { /**attempting to mine a spawner gives mining fatigue 3 for 15 seconds*/
+                    if (type == Material.SPAWNER) { /** attempting to mine a spawner gives mining fatigue 3 for 15 seconds */
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 300, 2));
                     }
                 } else {
-                    if (containerBlock) { /**right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds*/
+                    if (containerBlock) { /** right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds */
                         CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
                         new SpawnEntity(nmsWorld, newPiglin, 1, null, loc, true);
-                        newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); //give piglin a sword or crossbow
-                        PiglinAI.a(newPiglin); //code from onInitialSpawn
+                        newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); // give piglin a sword or crossbow
+                        PiglinAI.a(newPiglin); // code from onInitialSpawn
 
                         nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
                             ((CustomEntityPiglin)entity).veryAngryTicks += 200;
                         });
                     }
 
-                    if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /**right-clicking an anvil or smithing table causes it to explode 10 seconds later*/
+                    if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /** right-clicking an anvil or smithing table causes it to explode 10 seconds later */
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                             nmsWorld.createExplosion(null, bukkitBlock.getLocation().getX(), bukkitBlock.getLocation().getY(), bukkitBlock.getLocation().getZ(), 4.0F, true, Explosion.Effect.NONE);
                             bukkitBlock.setType(Material.AIR);
                         }, 200L);
                     }
 
-                    if (bukkitPlayer.getEquipment().getItemInMainHand().getType() == Material.FLINT_AND_STEEL && bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
+                    if (bukkitPlayer.getEquipment().getItemInMainHand().getType() == Material.FLINT_AND_STEEL && bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /** blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners */
                         event.setCancelled(true);
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You can't place such bright blocks in the end\"");
                     }
@@ -72,7 +72,7 @@ public class ListenerPlayerInteract implements Listener {
 
     @EventHandler
     public void playerPlaceLavaBucket(PlayerBucketEmptyEvent event) {
-        if (event.getBucket() == Material.LAVA_BUCKET && event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /**blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners*/
+        if (event.getBucket() == Material.LAVA_BUCKET && event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /** blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners */
             event.setCancelled(true);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + event.getPlayer().getName() + " \"You can't place such bright blocks in the end\"");
         }

@@ -20,8 +20,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
-        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
         this.a20 = false;
         this.deathFireballs = false;
@@ -29,27 +29,27 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     protected void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (this.isInvulnerable(damagesource)) {
             return false;
-        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /**rebounded fireballs do not do damage*/
+        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /** rebounded fireballs do not do damage */
             return false;
         } else {
             return super.damageEntity(damagesource, f);
         }
     }
 
-    public double getFollowRange() { /**ghasts have 80 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /** ghasts have 80 block detection range (setting attribute doesn't work) */
         return 80.0;
     }
 
@@ -57,15 +57,15 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 20 && !this.a20) { /**after 20 attacks, ghasts get 16 max health and health*/
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, ghasts get 16 max health and health */
             this.a20 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
             this.setHealth(16.0F);
         }
 
-        if (this.getHealth() <= 0.0 && !this.deathFireballs) { //do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
+        if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.attacks < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /**when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks*/
+            new RunnableRingOfFireballs(this, 0.5, this.attacks < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
         }
     }
 
@@ -77,7 +77,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -85,7 +85,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 32; /**random despawn distance increased to 64 blocks*/
+                int k = this.getEntityType().e().g() + 32; /** random despawn distance increased to 64 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -102,7 +102,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -110,7 +110,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -148,7 +148,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         public void e() {
             EntityLiving entityliving = this.ghast.getGoalTarget();
 
-            if (this.ghast.d(entityliving.getPositionVector()) < 6400.0D) { /**removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing*/
+            if (this.ghast.d(entityliving.getPositionVector()) < 6400.0D) { /** removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.world;
 
                 ++this.a;
@@ -156,10 +156,10 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                     world.a((EntityHuman)null, 1015, this.ghast.getChunkCoordinates(), 0);
                 }
 
-                this.ghast.t(this.a > 2); //shooting animation only plays for 2 ticks
+                this.ghast.t(this.a > 2); // shooting animation only plays for 2 ticks
 
-                if (this.a == 5) { /**shoots a fireball every 5 ticks*/
-                    if (++this.attackNum == 6) { //attacks only count every 1.5 seconds, or 6 shots
+                if (this.a == 5) { /** shoots a fireball every 5 ticks */
+                    if (++this.attackNum == 6) { // attacks only count every 1.5 seconds, or 6 shots
                         this.ghast.attacks++;
                         this.attackNum = 0;
                     }
@@ -173,22 +173,22 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                         world.a((EntityHuman)null, 1016, this.ghast.getChunkCoordinates(), 0);
                     }
 
-                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 5 == 0 && this.ring) { //reset booleans for next cycle
+                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 5 == 0 && this.ring) { // reset booleans for next cycle
                         this.ring = false;
                     }
 
-                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 7 == 0 && this.power3) { //reset booleans for next cycle
+                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 7 == 0 && this.power3) { // reset booleans for next cycle
                         this.power3 = false;
                     }
 
-                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0 && !this.ring) { /**after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds*/
+                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0 && !this.ring) { /** after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
                         this.ring = true;
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
                     CustomEntityLargeFireball entitylargefireball;
 
-                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 8 == 0 && !this.power3) { /**after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds*/
+                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
                         entitylargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {

@@ -34,7 +34,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
         this.attackBooleans.put(39, false);
         this.attackBooleans.put(42, false);
         this.attackBooleans.put(50, false);
-        Arrays.fill(this.nmsEntity.dropChanceArmor, 0.0f);  /**entity can't drop the items in their armor slots*/
+        Arrays.fill(this.nmsEntity.dropChanceArmor, 0.0f);  /** entity can't drop the items in their armor slots */
 
         try {
             this.attacks = this.nmsEntity.getClass().getDeclaredField("attacks");
@@ -93,7 +93,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
             }
             case 11 -> {
                 org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BOOTS);
-                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
                 if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.IRON_HELMET) {
@@ -116,7 +116,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
             }
             case 22 -> {
                 org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_BOOTS);
-                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
                 if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.DIAMOND_HELMET) {
@@ -149,7 +149,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
                 org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
                 if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
@@ -182,7 +182,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
                 org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
-                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
 
                 if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {
@@ -213,7 +213,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
                 org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /**most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back*/
+                boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
 
                 if (this.bukkitEquipment.getHelmet().getType() != org.bukkit.Material.NETHERITE_HELMET) {

@@ -28,26 +28,26 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
         goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
-        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /**shulkers have 12 armor points, and even more when it is closed*/
+        this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /** shulkers have 12 armor points, and even more when it is closed */
     }
 
     @Override
     public void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(4, new CustomEntityShulker.PathfinderGoalShulkerBulletAttack());
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, (new CustomPathfinderGoalHurtByTarget(this, new Class[0])).a(CustomEntityShulker.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         boolean b = super.damageEntity(damagesource, f);
 
-        if ((double)this.getHealth() < (double)this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /**shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health*/
+        if ((double)this.getHealth() < (double)this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /** shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
@@ -57,10 +57,10 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
     @Override
     public void die() {
         super.die();
-        new RunnableShulkerDeathBullets(this); /**shulkers explode into 9 shulker bullets that seek out the player when killed*/
+        new RunnableShulkerDeathBullets(this); /** shulkers explode into 9 shulker bullets that seek out the player when killed */
     }
 
-    public double getFollowRange() { /**shulkers have 40 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /** shulkers have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
     }
 
@@ -68,18 +68,18 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 10 && !this.a10) { /**after 10 attacks, shulkers get 15 armor points and regen 2*/
+        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, shulkers get 15 armor points and regen 2 */
             this.a10 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(15.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 21 && !this.a21) { /**after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds*/
+        if (this.attacks == 21 && !this.a21) { /** after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds */
             this.a21 = true;
             this.goalSelector.a(1, goal1);
         }
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks*/
+        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
             this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
             this.goalSelector.a(goal1);
@@ -95,7 +95,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -103,7 +103,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -120,7 +120,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -128,7 +128,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -173,9 +173,9 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
                     if (this.b <= 0) {
                         CustomEntityShulker.this.attacks++;
 
-                        this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /**shulker takes on average 10 less ticks to shoot*/
+                        this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /** shulker takes on average 10 less ticks to shoot */
 
-                        for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /**after 35 attacks, shulkers have a 50% to 2 bullets at a time*/
+                        for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /** after 35 attacks, shulkers have a 50% to 2 bullets at a time */
                             CustomEntityShulker.this.world.addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.world, CustomEntityShulker.this, entityliving, CustomEntityShulker.this.eM().n()));
                         }
 

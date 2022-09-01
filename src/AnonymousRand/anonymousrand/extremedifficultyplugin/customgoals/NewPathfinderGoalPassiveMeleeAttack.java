@@ -26,7 +26,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public boolean a() { //should execute; fires constantly
+    public boolean a() { // should execute; fires constantly
         long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) {
@@ -47,7 +47,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public boolean b() { //should continue executing; fires after every attack
+    public boolean b() { // should continue executing; fires after every attack
         EntityLiving entityliving = this.entity.getGoalTarget();
 
         return entityliving == null ? false : (!entityliving.isAlive() ? false : (!this.c ? !this.entity.getNavigation().m() : (!this.entity.a(entityliving.getChunkCoordinates()) ? false : !(entityliving instanceof EntityHuman) || !entityliving.isSpectator() && !((EntityHuman) entityliving).isCreative())));
@@ -70,14 +70,14 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public void e() { //tick; fires if continue execute or should execute is true
+    public void e() { // tick; fires if continue execute or should execute is true
         EntityLiving entityliving = this.entity.getGoalTarget();
 
         this.entity.getControllerLook().a(entityliving, 30.0F, 30.0F);
         double d0 = this.entity.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
 
         this.h = Math.max(this.h - 1, 0);
-        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /**no longer requires line of sight to continue attacking*/
+        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityliving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /** no longer requires line of sight to continue attacking */
             this.e = entityliving.locX();
             this.f = entityliving.locY();
             this.g = entityliving.locZ();

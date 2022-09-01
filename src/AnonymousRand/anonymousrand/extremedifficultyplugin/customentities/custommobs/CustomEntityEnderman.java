@@ -14,44 +14,44 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
-        this.a(PathType.WATER, 0.0F); /**no longer avoids water*/
-        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.a(PathType.WATER, 0.0F); /** no longer avoids water */
+        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
         this.a12 = false;
         this.a25 = false;
         this.a40 = false;
-        this.setHealth(20.0F); /**endermen only have 20 health*/
+        this.setHealth(20.0F); /** endermen only have 20 health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 
     @Override
-    protected void initPathfinder() { /**no longer targets endermites, avoids water and stops if stared at*/
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /**custom goal that breaks blocks around the mob periodically*/
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /**uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level*/
+    protected void initPathfinder() { /** no longer targets endermites, avoids water and stops if stared at */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level */
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
         this.goalSelector.a(11, new CustomEntityEnderman.PathfinderGoalEndermanPickupBlock(this));
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /**custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage*/
+        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not*/
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not */
     }
 
     @Override
-    public boolean dN() { /**no longer damaged by water*/
+    public boolean dN() { /** no longer damaged by water */
         return false;
     }
 
     @Override
-    protected void burnFromLava() {} /**no longer teleports away from lava*/
+    protected void burnFromLava() {} /** no longer teleports away from lava */
 
     protected boolean shouldAttackPlayer(EntityHuman entityhuman) {
-        /**carved pumpkins no longer work*/
+        /** carved pumpkins no longer work */
         Vec3D vec3d = entityhuman.f(1.0F).d();
         Vec3D vec3d1 = new Vec3D(this.locX() - entityhuman.locX(), this.getHeadY() - entityhuman.getHeadY(), this.locZ() - entityhuman.locZ());
         double d0 = vec3d1.f();
@@ -59,13 +59,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         vec3d1 = vec3d1.d();
         double d1 = vec3d.b(vec3d1);
 
-        return d1 > 1.0D - 0.025D / d0; /**removed line of sight requirement for anger by sight*/
+        return d1 > 1.0D - 0.025D / d0; /** removed line of sight requirement for anger by sight */
     }
 
     @Override
-    protected boolean eM() { //teleportRandomly()
+    protected boolean eM() { // teleportRandomly()
         if (!this.getWorld().s_() && this.isAlive()) {
-            double d0 = this.locX() + (random.nextDouble() - 0.5D) * 20.0D; /**random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player*/
+            double d0 = this.locX() + (random.nextDouble() - 0.5D) * 20.0D; /** random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player */
             double d1 = this.locY() + (double)(random.nextInt(64) - 32);
             double d2 = this.locZ() + (random.nextDouble() - 0.5D) * 24.0D;
 
@@ -75,7 +75,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         }
     }
 
-    protected boolean a(Entity entity) { //override private teleportToEntity()
+    protected boolean a(Entity entity) { // override private teleportToEntity()
         Vec3D vec3d = new Vec3D(this.locX() - entity.locX(), this.e(0.5D) - entity.getHeadY(), this.locZ() - entity.locZ());
 
         vec3d = vec3d.d();
@@ -86,14 +86,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         return this.o(d1, d2, d3);
     }
 
-    protected boolean o(double d0, double d1, double d2) { //override private teleportTo()
+    protected boolean o(double d0, double d1, double d2) { // override private teleportTo()
         BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(d0, d1, d2);
 
         while (blockposition_mutableblockposition.getY() > 0 && !this.getWorld().getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
             blockposition_mutableblockposition.c(EnumDirection.DOWN);
         }
 
-        boolean flag = true; /**can now teleport onto fluids and non-solid blocks*/
+        boolean flag = true; /** can now teleport onto fluids and non-solid blocks */
         boolean flag1 = false;
 
         if (flag && !flag1) {
@@ -114,13 +114,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (this.isInvulnerable(damagesource)) {
             return false;
-        } else if (damagesource instanceof EntityDamageSourceIndirect) { /**no longer teleports away from projectiles*/
+        } else if (damagesource instanceof EntityDamageSourceIndirect) { /** no longer teleports away from projectiles */
             return false;
         } else {
             boolean flag = super.damageEntity(damagesource, f);
 
             if (flag && damagesource.getEntity() instanceof EntityPlayer) {
-                if (this.attacks >= 40) { /**after 40 attacks, endermen summon an endermite when hit and not killed*/
+                if (this.attacks >= 40) { /** after 40 attacks, endermen summon an endermite when hit and not killed */
                     new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                 }
             }
@@ -137,12 +137,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
     public void die() {
         super.die();
 
-        if (this.attacks >= 40) { /**after 40 attacks, endermen summon 5 endermites when killed*/
+        if (this.attacks >= 40) { /** after 40 attacks, endermen summon 5 endermites when killed */
             new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
     }
 
-    public double getFollowRange() { /**endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks)*/
+    public double getFollowRange() { /** endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks) */
         return this.attacks < 12 ? 16.0 : this.attacks < 25 ? 24.0 : 32.0;
     }
 
@@ -150,44 +150,44 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /**after 12 attacks, endermen gain speed 1*/
+        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, endermen gain speed 1 */
             this.a12 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
         }
 
-        if (this.attacks == 25 && !this.a25) { /**after 25 attacks, endermen get 40 max health and regen 3*/
+        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, endermen get 40 max health and regen 3 */
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); //updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
         }
 
-        if (this.attacks == 40 && !this.a40) { /**after 40 attacks, endermen summon 5 endermites*/
+        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, endermen summon 5 endermites */
             this.a40 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {
-            if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { //deaggros if out of range
+            if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggros if out of range
                 this.setGoalTarget(null);
             }
 
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (this.d(target.getPositionVector()) > 144.0) { /**teleports to player if player is more than 12 blocks horizontally but less than 20 blocks away*/
+                if (this.d(target.getPositionVector()) > 144.0) { /** teleports to player if player is more than 12 blocks horizontally but less than 20 blocks away */
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (random.nextDouble() < 0.3) { /**30% chance to summon an endermite where it teleports to*/
+                    if (random.nextDouble() < 0.3) { /** 30% chance to summon an endermite where it teleports to */
                         new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
 
-                if (!this.getEntitySenses().a(target)) { /**teleports to player if player can't be seen (includes when the player is towering up to avoid enderman)*/
+                if (!this.getEntitySenses().a(target)) { /** teleports to player if player can't be seen (includes when the player is towering up to avoid enderman) */
                     this.o(target.locX(), target.locY(), target.locZ());
 
-                    if (random.nextDouble() < 0.3) { /**30% chance to summan an endermite where it teleports to*/
+                    if (random.nextDouble() < 0.3) { /** 30% chance to summan an endermite where it teleports to */
                         new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                     }
                 }
@@ -203,7 +203,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -211,7 +211,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -228,7 +228,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -236,15 +236,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
     @Override
-    public int bL() { //getMaxFallHeight
-        return Integer.MAX_VALUE; /**mobs are willing to take any fall to reach the player as they don't take fall damage*/
+    public int bL() { // getMaxFallHeight
+        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 
     @Override
@@ -274,7 +274,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
             if (flag2) {
                 this.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this)) { /**can teleport onto fluids*/
+                if (world.getCubes(this)) { /** can teleport onto fluids */
                     flag1 = true;
                 }
             }
@@ -308,7 +308,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityenderman) {
             super(entityenderman, EntityPlayer.class, false);
             this.entity = entityenderman;
-            this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityliving) -> { /**players can anger endermen from up to 128 blocks away*/
+            this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityliving) -> { /** players can anger endermen from up to 128 blocks away */
                 return entityenderman.shouldAttackPlayer((EntityHuman)entityliving);
             });
         }
@@ -348,7 +348,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
         @Override
         public void e() {
-            this.entity.setGoalTarget(this.target); //simplified to deal with some bugs
+            this.entity.setGoalTarget(this.target); // simplified to deal with some bugs
             super.e();
         }
     }

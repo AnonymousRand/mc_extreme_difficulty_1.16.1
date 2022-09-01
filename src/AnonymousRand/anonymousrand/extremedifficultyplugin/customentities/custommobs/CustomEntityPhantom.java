@@ -32,12 +32,12 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     public CustomEntityPhantom(World world) {
         super(EntityTypes.PHANTOM, world);
-        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
-        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /**every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07*/
+        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /** every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
-        this.noclip = true; /**phantoms can fly through blocks*/
+        this.noclip = true; /** phantoms can fly through blocks */
         this.attacks = 0;
         this.a30 = false;
         this.deathExplosion = false;
@@ -64,7 +64,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
-    private void updateSizeStats(int change) { /**phantoms gain +0.3 health and 0.125 damage per size and starts with 12 health and 2 damage at size 0*/
+    private void updateSizeStats(int change) { /** phantoms gain +0.3 health and 0.125 damage per size and starts with 12 health and 2 damage at size 0 */
         this.updateSize();
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0 + 0.125 * this.getSize());
         double maxHealth = 12.0 + 0.3 * this.getSize();
@@ -79,14 +79,14 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
     public void die() {
         super.die();
 
-        if (this.attacks >= 40 || this.duplicate) { /**after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4*/
+        if (this.attacks >= 40 || this.duplicate) { /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4 */
             if (this.getSize() > 7) {
                 new SpawnEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
     }
 
-    public double getFollowRange() { /**phantoms have 64 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */
         return 64.0;
     }
 
@@ -94,17 +94,17 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.attacks < 5 ? 160 : this.attacks < 20 ? 140 : this.attacks < 30 ? 110 : 90) == 0 && this.ticksLived != 0) { /**phantoms increase in size by 1 every 8 seconds (7 seconds after 5 attacks, 5.5 seconds after 20 attacks, 4.5 seconds after 30 attacks)*/
+        if (this.ticksLived % (this.attacks < 5 ? 160 : this.attacks < 20 ? 140 : this.attacks < 30 ? 110 : 90) == 0 && this.ticksLived != 0) { /** phantoms increase in size by 1 every 8 seconds (7 seconds after 5 attacks, 5.5 seconds after 20 attacks, 4.5 seconds after 30 attacks) */
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }
 
-        if (this.getHealth() <= 0.0 && this.attacks >= 15 && !this.deathExplosion) { /**after 15 attacks, phantoms explode when killed*/
+        if (this.getHealth() <= 0.0 && this.attacks >= 15 && !this.deathExplosion) { /** after 15 attacks, phantoms explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
         }
 
-        if (this.attacks == 30 && !this.a30) { /**after 30 attacks, phantoms get regen 3*/
+        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, phantoms get regen 3 */
             this.a30 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
@@ -122,7 +122,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -130,7 +130,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -147,7 +147,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -155,7 +155,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -265,7 +265,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
                 return false;
             } else if (!this.a()) {
                 return false;
-            } else { /**phantoms are no longer scared of cats and ocelots*/
+            } else { /** phantoms are no longer scared of cats and ocelots */
                 return true;
             }
         }

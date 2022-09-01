@@ -19,15 +19,15 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
     public CustomEntityWitch(World world) {
         super(EntityTypes.WITCH, world);
         this.targetSelectorVanilla = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
         this.attackNum = 0;
         this.a12 = false;
         this.a30 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
-        RemovePathfinderGoals.removePathfinderGoals(this); //remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     static {
@@ -42,15 +42,15 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.goalSelector.a(1, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 24.0F)); /**throws a potion every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal)*/
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement)*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(1, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 24.0F)); /** throws a potion every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { //shoot
-        if (++this.attackNum % 6 == 0) { //attacks only count every 1.5 seconds, or 6 shots
+    public void a(EntityLiving entityliving, float f) { // shoot
+        if (++this.attackNum % 6 == 0) { // attacks only count every 1.5 seconds, or 6 shots
             this.attacks++;
         }
 
@@ -60,21 +60,21 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             double d1 = entityliving.getHeadY() - 1.100000023841858D - this.locY();
             double d2 = entityliving.locZ() + vec3d.z - this.locZ();
             float f1 = MathHelper.sqrt(d0 * d0 + d2 * d2);
-            PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /**after 45 attacks, witches throw harming 2 instead of 1*/
+            PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /** after 45 attacks, witches throw harming 2 instead of 1 */
 
             if (entityliving instanceof EntityRaider) {
-                if (entityliving.getHealth() <= 10.0F) { /**gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts*/
+                if (entityliving.getHealth() <= 10.0F) { /** gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
                     potionregistry = Potions.STRONG_HEALING;
                 } else {
                     potionregistry = Potions.STRONG_REGENERATION;
                 }
 
                 this.setGoalTarget((EntityLiving)null);
-            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /**gives slowness 2 up to 6 blocks away*/
+            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /** gives slowness 2 up to 6 blocks away */
                 potionregistry = Potions.STRONG_SLOWNESS;
-            } else if (f1 < 6.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /**100% to give weakness when player within 6 blocks*/
+            } else if (f1 < 6.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /** 100% to give weakness when player within 6 blocks */
                 potionregistry = Potions.WEAKNESS;
-            } else if (f1 >= 5.0F) { /**gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming*/
+            } else if (f1 >= 5.0F) { /** gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming */
                 potionregistry = Potions.STRONG_POISON;
             }
 
@@ -99,12 +99,12 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             if (!this.m()) {
                 PotionRegistry potionregistry = null;
 
-                /**witches don't drink water breathing potions as they no longer take drowning damage*/
-                if ((this.isBurning() || this.dl() != null && this.dl().isFire()) && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) { /**witches always drink fire resistance when they are burning*/
+                /** witches don't drink water breathing potions as they no longer take drowning damage */
+                if ((this.isBurning() || this.dl() != null && this.dl().isFire()) && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) { /** witches always drink fire resistance when they are burning */
                     potionregistry = Potions.FIRE_RESISTANCE;
-                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /**below 5.2 health, witches always drink turtle master 2*/
+                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /** below 5.2 health, witches always drink turtle master 2 */
                     potionregistry = Potions.STRONG_TURTLE_MASTER;
-                } else if (this.getHealth() < this.getMaxHealth() * 0.5) { /**below 13 health, witches always drink instant health 2*/
+                } else if (this.getHealth() < this.getMaxHealth() * 0.5) { /** below 13 health, witches always drink instant health 2 */
                     potionregistry = Potions.STRONG_HEALING;
                 }
 
@@ -114,14 +114,14 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             }
         }
 
-        try { /**witches drink potions 3 times as fast*/
+        try { /** witches drink potions 3 times as fast */
             bx.setInt(this, bx.getInt(this) - 2);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    public double getFollowRange() { /**witches have 24 blocks detection range*/
+    public double getFollowRange() { /** witches have 24 blocks detection range */
         return 24.0;
     }
 
@@ -129,12 +129,12 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /**after 12 attakcs, witches summon a ring of dragon fireballs*/
+        if (this.attacks == 12 && !this.a12) { /** after 12 attakcs, witches summon a ring of dragon fireballs */
             this.a12 = true;
             new RunnableRingOfFireballs(this, 1.0, 2, 1).run();
         }
 
-        if (this.attacks == 30 && !this.a30) { /**after 30 attacks, witches summon area effect clouds wherever it goes*/
+        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, witches summon area effect clouds wherever it goes */
             this.a30 = true;
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1, 0, 1, 0, 1.0));
         }
@@ -148,7 +148,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -156,7 +156,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -173,7 +173,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -181,14 +181,14 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
     @Override
-    public int bL() { //getMaxFallHeight
-        return Integer.MAX_VALUE; /**mobs are willing to take any fall to reach the player as they don't take fall damage*/
+    public int bL() { // getMaxFallHeight
+        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

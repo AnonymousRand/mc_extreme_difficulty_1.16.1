@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
-public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custom goal to break blocks around a mob
+public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { // custom goal to break blocks around a mob
 
     public EntityInsentient entity;
     protected final int delayTimer, radX, radY, radZ, yOffset;
@@ -27,17 +27,17 @@ public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { //custo
     }
 
     @Override
-    public boolean a() { //should execute
+    public boolean a() { // should execute
         return this.entity.getGoalTarget() != null && !this.entity.getGoalTarget().isInvulnerable();
     }
 
     @Override
-    public boolean b() { //should continue executing
+    public boolean b() { // should continue executing
         return this.a();
     }
 
     @Override
-    public void e() { //tick
+    public void e() { // tick
         if (this.entity.ticksLived % this.delayTimer == 0) {
             new RunnableBreakBlocks(this.entity, this.radX, this.radY, this.radZ, this.yOffset, this.removeFluids).run();
         }

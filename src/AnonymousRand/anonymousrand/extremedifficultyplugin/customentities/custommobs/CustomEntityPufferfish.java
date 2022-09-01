@@ -14,8 +14,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     public CustomEntityPufferfish(World world) {
         super(EntityTypes.PUFFERFISH, world);
-        this.a(PathType.LAVA, 0.0F); /**no longer avoids lava*/
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /**no longer avoids fire*/
+        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.lastStingTicks = 0;
     }
 
@@ -31,13 +31,13 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /**custom goal that allows non-player mobs to still go fast in cobwebs*/
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /**custom goal that allows this mob to take certain buffs from bats etc.*/
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /**this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level*/
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level */
     }
 
     @Override
-    public void pickup(EntityHuman entityhuman) { //onCollideWithPlayer
+    public void pickup(EntityHuman entityhuman) { // onCollideWithPlayer
         if (entityhuman.abilities.isInvulnerable) {
             return;
         }
@@ -45,14 +45,14 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         int i = this.getPuffState() + 1;
 
         if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 100) {
-            this.lastStingTicks = this.ticksLived; /**only plays sting sound once per 5 seconds*/
+            this.lastStingTicks = this.ticksLived; /** only plays sting sound once per 5 seconds */
             ((EntityPlayer)entityhuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
         }
 
-        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /**poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80*/
+        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /** poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80 */
     }
 
-    public double getFollowRange() { /**pufferfish have 32 block detection range (setting attribute doesn't work)*/
+    public double getFollowRange() { /** pufferfish have 32 block detection range (setting attribute doesn't work) */
         return 32.0;
     }
 
@@ -63,7 +63,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         if (this.ticksLived % 3 == 0) {
             this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> {
                 this.pickup((EntityHuman)entity);
-            }); /**pufferfish have a poison/wither range of 5 blocks horizontally*/
+            }); /** pufferfish have a poison/wither range of 5 blocks horizontally */
         }
     }
 
@@ -75,7 +75,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
             EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /**mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this);*/
+                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -83,7 +83,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /**random despawn distance increased to 40 blocks*/
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
                 if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
@@ -100,7 +100,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -108,14 +108,14 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /**for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level)*/
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
     @Override
-    public void movementTick() { /**uses the movementick() method from entityliving class so pufferfish no longer damage other mobs besides players*/
+    public void movementTick() { /** uses the movementick() method from entityliving class so pufferfish no longer damage other mobs besides players */
         int jumpTicksTemp;
 
         try {
@@ -235,7 +235,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         this.world.getMethodProfiler().exit();
     }
 
-    private void t() { //util method from entityliving class
+    private void t() { // util method from entityliving class
         boolean flag = this.getFlag(7);
 
         if (flag && !this.onGround && !this.isPassenger() && !this.hasEffect(MobEffects.LEVITATION)) {

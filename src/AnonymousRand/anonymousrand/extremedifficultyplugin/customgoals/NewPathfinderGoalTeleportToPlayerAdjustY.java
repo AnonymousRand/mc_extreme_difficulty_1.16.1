@@ -22,7 +22,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
     @Override
     public boolean a() {
         if (this.entity.getGoalTarget() instanceof EntityPlayer) {
-            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < this.chancePerTick) { /**every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player*/
+            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < this.chancePerTick) { /** every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player */
                 return true;
             }
         }
@@ -40,7 +40,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         this.initiateTeleport(-1.0);
     }
 
-    protected void initiateTeleport(double h) { //try to ensure that creeper ends up within detonating range of player or endermites/silverfish end up within attacking range of player
+    protected void initiateTeleport(double h) { // try to ensure that creeper ends up within detonating range of player or endermites/silverfish end up within attacking range of player
         if (h == -1.0) {
             h = this.initialRange;
         }
@@ -48,15 +48,15 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         EntityPlayer player;
         player = (EntityPlayer)this.entity.getGoalTarget();
 
-        BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); //gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-        BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); //highest block at those coords
+        BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+        BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
         if (pos2 != null) {
-            if (Math.abs(this.entity.getGoalTarget().locY() - pos2.getY()) < (this.entity instanceof CustomEntityCreeper ? (((CustomEntityCreeper)this.entity).isPowered() ? 5.0 : 3.0) : 1.0)) { //if the teleport allows the mob to be within a certain y level of player
+            if (Math.abs(this.entity.getGoalTarget().locY() - pos2.getY()) < (this.entity instanceof CustomEntityCreeper ? (((CustomEntityCreeper)this.entity).isPowered() ? 5.0 : 3.0) : 1.0)) { // if the teleport allows the mob to be within a certain y level of player
                 if (pos2.getY() < 128.0) {
                     if (this.entity instanceof CustomEntityCreeper) {
                         CustomEntityCreeper creeper = ((CustomEntityCreeper)this.entity);
-                        creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); //increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
+                        creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                         try {
                             creeper.fuseTicks.setInt(creeper, 0);
@@ -71,15 +71,15 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
             }
         }
 
-        //else use recursive method that checks smaller areas each time
+        // else use recursive method that checks smaller areas each time
         if (h > 6.0) {
             this.initiateTeleport(h - 2.0);
         } else if (h > 1.0){
             this.initiateTeleport(h - 1.0);
-        } else { //teleport onto player if that's the only available block
+        } else { // teleport onto player if that's the only available block
             if (this.entity instanceof CustomEntityCreeper) {
                 CustomEntityCreeper creeper = ((CustomEntityCreeper)this.entity);
-                creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); //increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
+                creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                 try {
                     creeper.fuseTicks.setInt(creeper, 0);
@@ -115,7 +115,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         }
     }
 
-    protected boolean teleportHelper(double d0, double d1, double d2, boolean flag) { //called a() in original living entity/whatever class
+    protected boolean teleportHelper(double d0, double d1, double d2, boolean flag) { // called a() in original living entity/whatever class
         double d3 = this.entity.locX();
         double d4 = this.entity.locY();
         double d5 = this.entity.locZ();
@@ -141,7 +141,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
 
             if (flag2) {
                 this.entity.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this.entity)) { /**can teleport onto fluids*/
+                if (world.getCubes(this.entity)) { /** can teleport onto fluids */
                     flag1 = true;
                 }
             }

@@ -21,12 +21,12 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() { //this runs when the plugin is first enabled (when the server starts up)
+    public void onEnable() { // this runs when the plugin is first enabled (when the server starts up)
         this.initializeListeners();
         this.initializePluginFields();
         this.initializeExplosionVolume();
         this.addEyeOfEnderRecipe();
-        this.getCommand("explosionvolume").setExecutor(new CommandExplosionVolume()); /**run "/explosionvolume [set/get] [decimal]" to set the volume of explosions*/
+        this.getCommand("explosionvolume").setExecutor(new CommandExplosionVolume()); /** run "/explosionvolume [set/get] [decimal]" to set the volume of explosions */
     }
 
     @Override
@@ -35,10 +35,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     }
 
     private void changeBlocksBlastResistance() {
-        BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /**end stone now has a blast resistance of 16*/
+        BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /** end stone now has a blast resistance of 16 */
         endStone.set("durability", 16.0F);
 
-        BlockOverride obsidian = new BlockOverride(Blocks.OBSIDIAN); /**obsidian, crying obsidian, anvils, enchanting tables, ancient debris and respawn anchors now has a blast resistance of 6, the same as cobblestone*/
+        BlockOverride obsidian = new BlockOverride(Blocks.OBSIDIAN); /** obsidian, crying obsidian, anvils, enchanting tables, ancient debris and respawn anchors now has a blast resistance of 6, the same as cobblestone */
         obsidian.set("durability", 6.0F);
 
         BlockOverride cryingObsidian = new BlockOverride(Blocks.CRYING_OBSIDIAN);
@@ -56,14 +56,14 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         BlockOverride respawnAnchor = new BlockOverride(Blocks.RESPAWN_ANCHOR);
         respawnAnchor.set("durability", 6.0F);
 
-        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /**spawners are now indestructible by explosions*/
+        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /** spawners are now indestructible by explosions */
         spawner.set("durability", 3600000.0F);
 
-        BlockOverride conduit = new BlockOverride(Blocks.CONDUIT); /**conduits are now indestructible by explosions*/
+        BlockOverride conduit = new BlockOverride(Blocks.CONDUIT); /** conduits are now indestructible by explosions */
         conduit.set("durability", 3600000.0F);
     }
 
-    private void initializeListeners() { //registers the listeners
+    private void initializeListeners() { // registers the listeners
         getServer().getPluginManager().registerEvents(new ListenerBlockPlaceAndBreak(), this);
         getServer().getPluginManager().registerEvents(new ListenerDragonFight(), this);
         getServer().getPluginManager().registerEvents(new ListenerDropItem(),this);
@@ -87,16 +87,16 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ListenerVehicleCreate(), this);
     }
 
-    private void initializePluginFields() { //initializes static plugin fields
+    private void initializePluginFields() { // initializes static plugin fields
         StaticPlugin.plugin = this;
     }
 
-    private void initializeExplosionVolume() { //initializes static explosion volume
+    private void initializeExplosionVolume() { // initializes static explosion volume
         ListenerPlayerJoinAndQuit.explosionVolumeMultiplier = 1.0;
         ListenerPlayerJoinAndQuit.firstExplosion = true;
     }
 
-    private void addEyeOfEnderRecipe() { /**changes eye of ender recipe*/
+    private void addEyeOfEnderRecipe() { /** changes eye of ender recipe */
         Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
         NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
         ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));

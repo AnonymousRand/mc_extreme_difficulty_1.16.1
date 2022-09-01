@@ -64,7 +64,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
     @Override
     public void e() {
         double d0 = this.entity.g(this.attackTarget.locX(), this.attackTarget.locY(), this.attackTarget.locZ());
-        boolean flag = true; /**breaking line of sight does not stop the mob from attacking*/
+        boolean flag = true; /** breaking line of sight does not stop the mob from attacking */
 
         if (flag) {
             ++this.f;
