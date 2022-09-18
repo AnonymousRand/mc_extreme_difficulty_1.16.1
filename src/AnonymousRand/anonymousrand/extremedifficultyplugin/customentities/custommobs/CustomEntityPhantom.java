@@ -77,13 +77,13 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public void die() {
-        super.die();
-
         if (this.attacks >= 40 || this.duplicate) { /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4 */
             if (this.getSize() > 7) {
                 new SpawnEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
+
+        super.die();
     }
 
     public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */

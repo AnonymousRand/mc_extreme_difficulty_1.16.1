@@ -164,7 +164,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
             this.ba = 0.5F;
             this.yaw += f1;
         }
-    }
+}
 
     public double getFollowRange() { /** bats have 16 block detection range (setting attribute doesn't work) (24 after 5 attacks, 32 after 10 attacks) */
         return this.attacks < 5 ? 16.0 : this.attacks < 10 ? 24 : 32;
@@ -244,17 +244,25 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
-        return d3 * d3 + d5 * d5;
+        if (random.nextDouble() < 0.1) {
+            return d3 * d3 + Math.pow(this.locY() - d1, 2) + d5 * d5;
+        } else {
+            return d3 * d3 + d5 * d5;
+        }
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
-        return d0 * d0 + d2 * d2;
+        if (random.nextDouble() < 0.1) {
+            return d0 * d0 + Math.pow(this.locY() - vec3d.y, 2) + d2 * d2;
+        } else {
+            return d0 * d0 + d2 * d2;
+        }
     }
 }

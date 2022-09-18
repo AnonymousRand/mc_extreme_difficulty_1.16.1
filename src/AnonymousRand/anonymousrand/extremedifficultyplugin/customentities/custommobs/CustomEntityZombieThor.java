@@ -171,7 +171,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
 
             if (random.nextDouble() < 0.002 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 120).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             }
         }
     }

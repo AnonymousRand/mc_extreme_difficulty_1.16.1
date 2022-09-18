@@ -23,14 +23,15 @@ public class CustomMathHelper {
     }
 
     public static BlockPosition coordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
-        if (angle == 361.0) { // random angle
+        if (angle > 360) { // random angle
             angle = random.nextInt(720);
         } else {
             angle *= 2;
+            angle %= 720;
         }
 
-        double x = Math.floor(hypotenuse * trigTableSin[(int)angle]); // in Minecraft, x direction/coordinate is y-axis, but negative
-        double z = Math.floor(hypotenuse * trigTableCos[(int)angle]);
+        double x = hypotenuse * trigTableSin[(int)angle]; // in Minecraft, x direction/coordinate is y-axis, but negative
+        double z = hypotenuse * trigTableCos[(int)angle];
 
         if (angle >= 0 && angle < 180.0) { // quadrant 1, towards neg pos
             return new BlockPosition(origin.getX() - x, y, origin.getZ() + z);
@@ -44,14 +45,13 @@ public class CustomMathHelper {
     }
 
     public static Location coordsFromHypotenuseAndAngle(World bukkitWorld, BlockPosition origin, double hypotenuse, double y, double angle) {
-        if (angle == 361.0) { // random angle
+        if (angle > 360) { // random angle
             angle = random.nextInt(720);
         } else {
             angle *= 2;
+            angle %= 720;
         }
 
-        angle *= 360.0;
-        angle /= PI;
         double x = hypotenuse * trigTableSin[(int)angle];
         double z = hypotenuse * trigTableCos[(int)angle];
 
@@ -68,8 +68,8 @@ public class CustomMathHelper {
 
     public static Vector spiralVector(double radiusOfSpiral, double xIntervalNumber, double yChangePerInterval) { // clockwise starting quadrant 2
         double angle = xIntervalNumber / (8.5 + random.nextDouble());
-        angle %= 2.0;
-        angle *= 360.0;
+        angle %= 4.0;
+        angle *= 180.0;
         double x = radiusOfSpiral * trigTableSin[(int)angle];
         double z = radiusOfSpiral * trigTableCos[(int)angle];
 
