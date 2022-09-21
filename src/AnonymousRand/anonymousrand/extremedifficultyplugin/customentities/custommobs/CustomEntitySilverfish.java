@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import net.minecraft.server.v1_16_R1.*;
@@ -25,7 +25,7 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomM
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.375); /** silverfish move 50% faster and have 9 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(9.0);
         this.setHealth(9.0F);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

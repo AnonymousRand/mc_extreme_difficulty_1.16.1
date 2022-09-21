@@ -24,7 +24,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         super(EntityTypes.WITHER, world);
         this.setInvul(100); /** withers only take 5 seconds to explode when spawned */
         this.dash = false;
-        double health = 200.0 + 70.0 * this.getWorld().getServer().getOnlinePlayers().size(); /** withers have 70 more health per player online, and 200 starting health */
+        double health = 200.0 + 60.0 * this.getWorld().getServer().getOnlinePlayers().size(); /** withers have 60 more health per player online, and 200 starting health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float)health);
     }
@@ -45,8 +45,8 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new PathfinderGoalWitherDoNothingWhileInvulnerable());
-        this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /** custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 25 seconds) that breaks blocks around it and does 6 damage to all nearby players */
-        this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /** main head shoots a skull every 5 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /** custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 30 seconds) that breaks blocks around it and does 6 damage to all nearby players */
+        this.goalSelector.a(2, new CustomPathfinderGoalArrowAttack(this, 1.0D, 5, 80.0F)); /** main head shoots a skull every 5 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
@@ -107,11 +107,11 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public void setMot(double x, double y, double z) {
-        if (this.dash && this.getGoalTarget() != null) { /** when wither is dashing, always move towards player */
+        if (!this.dash) { /** when wither is dashing, always move towards player */
+            super.setMot(x, y, z);
+        } else if (this.getGoalTarget() != null) {
             EntityLiving target = this.getGoalTarget();
             super.setMot((target.locX() - this.locX()) / 14.0, (target.locY() - this.locY()) / 14.0, (target.locZ() - this.locZ()) / 14.0);
-        } else {
-            super.setMot(x, y, z);
         }
     }
 
@@ -206,7 +206,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.cos(f);
 
-            return this.locX() + (double) f1 * 1.3D;
+            return this.locX() + (double)f1 * 1.3D;
         }
     }
 
@@ -221,7 +221,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
             float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.sin(f);
 
-            return this.locZ() + (double) f1 * 1.3D;
+            return this.locZ() + (double)f1 * 1.3D;
         }
     }
 
@@ -247,7 +247,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
         @Override
         public boolean a() {
-            return this.wither.getGoalTarget() != null && this.wither.ticksLived % 500 == 0 && random.nextDouble() < 0.5;
+            return this.wither.getGoalTarget() != null && this.wither.ticksLived % 600 == 0 && random.nextDouble() < 0.5;
         }
 
         @Override

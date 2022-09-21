@@ -75,7 +75,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
         if (d0 <= (double)this.j && this.f >= 5) {
             this.entity.getNavigation().o();
         } else {
-            this.entity.getNavigation().a((Entity) this.attackTarget, this.e);
+            this.entity.getNavigation().a((Entity)this.attackTarget, this.e);
         }
 
         this.entity.getControllerLook().a(this.attackTarget, 30.0F, 30.0F);
@@ -90,10 +90,10 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
             float f1 = MathHelper.a(f, 0.1F, 1.0F);
 
             this.entityButIRangedEntity.a(this.attackTarget, f1);
-            this.d = MathHelper.d(f * (float)(this.h - this.g) + (float) this.g);
+            this.d = MathHelper.d(f * (float)(this.h - this.g) + (float)this.g);
         } else if (this.d < 0) {
             f = MathHelper.sqrt(d0) / this.i;
-            this.d = MathHelper.d(f * (float)(this.h - this.g) + (float) this.g);
+            this.d = MathHelper.d(f * (float)(this.h - this.g) + (float)this.g);
         }
     }
 }

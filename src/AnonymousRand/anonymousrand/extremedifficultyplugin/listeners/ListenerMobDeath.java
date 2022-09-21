@@ -117,7 +117,7 @@ public class ListenerMobDeath implements Listener {
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     ListenerPlayerDeathAndRespawn.superZombies.remove(nmsEntity);
                 } else { /** zombies summon an area effect cloud when killed */
-                    CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 100, 30);
+                    CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 80, 40);
                     newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
 
                     try {

@@ -39,7 +39,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new CustomPathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); /** uses the custom goal that attacks even when line of sight is broken */
+        this.goalSelector.a(3, new CustomPathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));
@@ -58,7 +58,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomMob {
         double d2 = entityliving.locZ() - this.locZ();
         f = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
 
-        entityllamaspit.shoot(d0, d1 + (double) f, d2, 1.5F, 10.0F);
+        entityllamaspit.shoot(d0, d1 + (double)f, d2, 1.5F, 10.0F);
         if (!this.isSilent()) {
             this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         }

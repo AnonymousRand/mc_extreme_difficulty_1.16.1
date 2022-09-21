@@ -7,6 +7,8 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.lang.reflect.Field;
+
 public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     public int attacks;
@@ -27,20 +29,20 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
     }
 
+
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.00333333333)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /** custom goal that allows spider to summon cobwebs on itself constantly */
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
-        this.goalSelector.a(4, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level */
+        this.goalSelector.a(4, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     public double getFollowRange() { /** spiders have 16 block detection range (setting attribute doesn't work) */
@@ -73,6 +75,10 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
         if (this.attacks == 80 && !this.a80) { /** after 80 attacks, spiders summon 4 cave spiders */
             this.a80 = true;
             new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 4, null, null, this, false, true);
+        }
+
+        if (this.isClimbing()) { /** spiders move vertically 3 times as fast (for some reason this still applies to jumping) */
+            this.setMot(this.getMot().x, this.getMot().y * 3.0, this.getMot().z);
         }
     }
 
@@ -109,7 +115,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;

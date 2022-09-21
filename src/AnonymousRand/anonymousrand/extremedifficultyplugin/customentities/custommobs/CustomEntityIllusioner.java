@@ -40,7 +40,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(4, new PathfinderGoalIllusionerDuplicationSpell());
         this.goalSelector.a(5, new PathfinderGoalIllusionerBlindnessSpell());
-        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, 25, 24.0F)); /** illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, 25, 24.0F)); /** illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -58,7 +58,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         double d0 = entityliving.locX() - this.locX();
         double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
         double d2 = entityliving.locZ() - this.locZ();
-        double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+        double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
 
         entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /** arrows have no inaccuracy */
         this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));

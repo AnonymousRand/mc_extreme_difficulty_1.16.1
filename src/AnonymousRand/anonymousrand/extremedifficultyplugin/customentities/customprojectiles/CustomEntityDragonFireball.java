@@ -43,7 +43,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
             entityareaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
             entityareaeffectcloud.setParticle(Particles.DRAGON_BREATH);
-            entityareaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityareaeffectcloud.getRadius()) / (float) entityareaeffectcloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
+            entityareaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityareaeffectcloud.getRadius()) / (float)entityareaeffectcloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
             entityareaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityLiving entity : entities) {

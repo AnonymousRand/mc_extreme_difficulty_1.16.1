@@ -164,7 +164,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob {
         @Override
         public void d() {
             this.guardian.a(0);
-            this.guardian.setGoalTarget((EntityLiving) null);
+            this.guardian.setGoalTarget((EntityLiving)null);
             this.guardian.goalRandomStroll.h();
         }
 

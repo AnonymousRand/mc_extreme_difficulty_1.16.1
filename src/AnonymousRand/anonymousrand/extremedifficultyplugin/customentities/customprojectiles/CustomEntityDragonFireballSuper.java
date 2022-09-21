@@ -43,7 +43,7 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             }
 
             entityareaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
-            entityareaeffectcloud.setRadiusPerTick((7.0F - entityareaeffectcloud.getRadius()) / (float) entityareaeffectcloud.getDuration());
+            entityareaeffectcloud.setRadiusPerTick((7.0F - entityareaeffectcloud.getRadius()) / (float)entityareaeffectcloud.getDuration());
             entityareaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /** super fireball area effect clouds do twice as much damage */
 
             for (EntityLiving entity : entities) {

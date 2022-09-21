@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -20,7 +20,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(1.0);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(35.0);
         this.setHealth(35.0F);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks even when line of sight is broken */
+        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
@@ -42,7 +42,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
             EntityLiving entityliving = this.getGoalTarget();
 
             if (entityliving == null) {
-                entityliving = (EntityLiving) damagesource.getEntity();
+                entityliving = (EntityLiving)damagesource.getEntity();
             }
 
             if (!(entityliving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
@@ -65,8 +65,8 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
                         EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
 
                         if (SpawnerCreature.a(entitypositiontypes_surface, (IWorldReader) this.getWorld(), blockposition, entitytypes) && EntityPositionTypes.a(entitytypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockposition, this.getWorld().random)) {
-                            newZombie.setPosition((double) i1, (double) j1, (double) k1);
-                            if (!this.getWorld().isPlayerNearby((double) i1, (double) j1, (double) k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
+                            newZombie.setPosition((double)i1, (double)j1, (double)k1);
+                            if (!this.getWorld().isPlayerNearby((double)i1, (double)j1, (double)k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
                                 this.getWorld().addEntity(newZombie);
                                 newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, (GroupDataEntity) null, (NBTTagCompound) null);
                                 this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /** zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement (15% after 7 attacks) */

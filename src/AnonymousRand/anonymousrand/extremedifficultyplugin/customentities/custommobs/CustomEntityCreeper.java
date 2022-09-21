@@ -36,7 +36,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0025)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.001)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
@@ -105,7 +105,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
             entityareaeffectcloud.setRadiusOnUse(-0.5F);
             entityareaeffectcloud.setWaitTime(10);
             entityareaeffectcloud.setDuration(entityareaeffectcloud.getDuration() / 2);
-            entityareaeffectcloud.setRadiusPerTick(-entityareaeffectcloud.getRadius() / (float) entityareaeffectcloud.getDuration());
+            entityareaeffectcloud.setRadiusPerTick(-entityareaeffectcloud.getRadius() / (float)entityareaeffectcloud.getDuration());
 
             for (MobEffect mobeffect : collection) { /** creepers only create area effect clouds of negative effects */
                 MobEffectList type = mobeffect.getMobEffect();

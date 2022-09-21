@@ -48,7 +48,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
                 this.a.getNavigation().o();
                 ++this.i;
             } else {
-                this.a.getNavigation().a((Entity) entityliving, this.b);
+                this.a.getNavigation().a((Entity)entityliving, this.b);
                 this.i = -1;
             }
 
@@ -72,7 +72,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
                 }
 
                 this.a.getControllerMove().a(this.h ? -0.5F : 0.5F, this.g ? 0.5F : -0.5F);
-                this.a.a((Entity) entityliving, 30.0F, 30.0F);
+                this.a.a((Entity)entityliving, 30.0F, 30.0F);
             } else {
                 this.a.getControllerLook().a(entityliving, 30.0F, 30.0F);
             }

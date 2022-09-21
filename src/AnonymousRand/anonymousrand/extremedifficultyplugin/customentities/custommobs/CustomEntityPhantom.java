@@ -64,10 +64,10 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
-    private void updateSizeStats(int change) { /** phantoms gain +0.3 health and 0.125 damage per size and starts with 12 health and 2 damage at size 0 */
+    private void updateSizeStats(int change) { /** phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */
         this.updateSize();
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0 + 0.125 * this.getSize());
-        double maxHealth = 12.0 + 0.3 * this.getSize();
+        double maxHealth = 11.0 + 0.3 * this.getSize();
         double health = this.getHealth() + 0.3 * change;
 
         this.setHealth((float)health);
@@ -77,13 +77,13 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public void die() {
+        super.die();
+
         if (this.attacks >= 40 || this.duplicate) { /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4 */
             if (this.getSize() > 7) {
                 new SpawnEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
-
-        super.die();
     }
 
     public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */
@@ -94,7 +94,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.attacks < 5 ? 160 : this.attacks < 20 ? 140 : this.attacks < 30 ? 110 : 90) == 0 && this.ticksLived != 0) { /** phantoms increase in size by 1 every 8 seconds (7 seconds after 5 attacks, 5.5 seconds after 20 attacks, 4.5 seconds after 30 attacks) */
+        if (this.ticksLived % (this.attacks < 10 ? 170 : this.attacks < 20 ? 150 : this.attacks < 30 ? 120 : 100) == 0 && this.ticksLived != 0 && this.getHealth() > 0.0) { /** phantoms increase in size by 1 every 8.5 seconds (7.5 seconds after 10 attacks, 6 seconds after 20 attacks, 5 seconds after 30 attacks) */
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }

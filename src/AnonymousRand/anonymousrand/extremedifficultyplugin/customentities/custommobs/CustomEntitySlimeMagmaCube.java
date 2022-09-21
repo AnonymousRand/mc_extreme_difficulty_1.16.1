@@ -1,28 +1,26 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSpawnBlocksEntitiesOnMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksEntitiesConstantly;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    private int attackCooldown;
     public int attacks;
     private boolean a15, a40, deathExplosion;
 
     public CustomEntitySlimeMagmaCube(World world) {
         super(EntityTypes.MAGMA_CUBE, world);
         this.targetSelectorVanilla = super.targetSelector;
-        this.attackCooldown = 0;
         this.attacks = 0;
         this.a15 = false;
         this.a40 = false;
         this.deathExplosion = false;
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     public CustomEntitySlimeMagmaCube(World world, int size) {
@@ -34,8 +32,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /** custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count */
-        this.goalSelector.a(1, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeBlazeFireball(this)); /** custom goal that allows magma cube to occasionally shoot small fireballs in all directions depending on attack count */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0, false)); /** uses the custom goal that atstacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, 10, false, false, null)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); for some reason the magma cubes run away after a while without the extra parameters */
     }
 
     @Override
@@ -51,24 +49,10 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     }
 
     @Override
-    protected void j(EntityLiving entityliving) {
-        if (this.isAlive() && this.attackCooldown <= 0) { /** magma cubes attack every 20 ticks instead of every tick */
-            int i = this.getSize();
-
-            if (this.h((Entity)entityliving) < 0.6D * (double)i * 0.6D * (double)i && entityliving.damageEntity(DamageSource.mobAttack(this), this.eN())) { /** magma cubes don't need line of sight to attack player */
-                this.attackCooldown = 20;
-                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-                this.a((EntityLiving)this, (Entity)entityliving);
-            }
-        }
-    }
+    protected void j(EntityLiving entityliving) {} /** magma cubes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
 
     protected int eK() { /** magma cubes jump faster */
-        return random.nextInt(4) + 9;
-    }
-
-    public int getBlazeFireballGoalAttackCooldown() { /** after 20 attacks, magma cubes shoot a ring of blaze fireballs every 10 seconds (6 seconds after 40 attacks) */
-        return this.attacks < 20 ? Integer.MAX_VALUE : this.attacks < 40 ? 200 : 120;
+        return random.nextInt(3) + 6;
     }
 
     public double getFollowRange() { /** magma cubes have 40 block detection range (setting attribute doesn't work) */
@@ -79,18 +63,16 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     public void tick() {
         super.tick();
 
-        this.attackCooldown--;
-
         if (this.getHealth() <= 0.0 && this.attacks >= 30 && !this.deathExplosion) { /** after 30 attacks, magma cubes explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2)), false, Explosion.Effect.DESTROY);
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)) / 2.0F, true, Explosion.Effect.DESTROY);
         }
 
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, magma cubes increase in size by 3 unless it is already at the largest possible size or is going to exceed it */
+        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, magma cubes increase in size by 2 unless it is already at the largest possible size or is going to exceed it */
             this.a15 = true;
 
-            if (this.getSize() < 14) {
-                this.setSize(this.getSize() + 3, true);
+            if (this.getSize() < 15) {
+                this.setSize(this.getSize() + 2, true);
             }
         }
 
@@ -168,7 +150,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         public PathfinderGoalMagmaCubeFireAndLava(CustomEntitySlimeMagmaCube cube) {
             this.cube = cube;
-            this.firstLand = 1;
+            this.firstLand = 0;
         }
 
         @Override
@@ -183,42 +165,20 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         @Override
         public void e() {
-            if (this.cube.isOnGround() && this.firstLand > 0) { /** magma cube spawns fire on it while on the ground and magma blocks below it */
-                this.firstLand = -10; // to reduce lag, this can only happen every 10 ticks
-                double diameterDecimal = this.cube.getBoundingBox().maxX - this.cube.getBoundingBox().minX;
-                int diameter = (int)(Math.floor(diameterDecimal) + 2);
+            if (this.cube.isOnGround()) { /** magma cube spawns fire on it while on the ground and magma blocks below it */
+                int diameter = (int)(Math.floor(this.cube.getBoundingBox().maxX - this.cube.getBoundingBox().minX) + 2);
 
-                new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this.cube, org.bukkit.Material.MAGMA_BLOCK, 1, diameter / 2, 0, diameter / 2, -1.0, true).e();
-                new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this.cube, org.bukkit.Material.FIRE, 1, diameter / 2, 0, diameter / 2, 0.0, false).e();
-            } else {
-                this.firstLand++;
+                if (this.firstLand <= 0) { // to reduce lag, this can only happen every 10 ticks
+                    this.firstLand = 10;
+                    new RunnableSpawnBlocksEntitiesConstantly(this.cube, org.bukkit.Material.MAGMA_BLOCK, null, diameter / 2, 0, diameter / 2, -1.0, true).run();
+                    return;
+                } else if (this.firstLand == 10) { // delay it by 1 tick so the magma blocks have time to place before the fire needs to go underneath
+                    new RunnableSpawnBlocksEntitiesConstantly(this.cube, org.bukkit.Material.FIRE, null, diameter / 2, 0, diameter / 2, 0.0, false).run();
+                    return;
+                }
             }
-        }
-    }
 
-    static class PathfinderGoalMagmaCubeBlazeFireball extends PathfinderGoal {
-
-        private final CustomEntitySlimeMagmaCube cube;
-
-        public PathfinderGoalMagmaCubeBlazeFireball(CustomEntitySlimeMagmaCube cube) {
-            this.cube = cube;
-        }
-
-        @Override
-        public boolean a() {
-            return this.cube.getGoalTarget() != null;
-        }
-
-        @Override
-        public boolean b() {
-            return this.a();
-        }
-
-        @Override
-        public void e() {
-            if (this.cube.ticksLived % this.cube.getBlazeFireballGoalAttackCooldown() == 0) {
-                new RunnableRingOfFireballs(this.cube, 0.5, 1).run();
-            }
+            this.firstLand--;
         }
     }
 }

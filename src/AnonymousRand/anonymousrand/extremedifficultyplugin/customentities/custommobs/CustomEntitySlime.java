@@ -1,15 +1,17 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.util.io.BukkitObjectInputStream;
+
+import java.util.EnumSet;
 
 public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    private int attackCooldown;
     public int attacks;
     private boolean a12, a35, deathExplosion;
 
@@ -18,12 +20,11 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
         this.targetSelectorVanilla = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attackCooldown = 0;
         this.attacks = 0;
         this.a12 = false;
         this.a35 = false;
         this.deathExplosion = false;
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     public CustomEntitySlime(World world, int size) {
@@ -34,7 +35,9 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+
+        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0, false)); /** small slimes also do damage; uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, 10, false, false, null)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); for some reason the slimes run away after a while without the extra parameters */
     }
 
     @Override
@@ -49,22 +52,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     }
 
     @Override
-    protected void j(EntityLiving entityliving) {
-        if (this.isAlive() && this.attackCooldown <= 0) { /** slimes attack every 20 ticks instead of every tick */
-            int i = this.getSize();
-
-            if (this.h((Entity) entityliving) < 0.6D * (double) i * 0.6D * (double) i && entityliving.damageEntity(DamageSource.mobAttack(this), this.eN())) { /** slimes don't need line of sight to attack player */
-                this.attackCooldown = 20;
-                this.playSound(SoundEffects.ENTITY_SLIME_ATTACK, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-                this.a((EntityLiving)this, (Entity)entityliving);
-            }
-        }
-    }
-
-    @Override
-    protected boolean eM() { /** smallest slimes can also do 1 damage */
-        return this.doAITick();
-    }
+    protected void j(EntityLiving entityliving) {} /** slimes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
 
     @Override
     public void die() {
@@ -76,7 +64,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
             if (!this.world.isClientSide && i > 1 && this.dk()) {
                 IChatBaseComponent ichatbasecomponent = this.getCustomName();
                 boolean flag = this.isNoAI();
-                float f = (float) i / 4.0F;
+                float f = (float)i / 4.0F;
                 int j = i / 2;
 
                 for (int l = 0; l < 4; ++l) {
@@ -92,7 +80,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
                     entityslime.setNoAI(flag);
                     entityslime.setInvulnerable(this.isInvulnerable());
                     entityslime.setSize(j, true);
-                    entityslime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5D, this.locZ() + (double) f2, random.nextFloat() * 360.0F, 0.0F);
+                    entityslime.setPositionRotation(this.locX() + (double)f1, this.locY() + 0.5D, this.locZ() + (double)f2, random.nextFloat() * 360.0F, 0.0F);
                     this.world.addEntity(entityslime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
                 }
             }
@@ -100,7 +88,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     }
 
     protected int eK() { /** slimes jump faster */
-        return random.nextInt(4) + 9;
+        return random.nextInt(3) + 6;
     }
 
     public double getFollowRange() { /** slimes have 40 block detection range (setting attribute doesn't work) */
@@ -111,18 +99,16 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     public void tick() {
         super.tick();
 
-        this.attackCooldown--;
-
         if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /** after 22 attacks, slimes explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(this.getSize() - 1.5), false, Explosion.Effect.DESTROY);
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
         }
 
-        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, slimes increase in size by 2 unless it is already at the largest possible size or is going to exceed it */
+        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */
             this.a12 = true;
 
-            if (this.getSize() < 7) {
-                this.setSize(this.getSize() + 2, true);
+            if (this.getSize() < 8) {
+                this.setSize(this.getSize() + 1, true);
             }
         }
 

@@ -68,8 +68,8 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
     @Override
     public void initPathfinder() {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal); this custom goal also allows the spider to continue attacking regardless of light level */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() { /** buffs: after 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes. After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks. After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds. After 32 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 8 ticks */
@@ -121,10 +121,10 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
             if (this.getWorld().getType(blockposition1).isOccluding(this.getWorld(), blockposition)) {
                 if (random.nextInt(200) == 0) {
-                    this.aJ = (float) random.nextInt(360);
+                    this.aJ = (float)random.nextInt(360);
                 }
 
-                if (this.getWorld().a(c, (EntityLiving) this) != null) {
+                if (this.getWorld().a(c, (EntityLiving)this) != null) {
                     this.setAsleep(false);
                     if (!flag) {
                         this.getWorld().a((EntityHuman) null, 1025, blockposition, 0);
@@ -148,12 +148,12 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
             if (this.d == null && this.getGoalTarget() != null) { /** always flies towards goal target if possible; pathfinder goals and navigator doesn't work because bats' movement doesn't follow them, only this method */
                 this.d = new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());
             } else if (d == null) {
-                this.d = new BlockPosition(this.locX() + (double) random.nextInt(7) - (double) random.nextInt(7), this.locY() + (double) random.nextInt(6) - 2.0D, this.locZ() + (double) random.nextInt(7) - (double) random.nextInt(7));
+                this.d = new BlockPosition(this.locX() + (double)random.nextInt(7) - (double)random.nextInt(7), this.locY() + (double)random.nextInt(6) - 2.0D, this.locZ() + (double)random.nextInt(7) - (double)random.nextInt(7));
             }
 
-            double d0 = (double) this.d.getX() + 0.5D - this.locX();
-            double d1 = (double) this.d.getY() + 0.1D - this.locY();
-            double d2 = (double) this.d.getZ() + 0.5D - this.locZ();
+            double d0 = (double)this.d.getX() + 0.5D - this.locX();
+            double d1 = (double)this.d.getY() + 0.1D - this.locY();
+            double d2 = (double)this.d.getZ() + 0.5D - this.locZ();
             Vec3D vec3d = this.getMot();
             Vec3D vec3d1 = vec3d.add((Math.signum(d0) * 0.5D - vec3d.x) * 0.10000000149011612D, (Math.signum(d1) * 0.699999988079071D - vec3d.y) * 0.10000000149011612D, (Math.signum(d2) * 0.5D - vec3d.z) * 0.10000000149011612D);
 
@@ -244,7 +244,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         if (random.nextDouble() < 0.1) {
@@ -256,7 +256,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         if (random.nextDouble() < 0.1) {

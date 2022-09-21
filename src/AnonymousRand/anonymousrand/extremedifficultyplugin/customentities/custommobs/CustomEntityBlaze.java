@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +31,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
         this.rapidFireTracker = 0;
         this.setHealth(12.5F); /** blazes only have 12.5 health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -137,7 +137,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
             if (entityliving != null) { /** attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via nearestAttackableTarget goal) */
                 ++this.d;
 
-                double d0 = this.blaze.h((Entity) entityliving);
+                double d0 = this.blaze.h((Entity)entityliving);
 
                 if (d0 < 4.0D) {
                     if (this.c <= 0) {

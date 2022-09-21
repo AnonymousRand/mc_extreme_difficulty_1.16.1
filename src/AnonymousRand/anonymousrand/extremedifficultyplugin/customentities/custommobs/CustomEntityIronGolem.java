@@ -24,7 +24,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks even when line of sight is broken */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));

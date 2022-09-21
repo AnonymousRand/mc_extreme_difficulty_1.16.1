@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -26,7 +26,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomMob
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
         this.setHealth(12.0F);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

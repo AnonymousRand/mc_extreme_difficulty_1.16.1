@@ -1,22 +1,26 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.ICustomMob;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
+import java.util.Random;
 
 public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
-    private final EntityInsentient entity;
-    private final double b;
-    private final boolean c;
-    private PathEntity d;
-    private double e;
-    private double f;
-    private double g;
-    private int h;
-    private int i;
-    private final int j = 20;
-    private long k;
+    protected final EntityInsentient entity;
+    protected final double b;
+    protected final boolean c;
+    protected PathEntity d;
+    protected double e;
+    protected double f;
+    protected double g;
+    protected int h;
+    protected int i;
+    protected final int j = 20;
+    protected long k;
+    protected static final Random random = new Random();
 
     public NewPathfinderGoalPassiveMeleeAttack(EntityInsentient entity, double d0, boolean flag) {
         this.entity = entity;
@@ -40,7 +44,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
             } else if (!entityliving.isAlive()) {
                 return false;
             } else {
-                this.d = this.entity.getNavigation().a((Entity) entityliving, 0);
+                this.d = this.entity.getNavigation().a((Entity)entityliving, 0);
                 return this.a(entityliving) >= this.entity.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
             }
         }
@@ -88,7 +92,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
                 this.h += 5;
             }
 
-            if (!this.entity.getNavigation().a((Entity) entityliving, this.b)) {
+            if (!this.entity.getNavigation().a((Entity)entityliving, this.b)) {
                 this.h += 15;
             }
         }
@@ -101,11 +105,16 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
         double d1 = this.a(entityliving);
 
         if (d0 <= d1 && this.i <= 0) {
+            if (this.entity instanceof ICustomMob) {
+                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
+                    return;
+                }
+            }
+
             this.g();
             this.entity.swingHand(EnumHand.MAIN_HAND);
             this.entity.attackEntity(entityliving);
         }
-
     }
 
     protected void g() {
@@ -125,6 +134,6 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     protected double a(EntityLiving entityliving) {
-        return (double)(this.entity.getWidth() * 4.0F * this.entity.getWidth() * 4.0F + entityliving.getWidth());
+        return this.entity.getWidth() * 4.0F * this.entity.getWidth() * 4.0F + entityliving.getWidth();
     }
 }

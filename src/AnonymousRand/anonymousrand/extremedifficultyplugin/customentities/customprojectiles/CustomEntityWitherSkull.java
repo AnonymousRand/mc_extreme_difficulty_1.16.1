@@ -22,7 +22,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             boolean flag;
 
             if (entity1 instanceof EntityLiving) {
-                EntityLiving entityliving = (EntityLiving) entity1;
+                EntityLiving entityliving = (EntityLiving)entity1;
 
                 flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 2.0F); /** wither skulls only do 2 direct damage */
                 if (flag) {

@@ -33,7 +33,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); this custom goal also allows the spider to continue attacking regardless of light level */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
@@ -135,13 +135,13 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         }
 
         if (this.bb > 0) {
-            double d0 = this.locX() + (this.bc - this.locX()) / (double) this.bb;
-            double d1 = this.locY() + (this.bd - this.locY()) / (double) this.bb;
-            double d2 = this.locZ() + (this.be - this.locZ()) / (double) this.bb;
-            double d3 = MathHelper.g(this.bf - (double) this.yaw);
+            double d0 = this.locX() + (this.bc - this.locX()) / (double)this.bb;
+            double d1 = this.locY() + (this.bd - this.locY()) / (double)this.bb;
+            double d2 = this.locZ() + (this.be - this.locZ()) / (double)this.bb;
+            double d3 = MathHelper.g(this.bf - (double)this.yaw);
 
-            this.yaw = (float)((double) this.yaw + d3 / (double) this.bb);
-            this.pitch = (float)((double) this.pitch + (this.bg - (double) this.pitch) / (double) this.bb);
+            this.yaw = (float)((double)this.yaw + d3 / (double)this.bb);
+            this.pitch = (float)((double)this.pitch + (this.bg - (double)this.pitch) / (double)this.bb);
             --this.bb;
             this.setPosition(d0, d1, d2);
             this.setYawPitch(this.yaw, this.pitch);
@@ -150,7 +150,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         }
 
         if (this.bi > 0) {
-            this.aJ = (float)((double) this.aJ + MathHelper.g(this.bh - (double) this.aJ) / (double) this.bi);
+            this.aJ = (float)((double)this.aJ + MathHelper.g(this.bh - (double)this.aJ) / (double)this.bi);
             --this.bi;
         }
 
@@ -216,7 +216,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         this.t();
         AxisAlignedBB axisalignedbb = this.getBoundingBox();
 
-        this.f(new Vec3D((double) this.aY, (double) this.aZ, (double) this.ba));
+        this.f(new Vec3D((double)this.aY, (double)this.aZ, (double)this.ba));
         this.world.getMethodProfiler().exit();
         this.world.getMethodProfiler().enter("push");
         if (this.bm > 0) {

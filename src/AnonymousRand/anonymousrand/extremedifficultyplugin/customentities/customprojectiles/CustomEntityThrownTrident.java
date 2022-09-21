@@ -41,7 +41,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         float f = 4.0F; /** trident damage decreased from 8 to 4.0 */
 
         if (entity instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) entity;
+            EntityLiving entityliving = (EntityLiving)entity;
 
             f += EnchantmentManager.a(this.trident, entityliving.getMonsterType());
         }
@@ -63,11 +63,11 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
             }
 
             if (entity instanceof EntityLiving) {
-                EntityLiving entityliving1 = (EntityLiving) entity;
+                EntityLiving entityliving1 = (EntityLiving)entity;
 
                 if (entity1 instanceof EntityLiving) {
                     EnchantmentManager.a(entityliving1, entity1);
-                    EnchantmentManager.b((EntityLiving) entity1, (net.minecraft.server.v1_16_R1.Entity)entityliving1);
+                    EnchantmentManager.b((EntityLiving)entity1, (net.minecraft.server.v1_16_R1.Entity)entityliving1);
                 }
 
                 this.a(entityliving1);

@@ -45,13 +45,13 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
                 --this.f;
             }
 
-            double d0 = this.b.h((Entity) entityliving);
+            double d0 = this.b.h((Entity)entityliving);
             boolean flag2 = (d0 > (double)this.e || this.f < 5) && this.g == 0;
 
             if (flag2) {
                 --this.h;
                 if (this.h <= 0) {
-                    this.b.getNavigation().a((Entity) entityliving, this.j() ? this.d : this.d * 0.5D);
+                    this.b.getNavigation().a((Entity)entityliving, this.j() ? this.d : this.d * 0.5D);
                     this.h = CustomPathfinderGoalCrossbowAttack.a.a(this.b.getRandom());
                 }
             } else {

@@ -167,7 +167,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
                 EntityLiving entityliving = CustomEntityShulker.this.getGoalTarget();
 
                 CustomEntityShulker.this.getControllerLook().a(entityliving, 180.0F, 180.0F);
-                double d0 = CustomEntityShulker.this.h((Entity) entityliving);
+                double d0 = CustomEntityShulker.this.h((Entity)entityliving);
 
                 if (d0 < 400.0D) {
                     if (this.b <= 0) {

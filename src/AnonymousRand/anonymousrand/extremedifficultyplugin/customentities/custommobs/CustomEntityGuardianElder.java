@@ -39,7 +39,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) damagesource.j();
+            EntityLiving entityliving = (EntityLiving)damagesource.j();
 
             if (!damagesource.isExplosion()) {
                 entityliving.damageEntity(DamageSource.a(this), f); /** thorns damage increased from 2 to 100% of the damage dealt */
@@ -156,7 +156,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         @Override
         public void d() {
             this.entity.a(0);
-            this.entity.setGoalTarget((EntityLiving) null);
+            this.entity.setGoalTarget((EntityLiving)null);
             this.entity.goalRandomStroll.h();
         }
 

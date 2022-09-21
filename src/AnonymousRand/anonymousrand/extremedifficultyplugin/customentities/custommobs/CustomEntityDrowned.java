@@ -31,9 +31,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 3, 40.0F)); /** throws a trident every 3 ticks and uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 3, 40.0F)); /** throws a trident every 3 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D, false)); /** uses the custom melee attack goal that attacks even when line of sight is broken */
+        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D, false)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
@@ -162,7 +162,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         protected boolean a(IWorldReader iworldreader, BlockPosition blockposition) {
             BlockPosition blockposition1 = blockposition.up();
 
-            return iworldreader.isEmpty(blockposition1) && iworldreader.isEmpty(blockposition1.up()) ? iworldreader.getType(blockposition).a((IBlockAccess) iworldreader, blockposition, (Entity) this.drowned) : false;
+            return iworldreader.isEmpty(blockposition1) && iworldreader.isEmpty(blockposition1.up()) ? iworldreader.getType(blockposition).a((IBlockAccess) iworldreader, blockposition, (Entity)this.drowned) : false;
         }
 
         @Override

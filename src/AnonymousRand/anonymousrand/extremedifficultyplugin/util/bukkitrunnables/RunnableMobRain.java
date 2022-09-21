@@ -114,7 +114,7 @@ public class RunnableMobRain extends BukkitRunnable {
                 new CustomEntityRabbit(nmsWorld),
                 new CustomEntityRabbit(nmsWorld),
                 new CustomEntityLlama(nmsWorld),
-                new CustomEntityPhantom(nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize),
+                new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
                 new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
                 new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),
                 new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize),

@@ -34,7 +34,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
@@ -224,16 +224,16 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
             if (this.a.getGoalTarget() == null) {
                 Vec3D vec3d = this.a.getMot();
 
-                this.a.yaw = -((float) MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
+                this.a.yaw = -((float)MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
                 this.a.aH = this.a.yaw;
             } else {
                 EntityLiving entityliving = this.a.getGoalTarget();
 
-                if (entityliving.h((Entity) this.a) < 4096.0D) {
+                if (entityliving.h((Entity)this.a) < 4096.0D) {
                     double d1 = entityliving.locX() - this.a.locX();
                     double d2 = entityliving.locZ() - this.a.locZ();
 
-                    this.a.yaw = -((float) MathHelper.d(d1, d2)) * 57.295776F;
+                    this.a.yaw = -((float)MathHelper.d(d1, d2)) * 57.295776F;
                     this.a.aH = this.a.yaw;
                 }
             }

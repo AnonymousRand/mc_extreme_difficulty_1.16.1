@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -22,7 +22,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.a50 = false;
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.0); /** wither skeletons twice as fast and have extra knockback */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.SOUL_SOIL, 1, 1, 0, 1, -1.0, false)); /** custom goal that allows wither skeleton to summon soul sand in a 3 by 3 beneath itself constantly */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.WITHER_ROSE, 1, 0, 0, 0, 0, false)); /** custom goal that allows wither skeleton to summon wither roses on itself constantly */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks even when line of sight is broken */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
@@ -103,26 +103,18 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter for wither skeletons, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
-        if (random.nextDouble() < 0.1) {
-            return d3 * d3 + Math.pow(this.locY() - d1, 2) + d5 * d5;
-        } else {
-            return d3 * d3 + d5 * d5;
-        }
+        return d3 * d3 + d5 * d5;
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter sometimes, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter for wither skeletons, eg. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
-        if (random.nextDouble() < 0.1) {
-            return d0 * d0 + Math.pow(this.locY() - vec3d.y, 2) + d2 * d2;
-        } else {
-            return d0 * d0 + d2 * d2;
-        }
+        return d0 * d0 + d2 * d2;
     }
 
     @Override

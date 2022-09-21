@@ -61,7 +61,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         double d2 = entityliving.locZ() - this.locZ();
         f = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
 
-        entityllamaspit.shoot(d0, d1 + (double) f, d2, 1.5F, 10.0F);
+        entityllamaspit.shoot(d0, d1 + (double)f, d2, 1.5F, 10.0F);
         if (!this.isSilent()) {
             this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         }

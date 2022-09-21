@@ -1,6 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.ICustomMob;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
+
+import java.lang.reflect.Method;
+import java.util.Random;
 
 public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
@@ -14,6 +19,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     protected int h;
     protected int i;
     protected long k;
+    private static final Random random = new Random();
 
     public CustomPathfinderGoalMeleeAttack(EntityCreature entitycreature, double speedTowardsTarget, boolean useLongMemory) {
         super(entitycreature, speedTowardsTarget, useLongMemory);
@@ -24,30 +30,30 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
     @Override
     public boolean a() { // copied in because first two attacks are rapidfire otherwise
-        long i = this.a.world.getTime();
+        long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) { // this line dictates attack cooldown
             return false;
         } else {
             this.k = i;
 
-            EntityLiving entityliving = this.a.getGoalTarget();
+            EntityLiving entityliving = this.entity.getGoalTarget();
 
             if (entityliving == null) {
                 return false;
             } else if (!entityliving.isAlive()) {
                 return false;
             } else {
-                this.d = this.a.getNavigation().a((Entity) entityliving, 0);
-                return this.d != null ? true : this.a(entityliving) >= this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
+                this.d = this.entity.getNavigation().a((Entity)entityliving, 0);
+                return this.d != null ? true : this.a(entityliving) >= this.entity.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
             }
         }
     }
 
     @Override
     public void c() { // copied in because mobs doesn't attack regularly otherwise
-        this.a.getNavigation().a(this.d, this.b);
-        this.a.setAggressive(true);
+        this.entity.getNavigation().a(this.d, this.b);
+        this.entity.setAggressive(true);
         this.h = 0;
         this.i = 0;
     }
@@ -84,17 +90,22 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         this.a(entityliving, d0);
     }
 
-    protected void a(EntityLiving entityliving, double d0) { // these four methods copied in as mobs hit multiple times per attack otherwise
+    protected void a(EntityLiving entityliving, double d0) {
         double d1 = this.a(entityliving);
 
         if (d0 <= d1 && this.i <= 0) {
+            if (this.entity instanceof ICustomMob) {
+                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityliving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
+                    return;
+                }
+            }
             this.g();
-            this.a.swingHand(EnumHand.MAIN_HAND);
-            this.a.attackEntity(entityliving);
+            this.entity.swingHand(EnumHand.MAIN_HAND);
+            this.entity.attackEntity(entityliving);
         }
     }
 
-    protected void g() {
+    protected void g() {  // these three methods copied in as mobs hit multiple times per attack otherwise
         this.i = 20;
     }
 

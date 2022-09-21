@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
@@ -29,7 +29,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         this.a30 = false;
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /** zoglins move 75% faster (125% faster for babies) and do 2 damage (4 for babies) */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 4.0 : 2.0);
-        RemovePathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new CustomEntityZoglin.PathfinderGoalZoglinAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks even when line of sight is broken */
+        this.goalSelector.a(1, new CustomEntityZoglin.PathfinderGoalZoglinAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -51,7 +51,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         if (this.world.isClientSide) {
             return false;
         } else if (flag && damagesource.getEntity() instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) damagesource.getEntity();
+            EntityLiving entityliving = (EntityLiving)damagesource.getEntity();
 
             if (entityliving instanceof EntityPlayer && !BehaviorUtil.a(this, entityliving, 4.0D)) { /** only retaliate against players */
                 this.k(entityliving);

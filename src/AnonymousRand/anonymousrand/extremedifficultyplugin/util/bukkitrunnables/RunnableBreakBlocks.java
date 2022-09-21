@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySlimeMagmaCube;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
@@ -21,9 +22,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected int cycles;
     protected final int maxCycles;
     protected int X, Y, Z;
-    public static Predicate<Material> blockBreakable = (type) -> {
-        return type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
-    };
+    public static Predicate<Material> blockBreakable = (type) -> type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
     protected static final Random random = new Random();
 
     public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.RemovePathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -35,7 +35,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new EntityIllagerWizard.b());
-        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /** uses the custom goal that attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -57,7 +57,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         if (this.parentIllusioner.attacks == 20 && !this.a20) { /** after 20 attacks, summoned fake illusioners attack faster */
             this.a20 = true;
 
-            for (PathfinderGoal goal : RemovePathfinderGoals.removePathfinderGoal(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+            for (PathfinderGoal goal : AccessPathfinderGoals.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
                 this.goalSelector.a(goal);
             }
 
@@ -67,7 +67,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         if (this.parentIllusioner.attacks == 40 && !this.a40) { /** after 40 attacks, summoned fake illusioners attack even faster */
             this.a40 = true;
 
-            for (PathfinderGoal goal : RemovePathfinderGoals.removePathfinderGoal(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+            for (PathfinderGoal goal : AccessPathfinderGoals.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
                 this.goalSelector.a(goal);
             }
 

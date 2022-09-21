@@ -17,7 +17,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean checkSight, boolean nearbyOnly) {
-        this(entityinsentient, oclass, 10, checkSight, nearbyOnly, (Predicate) null);
+        this(entityinsentient, oclass, 10, checkSight, nearbyOnly, null);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, int i, boolean flag, boolean flag1, @Nullable Predicate<EntityLiving> predicate) {
@@ -41,9 +41,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     @Override
     public void c() {
         if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
-            try {
-                this.e.setGoalTarget(this.nearestTarget); // must have this to work; keeps giving null pointer warnings for some reason
-            } catch (Exception e) {}
+            this.e.setGoalTarget(this.nearestTarget); // must have this to work; keeps giving null pointer warnings for some reason
         }
     }
 
