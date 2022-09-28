@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksAround;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -70,7 +70,7 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomM
 
         if (this.attacks == 90 && !this.a90) { /** after 90 attacks, silverfish spawns a 5 by 5 by 5 block of invested stone around it and dies */
             this.a90 = true;
-            new RunnableSpiderSilverfishSummonMaterialBlock(this, org.bukkit.Material.INFESTED_STONE, 2);
+            new RunnableSpawnBlocksAround(this, org.bukkit.Material.INFESTED_STONE, 2).run();
             this.die();
         }
     }

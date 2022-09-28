@@ -56,7 +56,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob, IA
     @Override
     public void die() {
         super.die();
-        new RunnableShulkerDeathBullets(this); /** shulkers explode into 9 shulker bullets that seek out the player when killed */
+        new RunnableShulkerDeathBullets(this).run(); /** shulkers explode into 9 shulker bullets that seek out the player when killed */
     }
 
     public double getFollowRange() { /** shulkers have 40 block detection range (setting attribute doesn't work) */
@@ -243,7 +243,6 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob, IA
             this.shulker = shulker;
             this.nmsWorld = shulker.getWorld();
             this.pos = shulker.getPositionVector();
-            this.run();
         }
 
         @Override

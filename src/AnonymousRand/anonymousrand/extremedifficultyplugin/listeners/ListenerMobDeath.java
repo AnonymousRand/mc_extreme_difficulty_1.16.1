@@ -8,7 +8,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -77,7 +77,7 @@ public class ListenerMobDeath implements Listener {
             }
             case SPIDER -> { /** spiders lay down cobwebs that last 10 seconds in a 3 by 3 cube around itself when killed */
                 EntitySpider spider = (EntitySpider)(nmsEntity);
-                new RunnableSpiderSilverfishSummonMaterialBlock(spider, org.bukkit.Material.COBWEB, 1);
+                new RunnableSpawnBlocksAround(spider, org.bukkit.Material.COBWEB, 1).run();
             }
             case WANDERING_TRADER -> { /** wandering traders spawn 2 evokers and illusioners when killed */
                 new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 2, null, null, nmsEntity, false, true);

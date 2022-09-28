@@ -145,7 +145,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         public void e() {
             try {
                 if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are fewer crystals and fewer players */
-                    new RunnableDragonShootProjectiles(this.dragon);
+                    new RunnableDragonShootProjectiles(this.dragon).run();
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -188,7 +188,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         public RunnableDragonShootProjectiles(CustomEntityEnderDragon dragon) {
             this.dragon = dragon;
             this.nmsWorld = dragon.getWorld();
-            this.run();
         }
 
         @Override

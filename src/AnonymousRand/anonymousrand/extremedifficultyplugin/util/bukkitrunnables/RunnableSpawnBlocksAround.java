@@ -7,17 +7,16 @@ import org.bukkit.Material;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class RunnableSpiderSilverfishSummonMaterialBlock extends BukkitRunnable {
+public class RunnableSpawnBlocksAround extends BukkitRunnable {
 
     private final EntityInsentient entity;
     private final org.bukkit.Material material;
     private final int radius;
 
-    public RunnableSpiderSilverfishSummonMaterialBlock(EntityInsentient entity, Material material, int radius) {
+    public RunnableSpawnBlocksAround(EntityInsentient entity, Material material, int radius) {
         this.entity = entity;
         this.material = material;
         this.radius = radius;
-        this.run();
     }
 
     @Override
