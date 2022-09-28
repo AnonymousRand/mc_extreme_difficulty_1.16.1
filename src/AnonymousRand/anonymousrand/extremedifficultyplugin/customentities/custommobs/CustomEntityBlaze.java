@@ -8,12 +8,13 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfi
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 
-public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
     private int attacks;
@@ -44,10 +45,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
     @Override
     public boolean dN() { /** no longer damaged by water */
         return false;
-    } /** no longer damaged by water */
+    }
 
-    public double getFollowRange() { /** blazes have 48 block detection range (setting attribute doesn't work) */
-        return 48.0;
+    public double getFollowRange() { /** blazes have 40 block detection range (setting attribute doesn't work) */
+        return 40.0;
     }
 
     public int getAttacks() {
@@ -60,6 +61,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
+        Bukkit.broadcastMessage(this.attacks + "");
     }
 
     @Override
@@ -143,7 +145,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
 
                 double d0 = this.blaze.h((Entity)entityLiving);
 
-                if (d0 < 4.0D) {
+                if (d0 < 3.0D) {
                     if (this.c <= 0) {
                         this.blaze.attackEntity(entityLiving);
                         this.blaze.getWorld().createExplosion(this.blaze, entityLiving.locX(), entityLiving.locY(), entityLiving.locZ(), 0.4F, false, Explosion.Effect.DESTROY); /** melee attack creates a power 0.4 explosion on player's location */
@@ -168,27 +170,30 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
                             this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
                         }
 
-                        if (this.blaze.rapidFireTracker <= 0 && this.blaze.getAttacks() < 250) {
-                            if (this.blaze.getAttacks() % 75 == 0 && this.blaze.getAttacks() != 0) { /** every 75 attacks, blazes shoot a fireball with explosion power 2 */
+                        if (this.blaze.rapidFireTracker <= 0 && this.blaze.getAttacks() < 425) {
+                            if (this.blaze.getAttacks() % 150 == 0 && this.blaze.getAttacks() != 0) { /** every 150 attacks, blazes shoot a fireball with explosion power 2 */
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
-                            } else if (this.blaze.getAttacks() % 30 == 0 && this.blaze.getAttacks() != 0) { /** every 30 attacks, blazes shoot a fireball with explosion power 1 */
+                                this.blaze.increaseAttacks(1);
+                            } else if (this.blaze.getAttacks() % 60 == 0 && this.blaze.getAttacks() != 0) { /** every 60 attacks, blazes shoot a fireball with explosion power 1 */
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
+                                this.blaze.increaseAttacks(1);
                             } else {
                                 CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /** blaze has no inaccuracy */
                                 entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                                 this.nmsWorld.addEntity(entitySmallFireball);
+                                this.blaze.increaseAttacks(1);
                             }
 
-                            if (this.blaze.getAttacks() % 25 == 0) { /** every 25 attacks, the blaze shoots a ring of fireballs */
+                            if (this.blaze.getAttacks() % 50 == 0) { /** every 50 attacks, the blaze shoots a ring of fireballs */
                                 new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                             }
 
-                        } else { /** rapid fire phase for 50 attacks after 250 normal attacks */
-                            if (this.blaze.getAttacks() >= 250) { /** first entering rapid fire phase */
+                        } else { /** rapid fire phase for 50 attacks after 425 normal attacks */
+                            if (this.blaze.getAttacks() >= 425) { /** first entering rapid fire phase */
                                 this.blaze.setAttacks(0);
                                 this.blaze.rapidFireTracker = 50;
                             } else {

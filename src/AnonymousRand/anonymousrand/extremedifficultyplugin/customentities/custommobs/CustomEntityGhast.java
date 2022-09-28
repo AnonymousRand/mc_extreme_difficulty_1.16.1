@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     private int attacks;
     private boolean a20, deathFireballs;
@@ -194,17 +194,17 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttac
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
-                    CustomEntityLargeFireball entityLargefireball;
+                    CustomEntityLargeFireball entityLargeFireball;
 
                     if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
-                        entityLargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
+                        entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {
-                        entityLargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
+                        entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
                     }
 
-                    entityLargefireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entityLargefireball.locZ() + vec3d.z * 4.0D);
-                    world.addEntity(entityLargefireball);
+                    entityLargeFireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entityLargeFireball.locZ() + vec3d.z * 4.0D);
+                    world.addEntity(entityLargeFireball);
                     this.a = 0;
                 }
             } else if (this.a > 0) {
