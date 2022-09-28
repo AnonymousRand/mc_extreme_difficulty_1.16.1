@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.*;
@@ -11,7 +10,6 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftProjectile;
 import org.bukkit.enchantments.Enchantment;
@@ -37,18 +35,15 @@ public class ListenerEggs implements Listener {
 
     static class RunnableEggLand extends BukkitRunnable {
 
-        private final Projectile bukkitEgg;
         private final IProjectile nmsEgg;
         private final LivingEntity bukkitPlayer;
         private final EntityLiving nmsPlayer;
         private final Location playerLoc, eggLoc;
         private final org.bukkit.World bukkitWorld;
         private final World nmsWorld;
-        private double rand;
         private static final Random random = new Random();
 
         public RunnableEggLand(Projectile bukkitEgg) {
-            this.bukkitEgg = bukkitEgg;
             this.nmsEgg = ((CraftProjectile)bukkitEgg).getHandle();
 
             if (bukkitEgg.getShooter() != null) {
@@ -73,7 +68,7 @@ public class ListenerEggs implements Listener {
 
         @Override
         public void run() {
-            this.rand = random.nextDouble();
+            double rand = random.nextDouble();
 
             if (rand >= 0.5) {
                 MobEffect nmsMobEffect;
@@ -331,7 +326,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.9982) {
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.ENDER_EYE, 4));
                 } else if (rand < 0.9986) {
-                    new RunnableSpawnBlocksEntitiesConstantly(this.nmsPlayer, null, new EntityTNTPrimed(EntityTypes.TNT, this.nmsWorld), 0, 0, 0, 0.0, false, 50).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                    new RunnableConstantlySpawnBlocksEntities(this.nmsPlayer, null, new EntityTNTPrimed(EntityTypes.TNT, this.nmsWorld), 0, 0, 0, 0.0, false, 50).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
                     Bukkit.broadcastMessage("5");
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("4"), 20);
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("3"), 40);

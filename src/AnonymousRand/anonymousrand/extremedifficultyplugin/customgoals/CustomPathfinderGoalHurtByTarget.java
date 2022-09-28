@@ -5,8 +5,8 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget {
 
-    public CustomPathfinderGoalHurtByTarget(EntityCreature entitycreature, Class<?>... aclass) {
-        super(entitycreature, aclass);
+    public CustomPathfinderGoalHurtByTarget(EntityCreature entityCreature, Class<?>... aclass) {
+        super(entityCreature, aclass);
     }
 
     @Override
@@ -21,9 +21,9 @@ public class CustomPathfinderGoalHurtByTarget extends PathfinderGoalHurtByTarget
     }
 
     @Override
-    protected void a(EntityInsentient entityinsentient, EntityLiving entityliving) { // some mobs like bees use this method instead
-        if (entityliving instanceof EntityPlayer) {
-            entityinsentient.setGoalTarget(entityliving, EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
+    protected void a(EntityInsentient entityInsentient, EntityLiving entityLiving) { // some mobs like bees use this method instead
+        if (entityLiving instanceof EntityPlayer) {
+            entityInsentient.setGoalTarget(entityLiving, EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
         }
     }
 

@@ -4,9 +4,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob {
+public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     public double followRangeMultipler;
 
     public CustomEntityIronGolem(World world) {
@@ -21,7 +21,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
 
     @Override
     protected void initPathfinder() { /** no longer targets monsters or defends villages */
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
@@ -36,14 +36,14 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         this.targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 
-    public void increaseStatsMultiply(double multipler) {
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multipler);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multipler);
-        this.setHealth((float)(this.getHealth() * multipler));
-        this.followRangeMultipler *= multipler * 1.1;
+    public void increaseStatsMultiply(double multiplier) {
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multiplier);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multiplier);
+        this.setHealth((float)(this.getHealth() * multiplier));
+        this.followRangeMultipler *= multiplier * 1.1;
 
-        if (this.followRangeMultipler >= 5.0) {
-            this.followRangeMultipler = 5.0;
+        if (this.followRangeMultipler >= 3.0) {
+            this.followRangeMultipler = 3.0;
         }
 
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); // updates follow range
@@ -64,6 +64,14 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         return 24.0 * this.followRangeMultipler;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -74,10 +82,10 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -102,7 +110,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -110,7 +118,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

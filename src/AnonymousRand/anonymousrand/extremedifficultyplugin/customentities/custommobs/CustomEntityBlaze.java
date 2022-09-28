@@ -13,13 +13,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 
-public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
+public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private int rapidFireTracker;
-
-    private static final DataWatcherObject<Byte> d = DataWatcher.a(CustomEntityBlaze.class, DataWatcherRegistry.a);
 
     public CustomEntityBlaze(World world) {
         super(EntityTypes.BLAZE, world);
@@ -52,15 +50,27 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
         return 48.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void setAttacks(int attacks) {
+        this.attacks = attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleeping */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleeping */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -85,7 +95,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -93,7 +103,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -103,25 +113,19 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
         private final CustomEntityBlaze blaze;
         private final World nmsWorld;
-        private int b;
         private int c;
         private int d;
 
-        public PathfinderGoalBlazeFireballAttack(CustomEntityBlaze entityblaze) {
-            this.blaze = entityblaze;
-            this.nmsWorld = entityblaze.getWorld();
+        public PathfinderGoalBlazeFireballAttack(CustomEntityBlaze entityBlaze) {
+            this.blaze = entityBlaze;
+            this.nmsWorld = entityBlaze.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         }
 
         @Override
         public boolean a() {
-            EntityLiving entityliving = this.blaze.getGoalTarget();
-            return entityliving != null && entityliving.isAlive() && this.blaze.d(entityliving);
-        }
-
-        @Override
-        public void c() {
-            this.b = 0;
+            EntityLiving entityLiving = this.blaze.getGoalTarget();
+            return entityLiving != null && entityLiving.isAlive() && this.blaze.d(entityLiving);
         }
 
         @Override
@@ -132,24 +136,24 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
         @Override
         public void e() {
             --this.c;
-            EntityLiving entityliving = this.blaze.getGoalTarget();
+            EntityLiving entityLiving = this.blaze.getGoalTarget();
 
-            if (entityliving != null) { /** attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via nearestAttackableTarget goal) */
+            if (entityLiving != null) { /** attacks even when line of sight is broken (the old goal stopped the mob from attacking even if the mob has already recognized a target via nearestAttackableTarget goal) */
                 ++this.d;
 
-                double d0 = this.blaze.h((Entity)entityliving);
+                double d0 = this.blaze.h((Entity)entityLiving);
 
                 if (d0 < 4.0D) {
                     if (this.c <= 0) {
-                        this.blaze.attackEntity(entityliving);
-                        this.blaze.getWorld().createExplosion(this.blaze, entityliving.locX(), entityliving.locY(), entityliving.locZ(), 0.4F, false, Explosion.Effect.DESTROY); /** melee attack creates a power 0.4 explosion on player's location */
+                        this.blaze.attackEntity(entityLiving);
+                        this.blaze.getWorld().createExplosion(this.blaze, entityLiving.locX(), entityLiving.locY(), entityLiving.locZ(), 0.4F, false, Explosion.Effect.DESTROY); /** melee attack creates a power 0.4 explosion on player's location */
                     }
 
-                    this.blaze.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
+                    this.blaze.getControllerMove().a(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ(), 1.0D);
                 } else if (d0 < this.g() * this.g()) {
-                    double d1 = entityliving.locX() - this.blaze.locX();
-                    double d2 = entityliving.e(0.5D) - this.blaze.e(0.5D);
-                    double d3 = entityliving.locZ() - this.blaze.locZ();
+                    double d1 = entityLiving.locX() - this.blaze.locX();
+                    double d2 = entityLiving.e(0.5D) - this.blaze.e(0.5D);
+                    double d3 = entityLiving.locZ() - this.blaze.locZ();
 
                     if (this.c <= 0) {
                         if (this.blaze.rapidFireTracker == 0) { /** no pause between each volley; shoots constantly */
@@ -161,43 +165,40 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                         float f = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
 
                         if (!this.blaze.isSilent()) {
-                            this.nmsWorld.a((EntityHuman)null, 1018, this.blaze.getChunkCoordinates(), 0);
+                            this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
                         }
 
-                        if (this.blaze.rapidFireTracker <= 0 && this.blaze.attacks < 400) {
-                            if (this.blaze.attacks % 150 == 0 && this.blaze.attacks != 0) { /** every 150 shots, the blaze shoots a fireball with explosion power 2 */
+                        if (this.blaze.rapidFireTracker <= 0 && this.blaze.getAttacks() < 250) {
+                            if (this.blaze.getAttacks() % 75 == 0 && this.blaze.getAttacks() != 0) { /** every 75 attacks, blazes shoot a fireball with explosion power 2 */
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
-                                this.blaze.attacks++;
-                            } else if (this.blaze.attacks % 60 == 0 && this.blaze.attacks != 0) { /** every 60 shots, the blaze shoots a fireball with explosion power 1 */
+                            } else if (this.blaze.getAttacks() % 30 == 0 && this.blaze.getAttacks() != 0) { /** every 30 attacks, blazes shoot a fireball with explosion power 1 */
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
-                                this.blaze.attacks++;
                             } else {
                                 CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /** blaze has no inaccuracy */
                                 entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                                 this.nmsWorld.addEntity(entitySmallFireball);
-                                this.blaze.attacks++;
                             }
 
-                            if (this.blaze.attacks % 45 == 0) { /** every 45 shots, the blaze shoots a ring of fireballs */
+                            if (this.blaze.getAttacks() % 25 == 0) { /** every 25 attacks, the blaze shoots a ring of fireballs */
                                 new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                             }
 
-                        } else { /** rapid fire phase for 50 shots after 400 normal shots */
-                            if (this.blaze.attacks >= 400) { /** first entering rapid fire phase */
-                                this.blaze.attacks = 0;
+                        } else { /** rapid fire phase for 50 attacks after 250 normal attacks */
+                            if (this.blaze.getAttacks() >= 250) { /** first entering rapid fire phase */
+                                this.blaze.setAttacks(0);
                                 this.blaze.rapidFireTracker = 50;
                             } else {
-                                new RunnableBlazeRapidFire(this.blaze, d1, d2, d3, (double)f).run();
+                                new RunnableBlazeRapidFire(this.blaze, d1, d2, d3, f).run();
                                 if (this.blaze.rapidFireTracker == 1) { /** shoots a large fireball with explosion power 3 and a ring of fireballs when this phase ends */
                                     CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 3);
                                     entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                     this.nmsWorld.addEntity(entityLargeFireball);
                                     new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
-                                } else if (this.blaze.rapidFireTracker % 26 == 0) { /** every 26 shots, the blaze shoots a ring of fireballs */
+                                } else if (this.blaze.rapidFireTracker % 26 == 0) { /** every 26 attacks, the blaze shoots a ring of fireballs */
                                     new RunnableRingOfFireballs(this.blaze, 0.5, 1).run();
                                 }
 
@@ -206,9 +207,9 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                         }
                     }
 
-                    this.blaze.getControllerLook().a(entityliving, 10.0F, 10.0F);
+                    this.blaze.getControllerLook().a(entityLiving, 10.0F, 10.0F);
                 } else if (this.d < 5) {
-                    this.blaze.getControllerMove().a(entityliving.locX(), entityliving.locY(), entityliving.locZ(), 1.0D);
+                    this.blaze.getControllerMove().a(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ(), 1.0D);
                 }
 
                 super.e();

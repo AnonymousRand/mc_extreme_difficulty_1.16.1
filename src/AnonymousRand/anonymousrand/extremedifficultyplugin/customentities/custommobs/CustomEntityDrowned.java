@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -11,9 +10,9 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
+public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a50, a100;
 
     public CustomEntityDrowned(World world) {
@@ -44,12 +43,20 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
     }
 
     @Override
-    public boolean j(@Nullable EntityLiving entityliving) { /** always attacks even in the day */
+    public boolean j(@Nullable EntityLiving entityLiving) { /** always attacks even in the day */
         return true;
     }
 
     public double getFollowRange() { /** drowned have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -72,10 +79,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -100,7 +107,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -108,7 +115,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -143,9 +150,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
 
         private final CustomEntityDrowned drowned;
 
-        public PathfinderGoalDrownedGoToBeach(CustomEntityDrowned entitydrowned, double d0) {
-            super(entitydrowned, d0, 8, 2);
-            this.drowned = entitydrowned;
+        public PathfinderGoalDrownedGoToBeach(CustomEntityDrowned entityDrowned, double d0) {
+            super(entityDrowned, d0, 8, 2);
+            this.drowned = entityDrowned;
         }
 
         @Override
@@ -159,10 +166,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         }
 
         @Override
-        protected boolean a(IWorldReader iworldreader, BlockPosition blockposition) {
-            BlockPosition blockposition1 = blockposition.up();
+        protected boolean a(IWorldReader iworldreader, BlockPosition blockPosition) {
+            BlockPosition blockPosition1 = blockPosition.up();
 
-            return iworldreader.isEmpty(blockposition1) && iworldreader.isEmpty(blockposition1.up()) ? iworldreader.getType(blockposition).a((IBlockAccess) iworldreader, blockposition, (Entity)this.drowned) : false;
+            return iworldreader.isEmpty(blockPosition1) && iworldreader.isEmpty(blockPosition1.up()) ? iworldreader.getType(blockPosition).a(iworldreader, blockPosition, this.drowned) : false;
         }
 
         @Override
@@ -227,31 +234,17 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         @Nullable
         private Vec3D g() {
             Random random = this.drowned.getRandom();
-            BlockPosition blockposition = this.drowned.getChunkCoordinates();
+            BlockPosition blockPosition = this.drowned.getChunkCoordinates();
 
             for (int i = 0; i < 10; ++i) {
-                BlockPosition blockposition1 = blockposition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
+                BlockPosition blockPosition1 = blockPosition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
 
-                if (this.world.getType(blockposition1).a(Blocks.WATER)) {
-                    return Vec3D.c((BaseBlockPosition)blockposition1);
+                if (this.world.getType(blockPosition1).a(Blocks.WATER)) {
+                    return Vec3D.c(blockPosition1);
                 }
             }
 
             return null;
-        }
-    }
-
-    protected static Method eX;
-    private static Field d;
-
-    static {
-        try {
-            eX = EntityDrowned.class.getDeclaredMethod("eX");
-            eX.setAccessible(true);
-            d = EntityDrowned.class.getDeclaredField("d");
-            d.setAccessible(true);
-        } catch (NoSuchFieldException | NoSuchMethodException e) {
-            e.printStackTrace();
         }
     }
 
@@ -262,8 +255,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         private final int c;
         private boolean d;
 
-        public PathfinderGoalSwimUp(CustomEntityDrowned entitydrowned, double d0, int i) {
-            this.drowned = entitydrowned;
+        public PathfinderGoalSwimUp(CustomEntityDrowned entityDrowned, double d0, int i) {
+            this.drowned = entityDrowned;
             this.b = d0;
             this.c = i;
         }
@@ -281,7 +274,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob {
         @Override
         public void e() {
             if (this.drowned.locY() < (double)(this.c - 1) && (this.drowned.getNavigation().m() || this.drowned.eP())) {
-                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8, new Vec3D(this.drowned.locX(), (double)(this.c - 1), this.drowned.locZ()));
+                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8, new Vec3D(this.drowned.locX(), this.c - 1, this.drowned.locZ()));
 
                 if (vec3d == null) {
                     this.d = true;

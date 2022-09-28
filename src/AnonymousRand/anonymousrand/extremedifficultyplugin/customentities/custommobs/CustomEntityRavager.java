@@ -5,12 +5,11 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinder
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityRavager extends EntityRavager implements ICustomMob {
+public class CustomEntityRavager extends EntityRavager implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
-    private boolean a20, a60, a90;
-    public boolean launchHigh;
+    private int attacks;
+    private boolean a20, a60, a90, launchHigh;
 
     public CustomEntityRavager(World world) {
         super(EntityTypes.RAVAGER, world);
@@ -33,7 +32,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob {
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
@@ -42,12 +41,28 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob {
     }
 
     @Override
-    protected void f(EntityLiving entityliving) { /** ravager can't get stunned and instead heals when its attack is blocked by a shield */
+    protected void f(EntityLiving entityLiving) { /** ravager can't get stunned and instead heals when its attack is blocked by a shield */
         this.heal(this.attacks < 30 ? 20.0F : 30.0F);
+    }
+
+    public boolean getLaunchHigh() {
+        return this.launchHigh;
+    }
+
+    public void setLaunchHigh(boolean launchHigh) {
+        this.launchHigh = launchHigh;
     }
 
     public double getFollowRange() { /** ravagers have 40 block detection range (setting attribute doesn't work) (80 after 20 attacks) */
         return this.attacks < 20 ? 40.0 : 80.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -77,10 +92,10 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -105,7 +120,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -113,7 +128,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

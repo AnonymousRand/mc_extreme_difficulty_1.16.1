@@ -14,7 +14,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomMob {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /** sheep move 2x faster and have 20 health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /** uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
+        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
     }
 
     @Override

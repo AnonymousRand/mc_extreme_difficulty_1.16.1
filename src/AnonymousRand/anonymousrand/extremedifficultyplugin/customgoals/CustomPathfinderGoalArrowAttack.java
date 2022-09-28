@@ -39,10 +39,10 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        EntityLiving entityliving = this.entity.getGoalTarget();
+        EntityLiving entityLiving = this.entity.getGoalTarget();
 
-        if (entityliving != null && entityliving.isAlive()) {
-            this.attackTarget = entityliving;
+        if (entityLiving != null && entityLiving.isAlive()) {
+            this.attackTarget = entityLiving;
             return true;
         } else {
             return false;
@@ -75,7 +75,7 @@ public class CustomPathfinderGoalArrowAttack extends PathfinderGoal {
         if (d0 <= (double)this.j && this.f >= 5) {
             this.entity.getNavigation().o();
         } else {
-            this.entity.getNavigation().a((Entity)this.attackTarget, this.e);
+            this.entity.getNavigation().a(this.attackTarget, this.e);
         }
 
         this.entity.getControllerLook().a(this.attackTarget, 30.0F, 30.0F);

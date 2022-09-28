@@ -1,18 +1,17 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 public class CustomEntityWitherSkull extends EntityWitherSkull {
 
-    public CustomEntityWitherSkull(World world, EntityLiving entityliving, double d0, double d1, double d2) {
-        super(world, entityliving, d0, d1, d2);
+    public CustomEntityWitherSkull(World world, EntityLiving entityLiving, double d0, double d1, double d2) {
+        super(world, entityLiving, d0, d1, d2);
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
         if (!this.world.isClientSide) {
-            Entity entity = movingobjectpositionentity.getEntity();
+            Entity entity = movingObjectPositionEntity.getEntity();
 
             if (!(entity instanceof EntityPlayer)) { /** wither skulls can only impact players */
                 return;
@@ -22,14 +21,14 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             boolean flag;
 
             if (entity1 instanceof EntityLiving) {
-                EntityLiving entityliving = (EntityLiving)entity1;
+                EntityLiving entityLiving = (EntityLiving)entity1;
 
-                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityliving), 2.0F); /** wither skulls only do 2 direct damage */
+                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityLiving), 2.0F); /** wither skulls only do 2 direct damage */
                 if (flag) {
                     if (entity.isAlive()) {
-                        this.a(entityliving, entity);
+                        this.a(entityLiving, entity);
                     } else {
-                        entityliving.heal(20.0F); /** withers heal 20 health per entity killed instead of 5 since they only attack players */
+                        entityLiving.heal(20.0F); /** withers heal 20 health per entity killed instead of 5 since they only attack players */
                     }
                 }
             } else {
@@ -57,17 +56,17 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
     }
 
     @Override
-    protected void a(MovingObjectPosition movingobjectposition) {
-        if (movingobjectposition instanceof MovingObjectPositionEntity) {
-            if (((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer) { /** wither skulls can only impact players */
-                this.a((MovingObjectPositionEntity)movingobjectposition);
+    protected void a(MovingObjectPosition movingObjectPosition) {
+        if (movingObjectPosition instanceof MovingObjectPositionEntity) {
+            if (((MovingObjectPositionEntity)movingObjectPosition).getEntity() instanceof EntityPlayer) { /** wither skulls can only impact players */
+                this.a((MovingObjectPositionEntity)movingObjectPosition);
             }
 
             return;
         }
 
         // otherwise if hit block
-        super.a(movingobjectposition);
+        super.a(movingObjectPosition);
         if (!this.world.isClientSide && this.isCharged()) {
             Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
             this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /** blue skulls explode power 2 */

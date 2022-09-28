@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksEntitiesConstantly;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableConstantlySpawnBlocksEntities;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 
@@ -74,7 +74,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
     @Override
     public void e() {
         if ((this.entity.ticksLived - 10) % this.delayTimer == 0) {
-            new RunnableSpawnBlocksEntitiesConstantly(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.yOffset, this.terraform).run();
+            new RunnableConstantlySpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.yOffset, this.terraform).run();
         }
     }
 }

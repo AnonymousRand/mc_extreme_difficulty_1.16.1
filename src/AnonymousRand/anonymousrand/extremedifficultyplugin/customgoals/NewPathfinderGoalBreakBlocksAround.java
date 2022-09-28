@@ -1,11 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
-import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
+import net.minecraft.server.v1_16_R1.EntityInsentient;
+import net.minecraft.server.v1_16_R1.PathfinderGoal;
 
 import java.util.Random;
 

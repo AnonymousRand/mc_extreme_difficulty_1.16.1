@@ -30,31 +30,29 @@ public class ListenerPlayerInteract implements Listener {
         if (event.hasBlock()) {
             Action action = event.getAction();
             Block bukkitBlock = event.getClickedBlock();
-            Material type = bukkitBlock.getType();
+            Material bukkitMaterial = bukkitBlock.getType();
             Player bukkitPlayer = event.getPlayer();
             EntityPlayer nmsPlayer = ((CraftPlayer)bukkitPlayer).getHandle();
-            Location loc = bukkitPlayer.getLocation();
+            Location bukkitLoc = bukkitPlayer.getLocation();
             World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
-            boolean containerBlock = type == Material.CHEST || type == Material.BARREL || type == Material.DISPENSER || type == Material.DROPPER || type == Material.ENDER_CHEST || type == Material.HOPPER || type == Material.CHEST_MINECART || type == Material.HOPPER_MINECART || type == Material.SHULKER_BOX || type == Material.TRAPPED_CHEST;
+            boolean containerBlock = bukkitMaterial == Material.CHEST || bukkitMaterial == Material.BARREL || bukkitMaterial == Material.DISPENSER || bukkitMaterial == Material.DROPPER || bukkitMaterial == Material.ENDER_CHEST || bukkitMaterial == Material.HOPPER || bukkitMaterial == Material.CHEST_MINECART || bukkitMaterial == Material.HOPPER_MINECART || bukkitMaterial == Material.SHULKER_BOX || bukkitMaterial == Material.TRAPPED_CHEST;
 
             if (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK) {
                 if (action == Action.LEFT_CLICK_BLOCK) {
-                    if (type == Material.SPAWNER) { /** attempting to mine a spawner gives mining fatigue 3 for 15 seconds */
+                    if (bukkitMaterial == Material.SPAWNER) { /** attempting to mine a spawner gives mining fatigue 3 for 15 seconds */
                         bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 300, 2));
                     }
                 } else {
                     if (containerBlock) { /** right-clicking these blocks spawns a piglin and causes all piglins within 40 blocks horizontally to go into a frenzy for 10 seconds */
                         CustomEntityPiglin newPiglin = new CustomEntityPiglin(nmsWorld);
-                        new SpawnEntity(nmsWorld, newPiglin, 1, null, loc, true);
+                        new SpawnEntity(nmsWorld, newPiglin, 1, null, bukkitLoc, true);
                         newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); // give piglin a sword or crossbow
                         PiglinAI.a(newPiglin); // code from onInitialSpawn
 
-                        nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
-                            ((CustomEntityPiglin)entity).veryAngryTicks += 200;
-                        });
+                        nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).veryAngryTicks += 200);
                     }
 
-                    if (type == Material.ANVIL || type == Material.CHIPPED_ANVIL || type == Material.DAMAGED_ANVIL || type == Material.SMITHING_TABLE) { /** right-clicking an anvil or smithing table causes it to explode 10 seconds later */
+                    if (bukkitMaterial == Material.ANVIL || bukkitMaterial == Material.CHIPPED_ANVIL || bukkitMaterial == Material.DAMAGED_ANVIL || bukkitMaterial == Material.SMITHING_TABLE) { /** right-clicking an anvil or smithing table causes it to explode 10 seconds later */
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
                             nmsWorld.createExplosion(null, bukkitBlock.getLocation().getX(), bukkitBlock.getLocation().getY(), bukkitBlock.getLocation().getZ(), 4.0F, true, Explosion.Effect.NONE);
                             bukkitBlock.setType(Material.AIR);

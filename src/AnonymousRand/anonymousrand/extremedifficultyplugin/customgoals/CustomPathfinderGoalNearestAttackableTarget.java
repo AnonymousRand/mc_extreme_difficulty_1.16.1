@@ -12,16 +12,16 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     public EntityLiving nearestTarget;
     protected CustomPathfinderTargetCondition targetCondition;
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean checkSight) {
-        this(entityinsentient, oclass, checkSight, false);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, boolean checkSight) {
+        this(entityInsentient, oclass, checkSight, false);
     }
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, boolean checkSight, boolean nearbyOnly) {
-        this(entityinsentient, oclass, 10, checkSight, nearbyOnly, null);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, boolean checkSight, boolean nearbyOnly) {
+        this(entityInsentient, oclass, 10, checkSight, nearbyOnly, null);
     }
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityinsentient, Class<T> oclass, int i, boolean flag, boolean flag1, @Nullable Predicate<EntityLiving> predicate) {
-        super(entityinsentient, flag, flag1);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, int i, boolean flag, boolean flag1, @Nullable Predicate<EntityLiving> predicate) {
+        super(entityInsentient, flag, flag1);
         this.targetClass = oclass;
         this.targetChance = i;
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
@@ -49,8 +49,8 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         return this.e.getBoundingBox().grow(d0, 4.0D, d0);
     }
 
-    public void a(@Nullable EntityLiving entityliving) {
-        this.nearestTarget = entityliving;
+    public void a(@Nullable EntityLiving entityLiving) {
+        this.nearestTarget = entityLiving;
     }
 
     protected void g() {

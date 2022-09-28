@@ -4,7 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityDragonFireballSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,10 +47,10 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     @Override
-    public void a(EntityEnderCrystal entityendercrystal, BlockPosition blockposition, DamageSource damagesource) { // oncrystaldestroyed
-        super.a(entityendercrystal, blockposition, damagesource);
+    public void a(EntityEnderCrystal entityEnderCrystal, BlockPosition blockPosition, DamageSource damagesource) { // oncrystaldestroyed
+        super.a(entityEnderCrystal, blockPosition, damagesource);
 
-        if (entityendercrystal == this.currentEnderCrystal) { /** blowing up the end crystal that the dragon is currently healing from does not damage the dragon */
+        if (entityEnderCrystal == this.currentEnderCrystal) { /** blowing up the end crystal that the dragon is currently healing from does not damage the dragon */
             this.heal(10.0F);
         }
 
@@ -83,21 +83,19 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         if (this.random.nextInt(10) == 0) {
             List<EntityEnderCrystal> list = this.world.a(EntityEnderCrystal.class, this.getBoundingBox().grow(64.0, 128.0, 64.0)); /** dragon has double the horizontal range for finding end crystals */
-            EntityEnderCrystal entityendercrystal = null;
+            EntityEnderCrystal entityEnderCrystal = null;
             double d0 = Double.MAX_VALUE;
-            Iterator iterator = list.iterator();
 
-            while (iterator.hasNext()) {
-                EntityEnderCrystal entityendercrystal1 = (EntityEnderCrystal) iterator.next();
-                double d1 = entityendercrystal1.h(this);
+            for (EntityEnderCrystal entityEnderCrystal1 : list) {
+                double d1 = entityEnderCrystal1.h(this);
 
                 if (d1 < d0) {
                     d0 = d1;
-                    entityendercrystal = entityendercrystal1;
+                    entityEnderCrystal = entityEnderCrystal1;
                 }
             }
 
-            this.currentEnderCrystal = entityendercrystal;
+            this.currentEnderCrystal = entityEnderCrystal;
         }
     }
 
@@ -107,7 +105,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -115,7 +113,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -146,7 +144,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are less crystals and less players */
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are fewer crystals and fewer players */
                     new RunnableDragonShootProjectiles(this.dragon);
                 }
             } catch (IllegalAccessException e) {
@@ -185,7 +183,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         private final CustomEntityEnderDragon dragon;
         private final World nmsWorld;
-        private double rand, rand2, x, y, z;
         private static final Random random = new Random();
 
         public RunnableDragonShootProjectiles(CustomEntityEnderDragon dragon) {
@@ -196,34 +193,34 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         @Override
         public void run() {
-            this.rand = random.nextDouble();
-            this.rand2 = random.nextDouble();
+            double rand = random.nextDouble();
+            double rand2 = random.nextDouble();
 
             for (Entity entity : this.dragon.goalTargets) { /** dragon shoots a random projectile/fireball at every player within 128 blocks */
-                if (this.rand2 < 0.5) { /** 50% of the time the dragon shoots the same projectile to every player */
-                    this.rand = random.nextDouble();
+                if (rand2 < 0.5) { /** 50% of the time the dragon shoots the same projectile to every player */
+                    rand = random.nextDouble();
                 }
 
                 if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment() != org.bukkit.World.Environment.THE_END || ((EntityPlayer)entity).abilities.isInvulnerable) {
                     continue;
                 }
 
-                this.x = entity.locX() - this.dragon.locX();
-                this.y = entity.e(0.5D) - this.dragon.e(0.5D);
-                this.z = entity.locZ() - this.dragon.locZ();
+                double x = entity.locX() - this.dragon.locX();
+                double y = entity.e(0.5D) - this.dragon.e(0.5D);
+                double z = entity.locZ() - this.dragon.locZ();
 
                 if (rand < 0.65) { /** dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 65% chance to shoot a custom normal fireball, 22.5% chance to shoot a power 2 ghast fireball, 8.5% chance to shoot an arrow barrage, and 4% chance to shoot a super fireball */
-                    CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);
+                    CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, x, y, z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
                 } else if (rand < 0.875) {
-                    CustomEntitySmallFireball newFireball = new CustomEntitySmallFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z);
+                    CustomEntitySmallFireball newFireball = new CustomEntitySmallFireball(this.nmsWorld, this.dragon, x, y, z);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
                 } else if (rand < 0.96) {
-                    new RunnableMobShootArrowsNormally(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /** 2 pierce; less cycles with more players to reduce lag */
+                    new RunnableMobShootArrows(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /** 2 pierce; fewer cycles with more players to reduce lag */
                 } else {
-                    CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, this.x, this.y, this.z, true);
+                    CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, x, y, z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
                 }
@@ -235,12 +232,9 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         private final CustomEntityEnderDragon dragon;
         private final World nmsWorld;
-        private Entity targetEntity;
+        private final Entity targetEntity;
         private int cycles;
         private final int maxCycles;
-        private CustomEntityDragonFireball newFireball;
-        private CustomEntityDragonFireballSuper newFireballSuper;
-        private double x, y, z;
 
         public RunnableDragonRapidShootFireballs(CustomEntityEnderDragon dragon, Entity targetEntity, int maxCycles) {
             this.dragon = dragon;
@@ -257,19 +251,19 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                 return;
             }
 
-            this.x = this.targetEntity.locX() - this.dragon.locX();
-            this.y = this.targetEntity.e(0.5D) - this.dragon.e(0.5D);
-            this.z = this.targetEntity.locZ() - this.dragon.locZ();
+            double x = this.targetEntity.locX() - this.dragon.locX();
+            double y = this.targetEntity.e(0.5D) - this.dragon.e(0.5D);
+            double z = this.targetEntity.locZ() - this.dragon.locZ();
 
 
             if (this.cycles == 1 || this.cycles == this.maxCycles) {
-                this.newFireballSuper = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, this.x, this.y, this.z, false);
-                this.newFireballSuper.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
-                this.nmsWorld.addEntity(this.newFireballSuper);
+                CustomEntityDragonFireballSuper newFireballSuper = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, x, y, z, false);
+                newFireballSuper.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
+                this.nmsWorld.addEntity(newFireballSuper);
             } else {
-                this.newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, this.x, this.y, this.z, false);
-                this.newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
-                this.nmsWorld.addEntity(this.newFireball);
+                CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, x, y, z, false);
+                newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
+                this.nmsWorld.addEntity(newFireball);
             }
         }
     }

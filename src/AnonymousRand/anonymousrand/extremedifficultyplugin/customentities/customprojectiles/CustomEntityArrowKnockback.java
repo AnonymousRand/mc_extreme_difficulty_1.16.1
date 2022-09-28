@@ -9,10 +9,10 @@ public class CustomEntityArrowKnockback extends CustomEntityArrow {
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
-        super.a(movingobjectpositionentity);
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
+        super.a(movingObjectPositionEntity);
 
-        Entity entity = movingobjectpositionentity.getEntity();
+        Entity entity = movingObjectPositionEntity.getEntity();
 
         if (entity instanceof EntityPlayer) { // doesn't work all the time
             ((EntityPlayer)entity).setMot(new Vec3D(this.getMot().getX() * 1.5, -this.getMot().getY(), this.getMot().getZ() * 1.5));

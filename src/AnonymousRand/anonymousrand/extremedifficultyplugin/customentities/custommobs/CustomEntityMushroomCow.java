@@ -21,8 +21,8 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
     }
 
     @Override
-    public EnumInteractionResult b(EntityHuman entityhuman, EnumHand enumhand) {
-        ItemStack itemstack = entityhuman.b(enumhand);
+    public EnumInteractionResult b(EntityHuman entityHuman, EnumHand enumhand) {
+        ItemStack itemstack = entityHuman.b(enumhand);
 
         if ((itemstack.getItem() == Items.BOWL && !this.isBaby()) || (itemstack.getItem() == Items.SHEARS && this.canShear())) {
             EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box
@@ -36,6 +36,6 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
             this.die();
         }
 
-        return super.b(entityhuman, enumhand);
+        return super.b(entityHuman, enumhand);
     }
 }

@@ -2,8 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
-import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
+import net.minecraft.server.v1_16_R1.Entity;
+import net.minecraft.server.v1_16_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class SpawnEntity extends BukkitRunnable {
@@ -23,12 +23,12 @@ public class SpawnEntity extends BukkitRunnable {
     private final Entity firstEntityToSpawn;
     private final int numToSpawn;
     private final CreatureSpawnEvent.SpawnReason spawnReason;
-    private org.bukkit.entity.Entity bukkitOriginalEntity;
+    private final org.bukkit.entity.Entity bukkitOriginalEntity;
     private final boolean phantomDuplicate,removeOriginal, equipBoots, setNametag;
     private Entity entityToSpawn;
-    private World nmsWorld;
-    private Location loc;
-    private static org.bukkit.inventory.ItemStack boots;
+    private final World nmsWorld;
+    private final Location bukkitLoc;
+    private static final org.bukkit.inventory.ItemStack boots;
 
     static {
         boots = new ItemStack(Material.LEATHER_BOOTS);
@@ -46,7 +46,7 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.setNametag = false;
-        this.loc = this.bukkitOriginalEntity.getLocation();
+        this.bukkitLoc = this.bukkitOriginalEntity.getLocation();
         this.run();
     }
 
@@ -61,7 +61,7 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.setNametag = false;
-        this.loc = this.bukkitOriginalEntity.getLocation();
+        this.bukkitLoc = this.bukkitOriginalEntity.getLocation();
         this.run();
     }
 
@@ -76,11 +76,11 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = removeOriginal;
         this.equipBoots = equipBoots;
         this.setNametag = false;
-        this.loc = this.bukkitOriginalEntity.getLocation();
+        this.bukkitLoc = this.bukkitOriginalEntity.getLocation();
         this.run();
     }
 
-    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location bukkitLoc, boolean equipBoots) {
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
@@ -90,11 +90,11 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.setNametag = false;
-        this.loc = loc;
+        this.bukkitLoc = bukkitLoc;
         this.run();
     }
 
-    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots, boolean setNametag) {
+    public SpawnEntity(World nmsWorld, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location bukkitLoc, boolean equipBoots, boolean setNametag) {
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.numToSpawn = numToSpawn;
@@ -104,11 +104,11 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.setNametag = setNametag;
-        this.loc = loc;
+        this.bukkitLoc = bukkitLoc;
         this.run();
     }
 
-    public SpawnEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location loc, boolean equipBoots) {
+    public SpawnEntity(World nmsWorld, int maxFuseTicksOrPhantomSize, Entity firstEntityToSpawn, int numToSpawn, @Nullable CreatureSpawnEvent.SpawnReason spawnReason, @Nonnull Location bukkitLoc, boolean equipBoots) {
         this.maxFuseTicksOrPhantomSize = maxFuseTicksOrPhantomSize;
         this.nmsWorld = nmsWorld;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -119,7 +119,7 @@ public class SpawnEntity extends BukkitRunnable {
         this.removeOriginal = false;
         this.equipBoots = equipBoots;
         this.setNametag = false;
-        this.loc = loc;
+        this.bukkitLoc = bukkitLoc;
         this.run();
     }
 
@@ -149,7 +149,7 @@ public class SpawnEntity extends BukkitRunnable {
             }
 
             if (this.entityToSpawn != null) {
-                this.entityToSpawn.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());
+                this.entityToSpawn.setPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ());
                 this.nmsWorld.addEntity(this.entityToSpawn, this.spawnReason);
 
                 if (this.setNametag) {

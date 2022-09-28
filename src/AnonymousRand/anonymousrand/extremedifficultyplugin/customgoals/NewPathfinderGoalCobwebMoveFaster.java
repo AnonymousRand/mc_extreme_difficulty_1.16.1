@@ -1,7 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 public class NewPathfinderGoalCobwebMoveFaster extends PathfinderGoal {
 

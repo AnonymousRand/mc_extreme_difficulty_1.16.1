@@ -17,13 +17,13 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
-        Entity entity = movingobjectpositionentity.getEntity();
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
+        Entity entity = movingObjectPositionEntity.getEntity();
         if (!(entity instanceof EntityPlayer)) { /** shulker bullets can only hit players */
             return;
         }
 
-        super.a(movingobjectpositionentity);
+        super.a(movingObjectPositionEntity);
 
         EntityHuman entityHuman = (EntityHuman)entity;
         boolean shield = entityHuman.isBlocking();
@@ -32,7 +32,7 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
             entityHuman.removeEffect(MobEffects.LEVITATION);
 
             if (this.getShooter() instanceof CustomEntityShulker) {
-                if (((CustomEntityShulker)this.getShooter()).attacks >= 70) { /** after 70 attacks, shulkers' bullets inflict levitation for 50% longer and also inflict blindness for 2.5 seconds */
+                if (((CustomEntityShulker)this.getShooter()).getAttacks() >= 70) { /** after 70 attacks, shulkers' bullets inflict levitation for 50% longer and also inflict blindness for 2.5 seconds */
                     entityHuman.addEffect(new MobEffect(MobEffects.LEVITATION, shield ? 180 : 225, shield ? 1 : 0));
                     entityHuman.addEffect(new MobEffect(MobEffects.BLINDNESS, 50));
                     return;
@@ -44,8 +44,8 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
     }
 
     @Override
-    protected void a(MovingObjectPositionBlock movingobjectpositionblock) { /** shulker bullets explode when hitting a block */
-        super.a(movingobjectpositionblock);
+    protected void a(MovingObjectPositionBlock movingObjectPositionBlock) { /** shulker bullets explode when hitting a block */
+        super.a(movingObjectPositionBlock);
         this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.5F, false, Explosion.Effect.DESTROY);
     }
 

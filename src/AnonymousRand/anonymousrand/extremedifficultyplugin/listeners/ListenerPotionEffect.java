@@ -2,14 +2,12 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -23,20 +21,19 @@ public class ListenerPotionEffect implements Listener {
         EntityPotionEffectEvent.Cause bukkitCause = event.getCause();
 
         if (bukkitNewEffect != null) {
-            if (bukkitNewEffect.getType().equals(PotionEffectType.DOLPHINS_GRACE)) { /** dolphin's grace drags down the player */
+            PotionEffectType bukkitPotionEffectType = bukkitNewEffect.getType();
+            if (bukkitPotionEffectType.equals(PotionEffectType.DOLPHINS_GRACE)) { /** dolphin's grace drags down the player */
                 bukkitEntity.setVelocity(new Vector(0.0, -0.3, 0.0));
             }
 
             if ((bukkitCause == EntityPotionEffectEvent.Cause.POTION_DRINK || bukkitCause == EntityPotionEffectEvent.Cause.POTION_SPLASH || bukkitCause == EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD)) { /** positive potion effects applied via potions last 40 times shorter */
-                PotionEffectType type = bukkitNewEffect.getType();
-
-                if (type.equals(PotionEffectType.ABSORPTION) || type.equals(PotionEffectType.CONDUIT_POWER) || type.equals(PotionEffectType.DAMAGE_RESISTANCE) || type.equals(PotionEffectType.DOLPHINS_GRACE) || type.equals(PotionEffectType.FAST_DIGGING) || type.equals(PotionEffectType.FIRE_RESISTANCE) || type.equals(PotionEffectType.HEAL) || type.equals(PotionEffectType.HEALTH_BOOST) || type.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || type.equals(PotionEffectType.INCREASE_DAMAGE) || type.equals(PotionEffectType.INVISIBILITY) || type.equals(PotionEffectType.JUMP) || type.equals(PotionEffectType.LUCK) || type.equals(PotionEffectType.NIGHT_VISION) || type.equals(PotionEffectType.REGENERATION) || type.equals(PotionEffectType.SATURATION) || type.equals(PotionEffectType.SLOW_FALLING) || type.equals(PotionEffectType.SPEED) || type.equals(PotionEffectType.WATER_BREATHING)) {
+                if (bukkitPotionEffectType.equals(PotionEffectType.ABSORPTION) || bukkitPotionEffectType.equals(PotionEffectType.CONDUIT_POWER) || bukkitPotionEffectType.equals(PotionEffectType.DAMAGE_RESISTANCE) || bukkitPotionEffectType.equals(PotionEffectType.DOLPHINS_GRACE) || bukkitPotionEffectType.equals(PotionEffectType.FAST_DIGGING) || bukkitPotionEffectType.equals(PotionEffectType.FIRE_RESISTANCE) || bukkitPotionEffectType.equals(PotionEffectType.HEAL) || bukkitPotionEffectType.equals(PotionEffectType.HEALTH_BOOST) || bukkitPotionEffectType.equals(PotionEffectType.HERO_OF_THE_VILLAGE) || bukkitPotionEffectType.equals(PotionEffectType.INCREASE_DAMAGE) || bukkitPotionEffectType.equals(PotionEffectType.INVISIBILITY) || bukkitPotionEffectType.equals(PotionEffectType.JUMP) || bukkitPotionEffectType.equals(PotionEffectType.LUCK) || bukkitPotionEffectType.equals(PotionEffectType.NIGHT_VISION) || bukkitPotionEffectType.equals(PotionEffectType.REGENERATION) || bukkitPotionEffectType.equals(PotionEffectType.SATURATION) || bukkitPotionEffectType.equals(PotionEffectType.SLOW_FALLING) || bukkitPotionEffectType.equals(PotionEffectType.SPEED) || bukkitPotionEffectType.equals(PotionEffectType.WATER_BREATHING)) {
                     if (bukkitEntity instanceof Player) {
                         event.setCancelled(true);
 
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
-                            ((LivingEntity) bukkitEntity).addPotionEffect(new PotionEffect(bukkitNewEffect.getType(), (int)(bukkitNewEffect.getDuration() * 0.025), bukkitNewEffect.getAmplifier()));
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitEntity.getName() + " \"Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.025 / 20.0) + " seconds of " + bukkitNewEffect.getType().getName().toLowerCase().replaceAll("_", " ") + "\"");
+                            ((LivingEntity) bukkitEntity).addPotionEffect(new PotionEffect(bukkitPotionEffectType, (int)(bukkitNewEffect.getDuration() * 0.025), bukkitNewEffect.getAmplifier()));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitEntity.getName() + " \"Enjoy your " + (int)(bukkitNewEffect.getDuration() * 0.025 / 20.0) + " seconds of " + bukkitPotionEffectType.getName().toLowerCase().replaceAll("_", " ") + "\"");
                         }, 1);
                     }
                 } else {

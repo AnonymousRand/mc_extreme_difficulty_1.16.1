@@ -12,10 +12,10 @@ import org.bukkit.Location;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class CustomEntityZombieVillager extends EntityZombieVillager implements ICustomMob {
+public class CustomEntityZombieVillager extends EntityZombieVillager implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a25, deathLightningStorm;
 
     public CustomEntityZombieVillager(World world) {
@@ -33,7 +33,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 3 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
@@ -52,6 +52,14 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     public double getFollowRange() { /** zombies have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -75,10 +83,10 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -103,7 +111,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -111,7 +119,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

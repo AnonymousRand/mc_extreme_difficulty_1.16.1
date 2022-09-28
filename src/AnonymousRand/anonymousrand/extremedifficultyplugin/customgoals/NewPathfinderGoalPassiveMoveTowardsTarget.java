@@ -10,8 +10,8 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
     private EntityLiving targetEntity;
     private final float maxFollowDistance;
 
-    public NewPathfinderGoalPassiveMoveTowardsTarget(EntityInsentient entitycreature, double d0, float maxFollowDistance) {
-        this.entity = entitycreature;
+    public NewPathfinderGoalPassiveMoveTowardsTarget(EntityInsentient entityCreature, float maxFollowDistance) {
+        this.entity = entityCreature;
         this.maxFollowDistance = maxFollowDistance;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
     }
@@ -31,7 +31,7 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
     @Override
     public boolean b() {
-        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && this.targetEntity.h((Entity)this.entity) < (double)(this.maxFollowDistance * this.maxFollowDistance);
+        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && this.targetEntity.h(this.entity) < (double)(this.maxFollowDistance * this.maxFollowDistance);
     }
 
     @Override

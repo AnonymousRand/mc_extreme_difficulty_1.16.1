@@ -59,7 +59,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
                         creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                         try {
-                            creeper.fuseTicks.setInt(creeper, 0);
+                            CustomEntityCreeper.fuseTicks.setInt(creeper, 0);
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
@@ -79,10 +79,10 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         } else { // teleport onto player if that's the only available block
             if (this.entity instanceof CustomEntityCreeper) {
                 CustomEntityCreeper creeper = ((CustomEntityCreeper)this.entity);
-                creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
+                creeper.maxFuseTicks = ((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25; // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                 try {
-                    creeper.fuseTicks.setInt(creeper, 0);
+                    CustomEntityCreeper.fuseTicks.setInt(creeper, 0);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -92,26 +92,20 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         }
     }
 
-    protected boolean teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+    protected void teleportTo(BlockPosition pos) {
+        BlockPosition.MutableBlockPosition blockPosition_mutableblockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockposition_mutableblockposition.getY() > 0 && !this.entity.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
+        while (blockPosition_mutableblockPosition.getY() > 0 && !this.entity.world.getType(blockPosition_mutableblockPosition).getMaterial().isSolid()) {
+            blockPosition_mutableblockPosition.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.world.getType(blockposition_mutableblockposition);
+        IBlockData iblockdata = this.entity.world.getType(blockPosition_mutableblockPosition);
 
         if (iblockdata.getMaterial().isSolid()) {
-            boolean flag2 = this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true);
-
-            if (flag2 && !this.entity.isSilent()) {
-                this.entity.world.playSound((EntityHuman)null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
+            if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
+                this.entity.world.playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
                 this.entity.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
-
-            return flag2;
-        } else {
-            return false;
         }
     }
 
@@ -121,21 +115,21 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
         double d5 = this.entity.locZ();
         double d6 = d1;
         boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
         World world = this.entity.world;
 
-        if (world.isLoaded(blockposition)) {
+        if (world.isLoaded(blockPosition)) {
             boolean flag2 = false;
 
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
+            while (!flag2 && blockPosition.getY() > 0) {
+                BlockPosition blockPosition1 = blockPosition.down();
+                IBlockData iblockdata = world.getType(blockPosition1);
 
                 if (iblockdata.getMaterial().isSolid()) {
                     flag2 = true;
                 } else {
                     --d6;
-                    blockposition = blockposition1;
+                    blockPosition = blockPosition1;
                 }
             }
 
@@ -156,7 +150,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
             }
 
             if (this.entity instanceof EntityCreature) {
-                ((EntityCreature)this.entity).getNavigation().o();
+                this.entity.getNavigation().o();
             }
 
             return true;

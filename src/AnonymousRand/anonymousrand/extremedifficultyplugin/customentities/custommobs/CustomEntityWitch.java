@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks, attackNum;
+    private int attacks, attackNum;
     private boolean a12, a30;
     private final CustomEntityAreaEffectCloud newAEC;
     private static Field bx;
@@ -49,45 +49,45 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { // shoot
+    public void a(EntityLiving entityLiving, float f) { // shoot()
         if (++this.attackNum % 6 == 0) { // attacks only count every 1.5 seconds, or 6 shots
             this.attacks++;
         }
 
         if (!this.m()) {
-            Vec3D vec3d = entityliving.getMot();
-            double d0 = entityliving.locX() + vec3d.x - this.locX();
-            double d1 = entityliving.getHeadY() - 1.100000023841858D - this.locY();
-            double d2 = entityliving.locZ() + vec3d.z - this.locZ();
+            Vec3D vec3d = entityLiving.getMot();
+            double d0 = entityLiving.locX() + vec3d.x - this.locX();
+            double d1 = entityLiving.getHeadY() - 1.100000023841858D - this.locY();
+            double d2 = entityLiving.locZ() + vec3d.z - this.locZ();
             float f1 = MathHelper.sqrt(d0 * d0 + d2 * d2);
             PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /** after 45 attacks, witches throw harming 2 instead of 1 */
 
-            if (entityliving instanceof EntityRaider) {
-                if (entityliving.getHealth() <= 10.0F) { /** gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
+            if (entityLiving instanceof EntityRaider) {
+                if (entityLiving.getHealth() <= 10.0F) { /** gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
                     potionregistry = Potions.STRONG_HEALING;
                 } else {
                     potionregistry = Potions.STRONG_REGENERATION;
                 }
 
-                this.setGoalTarget((EntityLiving)null);
-            } else if (f1 >= 6.0F && !entityliving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /** gives slowness 2 up to 6 blocks away */
+                this.setGoalTarget(null);
+            } else if (f1 >= 6.0F && !entityLiving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /** gives slowness 2 up to 6 blocks away */
                 potionregistry = Potions.STRONG_SLOWNESS;
-            } else if (f1 < 6.0F && !entityliving.hasEffect(MobEffects.WEAKNESS)) { /** 100% to give weakness when player within 6 blocks */
+            } else if (f1 < 6.0F && !entityLiving.hasEffect(MobEffects.WEAKNESS)) { /** 100% to give weakness when player within 6 blocks */
                 potionregistry = Potions.WEAKNESS;
             } else if (f1 >= 5.0F) { /** gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming */
                 potionregistry = Potions.STRONG_POISON;
             }
 
-            EntityPotion entitypotion = new EntityPotion(this.world, this);
+            EntityPotion entityPotion = new EntityPotion(this.world, this);
 
-            entitypotion.setItem(PotionUtil.a(new ItemStack(Items.SPLASH_POTION), potionregistry));
-            entitypotion.pitch -= -20.0F;
-            entitypotion.shoot(d0, d1 + (double)(f1 * 0.2F), d2, 0.75F, 8.0F);
+            entityPotion.setItem(PotionUtil.a(new ItemStack(Items.SPLASH_POTION), potionregistry));
+            entityPotion.pitch -= -20.0F;
+            entityPotion.shoot(d0, d1 + (double)(f1 * 0.2F), d2, 0.75F, 8.0F);
             if (!this.isSilent()) {
-                this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
+                this.world.playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
             }
 
-            this.world.addEntity(entitypotion);
+            this.world.addEntity(entityPotion);
         }
     }
 
@@ -125,6 +125,14 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
         return 24.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -145,10 +153,10 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -173,7 +181,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -181,7 +189,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

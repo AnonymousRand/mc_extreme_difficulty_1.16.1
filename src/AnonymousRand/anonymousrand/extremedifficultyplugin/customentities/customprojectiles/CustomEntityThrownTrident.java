@@ -36,18 +36,18 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
-        net.minecraft.server.v1_16_R1.Entity entity = movingobjectpositionentity.getEntity();
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
+        net.minecraft.server.v1_16_R1.Entity entity = movingObjectPositionEntity.getEntity();
         float f = 4.0F; /** trident damage decreased from 8 to 4.0 */
 
         if (entity instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving)entity;
+            EntityLiving entityLiving = (EntityLiving)entity;
 
-            f += EnchantmentManager.a(this.trident, entityliving.getMonsterType());
+            f += EnchantmentManager.a(this.trident, entityLiving.getMonsterType());
         }
 
         net.minecraft.server.v1_16_R1.Entity entity1 = this.getShooter();
-        DamageSource damagesource = DamageSource.a((net.minecraft.server.v1_16_R1.Entity)this, (net.minecraft.server.v1_16_R1.Entity)(entity1 == null ? this : entity1));
+        DamageSource damagesource = DamageSource.a(this, entity1 == null ? this : entity1);
 
         try {
             ap.setBoolean(this, true);
@@ -63,14 +63,14 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
             }
 
             if (entity instanceof EntityLiving) {
-                EntityLiving entityliving1 = (EntityLiving)entity;
+                EntityLiving entityLiving1 = (EntityLiving)entity;
 
                 if (entity1 instanceof EntityLiving) {
-                    EnchantmentManager.a(entityliving1, entity1);
-                    EnchantmentManager.b((EntityLiving)entity1, (net.minecraft.server.v1_16_R1.Entity)entityliving1);
+                    EnchantmentManager.a(entityLiving1, entity1);
+                    EnchantmentManager.b((EntityLiving)entity1, entityLiving1);
                 }
 
-                this.a(entityliving1);
+                this.a(entityLiving1);
             }
         }
 
@@ -78,14 +78,14 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         float f1 = 1.0F;
 
         if (this.world instanceof WorldServer && this.world.T() && EnchantmentManager.h(this.trident)) {
-            BlockPosition blockposition = entity.getChunkCoordinates();
+            BlockPosition blockPosition = entity.getChunkCoordinates();
 
-            if (this.world.f(blockposition)) {
-                EntityLightning entitylightning = (EntityLightning) EntityTypes.LIGHTNING_BOLT.a(this.world);
+            if (this.world.f(blockPosition)) {
+                EntityLightning entityLightning = EntityTypes.LIGHTNING_BOLT.a(this.world);
 
-                entitylightning.c(Vec3D.c((BaseBlockPosition) blockposition));
-                entitylightning.d(entity1 instanceof EntityPlayer ? (EntityPlayer) entity1 : null);
-                this.world.addEntity(entitylightning);
+                entityLightning.c(Vec3D.c(blockPosition));
+                entityLightning.d(entity1 instanceof EntityPlayer ? (EntityPlayer) entity1 : null);
+                this.world.addEntity(entityLightning);
                 soundeffect = SoundEffects.ITEM_TRIDENT_THUNDER;
                 f1 = 5.0F;
             }

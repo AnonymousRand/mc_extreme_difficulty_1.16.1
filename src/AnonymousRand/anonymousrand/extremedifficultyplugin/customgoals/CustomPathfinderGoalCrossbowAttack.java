@@ -29,9 +29,9 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
 
     @Override
     public void e() {
-        EntityLiving entityliving = this.b.getGoalTarget();
+        EntityLiving entityLiving = this.b.getGoalTarget();
 
-        if (entityliving != null) {
+        if (entityLiving != null) {
             boolean flag = true; /** breaking line of sight does not stop the mob from attacking */
             boolean flag1 = this.f > 0;
 
@@ -45,13 +45,13 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
                 --this.f;
             }
 
-            double d0 = this.b.h((Entity)entityliving);
+            double d0 = this.b.h(entityLiving);
             boolean flag2 = (d0 > (double)this.e || this.f < 5) && this.g == 0;
 
             if (flag2) {
                 --this.h;
                 if (this.h <= 0) {
-                    this.b.getNavigation().a((Entity)entityliving, this.j() ? this.d : this.d * 0.5D);
+                    this.b.getNavigation().a(entityLiving, this.j() ? this.d : this.d * 0.5D);
                     this.h = CustomPathfinderGoalCrossbowAttack.a.a(this.b.getRandom());
                 }
             } else {
@@ -59,12 +59,12 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
                 this.b.getNavigation().o();
             }
 
-            this.b.getControllerLook().a(entityliving, 30.0F, 30.0F);
+            this.b.getControllerLook().a(entityLiving, 30.0F, 30.0F);
             if (this.c == CustomPathfinderGoalCrossbowAttack.State.UNCHARGED) {
                 if (!flag2) {
                     this.b.c(ProjectileHelper.a(this.b, Items.CROSSBOW));
                     this.c = CustomPathfinderGoalCrossbowAttack.State.CHARGING;
-                    ((ICrossbow) this.b).b(true);
+                    (this.b).b(true);
                 }
             } else if (this.c == CustomPathfinderGoalCrossbowAttack.State.CHARGING) {
                 if (!this.b.isHandRaised()) {
@@ -78,7 +78,7 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
                     this.b.releaseActiveItem();
                     this.c = CustomPathfinderGoalCrossbowAttack.State.CHARGED;
                     this.g = 20 + this.b.getRandom().nextInt(20);
-                    ((ICrossbow) this.b).b(false);
+                    (this.b).b(false);
                 }
             } else if (this.c == CustomPathfinderGoalCrossbowAttack.State.CHARGED) {
                 --this.g;
@@ -86,7 +86,7 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
                     this.c = CustomPathfinderGoalCrossbowAttack.State.READY_TO_ATTACK;
                 }
             } else if (this.c == CustomPathfinderGoalCrossbowAttack.State.READY_TO_ATTACK && flag) {
-                ((IRangedEntity) this.b).a(entityliving, 1.0F);
+                (this.b).a(entityLiving, 1.0F);
                 ItemStack itemstack1 = this.b.b(ProjectileHelper.a(this.b, Items.CROSSBOW));
 
                 ItemCrossbow.a(itemstack1, false);
@@ -96,10 +96,10 @@ public class CustomPathfinderGoalCrossbowAttack<T extends EntityMonster & IRange
         }
     }
 
-    static enum State {
+    enum State {
 
         UNCHARGED, CHARGING, CHARGED, READY_TO_ATTACK;
 
-        private State() {}
+        State() {}
     }
 }

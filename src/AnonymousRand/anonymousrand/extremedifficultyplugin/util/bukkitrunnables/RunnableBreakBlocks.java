@@ -1,28 +1,31 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySlimeMagmaCube;
-import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 import java.util.function.Predicate;
 
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
+
 public class RunnableBreakBlocks extends BukkitRunnable {
 
     protected final Entity entity;
     protected final World bukkitWorld;
-    protected Location loc;
+    protected Location bukkitLoc;
     protected final int radX, radY, radZ, yOffset;
-    protected final boolean removeFluids;
+    protected final boolean removeFluids, immuneBlocks;
     protected int cycles;
     protected final int maxCycles;
-    protected int X, Y, Z;
-    public static Predicate<Material> blockBreakable = (type) -> type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.COMMAND_BLOCK  && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.RESPAWN_ANCHOR && type != Material.ANCIENT_DEBRIS && type != Material.NETHERITE_BLOCK && type != Material.FIRE && type != Material.WITHER_ROSE;
+    protected int baseX, baseY, baseZ;
+    protected Block bukkitBlock;
+    protected Material bukkitMaterial;
+    protected Predicate<Material> blockBreakable = (type) -> blockBreakableBase.test(type) && blockBreakableBedrock.test(type) && blockBreakableHardBlocks.test(type) && blockBreakableFireWitherRose.test(type);
     protected static final Random random = new Random();
 
     public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
@@ -33,11 +36,12 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.radZ = radZ;
         this.yOffset = yOffset;
         this.removeFluids = removeFluids;
+        this.immuneBlocks = true;
         this.cycles = 0;
         this.maxCycles = 1;
     }
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids, int maxCycles) {
+    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids, boolean immuneBlocks, int maxCycles) {
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.radX = radX;
@@ -45,19 +49,21 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.radZ = radZ;
         this.yOffset = yOffset;
         this.removeFluids = removeFluids;
+        this.immuneBlocks = immuneBlocks;
         this.cycles = 0;
         this.maxCycles = maxCycles;
     }
 
-    public RunnableBreakBlocks(Location loc, World bukktWorld, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
+    public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
         this.entity = null;
-        this.loc = loc;
-        this.bukkitWorld = bukktWorld;
+        this.bukkitLoc = bukkitLoc;
+        this.bukkitWorld = bukkitWorld;
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
         this.yOffset = yOffset;
         this.removeFluids = removeFluids;
+        this.immuneBlocks = true;
         this.cycles = 0;
         this.maxCycles = 1;
     }
@@ -70,19 +76,19 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         }
 
         if (this.entity != null) {
-            this.X = (int)Math.floor(this.entity.getPositionVector().getX());
-            this.Y = (int)Math.floor(this.entity.getPositionVector().getY()) + this.yOffset;
-            this.Z = (int)Math.floor(this.entity.getPositionVector().getZ());
+            this.baseX = (int)Math.floor(this.entity.getPositionVector().getX());
+            this.baseY = (int)Math.floor(this.entity.getPositionVector().getY()) + this.yOffset;
+            this.baseZ = (int)Math.floor(this.entity.getPositionVector().getZ());
         } else {
-            this.X = (int)Math.floor(this.loc.getX());
-            this.Y = (int)Math.floor(this.loc.getY()) + this.yOffset;
-            this.Z = (int)Math.floor(this.loc.getZ());
+            this.baseX = (int)Math.floor(this.bukkitLoc.getX());
+            this.baseY = (int)Math.floor(this.bukkitLoc.getY()) + this.yOffset;
+            this.baseZ = (int)Math.floor(this.bukkitLoc.getZ());
         }
 
         if (this.entity instanceof EntityInsentient) {
             if (((EntityInsentient)this.entity).getGoalTarget() != null) {
                 if (((EntityInsentient)this.entity).getGoalTarget().locY() < this.entity.locY()) { // move downwards if player is below entity
-                    this.Y--;
+                    this.baseY--;
                 }
             }
         }
@@ -90,14 +96,15 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         for (int x = -this.radX; x <= this.radX; x++) {
             for (int y = -this.radY; y <= this.radY; y++) {
                 for (int z = -this.radZ; z <= this.radZ; z++) {
-                    int x1 = this.X + x, y1 = this.Y + y, z1 = this.Z + z;
-                    Material type = this.bukkitWorld.getBlockAt(x1, y1, z1).getType();
+                    int x1 = this.baseX + x, y1 = this.baseY + y, z1 = this.baseZ + z;
+                    this.bukkitBlock = this.bukkitWorld.getBlockAt(x1, y1, z1);
+                    this.bukkitMaterial = this.bukkitBlock.getType();
 
-                    if (blockBreakable.test(type) && (this.removeFluids ? true : (type != Material.WATER && type != Material.LAVA))) { // as long as it isn't one of these blocks
-                        this.bukkitWorld.getBlockAt(x1, y1, z1).setType(Material.AIR);
-                    } else if (type == Material.OBSIDIAN || type == Material.CRYING_OBSIDIAN || type == Material.RESPAWN_ANCHOR || type == Material.ANCIENT_DEBRIS || type == Material.NETHERITE_BLOCK) { // 50% chance to break these blocks
+                    if (blockBreakable.test(this.bukkitMaterial) && (this.removeFluids ? true : blockBreakableFluids.test(this.bukkitMaterial)) && (this.immuneBlocks ? blockBreakableImmuneBlocks.test(this.bukkitMaterial) : true)) { // as long as it isn't one of these blocks
+                        this.bukkitBlock.setType(Material.AIR);
+                    } else if (!blockBreakableHardBlocks.test(this.bukkitMaterial)) { // 50% chance to break these blocks
                         if (random.nextDouble() < 0.5) {
-                            this.bukkitWorld.getBlockAt(x1, y1, z1).setType(Material.AIR);
+                            this.bukkitBlock.setType(Material.AIR);
                         }
                     }
                 }

@@ -46,7 +46,7 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         }
 
         if (!this.isSilent() && random.nextDouble() < 0.05) { /** mini withers only play the skull shooting sound 5% of the time */
-            this.world.a((EntityHuman)null, 1024, this.getChunkCoordinates(), 0);
+            this.world.a(null, 1024, this.getChunkCoordinates(), 0);
         }
 
         double d3 = this.getHeadX(i);
@@ -55,14 +55,14 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         double d6 = d0 - d3;
         double d7 = d1 - d4;
         double d8 = d2 - d5;
-        CustomEntityWitherSkull entitywitherskull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
-        entitywitherskull.setShooter(this);
+        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
+        entityWitherSkull.setShooter(this);
 
         if (this.random.nextFloat() < 0.05 || alwaysBlue) { /** mini withers shoot blue skulls 5% of the time */
-            entitywitherskull.setCharged(true);
+            entityWitherSkull.setCharged(true);
         }
 
-        entitywitherskull.setPositionRaw(d3, d4, d5);
-        this.world.addEntity(entitywitherskull);
+        entityWitherSkull.setPositionRaw(d3, d4, d5);
+        this.world.addEntity(entityWitherSkull);
     }
 }

@@ -1,18 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSlimeMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.util.io.BukkitObjectInputStream;
 
-import java.util.EnumSet;
-
-public class CustomEntitySlime extends EntitySlime implements ICustomMob {
+public class CustomEntitySlime extends EntitySlime implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a12, a35, deathExplosion;
 
     public CustomEntitySlime(World world) {
@@ -52,7 +50,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
     }
 
     @Override
-    protected void j(EntityLiving entityliving) {} /** slimes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
+    protected void j(EntityLiving entityLiving) {} /** slimes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
 
     @Override
     public void die() {
@@ -70,18 +68,18 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
                 for (int l = 0; l < 4; ++l) {
                     float f1 = ((float)(l % 2) - 0.5F) * f;
                     float f2 = ((float)(l / 2) - 0.5F) * f;
-                    EntitySlime entityslime = (EntitySlime)this.getEntityType().a(this.world);
+                    EntitySlime entitySlime = this.getEntityType().a(this.world);
 
                     if (this.isPersistent()) {
-                        entityslime.setPersistent();
+                        entitySlime.setPersistent();
                     }
 
-                    entityslime.setCustomName(ichatbasecomponent);
-                    entityslime.setNoAI(flag);
-                    entityslime.setInvulnerable(this.isInvulnerable());
-                    entityslime.setSize(j, true);
-                    entityslime.setPositionRotation(this.locX() + (double)f1, this.locY() + 0.5D, this.locZ() + (double)f2, random.nextFloat() * 360.0F, 0.0F);
-                    this.world.addEntity(entityslime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
+                    entitySlime.setCustomName(ichatbasecomponent);
+                    entitySlime.setNoAI(flag);
+                    entitySlime.setInvulnerable(this.isInvulnerable());
+                    entitySlime.setSize(j, true);
+                    entitySlime.setPositionRotation(this.locX() + (double)f1, this.locY() + 0.5D, this.locZ() + (double)f2, random.nextFloat() * 360.0F, 0.0F);
+                    this.world.addEntity(entitySlime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
                 }
             }
         }
@@ -93,6 +91,14 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
     public double getFollowRange() { /** slimes have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -119,7 +125,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
         if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /** custom goal that breaks blocks around the mob periodically */
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
             }
         }
     }
@@ -129,10 +135,10 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -157,7 +163,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -165,7 +171,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

@@ -1,16 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSlimeMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksEntitiesConstantly;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableConstantlySpawnBlocksEntities;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
-public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICustomMob {
+public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a15, a40, deathExplosion;
 
     public CustomEntitySlimeMagmaCube(World world) {
@@ -49,7 +49,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     }
 
     @Override
-    protected void j(EntityLiving entityliving) {} /** magma cubes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
+    protected void j(EntityLiving entityLiving) {} /** magma cubes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
 
     protected int eK() { /** magma cubes jump faster */
         return random.nextInt(3) + 6;
@@ -57,6 +57,14 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     public double getFollowRange() { /** magma cubes have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -86,7 +94,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /** custom goal that breaks blocks around the mob periodically */
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
             }
         }
     }
@@ -96,10 +104,10 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -124,7 +132,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -132,7 +140,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -170,10 +178,10 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
                 if (this.firstLand <= 0) { // to reduce lag, this can only happen every 10 ticks
                     this.firstLand = 10;
-                    new RunnableSpawnBlocksEntitiesConstantly(this.cube, org.bukkit.Material.MAGMA_BLOCK, null, diameter / 2, 0, diameter / 2, -1.0, true).run();
+                    new RunnableConstantlySpawnBlocksEntities(this.cube, org.bukkit.Material.MAGMA_BLOCK, null, diameter / 2, 0, diameter / 2, -1.0, true).run();
                     return;
                 } else if (this.firstLand == 10) { // delay it by 1 tick so the magma blocks have time to place before the fire needs to go underneath
-                    new RunnableSpawnBlocksEntitiesConstantly(this.cube, org.bukkit.Material.FIRE, null, diameter / 2, 0, diameter / 2, 0.0, false).run();
+                    new RunnableConstantlySpawnBlocksEntities(this.cube, org.bukkit.Material.FIRE, null, diameter / 2, 0, diameter / 2, 0.0, false).run();
                     return;
                 }
             }

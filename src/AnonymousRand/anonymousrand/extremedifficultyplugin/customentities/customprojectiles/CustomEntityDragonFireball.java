@@ -4,9 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class CustomEntityDragonFireball extends EntityDragonFireball {
@@ -19,42 +17,42 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
     }
 
     @Override
-    protected void a(MovingObjectPosition movingobjectposition) {
-        if (movingobjectposition.getType() == MovingObjectPosition.EnumMovingObjectType.ENTITY) {
-            if (!(((MovingObjectPositionEntity)movingobjectposition).getEntity() instanceof EntityPlayer)) { /** area effect clouds can't collide with non-player mobs/entities */
+    protected void a(MovingObjectPosition movingObjectPosition) {
+        if (movingObjectPosition.getType() == MovingObjectPosition.EnumMovingObjectType.ENTITY) {
+            if (!(((MovingObjectPositionEntity)movingObjectPosition).getEntity() instanceof EntityPlayer)) { /** area effect clouds can't collide with non-player mobs/entities */
                 return;
             }
-        } else if (movingobjectposition.getType() != MovingObjectPosition.EnumMovingObjectType.BLOCK) {
+        } else if (movingObjectPosition.getType() != MovingObjectPosition.EnumMovingObjectType.BLOCK) {
             return;
         }
 
         Entity shooter = this.getShooter();
         List<EntityLiving> entities;
-        CustomEntityAreaEffectCloud entityareaeffectcloud;
+        CustomEntityAreaEffectCloud entityAreaeffectcloud;
         boolean largerRadius = random.nextDouble() < 0.05;
 
         for (int i = -3; i < 3; i++) { /** area effect clouds are 6 blocks high and take 5 ticks less to start doing damage, but only last 5 seconds; 5% chance to create a wider area effect cloud with radius 7 */
             entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
-            entityareaeffectcloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
+            entityAreaeffectcloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
-                entityareaeffectcloud.setSource((EntityLiving)shooter);
+                entityAreaeffectcloud.setSource((EntityLiving)shooter);
             }
 
-            entityareaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
-            entityareaeffectcloud.setParticle(Particles.DRAGON_BREATH);
-            entityareaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityareaeffectcloud.getRadius()) / (float)entityareaeffectcloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
-            entityareaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
+            entityAreaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
+            entityAreaeffectcloud.setParticle(Particles.DRAGON_BREATH);
+            entityAreaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaeffectcloud.getRadius()) / (float)entityAreaeffectcloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
+            entityAreaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityLiving entity : entities) {
                 if (this.d(entity.getPositionVector()) < 64.0D) { /** area effect clouds snap on to location of closest player within 8 blocks horizontally */
-                    entityareaeffectcloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
+                    entityAreaeffectcloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
                     break;
                 }
             }
 
             this.getWorld().triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 1);
-            this.getWorld().addEntity(entityareaeffectcloud);
+            this.getWorld().addEntity(entityAreaeffectcloud);
         }
 
         this.die();
@@ -89,7 +87,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

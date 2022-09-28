@@ -11,11 +11,10 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntitySheepAggressive extends EntitySheep implements ICustomMob {
+public class CustomEntitySheepAggressive extends EntitySheep implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
-    private boolean a20, a40, a65, die;
-    public boolean launchHigh;
+    private int attacks;
+    private boolean a20, a40, a65, die, launchHigh;
     private static Field attributeMap;
 
     public CustomEntitySheepAggressive(World world) {
@@ -66,21 +65,37 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
     @Override
     protected void initPathfinder() { /** sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority) */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); /** uses the custom goal that makes this mob move towards the player */
+        this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob move towards the player */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
-    protected void f(EntityLiving entityliving) { /** sheep heals when its attack is blocked by a shield */
+    protected void f(EntityLiving entityLiving) { /** sheep heals when its attack is blocked by a shield */
         this.heal(this.attacks < 15 ? 15.0F : 25.0F);
+    }
+
+    public boolean getLaunchHigh() {
+        return this.launchHigh;
+    }
+
+    public void setLaunchHigh(boolean launchHigh) {
+        this.launchHigh = launchHigh;
     }
 
     public double getFollowRange() { /** aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks) */
         return this.attacks < 20 ? 64.0 : 128.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -90,7 +105,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
         if (this.attacks == 20 && !this.a20) { /** after 20 attacks, aggressive sheep gain speed 1 */
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, 1.0, (float)this.getFollowRange())); // updates follow range
+            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); // updates follow range
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
         }
 
@@ -123,10 +138,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -151,7 +166,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -159,7 +174,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomM
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

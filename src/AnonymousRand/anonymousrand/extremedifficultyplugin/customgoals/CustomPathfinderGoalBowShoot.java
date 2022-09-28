@@ -27,10 +27,10 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
 
     @Override
     public void e() {
-        EntityLiving entityliving = this.a.getGoalTarget();
+        EntityLiving entityLiving = this.a.getGoalTarget();
 
-        if (entityliving != null) {
-            double d0 = this.a.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
+        if (entityLiving != null) {
+            double d0 = this.a.g(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ());
             boolean flag = true; /** breaking line of sight does not stop the mob from attacking */
             boolean flag1 = this.f > 0;
 
@@ -48,7 +48,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
                 this.a.getNavigation().o();
                 ++this.i;
             } else {
-                this.a.getNavigation().a((Entity)entityliving, this.b);
+                this.a.getNavigation().a(entityLiving, this.b);
                 this.i = -1;
             }
 
@@ -72,9 +72,9 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
                 }
 
                 this.a.getControllerMove().a(this.h ? -0.5F : 0.5F, this.g ? 0.5F : -0.5F);
-                this.a.a((Entity)entityliving, 30.0F, 30.0F);
+                this.a.a(entityLiving, 30.0F, 30.0F);
             } else {
-                this.a.getControllerLook().a(entityliving, 30.0F, 30.0F);
+                this.a.getControllerLook().a(entityLiving, 30.0F, 30.0F);
             }
 
             if (this.a.isHandRaised()) {
@@ -85,7 +85,7 @@ public class CustomPathfinderGoalBowShoot<T extends EntityMonster & IRangedEntit
 
                     if (i >= 20) {
                         this.a.clearActiveItem();
-                        ((IRangedEntity) this.a).a(entityliving, ItemBow.a(i));
+                        (this.a).a(entityLiving, ItemBow.a(i));
                         this.e = this.c;
                     }
                 }

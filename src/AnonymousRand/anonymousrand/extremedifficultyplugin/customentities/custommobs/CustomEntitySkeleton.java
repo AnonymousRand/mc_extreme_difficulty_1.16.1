@@ -3,15 +3,15 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
+public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob, IAttackLevelingMob {
 
     public boolean spawnExplodingArrow;
-    public int attacks;
-    private boolean a20, a80;
+    private int attacks;
+    private boolean a20, a90;
 
     public CustomEntitySkeleton(World world) {
         super(EntityTypes.SKELETON, world);
@@ -28,7 +28,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         this.spawnExplodingArrow = false;
         this.attacks = 0;
         this.a20 = false;
-        this.a80 = false;
+        this.a90 = false;
     }
 
     @Override
@@ -47,15 +47,15 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { // shoot
+    public void a(EntityLiving entityLiving, float f) { // shoot()
         this.attacks++;
 
         if (this.attacks >= 14 && this.attacks <= 30 && this.attacks % 8 == 6) { /** between these attack counts, shoot exploding arrows every 8 shots */
-            new RunnableMobShootArrowsNormally(this, entityliving, 10, 2, 40.0, 0, false, false).run();
+            new RunnableMobShootArrows(this, entityLiving, 10, 2, 40.0, 0, false, false).run();
         } else if (this.attacks < 30) { /** shoots 50 arrows at a time with increased inaccuracy to seem like a cone */
-            new RunnableMobShootArrowsNormally(this, entityliving, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /** 2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level */
+            new RunnableMobShootArrows(this, entityLiving, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /** 2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level */
         } else { /** if more than 30 attacks, rapidfire; if more than 40, even faster rapidfire */
-            new RunnableMobShootArrowsNormally(this, entityliving, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /** 5% of arrows shot are piercing 1 */
+            new RunnableMobShootArrows(this, entityLiving, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /** 5% of arrows shot are piercing 1 */
         }
     }
 
@@ -66,6 +66,14 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
 
     public double getFollowRange() { /** skeletons have 24 block detection range (setting attribute doesn't work) (32 after 20 attacks) */
         return this.attacks < 20 ? 24.0 : 32.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -79,8 +87,8 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
         }
 
-        if (this.attacks == 80 && !this.a80) { /** after 80 attacks, skeletons summon an iron golem */
-            this.a80 = true;
+        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, skeletons summon an iron golem */
+            this.a90 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
         }
 
@@ -100,10 +108,10 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 

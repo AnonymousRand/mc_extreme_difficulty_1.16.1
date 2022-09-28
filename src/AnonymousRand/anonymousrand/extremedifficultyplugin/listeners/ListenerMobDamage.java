@@ -4,12 +4,13 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieVillager;
-import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import net.minecraft.server.v1_16_R1.EntityArrow;
+import net.minecraft.server.v1_16_R1.EntityPlayer;
+import net.minecraft.server.v1_16_R1.EntityVillagerAbstract;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,16 +22,16 @@ public class ListenerMobDamage implements Listener {
 
     @EventHandler
     public void entityDamage(EntityDamageEvent event) {
-        EntityType entityType = event.getEntityType();
+        EntityType bukkitEntityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
         boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON) || cause.equals(EntityDamageEvent.DamageCause.CRAMMING);
 
         if (checkCause) {
-            if (entityType != PLAYER && entityType != ENDER_DRAGON && entityType != WITHER) { /** all non-player mobs take no damage from these sources */
+            if (bukkitEntityType != PLAYER && bukkitEntityType != ENDER_DRAGON && bukkitEntityType != WITHER) { /** all non-player mobs take no damage from these sources */
                 event.setCancelled(true);
                 return;
-            } else if (entityType == ENDER_DRAGON || entityType == WITHER) { /** ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
+            } else if (bukkitEntityType == ENDER_DRAGON || bukkitEntityType == WITHER) { /** ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
                 LivingEntity livingEntity = (LivingEntity)event.getEntity();
                 livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.2);
                 livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.2);
@@ -39,10 +40,8 @@ public class ListenerMobDamage implements Listener {
             }
         }
 
-        if (entityType != IRON_GOLEM && entityType != PLAYER) { /** golems within 50 blocks horizontally of damaged entity get a 20% stat boost */
-            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(50.0, 128.0, 50.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> {
-                ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.2);
-            });
+        if (bukkitEntityType != IRON_GOLEM && bukkitEntityType != PLAYER) { /** golems within 50 blocks horizontally of damaged entity get a 10% stat boost */
+            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(50.0, 128.0, 50.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.1));
         }
     }
 
@@ -72,9 +71,9 @@ public class ListenerMobDamage implements Listener {
             CustomEntityZombieVillager nmsZombieVillager = (CustomEntityZombieVillager)nmsDamager;
             LivingEntity bukkitDamager = ((LivingEntity)nmsDamager.getBukkitEntity());
 
-            nmsZombieVillager.attacks++; /** zombie villagers' attack counts increase when attacking villagers as well */
+            nmsZombieVillager.increaseAttacks(1); /** zombie villagers' attack counts increase when attacking villagers as well */
 
-            if (bukkitDamager.getMaxHealth() <= (nmsZombieVillager.attacks < 12 ? 57.0 : 77.0)) {
+            if (bukkitDamager.getMaxHealth() <= (nmsZombieVillager.getAttacks() < 12 ? 57.0 : 77.0)) {
                 bukkitDamager.setMaxHealth(bukkitDamager.getMaxHealth() + 3.0);
                 bukkitDamager.setHealth(bukkitDamager.getHealth() + 3.0F);
             }

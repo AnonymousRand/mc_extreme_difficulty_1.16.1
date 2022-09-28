@@ -26,7 +26,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
@@ -39,13 +39,13 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (super.damageEntity(damagesource, f)) {
-            EntityLiving entityliving = this.getGoalTarget();
+            EntityLiving entityLiving = this.getGoalTarget();
 
-            if (entityliving == null) {
-                entityliving = (EntityLiving)damagesource.getEntity();
+            if (entityLiving == null) {
+                entityLiving = (EntityLiving)damagesource.getEntity();
             }
 
-            if (!(entityliving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
+            if (!(entityLiving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
                 return true;
             }
 
@@ -60,15 +60,15 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomMob 
                         int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                         int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                         int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                        BlockPosition blockposition = new BlockPosition(i1, j1, k1);
-                        EntityTypes<?> entitytypes = newZombie.getEntityType();
-                        EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
+                        BlockPosition blockPosition = new BlockPosition(i1, j1, k1);
+                        EntityTypes<?> entityTypes = newZombie.getEntityType();
+                        EntityPositionTypes.Surface entityPositiontypes_surface = EntityPositionTypes.a(entityTypes);
 
-                        if (SpawnerCreature.a(entitypositiontypes_surface, (IWorldReader) this.getWorld(), blockposition, entitytypes) && EntityPositionTypes.a(entitytypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockposition, this.getWorld().random)) {
-                            newZombie.setPosition((double)i1, (double)j1, (double)k1);
-                            if (!this.getWorld().isPlayerNearby((double)i1, (double)j1, (double)k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
+                        if (SpawnerCreature.a(entityPositiontypes_surface, this.getWorld(), blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockPosition, this.getWorld().random)) {
+                            newZombie.setPosition(i1, j1, k1);
+                            if (!this.getWorld().isPlayerNearby(i1, j1, k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
                                 this.getWorld().addEntity(newZombie);
-                                newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, (GroupDataEntity) null, (NBTTagCompound) null);
+                                newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                                 this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /** zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement (15% after 7 attacks) */
                                 newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.125, AttributeModifier.Operation.ADDITION));
                                 break;

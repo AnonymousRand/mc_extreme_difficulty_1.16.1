@@ -14,7 +14,6 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
     private final World nmsWorld;
     private final org.bukkit.World bukkitWorld;
     private final double chanceMultiplier;
-    private Location loc;
     private static final Random random = new Random();
 
     public NewPathfinderGoalSummonLightningRandomly(EntityInsentient entity, double chanceMultiplier) {
@@ -40,7 +39,7 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     @Override
     public void e() {
-        this.loc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ()), random.nextDouble() * 50.0, this.entity.locY(), 361.0);
-        new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, this.loc, false);
+        Location bukkitLoc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ()), random.nextDouble() * 50.0, this.entity.locY(), 361.0);
+        new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, bukkitLoc, false);
     }
 }

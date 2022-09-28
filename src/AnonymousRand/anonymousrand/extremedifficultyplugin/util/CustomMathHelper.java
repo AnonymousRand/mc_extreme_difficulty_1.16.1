@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
+
 import net.minecraft.server.v1_16_R1.BlockPosition;
-import net.minecraft.server.v1_16_R1.Vec3D;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -17,7 +17,7 @@ public class CustomMathHelper {
 
     public static void initTrigTables() {
         for (int angle = 0; angle < 720; angle++) { // each index = +1/360 pi radians or +0.5 degrees
-            trigTableSin[angle] = Math.abs(Math.sin(angle * PI / 360.0)); // absval because Minecraft does not follow the same quadrants (ie. Minecraft is not pos pos for quadrant 1, neg pos for quadrant 2 etc. as the sin/cos functions would return)
+            trigTableSin[angle] = Math.abs(Math.sin(angle * PI / 360.0)); // absval because Minecraft does not follow the same quadrants (i.e. Minecraft is not pos pos for quadrant 1, neg pos for quadrant 2 etc. as the sin/cos functions would return)
             trigTableCos[angle] = Math.abs(Math.cos(angle * PI / 360.0));
         }
     }

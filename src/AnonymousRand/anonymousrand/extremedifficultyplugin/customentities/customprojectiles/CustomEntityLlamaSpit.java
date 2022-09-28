@@ -15,19 +15,19 @@ public class CustomEntityLlamaSpit extends EntityLlamaSpit {
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
         Entity entity = this.getShooter();
 
         if (entity instanceof EntityLiving) {
-            movingobjectpositionentity.getEntity().damageEntity(DamageSource.a((Entity)this, (EntityLiving)entity).c(), (float)this.damage); /** llama spit does at least 12 damage */
+            movingObjectPositionEntity.getEntity().damageEntity(DamageSource.a(this, (EntityLiving)entity).c(), (float)this.damage); /** llama spit does at least 12 damage */
         }
 
         if (this.getShooter() instanceof CustomEntityLlama) {
-            if (((CustomEntityLlama)this.getShooter()).attacks >= 25) { /** after 25 attacks, llama spit explodes on hit */
-                this.getWorld().createExplosion((Entity)null, this.locX(), this.locY(), this.locZ(), 3.0F, true, Explosion.Effect.DESTROY);
+            if (((CustomEntityLlama)this.getShooter()).getAttacks() >= 25) { /** after 25 attacks, llama spit explodes on hit */
+                this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), 3.0F, true, Explosion.Effect.DESTROY);
             }
         } else if (this.getShooter() instanceof CustomEntityLlamaTrader) {
-            if (((CustomEntityLlamaTrader)this.getShooter()).attacks >= 25) { /** after 25 attacks, trader llama spit summons a wandering trader on hit */
+            if (((CustomEntityLlamaTrader)this.getShooter()).getAttacks() >= 25) { /** after 25 attacks, trader llama spit summons a wandering trader on hit */
                 new SpawnEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true);
             }
         }

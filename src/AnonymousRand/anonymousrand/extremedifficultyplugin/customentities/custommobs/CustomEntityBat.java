@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomEntityBat extends EntityBat implements ICustomMob {
+public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a3, a7, a12, a24, a32, firstDuplicate;
     private BlockPosition d;
     private NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(), 32, 3, 200, 101);
@@ -113,13 +113,13 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     protected void mobTick() {
-        BlockPosition blockposition = this.getChunkCoordinates();
-        BlockPosition blockposition1 = blockposition.up();
+        BlockPosition blockPosition = this.getChunkCoordinates();
+        BlockPosition blockPosition1 = blockPosition.up();
 
         if (this.isAsleep()) {
             boolean flag = this.isSilent();
 
-            if (this.getWorld().getType(blockposition1).isOccluding(this.getWorld(), blockposition)) {
+            if (this.getWorld().getType(blockPosition1).isOccluding(this.getWorld(), blockPosition)) {
                 if (random.nextInt(200) == 0) {
                     this.aJ = (float)random.nextInt(360);
                 }
@@ -127,13 +127,13 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
                 if (this.getWorld().a(c, (EntityLiving)this) != null) {
                     this.setAsleep(false);
                     if (!flag) {
-                        this.getWorld().a((EntityHuman) null, 1025, blockposition, 0);
+                        this.getWorld().a((EntityHuman) null, 1025, blockPosition, 0);
                     }
                 }
             } else {
                 this.setAsleep(false);
                 if (!flag) {
-                    this.getWorld().a((EntityHuman) null, 1025, blockposition, 0);
+                    this.getWorld().a((EntityHuman) null, 1025, blockPosition, 0);
                 }
             }
         } else {
@@ -168,6 +168,14 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     public double getFollowRange() { /** bats have 16 block detection range (setting attribute doesn't work) (24 after 5 attacks, 32 after 10 attacks) */
         return this.attacks < 5 ? 16.0 : this.attacks < 10 ? 24 : 32;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -216,10 +224,10 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -244,7 +252,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         if (random.nextDouble() < 0.1) {
@@ -256,7 +264,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         if (random.nextDouble() < 0.1) {

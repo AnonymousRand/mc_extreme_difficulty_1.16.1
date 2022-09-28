@@ -13,9 +13,9 @@ import org.bukkit.entity.LivingEntity;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityGhast extends EntityGhast implements ICustomMob {
+public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a20, deathFireballs;
 
     public CustomEntityGhast(World world) {
@@ -29,7 +29,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     protected void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
@@ -53,6 +53,14 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         return 80.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -74,10 +82,10 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -102,7 +110,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -110,7 +118,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -122,8 +130,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         public int a, attackNum;
         private boolean power3, ring;
 
-        public PathfinderGoalGhastFireball(CustomEntityGhast entityghast) {
-            this.ghast = entityghast;
+        public PathfinderGoalGhastFireball(CustomEntityGhast entityGhast) {
+            this.ghast = entityGhast;
             this.attackNum = 0;
             this.power3 = false;
             this.ring = false;
@@ -146,17 +154,17 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
         @Override
         public void e() {
-            EntityLiving entityliving = this.ghast.getGoalTarget();
+            EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (this.ghast.d(entityliving.getPositionVector()) < 6400.0D) { /** removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /** removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.world;
 
                 ++this.a;
                 if (this.a == 10 && !this.ghast.isSilent()) {
-                    world.a((EntityHuman)null, 1015, this.ghast.getChunkCoordinates(), 0);
+                    world.a(null, 1015, this.ghast.getChunkCoordinates(), 0);
                 }
 
-                this.ghast.t(this.a > 2); // shooting animation only plays for 2 ticks
+                this.ghast.t(this.a > 2); // shoot()ing animation only plays for 2 ticks
 
                 if (this.a == 5) { /** shoots a fireball every 5 ticks */
                     if (++this.attackNum == 6) { // attacks only count every 1.5 seconds, or 6 shots
@@ -165,12 +173,12 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                     }
 
                     Vec3D vec3d = this.ghast.f(1.0F);
-                    double d2 = entityliving.locX() - (this.ghast.locX() + vec3d.x * 4.0D);
-                    double d3 = entityliving.e(0.5D) - (0.5D + this.ghast.e(0.5D));
-                    double d4 = entityliving.locZ() - (this.ghast.locZ() + vec3d.z * 4.0D);
+                    double d2 = entityLiving.locX() - (this.ghast.locX() + vec3d.x * 4.0D);
+                    double d3 = entityLiving.e(0.5D) - (0.5D + this.ghast.e(0.5D));
+                    double d4 = entityLiving.locZ() - (this.ghast.locZ() + vec3d.z * 4.0D);
 
                     if (!this.ghast.isSilent()) {
-                        world.a((EntityHuman)null, 1016, this.ghast.getChunkCoordinates(), 0);
+                        world.a(null, 1016, this.ghast.getChunkCoordinates(), 0);
                     }
 
                     if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 5 == 0 && this.ring) { // reset booleans for next cycle
@@ -186,17 +194,17 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
-                    CustomEntityLargeFireball entitylargefireball;
+                    CustomEntityLargeFireball entityLargefireball;
 
                     if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
-                        entitylargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
+                        entityLargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {
-                        entitylargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
+                        entityLargefireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
                     }
 
-                    entitylargefireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entitylargefireball.locZ() + vec3d.z * 4.0D);
-                    world.addEntity(entitylargefireball);
+                    entityLargefireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entityLargefireball.locZ() + vec3d.z * 4.0D);
+                    world.addEntity(entityLargefireball);
                     this.a = 0;
                 }
             } else if (this.a > 0) {
@@ -209,8 +217,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
         private final EntityGhast a;
 
-        public PathfinderGoalGhastMoveTowardsTarget(EntityGhast entityghast) {
-            this.a = entityghast;
+        public PathfinderGoalGhastMoveTowardsTarget(EntityGhast entityGhast) {
+            this.a = entityGhast;
             this.a(EnumSet.of(PathfinderGoal.Type.LOOK));
         }
 
@@ -227,11 +235,11 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                 this.a.yaw = -((float)MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
                 this.a.aH = this.a.yaw;
             } else {
-                EntityLiving entityliving = this.a.getGoalTarget();
+                EntityLiving entityLiving = this.a.getGoalTarget();
 
-                if (entityliving.h((Entity)this.a) < 4096.0D) {
-                    double d1 = entityliving.locX() - this.a.locX();
-                    double d2 = entityliving.locZ() - this.a.locZ();
+                if (entityLiving.h(this.a) < 4096.0D) {
+                    double d1 = entityLiving.locX() - this.a.locX();
+                    double d2 = entityLiving.locZ() - this.a.locZ();
 
                     this.a.yaw = -((float)MathHelper.d(d1, d2)) * 57.295776F;
                     this.a.aH = this.a.yaw;
@@ -245,8 +253,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
         private final EntityGhast a;
 
-        public PathfinderGoalGhastIdleMove(EntityGhast entityghast) {
-            this.a = entityghast;
+        public PathfinderGoalGhastIdleMove(EntityGhast entityGhast) {
+            this.a = entityGhast;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 

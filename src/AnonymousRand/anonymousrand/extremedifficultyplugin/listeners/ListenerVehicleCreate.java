@@ -17,10 +17,10 @@ public class ListenerVehicleCreate implements Listener {
     public void vehicleCreate(VehicleCreateEvent event) { // replace boats with custom boats
         Vehicle bukkitVehicle = event.getVehicle();
         World nmsWorld = ((CraftWorld)bukkitVehicle.getWorld()).getHandle();
-        Location loc = bukkitVehicle.getLocation();
+        Location bukkitLoc = bukkitVehicle.getLocation();
 
         if (bukkitVehicle instanceof Boat && !(((CraftVehicle)bukkitVehicle).getHandle() instanceof CustomEntityBoat)) {
-            CustomEntityBoat newBoat = new CustomEntityBoat(nmsWorld, loc.getX(), loc.getY(), loc.getZ());
+            CustomEntityBoat newBoat = new CustomEntityBoat(nmsWorld, bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
             nmsWorld.addEntity(newBoat);
             bukkitVehicle.remove();
         }

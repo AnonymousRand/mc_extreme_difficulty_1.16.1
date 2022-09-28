@@ -8,11 +8,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 
-public class CustomEntityShulker extends EntityShulker implements ICustomMob {
+public class CustomEntityShulker extends EntityShulker implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a10, a21, a40;
-    private CustomEntityAreaEffectCloud newAEC;
     private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal1;
     private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal2;
 
@@ -22,12 +21,12 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         this.a10 = false;
         this.a21 = false;
         this.a40 = false;
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F,20, 0);
-        this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
-        goal1 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
-        this.newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
-        goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 19);
+        CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
+        newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
+        goal1 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, newAEC, 19);
+        newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
+        newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
+        goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, newAEC, 19);
         this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /** shulkers have 12 armor points, and even more when it is closed */
     }
 
@@ -64,6 +63,14 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         return 40.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -92,10 +99,10 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -120,7 +127,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -128,7 +135,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -144,9 +151,9 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
 
         @Override
         public boolean a() {
-            EntityLiving entityliving = CustomEntityShulker.this.getGoalTarget();
+            EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
-            return entityliving != null && entityliving.isAlive() ? CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL : false;
+            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL : false;
         }
 
         @Override
@@ -164,10 +171,10 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
         public void e() {
             if (CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL) {
                 --this.b;
-                EntityLiving entityliving = CustomEntityShulker.this.getGoalTarget();
+                EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
-                CustomEntityShulker.this.getControllerLook().a(entityliving, 180.0F, 180.0F);
-                double d0 = CustomEntityShulker.this.h((Entity)entityliving);
+                CustomEntityShulker.this.getControllerLook().a(entityLiving, 180.0F, 180.0F);
+                double d0 = CustomEntityShulker.this.h((Entity)entityLiving);
 
                 if (d0 < 400.0D) {
                     if (this.b <= 0) {
@@ -176,13 +183,13 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob {
                         this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /** shulker takes on average 10 less ticks to shoot */
 
                         for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /** after 35 attacks, shulkers have a 50% to 2 bullets at a time */
-                            CustomEntityShulker.this.world.addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.world, CustomEntityShulker.this, entityliving, CustomEntityShulker.this.eM().n()));
+                            CustomEntityShulker.this.world.addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.world, CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
                         }
 
                         CustomEntityShulker.this.playSound(SoundEffects.ENTITY_SHULKER_SHOOT, 2.0F, (CustomEntityShulker.this.random.nextFloat() - CustomEntityShulker.this.random.nextFloat()) * 0.2F + 1.0F);
                     }
                 } else {
-                    CustomEntityShulker.this.setGoalTarget((EntityLiving)null);
+                    CustomEntityShulker.this.setGoalTarget(null);
                 }
 
                 super.e();

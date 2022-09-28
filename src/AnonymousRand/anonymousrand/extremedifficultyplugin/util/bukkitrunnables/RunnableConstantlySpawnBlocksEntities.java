@@ -5,13 +5,17 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 
-public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableFireWitherRose;
+
+public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
 
     private final EntityLiving entity;
     private final Material material;
@@ -23,10 +27,10 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
     private final World nmsWorld;
     protected int cycles;
     protected final int maxCycles;
-    private CustomEntityAreaEffectCloud newAEC;
-    private Location loc;
+    protected Block bukkitBlock;
+    protected Material bukkitMaterial;
 
-    public RunnableSpawnBlocksEntitiesConstantly(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform) {
+    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -40,7 +44,7 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
         this.maxCycles = 1;
     }
 
-    public RunnableSpawnBlocksEntitiesConstantly(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform, int maxCycles) {
+    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform, int maxCycles) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -64,39 +68,40 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
         for (int x = -this.xRadius; x <= this.xRadius; x++) {
             for (int y = -this.yRadius; y <= this.yRadius; y++) {
                 for (int z = -this.zRadius; z <= this.zRadius; z++) {
-                    this.loc = new Location(this.nmsWorld.getWorld(), this.entity.locX() + x, this.entity.locY() + this.yOffset + y, this.entity.locZ() + z);
+                    Location bukkitLoc = new Location(this.nmsWorld.getWorld(), this.entity.locX() + x, this.entity.locY() + this.yOffset + y, this.entity.locZ() + z);
 
                     if (this.material != null) {
-                        if (this.terraform) {
-                            Material type = this.loc.getBlock().getType();
+                        this.bukkitBlock = bukkitLoc.getBlock();
+                        this.bukkitMaterial = this.bukkitBlock.getType();
 
-                            if (type != this.material && type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.SPAWNER && type != Material.COBWEB && type != Material.WATER && type != Material.LAVA && type != Material.FIRE) { // as long as it isn't one of these blocks) {
-                                this.loc.getBlock().setType(this.material);
+                        if (this.terraform) {
+                            if (this.bukkitMaterial != this.material && blockBreakableBase.test(this.bukkitMaterial) && blockBreakableBedrock.test(this.bukkitMaterial) && blockBreakableHardBlocks.test(this.bukkitMaterial) && blockBreakableFireWitherRose.test(this.bukkitMaterial) && blockBreakableFluids.test(this.bukkitMaterial)) { // as long as it isn't one of these blocks
+                                this.bukkitBlock.setType(this.material);
 
                                 if (this.material == Material.COBWEB) {
-                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb block can be broken after 2.5 seconds
+                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.bukkitBlock, this.bukkitBlock.getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb block can be broken after 2.5 seconds
                                 }
                             }
                         } else {
-                            if (this.loc.getBlock().getType() == org.bukkit.Material.AIR) {
-                                this.loc.getBlock().setType(this.material);
+                            if (this.bukkitMaterial == Material.AIR) {
+                                this.bukkitBlock.setType(this.material);
 
                                 if (this.material == Material.COBWEB || this.material == Material.SOUL_SOIL) {
-                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.loc.getBlock(), this.loc.getBlock().getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb or soul soil block can be broken after 2.5 seconds
+                                    Bukkit.getPluginManager().callEvent(new BlockPlaceEvent(this.bukkitBlock, this.bukkitBlock.getState(), null, null, null, false, null)); // fire event that would otherwise not be fired so that the cobweb or soul soil block can be broken after 2.5 seconds
                                 }
                             }
                         }
                     } else if (this.firstEntityToSpawn != null) {
                         if (this.firstEntityToSpawn instanceof CustomEntityAreaEffectCloud) {
-                            this.newAEC = (CustomEntityAreaEffectCloud)this.firstEntityToSpawn;
+                            CustomEntityAreaEffectCloud newAEC = (CustomEntityAreaEffectCloud) this.firstEntityToSpawn;
 
                             try {
-                                this.entityToBeSpawned = this.firstEntityToSpawn.getClass().getDeclaredConstructor(World.class, float.class, int.class, int.class).newInstance(this.nmsWorld, this.newAEC.getRadius(), this.newAEC.getDuration(), this.newAEC.waitTime);
+                                this.entityToBeSpawned = this.firstEntityToSpawn.getClass().getDeclaredConstructor(World.class, float.class, int.class, int.class).newInstance(this.nmsWorld, newAEC.getRadius(), newAEC.getDuration(), newAEC.waitTime);
                             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
                                 e.printStackTrace();
                             }
 
-                            for (MobEffect effect : this.newAEC.effects) {
+                            for (MobEffect effect : newAEC.effects) {
                                 ((CustomEntityAreaEffectCloud) this.entityToBeSpawned).addEffect(effect);
                             }
                         } else if (this.firstEntityToSpawn instanceof EntityTNTPrimed) {
@@ -108,7 +113,7 @@ public class RunnableSpawnBlocksEntitiesConstantly extends BukkitRunnable {
                         }
 
                         if (this.entityToBeSpawned != null) {
-                            this.entityToBeSpawned.setPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ());
+                            this.entityToBeSpawned.setPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
                             this.nmsWorld.addEntity(this.entityToBeSpawned);
                         }
                     }

@@ -8,10 +8,10 @@ import org.bukkit.entity.LivingEntity;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CustomEntityIllusioner extends EntityIllagerIllusioner implements ICustomMob {
+public class CustomEntityIllusioner extends EntityIllagerIllusioner implements ICustomMob, IAttackLevelingMob {
 
     public ArrayList<CustomEntityIllusionerFake> fakeIllusioners = new ArrayList<>();
-    public int attacks;
+    private int attacks;
     private boolean a40;
 
     public CustomEntityIllusioner(World world) {
@@ -34,7 +34,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 3 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new EntityIllagerWizard.b());
@@ -50,23 +50,31 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) {
+    public void a(EntityLiving entityLiving, float f) {
         this.attacks++;
 
         ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-        EntityArrow entityarrow = ProjectileHelper.a(this, itemstack, f);
-        double d0 = entityliving.locX() - this.locX();
-        double d1 = entityliving.e(0.3333333333333333D) - entityarrow.locY();
-        double d2 = entityliving.locZ() - this.locZ();
-        double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+        EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, f);
+        double d0 = entityLiving.locX() - this.locX();
+        double d1 = entityLiving.e(0.3333333333333333D) - entityArrow.locY();
+        double d2 = entityLiving.locZ() - this.locZ();
+        double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-        entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /** arrows have no inaccuracy */
+        entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /** arrows have no inaccuracy */
         this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-        this.world.addEntity(entityarrow);
+        this.world.addEntity(entityArrow);
     }
 
     public double getFollowRange() { /** illusioners have 32 block detection range (setting attribute doesn't work) */
         return 32.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -86,10 +94,10 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -114,7 +122,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -122,7 +130,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -237,8 +245,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         private final CustomEntityIllusioner illusioner;
 
-        public c(CustomEntityIllusioner entityraider) {
-            this.illusioner = entityraider;
+        public c(CustomEntityIllusioner entityRaider) {
+            this.illusioner = entityRaider;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 
@@ -284,8 +292,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         private final int e;
         private boolean f;
 
-        public d(EntityRaider entityraider, double d0, int i) {
-            this.entity = entityraider;
+        public d(EntityRaider entityRaider, double d0, int i) {
+            this.entity = entityRaider;
             this.b = d0;
             this.e = i;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
@@ -303,27 +311,25 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         private boolean h() {
             WorldServer worldserver = (WorldServer) this.entity.world;
-            BlockPosition blockposition = this.entity.getChunkCoordinates();
-            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> {
-                return villageplacetype == VillagePlaceType.r;
-            }, this::a, VillagePlace.Occupancy.ANY, blockposition, 48, this.entity.getRandom());
+            BlockPosition blockPosition = this.entity.getChunkCoordinates();
+            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.entity.getRandom());
 
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 return false;
             } else {
-                this.c = ((BlockPosition) optional.get()).immutableCopy();
+                this.c = (optional.get()).immutableCopy();
                 return true;
             }
         }
 
         @Override
         public boolean b() {
-            return this.entity.getNavigation().m() ? false : this.entity.getGoalTarget() == null && !this.c.a((IPosition) this.entity.getPositionVector(), (double)(this.entity.getWidth() + (float)this.e)) && !this.f;
+            return this.entity.getNavigation().m() ? false : this.entity.getGoalTarget() == null && !this.c.a(this.entity.getPositionVector(), (double)(this.entity.getWidth() + (float)this.e)) && !this.f;
         }
 
         @Override
         public void d() {
-            if (this.c.a((IPosition) this.entity.getPositionVector(), (double)this.e)) {
+            if (this.c.a(this.entity.getPositionVector(), this.e)) {
                 this.d.add(this.c);
             }
 
@@ -333,14 +339,14 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         public void c() {
             super.c();
             this.entity.n(0);
-            this.entity.getNavigation().a((double)this.c.getX(), (double)this.c.getY(), (double)this.c.getZ(), this.b);
+            this.entity.getNavigation().a(this.c.getX(), this.c.getY(), this.c.getZ(), this.b);
             this.f = false;
         }
 
         @Override
         public void e() {
             if (this.entity.getNavigation().m()) {
-                Vec3D vec3d = Vec3D.c((BaseBlockPosition) this.c);
+                Vec3D vec3d = Vec3D.c(this.c);
                 Vec3D vec3d1 = RandomPositionGenerator.a(this.entity, 16, 7, vec3d, 0.3141592741012573D);
 
                 if (vec3d1 == null) {
@@ -357,18 +363,18 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         }
 
-        private boolean a(BlockPosition blockposition) {
+        private boolean a(BlockPosition blockPosition) {
             Iterator iterator = this.d.iterator();
 
-            BlockPosition blockposition1;
+            BlockPosition blockPosition1;
 
             do {
                 if (!iterator.hasNext()) {
                     return true;
                 }
 
-                blockposition1 = (BlockPosition) iterator.next();
-            } while (!Objects.equals(blockposition, blockposition1));
+                blockPosition1 = (BlockPosition) iterator.next();
+            } while (!Objects.equals(blockPosition, blockPosition1));
 
             return false;
         }

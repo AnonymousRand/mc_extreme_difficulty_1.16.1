@@ -11,9 +11,9 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
+public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a30, deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
     private static Field orbitPosition, orbitOffset;
@@ -90,6 +90,14 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         return 64.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -119,10 +127,10 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -147,7 +155,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -155,17 +163,17 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
-    static enum AttackPhase {
+    enum AttackPhase {
 
         CIRCLE, SWOOP;
 
-        private AttackPhase() {}
+        AttackPhase() {}
     }
 
     abstract class PathfinderGoalMove extends PathfinderGoal {
@@ -192,9 +200,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
         @Override
         public boolean a() {
-            EntityLiving entityliving = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
-            return entityliving != null ? CustomEntityPhantom.this.a(CustomEntityPhantom.this.getGoalTarget(), CustomPathfinderTargetCondition.a) : false;
+            return entityLiving != null ? CustomEntityPhantom.this.a(CustomEntityPhantom.this.getGoalTarget(), CustomPathfinderTargetCondition.a) : false;
         }
 
         @Override
@@ -255,13 +263,13 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
         @Override
         public boolean b() {
-            EntityLiving entityliving = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
-            if (entityliving == null) {
+            if (entityLiving == null) {
                 return false;
-            } else if (!entityliving.isAlive()) {
+            } else if (!entityLiving.isAlive()) {
                 return false;
-            } else if (entityliving instanceof EntityHuman && (((EntityHuman) entityliving).isSpectator() || ((EntityHuman) entityliving).isCreative())) {
+            } else if (entityLiving instanceof EntityHuman && ((entityLiving).isSpectator() || ((EntityHuman) entityLiving).isCreative())) {
                 return false;
             } else if (!this.a()) {
                 return false;
@@ -275,22 +283,22 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
 
         @Override
         public void d() {
-            CustomEntityPhantom.this.setGoalTarget((EntityLiving)null);
+            CustomEntityPhantom.this.setGoalTarget(null);
             CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         }
 
         @Override
         public void e() {
-            EntityLiving entityliving = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
             try {
-                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityliving.locX(), entityliving.e(0.5D), entityliving.locZ()));
+                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityLiving.locX(), entityLiving.e(0.5D), entityLiving.locZ()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            if (CustomEntityPhantom.this.getBoundingBox().g(0.20000000298023224D).c(entityliving.getBoundingBox())) {
-                CustomEntityPhantom.this.attackEntity(entityliving);
+            if (CustomEntityPhantom.this.getBoundingBox().g(0.20000000298023224D).c(entityLiving.getBoundingBox())) {
+                CustomEntityPhantom.this.attackEntity(entityLiving);
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
                 if (!CustomEntityPhantom.this.isSilent()) {
                     CustomEntityPhantom.this.world.triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);
@@ -373,7 +381,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob {
                 }
 
                 this.c += this.f * 15.0F * 0.017453292F;
-                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b((BaseBlockPosition)orbitPos).add((double)(this.d * MathHelper.cos(this.c)), (double)(-4.0F + this.e), (double)(this.d * MathHelper.sin(this.c))));
+                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b(orbitPos).add((this.d * MathHelper.cos(this.c)), (-4.0F + this.e), (this.d * MathHelper.sin(this.c))));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

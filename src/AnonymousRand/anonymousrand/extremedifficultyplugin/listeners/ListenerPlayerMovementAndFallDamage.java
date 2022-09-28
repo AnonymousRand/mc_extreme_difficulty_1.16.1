@@ -1,20 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
@@ -65,18 +61,20 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /** fall 
     @EventHandler
     public void playerMove(PlayerMoveEvent event) {
         Player bukkitPlayer = event.getPlayer();
-        Material type = bukkitPlayer.getLocation().getBlock().getType();
+        Material bukkitMaterial = bukkitPlayer.getLocation().getBlock().getType();
 
-        if (type == Material.GRASS || type == Material.TALL_GRASS) {
-            if (type == Material.GRASS) {
+        if (bukkitMaterial == Material.GRASS || bukkitMaterial == Material.TALL_GRASS) {
+            if (bukkitMaterial == Material.GRASS) {
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0)); /** grass gives players slowness 1 for half a second */
             } else {
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /** tall grass gives players slowness 1 for 1 second and weakness 1 for 3 seconds */
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 0));
             }
+
+            return;
         }
 
-        if (type == Material.WATER && bukkitPlayer.getEyeLocation().getBlock().getType() != Material.WATER && !bukkitPlayer.isInvulnerable() && !bukkitPlayer.isInsideVehicle()) { /** player loses air even if they are standing in 1-deep water (but twice as fast, as the player is still inhaling as well), as long as they are moving (to prevent using shallow water to slow down mobs) */
+        if (bukkitMaterial == Material.WATER && bukkitPlayer.getEyeLocation().getBlock().getType() != Material.WATER && !bukkitPlayer.isInvulnerable() && !bukkitPlayer.isInsideVehicle()) { /** player loses air even if they are standing in 1-deep water (but twice as fast, as the player is still inhaling as well), as long as they are moving (to prevent using shallow water to slow down mobs) */
             bukkitPlayer.setRemainingAir(bukkitPlayer.getRemainingAir() - (bukkitPlayer.getRemainingAir() <= 0 ? 5 : 8));
 
             if (bukkitPlayer.getRemainingAir() <= -20) {
@@ -84,6 +82,12 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /** fall 
                 bukkitPlayer.damage(2.0);
                 Bukkit.getPluginManager().callEvent(new EntityDamageEvent(bukkitPlayer, EntityDamageEvent.DamageCause.DROWNING, 2.0)); // fire event that would otherwise not be fired
             }
+
+            return;
+        }
+
+        if (bukkitMaterial == Material.SOUL_FIRE) { /** soul fire sets players on fire for 10 minutes */
+            bukkitPlayer.setFireTicks(12000);
         }
     }
 }

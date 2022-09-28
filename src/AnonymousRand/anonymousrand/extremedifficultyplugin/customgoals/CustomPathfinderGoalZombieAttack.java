@@ -7,9 +7,9 @@ public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeA
     private final EntityZombie zombie;
     private int raiseArmTicks;
 
-    public CustomPathfinderGoalZombieAttack(EntityZombie entityzombie, double speedTowardsTarget, boolean useLongMemory) {
-        super(entityzombie, speedTowardsTarget, useLongMemory);
-        this.zombie = entityzombie;
+    public CustomPathfinderGoalZombieAttack(EntityZombie entityZombie, double speedTowardsTarget, boolean useLongMemory) {
+        super(entityZombie, speedTowardsTarget, useLongMemory);
+        this.zombie = entityZombie;
     }
 
     @Override
@@ -28,6 +28,7 @@ public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeA
     public void e() {
         super.e();
         ++this.raiseArmTicks;
+
         if (this.raiseArmTicks >= 5 && this.j() < this.k() / 2) {
             this.zombie.setAggressive(true);
         } else {

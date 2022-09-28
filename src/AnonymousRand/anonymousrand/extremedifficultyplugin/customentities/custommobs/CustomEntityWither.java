@@ -15,6 +15,9 @@ import java.lang.reflect.Field;
 import java.util.EnumSet;
 import java.util.Random;
 
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableFireWitherRose;
+
 public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     protected boolean dash;
@@ -55,16 +58,16 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { // shoot for main head
-        this.shootSkullToEntity(0, entityliving);
+    public void a(EntityLiving entityLiving, float f) { // shoot() for main head
+        this.shootSkullToEntity(0, entityLiving);
     }
 
-    protected void shootSkullToEntity(int i, EntityLiving entityliving) {
-        this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), false);
+    protected void shootSkullToEntity(int i, EntityLiving entityLiving) {
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double)entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), false);
     }
 
-    protected void shootSkullToEntity(int i, EntityLiving entityliving, boolean alwaysBlue) {
-        this.shootSkullToCoords(i, entityliving.locX(), entityliving.locY() + (double)entityliving.getHeadHeight() * 0.5D, entityliving.locZ(), alwaysBlue);
+    protected void shootSkullToEntity(int i, EntityLiving entityLiving, boolean alwaysBlue) {
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double)entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), alwaysBlue);
     }
 
     protected void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
@@ -73,7 +76,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         }
 
         if (!this.isSilent() && random.nextDouble() < 0.05) { /** withers only play the skull shooting sound 5% of the time */
-            this.world.a((EntityHuman)null, 1024, this.getChunkCoordinates(), 0);
+            this.world.a(null, 1024, this.getChunkCoordinates(), 0);
         }
 
         /** withers have higher chances to shoot blue skulls the more players are online */
@@ -84,15 +87,15 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
         double d6 = d0 - d3;
         double d7 = d1 - d4;
         double d8 = d2 - d5;
-        CustomEntityWitherSkull entitywitherskull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
-        entitywitherskull.setShooter(this);
+        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
+        entityWitherSkull.setShooter(this);
 
         if (flag || alwaysBlue) {
-            entitywitherskull.setCharged(true);
+            entityWitherSkull.setCharged(true);
         }
 
-        entitywitherskull.setPositionRaw(d3, d4, d5);
-        this.world.addEntity(entitywitherskull);
+        entityWitherSkull.setPositionRaw(d3, d4, d5);
+        this.world.addEntity(entityWitherSkull);
     }
 
     @Override
@@ -145,7 +148,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
                     if (this.ticksLived % 5 == 0) { /** side heads also shoot a skull every 5 ticks */
                         this.setHeadTarget(i, 0);
-                        this.shootSkullToEntity(i, (EntityLiving)this.getGoalTarget());
+                        this.shootSkullToEntity(i, this.getGoalTarget());
                     }
                 } else {
                     this.setHeadTarget(i, 0);
@@ -185,7 +188,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -193,7 +196,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -299,9 +302,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
     static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
         public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
-            blockBreakable = (type) -> { /** wither can now break bedrock */
-                return type != org.bukkit.Material.END_GATEWAY && type != org.bukkit.Material.END_PORTAL && type != org.bukkit.Material.END_PORTAL_FRAME && type != org.bukkit.Material.COMMAND_BLOCK  && type != org.bukkit.Material.COMMAND_BLOCK_MINECART && type != org.bukkit.Material.STRUCTURE_BLOCK && type != org.bukkit.Material.JIGSAW && type != org.bukkit.Material.BARRIER && type != org.bukkit.Material.SPAWNER && type != org.bukkit.Material.FIRE && type != org.bukkit.Material.WITHER_ROSE && type != org.bukkit.Material.WATER && type != org.bukkit.Material.LAVA;
-            };
+            blockBreakable = (type) -> blockBreakableBase.test(type) && blockBreakableHardBlocks.test(type) && blockBreakableFireWitherRose.test(type); /** withers can now break bedrock */
         }
 
         @Override

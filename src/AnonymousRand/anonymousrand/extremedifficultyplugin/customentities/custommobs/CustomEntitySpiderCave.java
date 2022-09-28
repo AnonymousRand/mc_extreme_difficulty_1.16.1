@@ -6,10 +6,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomMob {
+public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
-    private boolean a25, a45;
+    private int attacks;
+    private boolean a25, a60;
     private final CustomEntityAreaEffectCloud newAEC;
 
     public CustomEntitySpiderCave(World world) {
@@ -18,11 +18,11 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
         this.a25 = false;
-        this.a45 = false;
+        this.a60 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 0.0F,40, 39);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /** cave spiders move 70% faster but only do 2 damage and have 8 health */
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /** cave spiders move 70% faster but only do 1 damage and have 8 health */
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
         this.setHealth(8.0F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(8.0);
     }
@@ -30,7 +30,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /** custom goal that allows cave spider to summon cobwebs on itself constantly */
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
@@ -46,14 +46,22 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
         return 16.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 400) { /** duplicates if it has been alive for 20 seconds */
+        if (this.ticksLived == 500) { /** duplicates if it has been alive for 25 seconds */
             new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
             this.getBukkitEntity().setCustomName("Good luck making me despawn"); // doesn't despawn and doesn't count towards mob cap
-        } else if (this.ticksLived == 6000) { /** explodes and dies after 5 minutes to reduce lag */
+        } else if (this.ticksLived == 4800) { /** explodes and dies after 4 minutes to reduce lag */
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
             this.die();
         }
@@ -63,13 +71,13 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 45 && !this.a45) { /** after 45 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs */
-            this.a45 = true;
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1));
+        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs */
+            this.a60 = true;
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 4));
         }
 
-        if (this.isClimbing()) { /** cave spiders move vertically 3 times as fast (for some reason this still applies to jumping) */
-            this.setMot(this.getMot().x, this.getMot().y * 3.0, this.getMot().z);
+        if (this.isClimbing()) { /** cave spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
+            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
         }
     }
 
@@ -78,10 +86,10 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -106,7 +114,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -114,7 +122,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomM
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

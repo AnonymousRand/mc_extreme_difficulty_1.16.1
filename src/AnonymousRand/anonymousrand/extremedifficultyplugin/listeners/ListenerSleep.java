@@ -19,8 +19,8 @@ public class ListenerSleep implements Listener {
 
     private static int cycles; // for extending duration of sleep; intentionally global instead of hashmapped for each player
     private static int peeCounter;
-    private static HashMap<Player, Long> enterBedTime= new HashMap<>(); // keeps track of time of last successful bed enter; 0 if restarting a new night cycle
-    private static HashMap<Player, Long> leaveBedTime = new HashMap<>(); // keeps track of time of last successful bed leave; 0 if restarting a new night cycle
+    private static final HashMap<Player, Long> enterBedTime= new HashMap<>(); // keeps track of time of last successful bed enter; 0 if restarting a new night cycle
+    private static final HashMap<Player, Long> leaveBedTime = new HashMap<>(); // keeps track of time of last successful bed leave; 0 if restarting a new night cycle
 
     public ListenerSleep() {
         cycles = 0;
@@ -62,8 +62,6 @@ public class ListenerSleep implements Listener {
         }
 
         if (closestMonster != null) {
-            double monsterDistanceY = Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locY() - bukkitBed.getY(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2);
-
             if (monsterDistanceNoY <= 1024.0) { // player within 32 blocks horizontally of closestMonster
                 if (Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locY() - bukkitBed.getY(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2) <= 1024.0) { // player within 32 blocks including vertical distance of closestMonster
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + nmsPlayer.getName() + " \"You may not sleep now, there are monsters nearby\"");
@@ -108,24 +106,24 @@ public class ListenerSleep implements Listener {
 
     @EventHandler
     public void playerBedLeave(PlayerBedLeaveEvent event) { // must sleep 3 times to completely pass night as each time only passes 1/3 of the night; with a 5 sec delay between each sleep attempt
-        org.bukkit.World world = event.getPlayer().getWorld();
+        org.bukkit.World bukkitWorld = event.getPlayer().getWorld();
         Player bukkitPlayer = event.getPlayer();
 
         if (enterBedTime.containsKey(bukkitPlayer)) {
-            if (world.getFullTime() - enterBedTime.get(bukkitPlayer) < 101) { // do not execute the rest of the function if the player leaves the bed before the 5.05 seconds full time is up
+            if (bukkitWorld.getFullTime() - enterBedTime.get(bukkitPlayer) < 101) { // do not execute the rest of the function if the player leaves the bed before the 5.05 seconds full time is up
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You must sleep for more than 5 seconds...get your sleep schedule fixed\"");
             } else { // only executes if player has been in a bed continuously for 5 seconds and just woke up from that
                 switch (cycles) {
                     case 0 -> {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You got woken up by a nightmare\"");
-                        leaveBedTime.put(bukkitPlayer, world.getFullTime() - 7000);
-                        world.setFullTime(world.getFullTime() - 7000); // approx 2/3 of the night
+                        leaveBedTime.put(bukkitPlayer, bukkitWorld.getFullTime() - 7000);
+                        bukkitWorld.setFullTime(bukkitWorld.getFullTime() - 7000); // approx 2/3 of the night
                         cycles++;
                     }
                     case 1 -> {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"It's 3am and you need to pee\"");
-                        leaveBedTime.put(bukkitPlayer, world.getFullTime() - 3500);
-                        world.setFullTime(world.getFullTime() - 3500); // approx 1/3 of the night
+                        leaveBedTime.put(bukkitPlayer, bukkitWorld.getFullTime() - 3500);
+                        bukkitWorld.setFullTime(bukkitWorld.getFullTime() - 3500); // approx 1/3 of the night
                         cycles++;
                         peeCounter = 1;
                     }

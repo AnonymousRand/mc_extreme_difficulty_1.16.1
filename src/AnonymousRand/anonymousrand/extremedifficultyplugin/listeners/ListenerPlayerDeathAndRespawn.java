@@ -26,9 +26,9 @@ import java.util.HashMap;
 
 public class ListenerPlayerDeathAndRespawn implements Listener {
 
-    private static HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
-    private static HashMap<Player, Integer> respawnCount = new HashMap<>();
-    public static ArrayList<EntityZombie> superZombies = new ArrayList<>();
+    private static final HashMap<Player, Collection<PotionEffect>> collections = new HashMap<>();
+    private static final HashMap<Player, Integer> respawnCount = new HashMap<>();
+    public static final ArrayList<EntityZombie> superZombies = new ArrayList<>();
 
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
@@ -42,7 +42,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
             bukkitNewZombie.setMaxHealth(bukkitNewZombie.getMaxHealth() + bukkitPlayer.getTotalExperience() / 50.0); /** super zombies gain health according to the player's XP when they died */
             nmsNewZombie.setHealth(nmsNewZombie.getHealth() + bukkitPlayer.getTotalExperience() / 50.0F);
             nmsNewZombie.getBukkitEntity().setCustomName("Dinnerbone");
-            new SpawnEntity(nmsWorld, nmsNewZombie, 1, null, bukkitPlayer.getLocation(), true);;
+            new SpawnEntity(nmsWorld, nmsNewZombie, 1, null, bukkitPlayer.getLocation(), true);
             superZombies.add(nmsNewZombie);
         }
     }
@@ -53,9 +53,9 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { // delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
             for (PotionEffect effect : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { // only re-applies negative status effects
-                PotionEffectType type = effect.getType();
+                PotionEffectType bukkitPotionEffectType = effect.getType();
 
-                if (type.equals(PotionEffectType.SLOW) || type.equals(PotionEffectType.SLOW_DIGGING) || type.equals(PotionEffectType.CONFUSION) || type.equals(PotionEffectType.BLINDNESS) || type.equals(PotionEffectType.HUNGER) || type.equals(PotionEffectType.WEAKNESS) || type.equals(PotionEffectType.POISON) || type.equals(PotionEffectType.WITHER) || type.equals(PotionEffectType.LEVITATION) || type.equals(PotionEffectType.UNLUCK) || type.equals(PotionEffectType.BAD_OMEN)) {
+                if (bukkitPotionEffectType.equals(PotionEffectType.SLOW) || bukkitPotionEffectType.equals(PotionEffectType.SLOW_DIGGING) || bukkitPotionEffectType.equals(PotionEffectType.CONFUSION) || bukkitPotionEffectType.equals(PotionEffectType.BLINDNESS) || bukkitPotionEffectType.equals(PotionEffectType.HUNGER) || bukkitPotionEffectType.equals(PotionEffectType.WEAKNESS) || bukkitPotionEffectType.equals(PotionEffectType.POISON) || bukkitPotionEffectType.equals(PotionEffectType.WITHER) || bukkitPotionEffectType.equals(PotionEffectType.LEVITATION) || bukkitPotionEffectType.equals(PotionEffectType.UNLUCK) || bukkitPotionEffectType.equals(PotionEffectType.BAD_OMEN)) {
                     bukkitPlayer.addPotionEffect(effect);
                 }
             }

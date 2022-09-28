@@ -8,10 +8,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityVex extends EntityVex implements ICustomMob {
+public class CustomEntityVex extends EntityVex implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a20, a30, a45, a60;
 
     public CustomEntityVex(World world) {
@@ -53,6 +53,14 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
         return 32.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -66,18 +74,14 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
             this.a30 = true;
             this.setHealth(11.0F);
 
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex).forEach(entity -> {
-                ((CustomEntityVex)entity).setHealth(11.0F);
-            });
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex).forEach(entity -> ((CustomEntityVex)entity).setHealth(11.0F));
         }
 
         if (attacks == 45 && !this.a45) { /** after 45 attacks, vexes heal itself and all other evokers and vexes within 32 blocks horizontally to full health */
             this.a45 = true;
             this.setHealth(11.0F);
 
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> {
-                ((EntityLiving)entity).setHealth(11.0F);
-            });
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> ((EntityLiving)entity).setHealth(11.0F));
         }
 
         if (this.attacks >= 60 && !this.a60) { /** after 60 attacks, vexes teleport ASAP to their goal target, explode and die */
@@ -95,10 +99,10 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -123,7 +127,7 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -131,7 +135,7 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -158,14 +162,14 @@ public class CustomEntityVex extends EntityVex implements ICustomMob {
                         Vec3D vec3d1 = CustomEntityVex.this.getMot();
 
                         CustomEntityVex.this.yaw = -((float)MathHelper.d(vec3d1.x, vec3d1.z)) * 57.295776F;
-                        CustomEntityVex.this.aH = CustomEntityVex.this.yaw;
                     } else {
                         double d1 = CustomEntityVex.this.getGoalTarget().locX() - CustomEntityVex.this.locX();
                         double d2 = CustomEntityVex.this.getGoalTarget().locZ() - CustomEntityVex.this.locZ();
 
                         CustomEntityVex.this.yaw = -((float)MathHelper.d(d1, d2)) * 57.295776F;
-                        CustomEntityVex.this.aH = CustomEntityVex.this.yaw;
                     }
+
+                    CustomEntityVex.this.aH = CustomEntityVex.this.yaw;
                 }
             }
         }

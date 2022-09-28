@@ -27,7 +27,9 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
         try {
             this.attacks = this.entity.getClass().getDeclaredField("attacks");
             this.attacks.setAccessible(true);
-        } catch (NoSuchFieldException e) {}
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

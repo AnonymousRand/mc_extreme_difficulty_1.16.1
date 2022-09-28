@@ -5,7 +5,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,6 +20,8 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
+
 public class ListenerProjectile implements Listener {
 
     private static final Random random = new Random();
@@ -34,7 +35,7 @@ public class ListenerProjectile implements Listener {
             return;
         }
 
-        Location loc = bukkitProjectile.getLocation();
+        Location bukkitLoc = bukkitProjectile.getLocation();
         Entity nmsShooter = ((CraftEntity)bukkitProjectile.getShooter()).getHandle();
         World nmsWorld = ((CraftWorld)bukkitProjectile.getWorld()).getHandle();
 
@@ -54,17 +55,17 @@ public class ListenerProjectile implements Listener {
                 newArrow.setNoGravity(true);
             }
 
-            newArrow.setPosition(loc.getX(), loc.getY(), loc.getZ());
+            newArrow.setPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
             nmsWorld.addEntity(newArrow);
             bukkitArrow.remove();
         } else if (nmsProjectile instanceof EntityThrownTrident) {
             Trident bukkitTrident = (Trident)bukkitProjectile;
             CustomEntityThrownTrident newTrident = new CustomEntityThrownTrident(nmsWorld, bukkitTrident.getVelocity(), (byte)bukkitTrident.getPierceLevel(), bukkitTrident.getShooter());
-            newTrident.setPosition(loc.getX(), loc.getY(), loc.getZ());
+            newTrident.setPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
 
             if (nmsShooter instanceof CustomEntityDrowned) {
-                if (((CustomEntityDrowned)nmsShooter).attacks >= 30) {
-                    if (random.nextDouble() < (((CustomEntityDrowned)nmsShooter).attacks < 70 ? 0.1 : 0.333333333)) { /** tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count */
+                if (((CustomEntityDrowned)nmsShooter).getAttacks() >= 30) {
+                    if (random.nextDouble() < (((CustomEntityDrowned)nmsShooter).getAttacks() < 70 ? 0.1 : 0.333333333)) { /** tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count */
                         newTrident.setNoGravity(true);
                     }
                 }
@@ -94,9 +95,9 @@ public class ListenerProjectile implements Listener {
 
         if (nmsProjectile instanceof CustomEntitySmallFireball) { /** blaze fireballs when shot by ghasts and dragons still explode like large fireballs; the reason I use small fireballs instead is because large fireballs keep hitting each other as they are spawned on the same spot */
             if (nmsShooter instanceof CustomEntityGhast) {
-                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
+                nmsWorld.createExplosion(null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
             } else if (nmsShooter instanceof CustomEntityEnderDragon) {
-                nmsWorld.createExplosion((Entity)null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
+                nmsWorld.createExplosion(null, nmsProjectile.locX(), nmsProjectile.locY(), nmsProjectile.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
             }
 
             return;
@@ -104,23 +105,23 @@ public class ListenerProjectile implements Listener {
 
         if (event.getHitBlock() != null) {
             Block hitBlock = event.getHitBlock();
-            Material type = hitBlock.getType();
+            Material bukkitMaterial = hitBlock.getType();
 
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof Player)) { /** arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything */
-                if (type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB) { // as long as it isn't one of these blocks
+                if (blockBreakableBase.test(bukkitMaterial) && blockBreakableBedrock.test(bukkitMaterial) && blockBreakableFireWitherRose.test(bukkitMaterial) && blockBreakableFluids.test(bukkitMaterial) && blockBreakableHardBlocks.test(bukkitMaterial) && blockBreakableImmuneBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                     if (random.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); // set the block as air instead of breaking it as there is no way to break it directly without it dropping
                     }
                 }
 
-                if (type != Material.COBWEB) {
+                if (bukkitMaterial != Material.COBWEB) {
                     nmsProjectile.die(); /** arrows die on block hit as long as it isn't a cobweb */
                     return;
                 }
             }
 
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /** tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything */
-                if (type != Material.AIR && type != Material.BEDROCK && type != Material.END_GATEWAY && type != Material.END_PORTAL && type != Material.END_PORTAL_FRAME && type != Material.NETHER_PORTAL && type != Material.OBSIDIAN && type != Material.CRYING_OBSIDIAN && type != Material.COMMAND_BLOCK && type != Material.COMMAND_BLOCK_MINECART && type != Material.STRUCTURE_BLOCK && type != Material.JIGSAW && type != Material.BARRIER && type != Material.END_STONE && type != Material.SPAWNER && type != Material.COBWEB) { // as long as it isn't one of these blocks
+                if (blockBreakableBase.test(bukkitMaterial) && blockBreakableBedrock.test(bukkitMaterial) && blockBreakableFireWitherRose.test(bukkitMaterial) && blockBreakableHardBlocks.test(bukkitMaterial) && blockBreakableImmuneBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                     if (random.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);
                     }

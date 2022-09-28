@@ -7,9 +7,9 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
+public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a12, a25, a40;
 
     public CustomEntityEnderman(World world) {
@@ -27,7 +27,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     @Override
     protected void initPathfinder() { /** no longer targets endermites, avoids water and stops if stared at */
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 1, 1, 1, 2, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D, true));  /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
@@ -50,10 +50,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
     @Override
     protected void burnFromLava() {} /** no longer teleports away from lava */
 
-    protected boolean shouldAttackPlayer(EntityHuman entityhuman) {
+    protected boolean shouldAttackPlayer(EntityHuman entityHuman) {
         /** carved pumpkins no longer work */
-        Vec3D vec3d = entityhuman.f(1.0F).d();
-        Vec3D vec3d1 = new Vec3D(this.locX() - entityhuman.locX(), this.getHeadY() - entityhuman.getHeadY(), this.locZ() - entityhuman.locZ());
+        Vec3D vec3d = entityHuman.f(1.0F).d();
+        Vec3D vec3d1 = new Vec3D(this.locX() - entityHuman.locX(), this.getHeadY() - entityHuman.getHeadY(), this.locZ() - entityHuman.locZ());
         double d0 = vec3d1.f();
 
         vec3d1 = vec3d1.d();
@@ -87,10 +87,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
     }
 
     protected boolean o(double d0, double d1, double d2) { // override private teleportTo()
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(d0, d1, d2);
+        BlockPosition.MutableBlockPosition blockPosition_mutableblockPosition = new BlockPosition.MutableBlockPosition(d0, d1, d2);
 
-        while (blockposition_mutableblockposition.getY() > 0 && !this.getWorld().getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
+        while (blockPosition_mutableblockPosition.getY() > 0 && !this.getWorld().getType(blockPosition_mutableblockPosition).getMaterial().isSolid()) {
+            blockPosition_mutableblockPosition.c(EnumDirection.DOWN);
         }
 
         boolean flag = true; /** can now teleport onto fluids and non-solid blocks */
@@ -100,7 +100,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
             boolean flag2 = this.a(d0, d1, d2, true);
 
             if (flag2 && !this.isSilent()) {
-                this.getWorld().playSound((EntityHuman)null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                 this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
 
@@ -144,6 +144,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     public double getFollowRange() { /** endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks) */
         return this.attacks < 12 ? 16.0 : this.attacks < 25 ? 24.0 : 32.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -200,10 +208,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -228,7 +236,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -236,7 +244,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -254,21 +262,21 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
         double d5 = this.locZ();
         double d6 = d1;
         boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
         World world = this.getWorld();
 
-        if (world.isLoaded(blockposition)) {
+        if (world.isLoaded(blockPosition)) {
             boolean flag2 = false;
 
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
+            while (!flag2 && blockPosition.getY() > 0) {
+                BlockPosition blockPosition1 = blockPosition.down();
+                IBlockData iblockdata = world.getType(blockPosition1);
 
                 if (iblockdata.getMaterial().isSolid()) {
                     flag2 = true;
                 } else {
                     --d6;
-                    blockposition = blockposition1;
+                    blockPosition = blockPosition1;
                 }
             }
 
@@ -288,10 +296,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
                 world.broadcastEntityEffect(this, (byte) 46);
             }
 
-            if (this instanceof EntityCreature) {
-                ((EntityCreature)this).getNavigation().o();
-            }
-
+            this.getNavigation().o();
             return true;
         }
     }
@@ -300,30 +305,21 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
         private final CustomEntityEnderman entity;
         private EntityHuman target;
-        private int k;
-        private int l;
         private final CustomPathfinderTargetCondition m;
         private final CustomPathfinderTargetCondition n = (CustomPathfinderTargetCondition)(new CustomPathfinderTargetCondition()).c();
 
-        public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityenderman) {
-            super(entityenderman, EntityPlayer.class, false);
-            this.entity = entityenderman;
-            this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityliving) -> { /** players can anger endermen from up to 128 blocks away */
-                return entityenderman.shouldAttackPlayer((EntityHuman)entityliving);
+        public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityEnderman) {
+            super(entityEnderman, EntityPlayer.class, false);
+            this.entity = entityEnderman;
+            this.m = (new CustomPathfinderTargetCondition()).a(128.0).a((entityLiving)-> { /** players can anger endermen from up to 128 blocks away */
+                return entityEnderman.shouldAttackPlayer((EntityHuman)entityLiving);
             });
         }
 
         @Override
         public boolean a() {
-            this.target = this.entity.world.a(this.m, (EntityLiving)this.entity);
+            this.target = this.entity.world.a(this.m, this.entity);
             return this.target != null;
-        }
-
-        @Override
-        public void c() {
-            this.k = 5;
-            this.l = 0;
-            this.entity.eQ();
         }
 
         @Override
@@ -338,7 +334,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
                 if (!this.entity.shouldAttackPlayer(this.target)) {
                     return false;
                 } else {
-                    this.entity.a((Entity)this.target, 10.0F, 10.0F);
+                    this.entity.a(this.target, 10.0F, 10.0F);
                     return true;
                 }
             } else {
@@ -357,8 +353,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
         private final CustomEntityEnderman entity;
 
-        public PathfinderGoalEndermanPickupBlock(CustomEntityEnderman entityenderman) {
-            this.entity = entityenderman;
+        public PathfinderGoalEndermanPickupBlock(CustomEntityEnderman entityEnderman) {
+            this.entity = entityEnderman;
         }
 
         @Override
@@ -373,17 +369,17 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
             int i = MathHelper.floor(this.entity.locX() - 2.0D + random.nextDouble() * 4.0D);
             int j = MathHelper.floor(this.entity.locY() + random.nextDouble() * 3.0D);
             int k = MathHelper.floor(this.entity.locZ() - 2.0D + random.nextDouble() * 4.0D);
-            BlockPosition blockposition = new BlockPosition(i, j, k);
-            IBlockData iblockdata = world.getType(blockposition);
+            BlockPosition blockPosition = new BlockPosition(i, j, k);
+            IBlockData iblockdata = world.getType(blockPosition);
             Block block = iblockdata.getBlock();
             Vec3D vec3d = new Vec3D((double)MathHelper.floor(this.entity.locX()) + 0.5D, (double)j + 0.5D, (double)MathHelper.floor(this.entity.locZ()) + 0.5D);
             Vec3D vec3d1 = new Vec3D((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
-            MovingObjectPositionBlock movingobjectpositionblock = world.rayTrace(new RayTrace(vec3d, vec3d1, RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.entity));
-            boolean flag = movingobjectpositionblock.getBlockPosition().equals(blockposition);
+            MovingObjectPositionBlock movingObjectPositionBlock = world.rayTrace(new RayTrace(vec3d, vec3d1, RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.entity));
+            boolean flag = movingObjectPositionBlock.getBlockPosition().equals(blockPosition);
 
-            if (block.a((Tag) TagsBlock.ENDERMAN_HOLDABLE) && flag) {
+            if (block.a(TagsBlock.ENDERMAN_HOLDABLE) && flag) {
                 this.entity.setCarried(iblockdata);
-                world.a(blockposition, false);
+                world.a(blockPosition, false);
             }
 
         }
@@ -393,8 +389,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
 
         private final CustomEntityEnderman entity;
 
-        public PathfinderGoalEndermanPlaceBlock(CustomEntityEnderman entityenderman) {
-            this.entity = entityenderman;
+        public PathfinderGoalEndermanPlaceBlock(CustomEntityEnderman entityEnderman) {
+            this.entity = entityEnderman;
         }
 
         @Override
@@ -409,21 +405,21 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob {
             int i = MathHelper.floor(this.entity.locX() - 1.0D + random.nextDouble() * 2.0D);
             int j = MathHelper.floor(this.entity.locY() + random.nextDouble() * 2.0D);
             int k = MathHelper.floor(this.entity.locZ() - 1.0D + random.nextDouble() * 2.0D);
-            BlockPosition blockposition = new BlockPosition(i, j, k);
-            IBlockData iblockdata = world.getType(blockposition);
-            BlockPosition blockposition1 = blockposition.down();
-            IBlockData iblockdata1 = world.getType(blockposition1);
+            BlockPosition blockPosition = new BlockPosition(i, j, k);
+            IBlockData iblockdata = world.getType(blockPosition);
+            BlockPosition blockPosition1 = blockPosition.down();
+            IBlockData iblockdata1 = world.getType(blockPosition1);
             IBlockData iblockdata2 = this.entity.getCarried();
 
-            if (iblockdata2 != null && this.a(world, blockposition, iblockdata2, iblockdata, iblockdata1, blockposition1)) {
-                world.setTypeAndData(blockposition, iblockdata2, 3);
-                this.entity.setCarried((IBlockData) null);
+            if (iblockdata2 != null && this.a(world, blockPosition, iblockdata2, iblockdata, iblockdata1, blockPosition1)) {
+                world.setTypeAndData(blockPosition, iblockdata2, 3);
+                this.entity.setCarried(null);
             }
 
         }
 
-        private boolean a(IWorldReader iworldreader, BlockPosition blockposition, IBlockData iblockdata, IBlockData iblockdata1, IBlockData iblockdata2, BlockPosition blockposition1) {
-            return iblockdata1.isAir() && !iblockdata2.isAir() && iblockdata2.r(iworldreader, blockposition1) && iblockdata.canPlace(iworldreader, blockposition);
+        private boolean a(IWorldReader iworldreader, BlockPosition blockPosition, IBlockData iblockdata, IBlockData iblockdata1, IBlockData iblockdata2, BlockPosition blockPosition1) {
+            return iblockdata1.isAir() && !iblockdata2.isAir() && iblockdata2.r(iworldreader, blockPosition1) && iblockdata.canPlace(iworldreader, blockPosition);
         }
     }
 }

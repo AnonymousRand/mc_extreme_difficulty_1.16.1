@@ -14,8 +14,6 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
     private final CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal;
     private final Entity entity;
     private final World bukkitWorld;
-    private Location loc;
-    private Location loc2;
     private int cycles;
     private final int maxCycles;
     private final boolean effect;
@@ -44,15 +42,15 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
     @Override
     public void run() {
         if (++this.cycles <= this.maxCycles) {
-            this.loc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
+            Location bukkitLoc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
             for (int i = 0; i < 4; i++) {
-                this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), 3.0, this.loc.getY(), this.cycles * 13.0 + i * 60.0);
+                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitLoc.getY(), this.cycles * 13.0 + i * 60.0);
 
                 if (this.effect) {
-                    this.bukkitWorld.strikeLightningEffect(this.loc2);
+                    this.bukkitWorld.strikeLightningEffect(bukkitLoc2);
                 } else {
-                    this.bukkitWorld.strikeLightning(this.loc2);
+                    this.bukkitWorld.strikeLightning(bukkitLoc2);
                 }
             }
         } else if (this.cycles - 5 >= this.maxCycles) {

@@ -2,18 +2,18 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrowsNormally;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
+public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks, veryAngryTicks;
+    private int attacks;
+    public int veryAngryTicks;
     private boolean a10, a20, a40, a55;
     private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
@@ -103,19 +103,19 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
     }
 
     @Override
-    public void a(EntityLiving entityliving, float f) { // shoot
+    public void a(EntityLiving entityLiving, float f) { // shoot()
         this.attacks++;
         this.setHealth((float)(this.getHealth() + 0.75)); /** piglins heal by 0.75 every time its attacks increase by 1 */
 
         if (this.attacks == 1) { /** first attack always shoots knockback arrows */
-            new RunnableMobShootArrowsNormally(this, entityliving, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
+            new RunnableMobShootArrows(this, entityLiving, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
         } else {
             int rand = random.nextInt(4);
 
             if (rand < 2) { /** shoots 15 arrows at a time with increased inaccuracy to seem like a cone; 25% of arrows shot are piercing 1 */
-                new RunnableMobShootArrowsNormally(this, entityliving, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /** 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
+                new RunnableMobShootArrows(this, entityLiving, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /** 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
             } else {
-                new RunnableMobShootArrowsNormally(this, entityliving, 15, 2 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run();
+                new RunnableMobShootArrows(this, entityLiving, 15, 2 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run();
             }
         }
     }
@@ -184,6 +184,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
         return 32.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -235,10 +243,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -262,7 +270,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -270,7 +278,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -383,14 +391,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob {
                 return false;
             } else if (this.piglin.veryAngryTicks > 0) {
                 this.k = i;
-                EntityLiving entityliving = this.piglin.getGoalTarget();
+                EntityLiving entityLiving = this.piglin.getGoalTarget();
 
-                if (entityliving == null || !entityliving.isAlive()) {
+                if (entityLiving == null || !entityLiving.isAlive()) {
                     return false;
                 }
 
-                this.d = this.piglin.getNavigation().a((Entity)entityliving, 0);
-                return this.d != null || this.a(entityliving) >= this.piglin.g(entityliving.locX(), entityliving.locY(), entityliving.locZ());
+                this.d = this.piglin.getNavigation().a(entityLiving, 0);
+                return this.d != null || this.a(entityLiving) >= this.piglin.g(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ());
             }
 
             return false;

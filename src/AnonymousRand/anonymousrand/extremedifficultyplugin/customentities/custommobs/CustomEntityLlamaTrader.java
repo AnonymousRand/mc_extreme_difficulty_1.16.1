@@ -10,9 +10,9 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICustomMob {
+public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICustomMob, IAttackLevelingMob {
 
-    public int attacks;
+    private int attacks;
     private boolean a15;
     private static Field bH;
 
@@ -52,21 +52,21 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public void a(EntityLiving entityliving, float f) { // shoots custom spit instead of vanilla
+    public void a(EntityLiving entityLiving, float f) { // shoot()s custom spit instead of vanilla
         this.attacks++;
 
-        CustomEntityLlamaSpit entityllamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 12.0 : 18.0); /** after 6 attacks, trader llamas do 18 damage */
-        double d0 = entityliving.locX() - this.locX();
-        double d1 = entityliving.e(0.3333333333333333D) - entityllamaspit.locY();
-        double d2 = entityliving.locZ() - this.locZ();
+        CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 12.0 : 18.0); /** after 6 attacks, trader llamas do 18 damage */
+        double d0 = entityLiving.locX() - this.locX();
+        double d1 = entityLiving.e(0.3333333333333333D) - entityLlamaspit.locY();
+        double d2 = entityLiving.locZ() - this.locZ();
         f = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
 
-        entityllamaspit.shoot(d0, d1 + (double)f, d2, 1.5F, 10.0F);
+        entityLlamaspit.shoot(d0, d1 + (double)f, d2, 1.5F, 10.0F);
         if (!this.isSilent()) {
-            this.world.playSound((EntityHuman) null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
+            this.world.playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         }
 
-        this.world.addEntity(entityllamaspit);
+        this.world.addEntity(entityLlamaspit);
 
         try {
             bH.setBoolean(this, true);
@@ -77,6 +77,14 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
 
     public double getFollowRange() { /** trader llamas have 24 block detection range (setting attribute doesn't work) */
         return 24.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override

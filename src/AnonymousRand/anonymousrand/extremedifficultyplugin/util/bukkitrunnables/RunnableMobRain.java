@@ -24,11 +24,10 @@ public class RunnableMobRain extends BukkitRunnable {
     private final org.bukkit.World bukkitWorld;
     private final double radius;
     private final int wave;
-    private int cycles, index;
+    private int cycles;
     private final int maxCycles;
     public HashMap<Integer, ArrayList<EntityLiving>> entitiesToSpawn = new HashMap<>();
     private final BlockPosition originPos;
-    private Location loc;
     private static final Random random = new Random();
 
     public RunnableMobRain(Entity entity, @Nullable EntityLiving target, double radius, int wave) {
@@ -69,14 +68,15 @@ public class RunnableMobRain extends BukkitRunnable {
         }
 
         int loopCounter = 0;
+        Location bukkitLoc;
         do { /** mobs can't spawn within an 8 block radius of 0,0 to prevent them from just falling into the end portal and they can't spawn into the void */
             loopCounter++; // to prevent rare infinite loops
-            this.loc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.originPos, random.nextDouble() * this.radius, this.target != null ? this.target.locY() + 35.0 : this.y + 35.0, 361.0);
-        } while ((Math.abs(this.loc.getX() - 0.0) < 8.0 || Math.abs(this.loc.getY() - 0.0) < 8.0 || this.bukkitWorld.getHighestBlockYAt(this.loc) < 10.0) && loopCounter < 20);
+            bukkitLoc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.originPos, random.nextDouble() * this.radius, this.target != null ? this.target.locY() + 35.0 : this.y + 35.0, 361.0);
+        } while ((Math.abs(bukkitLoc.getX() - 0.0) < 8.0 || Math.abs(bukkitLoc.getY() - 0.0) < 8.0 || this.bukkitWorld.getHighestBlockYAt(bukkitLoc) < 10.0) && loopCounter < 20);
 
-        this.index = random.nextInt(this.entitiesToSpawn.get(this.wave).size());
-        new SpawnEntity(this.nmsWorld, this.entitiesToSpawn.get(this.wave).get(this.index), 1, CreatureSpawnEvent.SpawnReason.DROWNED, this.loc, true, true); /** these mobs have nametags so they don't despawn or take up mob cap */
-        this.entitiesToSpawn.get(this.wave).remove(this.index);
+        int index = random.nextInt(this.entitiesToSpawn.get(this.wave).size());
+        new SpawnEntity(this.nmsWorld, this.entitiesToSpawn.get(this.wave).get(index), 1, CreatureSpawnEvent.SpawnReason.DROWNED, bukkitLoc, true, true); /** these mobs have nametags so they don't despawn or take up mob cap */
+        this.entitiesToSpawn.get(this.wave).remove(index);
     }
 
     public void initMobRainArrayLists(World nmsWorld) {

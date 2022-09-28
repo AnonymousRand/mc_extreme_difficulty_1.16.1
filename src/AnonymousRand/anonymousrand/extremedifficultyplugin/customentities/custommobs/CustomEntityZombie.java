@@ -12,10 +12,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityZombie extends EntityZombie implements ICustomMob {
+public class CustomEntityZombie extends EntityZombie implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a7, a15, a25, a40, a50;
     private static Field bA;
 
@@ -49,7 +49,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 3 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
@@ -63,18 +63,18 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (super.damageEntity(damagesource, f)) {
-            EntityLiving entityliving = this.getGoalTarget();
+            EntityLiving entityLiving = this.getGoalTarget();
 
-            if (entityliving == null) {
-                entityliving = (EntityLiving)damagesource.getEntity();
+            if (entityLiving == null) {
+                entityLiving = (EntityLiving)damagesource.getEntity();
             }
 
-            if (!(entityliving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
+            if (!(entityLiving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
                 return true;
             }
 
             if (this.attacks >= 30) { /** after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
-                this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityliving.locX(), entityliving.locY(), entityliving.locZ()));
+                this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
             }
 
             if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /** zombies can now spawn reinforcements on any difficulty */
@@ -87,15 +87,15 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
                     int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                     int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                     int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                    BlockPosition blockposition = new BlockPosition(i1, j1, k1);
-                    EntityTypes<?> entitytypes = newZombie.getEntityType();
-                    EntityPositionTypes.Surface entitypositiontypes_surface = EntityPositionTypes.a(entitytypes);
+                    BlockPosition blockPosition = new BlockPosition(i1, j1, k1);
+                    EntityTypes<?> entityTypes = newZombie.getEntityType();
+                    EntityPositionTypes.Surface entityPositionTypes_Surface = EntityPositionTypes.a(entityTypes);
 
-                    if (SpawnerCreature.a(entitypositiontypes_surface, (IWorldReader) this.getWorld(), blockposition, entitytypes) && EntityPositionTypes.a(entitytypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockposition, this.getWorld().random)) {
-                        newZombie.setPosition((double)i1, (double)j1, (double)k1);
-                        if (!this.getWorld().isPlayerNearby((double)i1, (double)j1, (double)k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
+                    if (SpawnerCreature.a(entityPositionTypes_Surface, this.getWorld(), blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockPosition, this.getWorld().random)) {
+                        newZombie.setPosition(i1, j1, k1);
+                        if (!this.getWorld().isPlayerNearby(i1, j1, k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
                             this.getWorld().addEntity(newZombie);
-                            newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, (GroupDataEntity) null, (NBTTagCompound) null);
+                            newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /** zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
                             newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.2, AttributeModifier.Operation.ADDITION));
                             break;
@@ -114,6 +114,14 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
         return 40.0;
     }
 
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -126,7 +134,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
                 }
             } else if (this.eO()) {
                 try {
-                    if (this.a((Tag) TagsFluid.WATER)) {
+                    if (this.a(TagsFluid.WATER)) {
                         bA.setInt(this, bA.getInt(this) + 3);
                     } else {
                         bA.setInt(this, -1);
@@ -176,10 +184,10 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -204,7 +212,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -212,7 +220,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

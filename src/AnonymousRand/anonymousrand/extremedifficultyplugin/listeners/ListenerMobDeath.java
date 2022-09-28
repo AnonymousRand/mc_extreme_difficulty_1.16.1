@@ -35,23 +35,23 @@ public class ListenerMobDeath implements Listener {
         EntityType bukkitEntityType = event.getEntityType();
         org.bukkit.World bukkitWorld = bukkitEntity.getWorld();
         World nmsWorld = ((CraftWorld)bukkitWorld).getHandle();
-        Location loc = event.getEntity().getLocation();
+        Location bukkitLoc = event.getEntity().getLocation();
 
         switch (bukkitEntityType) { // stuff that happens when mobs die regardless of attack count
-            case BAT -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 0.5F, false); /** bats explode with power 0.5 when killed */
+            case BAT -> bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 0.5F, false); /** bats explode with power 0.5 when killed */
             case CHICKEN -> { /** chickens drop 20 eggs when killed */
-                bukkitWorld.dropItem(loc, new ItemStack(Material.EGG, 20));
+                bukkitWorld.dropItem(bukkitLoc, new ItemStack(Material.EGG, 20));
 
                 if (nmsEntity instanceof CustomEntityChickenAggressive && !(nmsEntity instanceof CustomEntityChickenAggressiveExploding)) {
                     if (random.nextDouble() < 0.05) { /** aggressive chickens have a 5% chance to explode into 15-20 more chickens */
                         new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), random.nextInt(6) + 15, null, null, nmsEntity, false, true);
                     }
                 } else if (nmsEntity instanceof CustomEntityChickenAggressiveExploding) { /** aggressive exploding chickens explode with power 1 after 20 seconds or when killed */
-                    bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.0F, false);
+                    bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 1.0F, false);
                 }
 
             }
-            case COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 2.0F, false); /** cows explode with power 2 when killed */
+            case COW -> bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 2.0F, false); /** cows explode with power 2 when killed */
             case ENDERMAN -> { /** enderman have a 0.5% chance to drop a pearl without looting, and only slightly more with looting */
                 if (event.getDrops().size() != 0) {
                     if (random.nextDouble() < 0.99) {
@@ -60,7 +60,7 @@ public class ListenerMobDeath implements Listener {
                 }
             }
             case IRON_GOLEM -> new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true); /** iron golems summon 15 silverfish when killed */
-            case MUSHROOM_COW -> bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 15.0F, false); /** mooshrooms explode with power 15 when killed */
+            case MUSHROOM_COW -> bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 15.0F, false); /** mooshrooms explode with power 15 when killed */
             case PIG -> {
                 if (random.nextDouble() < 0.14) {
                     if (random.nextDouble() < 0.285714286) { /** pigs have a 4% chance to summon a hoglin on death and a 10% chance to summon a piglin on death */
@@ -71,11 +71,9 @@ public class ListenerMobDeath implements Listener {
                 }
             }
             case RAVAGER -> { /** ravagers explode with power 4 when killed and give all raiders within 32 blocks horiztonally regen 32 for 1 second */
-                bukkitWorld.createExplosion(loc.getX(), loc.getY(), loc.getZ(), 4.0F, true);
+                bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 4.0F, true);
 
-                nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> entity instanceof EntityRaider).forEach(entity -> {
-                    ((EntityRaider)entity).addEffect(new MobEffect(MobEffects.REGENERATION, 20, 31));
-                });
+                nmsWorld.getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> entity instanceof EntityRaider).forEach(entity -> ((EntityRaider)entity).addEffect(new MobEffect(MobEffects.REGENERATION, 20, 31)));
             }
             case SPIDER -> { /** spiders lay down cobwebs that last 10 seconds in a 3 by 3 cube around itself when killed */
                 EntitySpider spider = (EntitySpider)(nmsEntity);
@@ -90,29 +88,29 @@ public class ListenerMobDeath implements Listener {
                     new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,15).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
                     new SpawnEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 3, null, null, nmsEntity, false, true);
                 } else { /** withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain */
-                    bukkitWorld.dropItem(loc, new ItemStack(Material.ENDER_EYE, 3));
+                    bukkitWorld.dropItem(bukkitLoc, new ItemStack(Material.ENDER_EYE, 3));
                     new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
                     new RunnableMobRain(nmsEntity, ((CustomEntityWither)nmsEntity).getGoalTarget(), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 110L, 2L);
                 }
             }
             case WITHER_SKELETON -> { /** wither skeletons now have a +8% chance to drop a skull when killed */
                 if (random.nextDouble() < 0.08) {
-                    bukkitWorld.dropItem(loc, new ItemStack(Material.WITHER_SKELETON_SKULL));
+                    bukkitWorld.dropItem(bukkitLoc, new ItemStack(Material.WITHER_SKELETON_SKULL));
                 }
             }
             case ZOMBIE -> {
                 if (nmsEntity instanceof CustomEntityZombieThor) { /** thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed */
-                    new RunnableLightningStorm(nmsWorld, loc, random.nextInt(16) + 55).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
-                    Location loc2;
+                    new RunnableLightningStorm(nmsWorld, bukkitLoc, random.nextInt(16) + 55).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                    Location bukkitLoc2;
 
                     for (int i = 0; i < 8; i++) {
-                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 3.0, bukkitWorld.getHighestBlockYAt(loc), i * 45.0);
-                        bukkitWorld.strikeLightning(loc2);
+                        bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 45.0);
+                        bukkitWorld.strikeLightning(bukkitLoc2);
                     }
 
                     for (int i = 0; i < 20; i++) {
-                        loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(loc), i * 18.0);
-                        new SpawnEntity(nmsWorld, new CustomEntityLightning(nmsWorld), 1, null, loc2, false);
+                        bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 18.0);
+                        new SpawnEntity(nmsWorld, new CustomEntityLightning(nmsWorld), 1, null, bukkitLoc2, false);
                     }
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     ListenerPlayerDeathAndRespawn.superZombies.remove(nmsEntity);
@@ -139,7 +137,6 @@ public class ListenerMobDeath implements Listener {
         private final World nmsWorld;
         private int cycles;
         private final int maxCycles;
-        private CustomEntityWitherSkull entityWitherSkull;
 
         public RunnableWitherDeathSkulls(CustomEntityWither wither, int maxCycles) {
             this.wither = wither;
@@ -155,9 +152,9 @@ public class ListenerMobDeath implements Listener {
                 return;
             }
 
-            this.entityWitherSkull = new CustomEntityWitherSkull(this.nmsWorld, this.wither, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0);
-            this.entityWitherSkull.setCharged(true);
-            this.entityWitherSkull.setPosition(entityWitherSkull.locX(), this.wither.e(0.5D) + 0.5D, this.entityWitherSkull.locZ());
+            CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.nmsWorld, this.wither, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0);
+            entityWitherSkull.setCharged(true);
+            entityWitherSkull.setPosition(entityWitherSkull.locX(), this.wither.e(0.5D) + 0.5D, entityWitherSkull.locZ());
             this.nmsWorld.addEntity(entityWitherSkull);
         }
     }

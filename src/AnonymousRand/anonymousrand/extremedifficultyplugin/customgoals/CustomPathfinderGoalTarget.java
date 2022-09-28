@@ -9,16 +9,16 @@ import org.bukkit.entity.EntityType;
 
 public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
 
-    public CustomPathfinderGoalTarget(EntityInsentient entityinsentient, boolean checkSight, boolean nearbyOnly) {
-        super(entityinsentient, checkSight, nearbyOnly);
+    public CustomPathfinderGoalTarget(EntityInsentient entityInsentient, boolean checkSight, boolean nearbyOnly) {
+        super(entityInsentient, checkSight, nearbyOnly);
     }
 
     @Override
     protected double k() { // getFollowDistance from attribute; change this method instead of changing attribute as this method is called in super() of contructor (?), and takes the value of follow_range from that time only
         Entity bukkitEntity = this.e.getBukkitEntity();
-        EntityType type = bukkitEntity.getType();
+        EntityType bukkitEntityType = bukkitEntity.getType();
 
-        switch (type) {
+        switch (bukkitEntityType) {
             case BAT -> {
                 return ((CustomEntityBat)this.e).getFollowRange();
             }

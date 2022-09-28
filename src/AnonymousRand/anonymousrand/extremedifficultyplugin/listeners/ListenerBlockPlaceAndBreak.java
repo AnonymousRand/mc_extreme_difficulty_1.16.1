@@ -10,12 +10,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlockState;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,9 +33,6 @@ public class ListenerBlockPlaceAndBreak implements Listener {
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
         Block bukkitBlock = event.getBlock();
-        World nmsWorld = ((CraftWorld)event.getBlock().getWorld()).getHandle();
-        Location loc = bukkitBlock.getLocation();
-        Material type = bukkitBlock.getType();
 
         if (event.getPlayer() != null) {
             Player bukkitPlayer = event.getPlayer();
@@ -49,20 +43,20 @@ public class ListenerBlockPlaceAndBreak implements Listener {
                 return;
             }
 
-            switch (type) {
+            Material bukkitMaterial = bukkitBlock.getType();
+            switch (bukkitMaterial) {
                 case BEACON, BLAST_FURNACE, CAMPFIRE, CAULDRON,  END_ROD, FURNACE, GLOWSTONE, JACK_O_LANTERN, LANTERN, REDSTONE_LAMP, REDSTONE_ORE, REDSTONE_TORCH, RESPAWN_ANCHOR, SEA_LANTERN, SEA_PICKLE, SHROOMLIGHT, SMOKER, SOUL_CAMPFIRE, SOUL_LANTERN, SOUL_TORCH, TORCH -> {
                     if (bukkitPlayer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) { /** blocks that produce a lot of light can't be placed in the end to prevent exploiting them to deactivate spawners */
                         event.setCancelled(true);
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You can't place such bright blocks in the end\"");
                     }
                 }
-                case CONDUIT -> new RunnableConduitSummonMobs(nmsWorld, loc, 20).runTaskTimer(StaticPlugin.plugin, 0L, 100L); /** conduits spawn pufferfish and drowned every 5 seconds for 100 seconds */
-                case PISTON, STICKY_PISTON -> { /** pistons and sticky pistons can't be placed */
-                    event.setCancelled(true);
-                }
+                case CONDUIT -> new RunnableConduitSummonMobs(((CraftWorld)event.getBlock().getWorld()).getHandle(), bukkitBlock.getLocation(), 20).runTaskTimer(StaticPlugin.plugin, 0L, 100L); /** conduits spawn pufferfish and drowned every 5 seconds for 100 seconds */
+                case PISTON, STICKY_PISTON -> event.setCancelled(true); /** pistons and sticky pistons can't be placed */
             }
         } else {
-            if (type == Material.COBWEB || type == Material.SOUL_SOIL) { /** spider-placed cobwebs and wither skeleton-placed soul soil are deleted after 2.5 seconds */
+            Material bukkitMaterial = bukkitBlock.getType();
+            if (bukkitMaterial == Material.COBWEB || bukkitMaterial == Material.SOUL_SOIL) { /** spider-placed cobwebs and wither skeleton-placed soul soil are deleted after 2.5 seconds */
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitBlock.setType(Material.AIR), 50); // async thread is used so that the game doesn't pause completely for 2.5 seconds
             }
         }
@@ -73,38 +67,36 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         EntityPlayer nmsPlayer = ((CraftPlayer)event.getPlayer()).getHandle();
         World nmsWorld = nmsPlayer.getWorld();
         Block bukkitBlock = event.getBlock();
-        Location loc = bukkitBlock.getLocation();
-        Material type = bukkitBlock.getType();
+        Location bukkitLoc = bukkitBlock.getLocation();
+        Material bukkitMaterial = bukkitBlock.getType();
 
-        switch (type) {
+        switch (bukkitMaterial) {
             case ANCIENT_DEBRIS -> { /** breaking ancient debris spawns 6 silverfish and 2 bats */
-                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 6, null, loc, true);
-                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 2, null, loc, false);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 6, null, bukkitLoc, true);
+                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 2, null, bukkitLoc, false);
             }
             case ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, DEAD_BUSH, SMITHING_TABLE, TORCH ->  /** anvils, dead bushes, smithing tables, and torches explode when broken but don't break blocks */
-                nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
+                nmsWorld.createExplosion(null, bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 2.0F, false, Explosion.Effect.NONE);
             case BARREL, CHEST, CHEST_MINECART, DISPENSER, DROPPER, ENDER_CHEST, GOLD_BLOCK, GOLD_ORE, HOPPER, HOPPER_MINECART, NETHER_GOLD_ORE, SHULKER_BOX, TRAPPED_CHEST -> { /** breaking these blocks causes piglins within 40 blocks horizontally to go into a frenzy for 15 seconds */
-                nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> {
-                    ((CustomEntityPiglin)entity).veryAngryTicks += 300;
-                });
+                nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).veryAngryTicks += 300);
 
-                if (type == Material.NETHER_GOLD_ORE) { /** breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava */
+                if (bukkitMaterial == Material.NETHER_GOLD_ORE) { /** breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava */
                     if (random.nextDouble() < 0.8) {
-                        (new Location(bukkitBlock.getWorld(), loc.getX() + random.nextInt(5) - 2, loc.getY() + random.nextInt(5) - 2, loc.getZ() + random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
+                        (new Location(bukkitBlock.getWorld(), bukkitLoc.getX() + random.nextInt(5) - 2, bukkitLoc.getY() + random.nextInt(5) - 2, bukkitLoc.getZ() + random.nextInt(5) - 2)).getBlock().setType(Material.LAVA);
                     }
                 }
             }
             case BOOKSHELF, COBBLESTONE_STAIRS, CONDUIT, CRACKED_STONE_BRICKS, IRON_BARS,  MOSSY_STONE_BRICKS, STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /** breaking these blocks (all found in strongholds besides conduits) causes silverfish to spawn */
-                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), type == Material.CONDUIT ? 50 : 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true); /** breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50 */
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), bukkitMaterial == Material.CONDUIT ? 50 : 1, CreatureSpawnEvent.SpawnReason.INFECTION, bukkitLoc, true); /** breaking a spawner spawns 5 silverfish and breaking a conduit spawns 50 */
             case COAL_ORE -> /** breaking coal ore has a 10% chance to spawn a silverfish */
-                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), random.nextDouble() < 0.1 ? 1 : 0, null, loc, true);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), random.nextDouble() < 0.1 ? 1 : 0, null, bukkitLoc, true);
             case DIAMOND_ORE -> { /** breaking diamond ore spawns 3 silverfish and a bat */
-                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 3, null, loc, true);
-                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, loc, false);
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 3, null, bukkitLoc, true);
+                new SpawnEntity(nmsWorld, new CustomEntityBat(nmsWorld), 1, null, bukkitLoc, false);
             }
             case SPAWNER -> { /** breaking a spawner spawns 5 mobs of its spawned type */
                 EntityTypes<? extends Entity> types = IRegistry.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(((CreatureSpawner)bukkitBlock.getState()).getSpawnedType().getKey())); // gets the spawned entity type from the spawner and converts it into nms
-                new SpawnEntity(nmsWorld, types.a(nmsWorld), 5, CreatureSpawnEvent.SpawnReason.SPAWNER, loc, true);
+                new SpawnEntity(nmsWorld, types.a(nmsWorld), 5, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitLoc, true);
             }
         }
     }
@@ -114,18 +106,18 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         event.setYield(0.0F);
 
         World nmsWorld = ((CraftWorld)event.getBlock().getWorld()).getHandle();
-        Location loc;
-        Material type;
+        Location bukkitLoc;
+        Material bukkitMaterial;
 
         for (Block block : event.blockList()) {
-            loc = block.getLocation();
-            type = block.getType();
+            bukkitLoc = block.getLocation();
+            bukkitMaterial = block.getType();
 
-            switch (type) {
+            switch (bukkitMaterial) {
                 case BOOKSHELF, COBBLESTONE_STAIRS, CRACKED_STONE_BRICKS, IRON_BARS,  MOSSY_STONE_BRICKS, STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /** breaking these blocks (all found in strongholds besides conduits) causes a silverfish to spawn */
-                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
+                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, bukkitLoc, true);
                 case DEAD_BUSH, TORCH -> /** dead bushes and torches explode when broken but don't break blocks */
-                    nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
+                    nmsWorld.createExplosion(null, bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 2.0F, false, Explosion.Effect.NONE);
             }
         }
     }
@@ -135,18 +127,18 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         event.setYield(0.0F);
 
         World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
-        Location loc;
-        Material type;
+        Location bukkitLoc;
+        Material bukkitMaterial;
 
         for (Block block : event.blockList()) {
-            loc = block.getLocation();
-            type = block.getType();
+            bukkitLoc = block.getLocation();
+            bukkitMaterial = block.getType();
 
-            switch (type) {
+            switch (bukkitMaterial) {
                 case BOOKSHELF, COBBLESTONE_STAIRS, CRACKED_STONE_BRICKS, IRON_BARS, MOSSY_STONE_BRICKS, STONE_BRICKS, STONE_BRICK_SLAB, STONE_BRICK_STAIRS -> /** breaking these blocks (all found in strongholds besides conduits) causes a silverfish to spawn */
-                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, loc, true);
+                    new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.INFECTION, bukkitLoc, true);
                 case DEAD_BUSH, TORCH -> /** dead bushes and torches explode when broken but don't break blocks */
-                    nmsWorld.createExplosion(null, loc.getX(), loc.getY(), loc.getZ(), 2.0F, false, Explosion.Effect.NONE);
+                    nmsWorld.createExplosion(null, bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 2.0F, false, Explosion.Effect.NONE);
                 case SPAWNER -> {
                     if (event.getEntity() instanceof EnderDragon) { /** ender dragons can't break spawners */
                         event.setCancelled(true);
@@ -159,13 +151,13 @@ public class ListenerBlockPlaceAndBreak implements Listener {
     static class RunnableConduitSummonMobs extends BukkitRunnable {
 
         private final World nmsWorld;
-        private final Location loc;
+        private final Location bukkitLoc;
         private int cycles;
         private final int maxCycles;
 
-        public RunnableConduitSummonMobs(World nmsWorld, Location loc, int maxCycles) {
+        public RunnableConduitSummonMobs(World nmsWorld, Location bukkitLoc, int maxCycles) {
             this.nmsWorld = nmsWorld;
-            this.loc = loc;
+            this.bukkitLoc = bukkitLoc;
             this.cycles = 0;
             this.maxCycles = maxCycles;
         }
@@ -177,13 +169,8 @@ public class ListenerBlockPlaceAndBreak implements Listener {
                 return;
             }
 
-            new SpawnEntity(this.nmsWorld, new CustomEntityDrowned(this.nmsWorld), 1, null, this.loc, true);
-            new SpawnEntity(this.nmsWorld, new CustomEntityPufferfish(this.nmsWorld), 1, null, this.loc, true);
+            new SpawnEntity(this.nmsWorld, new CustomEntityDrowned(this.nmsWorld), 1, null, this.bukkitLoc, true);
+            new SpawnEntity(this.nmsWorld, new CustomEntityPufferfish(this.nmsWorld), 1, null, this.bukkitLoc, true);
         }
-    }
-
-    @EventHandler
-    public void dragonBreakBlocks(EntityChangeBlockEvent event) {
-
     }
 }

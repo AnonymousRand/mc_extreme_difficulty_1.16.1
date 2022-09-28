@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
@@ -87,8 +86,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     }
 
     @Override
-    public void onLightningStrike(EntityLightning entitylightning) {
-        super.onLightningStrike(entitylightning);
+    public void onLightningStrike(EntityLightning entityLightning) {
+        super.onLightningStrike(entityLightning);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(200.0); /** charged creepers have 200 health */
         this.setHealth(200.0F);
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
@@ -98,24 +97,24 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         Collection<MobEffect> collection = this.getEffects();
 
         if (!collection.isEmpty()) {
-            EntityAreaEffectCloud entityareaeffectcloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
+            EntityAreaEffectCloud entityAreaeffectcloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
 
-            entityareaeffectcloud.setInvisible(true);
-            entityareaeffectcloud.setRadius(2.5F);
-            entityareaeffectcloud.setRadiusOnUse(-0.5F);
-            entityareaeffectcloud.setWaitTime(10);
-            entityareaeffectcloud.setDuration(entityareaeffectcloud.getDuration() / 2);
-            entityareaeffectcloud.setRadiusPerTick(-entityareaeffectcloud.getRadius() / (float)entityareaeffectcloud.getDuration());
+            entityAreaeffectcloud.setInvisible(true);
+            entityAreaeffectcloud.setRadius(2.5F);
+            entityAreaeffectcloud.setRadiusOnUse(-0.5F);
+            entityAreaeffectcloud.setWaitTime(10);
+            entityAreaeffectcloud.setDuration(entityAreaeffectcloud.getDuration() / 2);
+            entityAreaeffectcloud.setRadiusPerTick(-entityAreaeffectcloud.getRadius() / (float)entityAreaeffectcloud.getDuration());
 
             for (MobEffect mobeffect : collection) { /** creepers only create area effect clouds of negative effects */
-                MobEffectList type = mobeffect.getMobEffect();
+                MobEffectList effect = mobeffect.getMobEffect();
                 
-                if (type.equals(MobEffects.BAD_OMEN) || type.equals(MobEffects.BLINDNESS) || type.equals(MobEffects.CONFUSION) || type.equals(MobEffects.HUNGER) || type.equals(MobEffects.LEVITATION)|| type.equals(MobEffects.POISON) || type.equals(MobEffects.SLOWER_DIG) || type.equals(MobEffects.SLOWER_MOVEMENT) || type.equals(MobEffects.UNLUCK) || type.equals(MobEffects.WEAKNESS) || type.equals(MobEffects.WITHER)) { /** creepers only create area effect clouds of negative effects */
-                    entityareaeffectcloud.addEffect(new MobEffect(mobeffect));
+                if (effect.equals(MobEffects.BAD_OMEN) || effect.equals(MobEffects.BLINDNESS) || effect.equals(MobEffects.CONFUSION) || effect.equals(MobEffects.HUNGER) || effect.equals(MobEffects.LEVITATION)|| effect.equals(MobEffects.POISON) || effect.equals(MobEffects.SLOWER_DIG) || effect.equals(MobEffects.SLOWER_MOVEMENT) || effect.equals(MobEffects.UNLUCK) || effect.equals(MobEffects.WEAKNESS) || effect.equals(MobEffects.WITHER)) { /** creepers only create area effect clouds of negative effects */
+                    entityAreaeffectcloud.addEffect(new MobEffect(mobeffect));
                 }
             }
 
-            this.getWorld().addEntity(entityareaeffectcloud);
+            this.getWorld().addEntity(entityAreaeffectcloud);
         }
 
     }
@@ -129,10 +128,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -157,7 +156,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -165,7 +164,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

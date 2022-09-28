@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -15,10 +16,12 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
+
+public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAttackLevelingMob {
 
     private EntitySheep wololoTarget;
-    public int attacks;
+    private int attacks;
     private boolean a25, a36, a60;
     private static final Random random = new Random();
 
@@ -40,7 +43,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
@@ -67,6 +70,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     public double getFollowRange() { /** evokers have 28 block detection range (setting attribute doesn't work) */
         return 28.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -96,10 +107,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -124,7 +135,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -132,7 +143,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -143,8 +154,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 
-    private void a(@Nullable EntitySheep entitysheep) { // private setWololoTarget()
-        this.wololoTarget = entitysheep;
+    private void a(@Nullable EntitySheep entitySheep) { // private setWololoTarget()
+        this.wololoTarget = entitySheep;
     }
 
     @Nullable
@@ -187,13 +198,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
             CustomEntityEvoker.this.attacks += 6;
 
             for (int i = 0; i < 6; ++i) { /** summons 6 vexes at a time instead of 3 */
-                BlockPosition blockposition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.random.nextInt(5), 1, -2 + CustomEntityEvoker.random.nextInt(5));
+                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.random.nextInt(5), 1, -2 + CustomEntityEvoker.random.nextInt(5));
                 CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
-                newVex.setPositionRotation(blockposition, 0.0F, 0.0F);
-                newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockposition), EnumMobSpawn.MOB_SUMMONED, (GroupDataEntity)null, (NBTTagCompound)null);
-                newVex.a((EntityInsentient)CustomEntityEvoker.this);
-                newVex.g(blockposition);
+                newVex.setPositionRotation(blockPosition, 0.0F, 0.0F);
+                newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition), EnumMobSpawn.MOB_SUMMONED, null, null);
+                newVex.a(CustomEntityEvoker.this);
+                newVex.g(blockPosition);
                 newVex.a(20 * (30 + CustomEntityEvoker.random.nextInt(90)));
                 CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
@@ -228,13 +239,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
         @Override
         protected void j() {
-            EntityLiving entityliving = CustomEntityEvoker.this.getGoalTarget();
-            double d0 = Math.min(entityliving.locY(), CustomEntityEvoker.this.locY());
-            double d1 = Math.max(entityliving.locY(), CustomEntityEvoker.this.locY()) + 1.0D;
-            float f = (float)MathHelper.d(entityliving.locZ() - CustomEntityEvoker.this.locZ(), entityliving.locX() - CustomEntityEvoker.this.locX());
+            EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
+            double d0 = Math.min(entityLiving.locY(), CustomEntityEvoker.this.locY());
+            double d1 = Math.max(entityLiving.locY(), CustomEntityEvoker.this.locY()) + 1.0D;
+            float f = (float)MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
             int i;
 
-            if (CustomEntityEvoker.this.h((Entity)entityliving) < 9.0) {
+            if (CustomEntityEvoker.this.h((Entity)entityLiving) < 9.0) {
                 float f1;
 
                 for (i = 0; i < 5; ++i) {
@@ -255,23 +266,23 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityliving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /** every time the fangs attack, the player is slowed for 1.2 seconds */
+            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /** every time the fangs attack, the player is slowed for 1.2 seconds */
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
-            EntityLiving entityliving = CustomEntityEvoker.this.getGoalTarget();
-            BlockPosition blockposition = new BlockPosition(d0, d3, d1);
+            EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
+            BlockPosition blockPosition = new BlockPosition(d0, d3, d1);
             boolean flag = false;
             double d4 = 0.0D;
 
             do {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = CustomEntityEvoker.this.getWorld().getType(blockposition1);
+                BlockPosition blockPosition1 = blockPosition.down();
+                IBlockData iblockdata = CustomEntityEvoker.this.getWorld().getType(blockPosition1);
 
-                if (iblockdata.d(CustomEntityEvoker.this.getWorld(), blockposition1, EnumDirection.UP)) {
-                    if (!CustomEntityEvoker.this.getWorld().isEmpty(blockposition)) {
-                        IBlockData iblockdata1 = CustomEntityEvoker.this.getWorld().getType(blockposition);
-                        VoxelShape voxelshape = iblockdata1.getCollisionShape(CustomEntityEvoker.this.getWorld(), blockposition);
+                if (iblockdata.d(CustomEntityEvoker.this.getWorld(), blockPosition1, EnumDirection.UP)) {
+                    if (!CustomEntityEvoker.this.getWorld().isEmpty(blockPosition)) {
+                        IBlockData iblockdata1 = CustomEntityEvoker.this.getWorld().getType(blockPosition);
+                        VoxelShape voxelshape = iblockdata1.getCollisionShape(CustomEntityEvoker.this.getWorld(), blockPosition);
 
                         if (!voxelshape.isEmpty()) {
                             d4 = voxelshape.c(EnumDirection.EnumAxis.Y);
@@ -282,28 +293,32 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                     break;
                 }
 
-                blockposition = blockposition.down();
-            } while (blockposition.getY() >= MathHelper.floor(d2) - 1);
+                blockPosition = blockPosition.down();
+            } while (blockPosition.getY() >= MathHelper.floor(d2) - 1);
 
             if (flag) {
                 CustomEntityEvoker.this.attacks += 2;
+                Location bukkitLocBase, bukkitLoc;
+                Block bukkitBlock;
+                org.bukkit.Material bukkitMaterial;
 
-                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityliving.locX() - CustomEntityEvoker.this.locX(), entityliving.locY() - CustomEntityEvoker.this.locY(), entityliving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int)Math.ceil(CustomEntityEvoker.this.getFollowRange()));
+                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int)Math.ceil(CustomEntityEvoker.this.getFollowRange()));
                 while (iterator.hasNext()) { /** every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
-                    Location locBase = iterator.next().getLocation();
-                    Location loc;
+                    bukkitLocBase = iterator.next().getLocation();
                     Random random = new Random();
 
                     for (int x = -1; x <= 1; x++) {
                         for (int y = -1; y <= 1; y++) {
                             for (int z = -1; z <= 1; z++) {
-                                loc = new Location(CustomEntityEvoker.this.getWorld().getWorld(), locBase.getX() + x, locBase.getY() + y, locBase.getZ() + z);
+                                bukkitLoc = new Location(CustomEntityEvoker.this.getWorld().getWorld(), bukkitLocBase.getX() + x, bukkitLocBase.getY() + y, bukkitLocBase.getZ() + z);
+                                bukkitBlock = bukkitLoc.getBlock();
+                                bukkitMaterial = bukkitBlock.getType();
 
-                                if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.CRYING_OBSIDIAN && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.END_STONE && loc.getBlock().getType() != org.bukkit.Material.SPAWNER && loc.getBlock().getType() != org.bukkit.Material.COBWEB) { // as long as it isn't one of these blocks
-                                    loc.getBlock().setType(org.bukkit.Material.AIR);
-                                } else if (loc.getBlock().getType() == org.bukkit.Material.OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.CRYING_OBSIDIAN || loc.getBlock().getType() == org.bukkit.Material.ANCIENT_DEBRIS || loc.getBlock().getType() == org.bukkit.Material.NETHERITE_BLOCK) { // 50% chance to break these blocks
+                                if (blockBreakableBase.test(bukkitMaterial) && blockBreakableBedrock.test(bukkitMaterial) && blockBreakableHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                                    bukkitBlock.setType(org.bukkit.Material.AIR);
+                                } else if (!blockBreakableHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
                                     if (random.nextDouble() < 0.5) {
-                                        loc.getBlock().setType(org.bukkit.Material.AIR);
+                                        bukkitBlock.setType(org.bukkit.Material.AIR);
                                     }
                                 }
                             }
@@ -311,7 +326,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                     }
                 }
 
-                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double)blockposition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
+                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double)blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
             }
         }
 
@@ -328,8 +343,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     class PathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
 
-        private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityliving) -> {
-            return !((EntitySheep)entityliving).getColor().equals(EnumColor.PINK); /** can target all non-pink sheep now within 32 blocks and with line of sight */
+        private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityLiving)-> {
+            return !((EntitySheep)entityLiving).getColor().equals(EnumColor.PINK); /** can target all non-pink sheep now within 32 blocks and with line of sight */
         });
 
         public PathfinderGoalEvokerWololoSpell() {
@@ -352,7 +367,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                 if (list.isEmpty()) {
                     return false;
                 } else {
-                    CustomEntityEvoker.this.a((EntitySheep)list.get(CustomEntityEvoker.random.nextInt(list.size())));
+                    CustomEntityEvoker.this.a(list.get(CustomEntityEvoker.random.nextInt(list.size())));
                     return true;
                 }
             }
@@ -372,10 +387,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         @Override
         protected void j() {
             CustomEntityEvoker.this.attacks++;
-            EntitySheep entitysheep = CustomEntityEvoker.this.fh();
+            EntitySheep entitySheep = CustomEntityEvoker.this.fh();
 
-            if (entitysheep != null && entitysheep.isAlive()) { /** instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */
-                new SpawnEntity(entitysheep.getWorld(), new CustomEntitySheepAggressive(entitysheep.getWorld()), 1, null, null, entitysheep, true, true);
+            if (entitySheep != null && entitySheep.isAlive()) { /** instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */
+                new SpawnEntity(entitySheep.getWorld(), new CustomEntitySheepAggressive(entitySheep.getWorld()), 1, null, null, entitySheep, true, true);
             }
         }
 
@@ -425,8 +440,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
         private final CustomEntityEvoker evoker;
 
-        public c(CustomEntityEvoker entityraider) {
-            this.evoker = entityraider;
+        public c(CustomEntityEvoker entityRaider) {
+            this.evoker = entityRaider;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 
@@ -455,7 +470,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
                 CustomEntityEvoker.this.playSound(CustomEntityEvoker.this.eM(), CustomEntityEvoker.this.getSoundVolume(), CustomEntityEvoker.this.dG());
             }
 
-            if (!this.evoker.isPassenger() && this.evoker.random.nextInt(50) == 0) {
+            if (!this.evoker.isPassenger() && this.evoker.getRandom().nextInt(50) == 0) {
                 this.evoker.getControllerJump().jump();
             }
 
@@ -472,8 +487,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         private final int e;
         private boolean f;
 
-        public d(EntityRaider entityraider, double d0, int i) {
-            this.raider = entityraider;
+        public d(EntityRaider entityRaider, double d0, int i) {
+            this.raider = entityRaider;
             this.b = d0;
             this.e = i;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
@@ -491,27 +506,25 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
         private boolean h() {
             WorldServer worldserver = (WorldServer) this.raider.world;
-            BlockPosition blockposition = this.raider.getChunkCoordinates();
-            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> {
-                return villageplacetype == VillagePlaceType.r;
-            }, this::a, VillagePlace.Occupancy.ANY, blockposition, 48, this.raider.getRandom());
+            BlockPosition blockPosition = this.raider.getChunkCoordinates();
+            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.raider.getRandom());
 
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 return false;
             } else {
-                this.c = ((BlockPosition) optional.get()).immutableCopy();
+                this.c = (optional.get()).immutableCopy();
                 return true;
             }
         }
 
         @Override
         public boolean b() {
-            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a((IPosition) this.raider.getPositionVector(), (double)(this.raider.getWidth() + (float)this.e)) && !this.f;
+            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a(this.raider.getPositionVector(), this.raider.getWidth() + (float)this.e) && !this.f;
         }
 
         @Override
         public void d() {
-            if (this.c.a((IPosition) this.raider.getPositionVector(), (double)this.e)) {
+            if (this.c.a(this.raider.getPositionVector(), this.e)) {
                 this.d.add(this.c);
             }
 
@@ -521,14 +534,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
         public void c() {
             super.c();
             this.raider.n(0);
-            this.raider.getNavigation().a((double)this.c.getX(), (double)this.c.getY(), (double)this.c.getZ(), this.b);
+            this.raider.getNavigation().a(this.c.getX(), this.c.getY(), this.c.getZ(), this.b);
             this.f = false;
         }
 
         @Override
         public void e() {
             if (this.raider.getNavigation().m()) {
-                Vec3D vec3d = Vec3D.c((BaseBlockPosition) this.c);
+                Vec3D vec3d = Vec3D.c(this.c);
                 Vec3D vec3d1 = RandomPositionGenerator.a(this.raider, 16, 7, vec3d, 0.3141592741012573D);
 
                 if (vec3d1 == null) {
@@ -545,18 +558,18 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
         }
 
-        private boolean a(BlockPosition blockposition) {
+        private boolean a(BlockPosition blockPosition) {
             Iterator iterator = this.d.iterator();
 
-            BlockPosition blockposition1;
+            BlockPosition blockPosition1;
 
             do {
                 if (!iterator.hasNext()) {
                     return true;
                 }
 
-                blockposition1 = (BlockPosition) iterator.next();
-            } while (!Objects.equals(blockposition, blockposition1));
+                blockPosition1 = (BlockPosition) iterator.next();
+            } while (!Objects.equals(blockPosition, blockPosition1));
 
             return false;
         }
@@ -571,8 +584,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob {
 
     static class RunnableEvokerStopPlayer extends BukkitRunnable {
 
-        private EntityLiving target;
-        private int cycles, maxCycles;
+        private final EntityLiving target;
+        private int cycles;
+        private final int maxCycles;
 
         public RunnableEvokerStopPlayer(EntityLiving target, int maxCycles) {
             this.target = target;

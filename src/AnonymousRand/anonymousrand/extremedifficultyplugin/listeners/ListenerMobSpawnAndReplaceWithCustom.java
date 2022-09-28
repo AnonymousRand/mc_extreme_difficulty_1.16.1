@@ -236,7 +236,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 return;
             } else {
                 net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity)bukkitEntity).getHandle();
-                EntityType type = bukkitEntity.getType();
+                EntityType bukkitEntityType = bukkitEntity.getType();
                 World nmsWorld = nmsEntity.getWorld();
 
                 if (!(nmsEntity instanceof EntityBat ||
@@ -293,7 +293,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         nmsEntity instanceof CustomEntityZombieVillager ||
                         nmsEntity instanceof CustomEntityZombiePig)) { // to prevent stack overflow when the new replacement mobs are spawned, causing this event to fire again and again
 
-                    switch (type) {
+                    switch (bukkitEntityType) {
                         case BEE -> new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case BLAZE -> new SpawnEntity(nmsWorld, new CustomEntityBlaze(nmsWorld), 1, null, bukkitEntity, null, true, false);
                         case CHICKEN -> new SpawnEntity(nmsWorld, new CustomEntityChicken(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -308,10 +308,10 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case DROWNED -> new SpawnEntity(nmsWorld, new CustomEntityDrowned(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ELDER_GUARDIAN -> new SpawnEntity(nmsWorld, new CustomEntityGuardianElder(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         case ENDER_CRYSTAL -> {
-                            Location loc = bukkitEntity.getLocation();
+                            Location bukkitLoc = bukkitEntity.getLocation();
 
                             CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(nmsWorld);
-                            newCrystal.setPosition(loc.getX(), loc.getY() + 15, loc.getZ()); /** end crystals are now spawned 15 blocks higher */
+                            newCrystal.setPosition(bukkitLoc.getX(), bukkitLoc.getY() + 15, bukkitLoc.getZ()); /** end crystals are now spawned 15 blocks higher */
                             nmsWorld.addEntity(newCrystal);
                             bukkitEntity.remove();
                         }

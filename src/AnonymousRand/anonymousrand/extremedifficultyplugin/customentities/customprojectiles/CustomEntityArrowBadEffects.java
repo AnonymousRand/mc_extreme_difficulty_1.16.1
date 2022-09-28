@@ -9,10 +9,10 @@ public class CustomEntityArrowBadEffects extends CustomEntityArrow {
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
-        super.a(movingobjectpositionentity);
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
+        super.a(movingObjectPositionEntity);
 
-        Entity entity = movingobjectpositionentity.getEntity();
+        Entity entity = movingObjectPositionEntity.getEntity();
 
         if (entity instanceof EntityPlayer) {
             EntityPlayer entityPlayer = ((EntityPlayer)entity);

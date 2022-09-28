@@ -1,20 +1,19 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 public class CustomEntitySmallFireball extends EntitySmallFireball {
 
-    public CustomEntitySmallFireball(World world, EntityLiving entityliving, double d0, double d1, double d2) {
-        super(world, entityliving, d0, d1, d2);
-        this.setShooter(entityliving);
+    public CustomEntitySmallFireball(World world, EntityLiving entityLiving, double d0, double d1, double d2) {
+        super(world, entityLiving, d0, d1, d2);
+        this.setShooter(entityLiving);
         this.isIncendiary = true; // make sure it lights the player on fire
     }
 
     @Override
-    protected void a(MovingObjectPositionEntity movingobjectpositionentity) {
+    protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
         if (!this.world.isClientSide) {
-            Entity entity = movingobjectpositionentity.getEntity();
+            Entity entity = movingObjectPositionEntity.getEntity();
 
             if (!(entity instanceof EntityPlayer)) { /** small fireballs can only impact players */
                 return;
@@ -37,11 +36,11 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     }
 
     @Override
-    protected void a(MovingObjectPosition movingobjectposition) { // most entity collisions are actually registered here
-        if (movingobjectposition instanceof MovingObjectPositionEntity) {
-            this.a((MovingObjectPositionEntity)movingobjectposition);
+    protected void a(MovingObjectPosition movingObjectPosition) { // most entity collisions are actually registered here
+        if (movingObjectPosition instanceof MovingObjectPositionEntity) {
+            this.a((MovingObjectPositionEntity)movingObjectPosition);
         } else {
-            super.a(movingobjectposition);
+            super.a(movingObjectPosition);
         }
     }
 

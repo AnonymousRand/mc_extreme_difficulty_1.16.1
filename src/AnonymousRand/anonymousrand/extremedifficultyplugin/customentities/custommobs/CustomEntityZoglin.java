@@ -13,10 +13,10 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
-public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
+public class CustomEntityZoglin extends EntityZoglin implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a8, a30;
 
     public CustomEntityZoglin(World world) {
@@ -51,10 +51,10 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         if (this.world.isClientSide) {
             return false;
         } else if (flag && damagesource.getEntity() instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving)damagesource.getEntity();
+            EntityLiving entityLiving = (EntityLiving)damagesource.getEntity();
 
-            if (entityliving instanceof EntityPlayer && !BehaviorUtil.a(this, entityliving, 4.0D)) { /** only retaliate against players */
-                this.k(entityliving);
+            if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0D)) { /** only retaliate against players */
+                this.k(entityLiving);
             }
 
             return flag;
@@ -70,6 +70,14 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
 
     public double getFollowRange() { /** zoglins have 64 block detection range (setting attribute doesn't work) */
         return 64.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -88,9 +96,9 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         }
 
         if (this.ticksLived % 10 == 0 && this.getGoalTarget() != null) {
-            Location thisLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+            Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
 
-            if (thisLoc.getBlock().getType() == org.bukkit.Material.AIR) { /** zoglins create a path of power 1 tnt on itself as long as it is inside an air block */
+            if (bukkitLoc.getBlock().getType() == org.bukkit.Material.AIR) { /** zoglins create a path of power 1 tnt on itself as long as it is inside an air block */
                 CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /** after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds */
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
                 this.getWorld().addEntity(newTNT);
@@ -103,10 +111,10 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -131,7 +139,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -139,7 +147,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
@@ -165,16 +173,16 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob {
         public void e() {
             super.e();
 
-            EntityLiving entityliving = this.zoglin.getGoalTarget();
+            EntityLiving entityLiving = this.zoglin.getGoalTarget();
 
-            if (entityliving == null) {
+            if (entityLiving == null) {
                 return;
             }
 
             if (this.zoglin.attacks >= 8) {
                 if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /** after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking */
                     this.moveEverywhere = true;
-                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityliving, 12).runTaskTimer(StaticPlugin.plugin, 0L, 5L);
+                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityLiving, 12).runTaskTimer(StaticPlugin.plugin, 0L, 5L);
                 }
             }
         }

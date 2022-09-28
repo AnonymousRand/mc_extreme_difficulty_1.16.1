@@ -22,16 +22,32 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() { // this runs when the plugin is first enabled (when the server starts up)
-        this.initializeListeners();
-        this.initializePluginFields();
-        this.initializeExplosionVolume();
         this.addEyeOfEnderRecipe();
         this.getCommand("explosionvolume").setExecutor(new CommandExplosionVolume()); /** run "/explosionvolume [set/get] [decimal]" to set the volume of explosions */
+        this.initializeExplosionVolume();
+        this.initializeListeners();
+        this.initializePluginFields();
     }
 
     @Override
     public void onDisable() {
 
+    }
+
+    private void addEyeOfEnderRecipe() { /** changes eye of ender recipe */
+        Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
+        NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
+        ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));
+        newRecipe.addIngredient(Material.BLAZE_ROD);
+        newRecipe.addIngredient(Material.ENDER_PEARL);
+        newRecipe.addIngredient(Material.NETHERITE_HOE);
+        newRecipe.addIngredient(Material.BEETROOT_SOUP);
+        newRecipe.addIngredient(Material.SCUTE);
+        newRecipe.addIngredient(Material.WRITABLE_BOOK);
+        newRecipe.addIngredient(Material.DAYLIGHT_DETECTOR);
+        newRecipe.addIngredient(Material.CRACKED_POLISHED_BLACKSTONE_BRICKS);
+        newRecipe.addIngredient(Material.DEAD_BRAIN_CORAL);
+        Bukkit.getServer().addRecipe(newRecipe);
     }
 
     private void changeBlocksBlastResistance() {
@@ -63,6 +79,11 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         conduit.set("durability", 3600000.0F);
     }
 
+    private void initializeExplosionVolume() { // initializes static explosion volume
+        ListenerPlayerJoinAndQuit.explosionVolumeMultiplier = 1.0;
+        ListenerPlayerJoinAndQuit.firstExplosion = true;
+    }
+
     private void initializeListeners() { // registers the listeners
         getServer().getPluginManager().registerEvents(new ListenerBlockPlaceAndBreak(), this);
         getServer().getPluginManager().registerEvents(new ListenerDragonFight(), this);
@@ -89,26 +110,5 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     private void initializePluginFields() { // initializes static plugin fields
         StaticPlugin.plugin = this;
-    }
-
-    private void initializeExplosionVolume() { // initializes static explosion volume
-        ListenerPlayerJoinAndQuit.explosionVolumeMultiplier = 1.0;
-        ListenerPlayerJoinAndQuit.firstExplosion = true;
-    }
-
-    private void addEyeOfEnderRecipe() { /** changes eye of ender recipe */
-        Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
-        NamespacedKey key = new NamespacedKey(this, "eye_of_ender");
-        ShapelessRecipe newRecipe = new ShapelessRecipe(key, new ItemStack(Material.ENDER_EYE));
-        newRecipe.addIngredient(Material.BLAZE_ROD);
-        newRecipe.addIngredient(Material.ENDER_PEARL);
-        newRecipe.addIngredient(Material.NETHERITE_HOE);
-        newRecipe.addIngredient(Material.BEETROOT_SOUP);
-        newRecipe.addIngredient(Material.SCUTE);
-        newRecipe.addIngredient(Material.WRITABLE_BOOK);
-        newRecipe.addIngredient(Material.DAYLIGHT_DETECTOR);
-        newRecipe.addIngredient(Material.CRACKED_POLISHED_BLACKSTONE_BRICKS);
-        newRecipe.addIngredient(Material.DEAD_BRAIN_CORAL);
-        Bukkit.getServer().addRecipe(newRecipe);
     }
 }

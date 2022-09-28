@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.List;
 
 public class CustomEntityPufferfish extends EntityPufferFish implements ICustomMob {
 
@@ -37,8 +37,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
     }
 
     @Override
-    public void pickup(EntityHuman entityhuman) { // onCollideWithPlayer
-        if (entityhuman.abilities.isInvulnerable) {
+    public void pickup(EntityHuman entityHuman) { // onCollideWithPlayer
+        if (entityHuman.abilities.isInvulnerable) {
             return;
         }
 
@@ -46,10 +46,10 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
         if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 100) {
             this.lastStingTicks = this.ticksLived; /** only plays sting sound once per 5 seconds */
-            ((EntityPlayer)entityhuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
+            ((EntityPlayer)entityHuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
         }
 
-        entityhuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /** poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80 */
+        entityHuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /** poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80 */
     }
 
     public double getFollowRange() { /** pufferfish have 32 block detection range (setting attribute doesn't work) */
@@ -61,9 +61,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         super.tick();
 
         if (this.ticksLived % 3 == 0) {
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> {
-                this.pickup((EntityHuman)entity);
-            }); /** pufferfish have a poison/wither range of 5 blocks horizontally */
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> this.pickup((EntityHuman)entity)); /** pufferfish have a poison/wither range of 5 blocks horizontally */
         }
     }
 
@@ -72,10 +70,10 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -100,7 +98,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -108,14 +106,14 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
     }
 
     @Override
-    public void movementTick() { /** uses the movementick() method from entityliving class so pufferfish no longer damage other mobs besides players */
+    public void movementTick() { /** uses the movementick() method from entityLiving class so pufferfish no longer damage other mobs besides players */
         int jumpTicksTemp;
 
         try {
@@ -189,18 +187,18 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
             double d7;
 
             if (this.aN()) {
-                d7 = this.b((Tag) TagsFluid.LAVA);
+                d7 = this.b(TagsFluid.LAVA);
             } else {
-                d7 = this.b((Tag) TagsFluid.WATER);
+                d7 = this.b(TagsFluid.WATER);
             }
 
             boolean flag = this.isInWater() && d7 > 0.0D;
             double d8 = this.cw();
 
             if (flag && (!this.onGround || d7 > d8)) {
-                this.c((Tag) TagsFluid.WATER);
+                this.c(TagsFluid.WATER);
             } else if (this.aN() && (!this.onGround || d7 > d8)) {
-                this.c((Tag) TagsFluid.LAVA);
+                this.c(TagsFluid.LAVA);
             } else if ((this.onGround || flag && d7 <= d8) && jumpTicksTemp == 0) {
                 this.jump();
                 jumpTicksTemp = 10;
@@ -216,7 +214,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         this.t();
         AxisAlignedBB axisalignedbb = this.getBoundingBox();
 
-        this.f(new Vec3D((double)this.aY, (double)this.aZ, (double)this.ba));
+        this.f(new Vec3D(this.aY, this.aZ, this.ba));
         this.world.getMethodProfiler().exit();
         this.world.getMethodProfiler().enter("push");
         if (this.bm > 0) {
@@ -235,18 +233,15 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomM
         this.world.getMethodProfiler().exit();
     }
 
-    private void t() { // util method from entityliving class
+    private void t() { // util method from entityLiving class
         boolean flag = this.getFlag(7);
 
         if (flag && !this.onGround && !this.isPassenger() && !this.hasEffect(MobEffects.LEVITATION)) {
             ItemStack itemstack = this.getEquipment(EnumItemSlot.CHEST);
 
             if (itemstack.getItem() == Items.ELYTRA && ItemElytra.d(itemstack)) {
-                flag = true;
                 if (!this.world.isClientSide && (this.bl + 1) % 20 == 0) {
-                    itemstack.damage(1, this, (entityliving) -> {
-                        entityliving.broadcastItemBreak(EnumItemSlot.CHEST);
-                    });
+                    itemstack.damage(1, this, (entityLiving)-> entityLiving.broadcastItemBreak(EnumItemSlot.CHEST));
                 }
             } else {
                 flag = false;

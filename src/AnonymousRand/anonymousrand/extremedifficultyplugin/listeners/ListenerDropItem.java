@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 
@@ -20,9 +19,9 @@ public class ListenerDropItem implements Listener {
     @EventHandler
     public void itemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
-        Material type = item.getItemStack().getType();
+        Material bukkitMaterial = item.getItemStack().getType();
 
-        switch (type) {
+        switch (bukkitMaterial) {
             case GOLD_ORE -> { /** when mined, gold ore drops a single gold nugget instead of gold ore */
                 item.getWorld().dropItem(item.getLocation(), new ItemStack(Material.GOLD_NUGGET));
                 item.remove();
@@ -44,7 +43,7 @@ public class ListenerDropItem implements Listener {
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, item::remove, 100);
         }
 
-        if (type.toString().contains("_BED") || type.toString().contains("VINE") || type.toString().contains("ROSE")) {  /** delete bed, vine, and rose (for wither roses) items immediately when they are spawned (eg. broken or thrown out) */
+        if (bukkitMaterial.toString().contains("_BED") || bukkitMaterial.toString().contains("VINE") || bukkitMaterial.toString().contains("ROSE")) {  /** delete bed, vine, and rose (for wither roses) items immediately when they are spawned (e.g. broken or thrown out) */
             item.remove();
         }
     }

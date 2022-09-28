@@ -10,10 +10,10 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomMob {
+public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomMob, IAttackLevelingMob {
 
     public PathfinderGoalSelector targetSelectorVanilla;
-    public int attacks;
+    private int attacks;
     private boolean a8, a20;
 
     public CustomEntityZombieHusk(World world) {
@@ -32,7 +32,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 1, 1, 1, false)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 1, 1, 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
@@ -54,6 +54,14 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
 
     public double getFollowRange() { /** husks have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -78,7 +86,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
         private final World nmsWorld;
         private final org.bukkit.World bukkitWorld;
         private Vec3D huskPos;
-        private Location locTemp;
+        private Location bukkitLocTemp;
         private BlockData blockData;
         private double randomDouble;
         private static final Random random = new Random();
@@ -106,7 +114,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
 
                 for (int i = 0; i < Math.ceil(this.husk.getSandStormStrength() / 5.0); i++) {
                     for (int j = 0; j < this.husk.getSandStormStrength() * 8.0; j++) {
-                        this.locTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + (this.husk.attacks < 20 ? 8.0 : 9.0) + i, 361.0);
+                        this.bukkitLocTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + (this.husk.attacks < 20 ? 8.0 : 9.0) + i, 361.0);
                         this.randomDouble = random.nextDouble();
 
                         if (this.husk.attacks < 20) {
@@ -120,9 +128,9 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
                                 this.blockData = org.bukkit.Material.ANVIL.createBlockData();
                             }
 
-                            this.bukkitWorld.spawnFallingBlock(new Location(this.bukkitWorld, (int)locTemp.getX() + 0.5, (int)locTemp.getY() + 0.5, (int)locTemp.getZ() + 0.5), this.blockData);
+                            this.bukkitWorld.spawnFallingBlock(new Location(this.bukkitWorld, (int)bukkitLocTemp.getX() + 0.5, (int)bukkitLocTemp.getY() + 0.5, (int)bukkitLocTemp.getZ() + 0.5), this.blockData);
                         } else { /** after 20 attacks, sand rains are always anvil rains */
-                            this.bukkitWorld.getBlockAt(this.locTemp).setType(org.bukkit.Material.DAMAGED_ANVIL);
+                            this.bukkitWorld.getBlockAt(this.bukkitLocTemp).setType(org.bukkit.Material.DAMAGED_ANVIL);
                         }
                     }
                 }

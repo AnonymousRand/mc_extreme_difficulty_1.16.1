@@ -3,8 +3,12 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 import java.util.Random;
+
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableBase;
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableBedrock;
 
 public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
@@ -45,8 +49,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
         }
     }
 
-    protected void initiateTeleport(double h) {
-        double hypo = h;
+    protected void initiateTeleport(double hypo) {
         EntityPlayer player = this.entity.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), this.entity.getBoundingBox().grow(128.0, 128.0, 128.0)); // get closest player within 128 sphere radius of this.entity
 
         if (player != null) {
@@ -64,21 +67,25 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
     }
 
     protected void initiateTeleportBreakBlocks(BlockPosition pos) {
-        Location loc = new Location (this.entity.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        Location bukkitLoc = new Location (this.entity.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        Block bukkitBlock;
+        org.bukkit.Material bukkitMaterial;
 
-        double initX = loc.getX();
-        double initY = loc.getY();
-        double initZ = loc.getZ();
+        double initX = bukkitLoc.getX();
+        double initY = bukkitLoc.getY();
+        double initZ = bukkitLoc.getZ();
 
         for (int x = -2; x < 3; x++) {
             for (int y = -2; y < 3; y++) {
                 for (int z = -2; z < 3; z++) {
-                    loc.setX(initX + x);
-                    loc.setY(initY + y);
-                    loc.setZ(initZ + z);
+                    bukkitLoc.setX(initX + x);
+                    bukkitLoc.setY(initY + y);
+                    bukkitLoc.setZ(initZ + z);
+                    bukkitBlock = bukkitLoc.getBlock();
+                    bukkitMaterial = bukkitBlock.getType();
 
-                    if (loc.getBlock().getType() != org.bukkit.Material.BEDROCK && loc.getBlock().getType() != org.bukkit.Material.END_GATEWAY && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL && loc.getBlock().getType() != org.bukkit.Material.END_PORTAL_FRAME && loc.getBlock().getType() != org.bukkit.Material.NETHER_PORTAL && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK  && loc.getBlock().getType() != org.bukkit.Material.COMMAND_BLOCK_MINECART && loc.getBlock().getType() != org.bukkit.Material.STRUCTURE_BLOCK && loc.getBlock().getType() != org.bukkit.Material.JIGSAW && loc.getBlock().getType() != org.bukkit.Material.BARRIER && loc.getBlock().getType() != org.bukkit.Material.SPAWNER) { // as long as it isn't one of these blocks
-                        loc.getBlock().setType(org.bukkit.Material.AIR);
+                    if (blockBreakableBase.test(bukkitMaterial) && blockBreakableBedrock.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                        bukkitBlock.setType(org.bukkit.Material.AIR);
                     }
                 }
             }
@@ -87,26 +94,20 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
         this.teleportTo(pos);
     }
 
-    protected boolean teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+    protected void teleportTo(BlockPosition pos) {
+        BlockPosition.MutableBlockPosition blockPosition_MutableBlockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockposition_mutableblockposition.getY() > 0 && !this.entity.world.getType(blockposition_mutableblockposition).getMaterial().isSolid()) {
-            blockposition_mutableblockposition.c(EnumDirection.DOWN);
+        while (blockPosition_MutableBlockPosition.getY() > 0 && !this.entity.world.getType(blockPosition_MutableBlockPosition).getMaterial().isSolid()) {
+            blockPosition_MutableBlockPosition.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.world.getType(blockposition_mutableblockposition);
+        IBlockData iblockdata = this.entity.world.getType(blockPosition_MutableBlockPosition);
 
         if (iblockdata.getMaterial().isSolid()) {
-            boolean flag2 = this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true);
-
-            if (flag2 && !this.entity.isSilent()) {
-                this.entity.world.playSound((EntityHuman)null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
+            if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
+                this.entity.world.playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
                 this.entity.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
-
-            return flag2;
-        } else {
-            return false;
         }
     }
 
@@ -116,21 +117,21 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
         double d5 = this.entity.locZ();
         double d6 = d1;
         boolean flag1 = false;
-        BlockPosition blockposition = new BlockPosition(d0, d1, d2);
+        BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
         World world = this.entity.world;
 
-        if (world.isLoaded(blockposition)) {
+        if (world.isLoaded(blockPosition)) {
             boolean flag2 = false;
 
-            while (!flag2 && blockposition.getY() > 0) {
-                BlockPosition blockposition1 = blockposition.down();
-                IBlockData iblockdata = world.getType(blockposition1);
+            while (!flag2 && blockPosition.getY() > 0) {
+                BlockPosition blockPosition1 = blockPosition.down();
+                IBlockData iblockdata = world.getType(blockPosition1);
 
                 if (iblockdata.getMaterial().isSolid()) {
                     flag2 = true;
                 } else {
                     --d6;
-                    blockposition = blockposition1;
+                    blockPosition = blockPosition1;
                 }
             }
 
@@ -151,7 +152,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
             }
 
             if (this.entity instanceof EntityCreature) {
-                ((EntityCreature)this.entity).getNavigation().o();
+                this.entity.getNavigation().o();
             }
 
             return true;

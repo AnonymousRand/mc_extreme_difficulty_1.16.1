@@ -1,17 +1,15 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpiderSilverfishSummonMaterialBlock;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-import java.lang.reflect.Field;
+public class CustomEntitySpider extends EntitySpider implements ICustomMob, IAttackLevelingMob {
 
-public class CustomEntitySpider extends EntitySpider implements ICustomMob {
-
-    public int attacks;
+    private int attacks;
     private boolean a20, a25, a50, a80;
 
     public CustomEntitySpider(World world) {
@@ -29,11 +27,10 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
     }
 
-
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /** custom goal that allows spider to summon cobwebs on itself constantly */
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
@@ -47,6 +44,14 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     public double getFollowRange() { /** spiders have 16 block detection range (setting attribute doesn't work) */
         return 16.0;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
     }
 
     @Override
@@ -72,13 +77,13 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
             new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
-        if (this.attacks == 80 && !this.a80) { /** after 80 attacks, spiders summon 4 cave spiders */
+        if (this.attacks == 80 && !this.a80) { /** after 80 attacks, spiders summon 2 cave spiders */
             this.a80 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 4, null, null, this, false, true);
+            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 2, null, null, this, false, true);
         }
 
-        if (this.isClimbing()) { /** spiders move vertically 3 times as fast (for some reason this still applies to jumping) */
-            this.setMot(this.getMot().x, this.getMot().y * 3.0, this.getMot().z);
+        if (this.isClimbing()) { /** spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
+            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
         }
     }
 
@@ -87,10 +92,10 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityhuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityhuman != null) {
-                double d0 = Math.pow(entityhuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityhuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityhuman.h(this); */
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
@@ -115,7 +120,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     @Override
     public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d5 = this.locZ() - d2;
 
         return d3 * d3 + d5 * d5;
@@ -123,7 +128,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomMob {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, eg. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

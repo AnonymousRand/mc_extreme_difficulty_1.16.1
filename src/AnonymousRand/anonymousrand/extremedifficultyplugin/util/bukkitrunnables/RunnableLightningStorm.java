@@ -13,21 +13,19 @@ import java.util.Random;
 
 public class RunnableLightningStorm extends BukkitRunnable {
 
-    private CustomEntityLightning newLightning;
     private final net.minecraft.server.v1_16_R1.World nmsWorld;
     private final World bukkitWorld;
-    private final Location loc;
-    private Location loc2;
+    private final Location bukkitLoc;
     private final double radius;
     private int cycles;
     private final int maxCycles;
     private final boolean customLightning;
     private static final Random random = new Random();
 
-    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, int maxCycles) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, int maxCycles) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
-        this.loc = loc;
+        this.bukkitLoc = bukkitLoc;
         this.cycles = 0;
         this.radius = 100.0;
         this.maxCycles = maxCycles;
@@ -35,10 +33,10 @@ public class RunnableLightningStorm extends BukkitRunnable {
         ListenerLightningStrike.storm = true;
     }
 
-    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location loc, double radius, int maxCycles, boolean customLightning) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, double radius, int maxCycles, boolean customLightning) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
-        this.loc = loc;
+        this.bukkitLoc = bukkitLoc;
         this.cycles = 0;
         this.radius = radius;
         this.maxCycles = maxCycles;
@@ -49,12 +47,12 @@ public class RunnableLightningStorm extends BukkitRunnable {
     @Override
     public void run() {
         if (++this.cycles <= this.maxCycles) {
-            this.loc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.loc.getX(), this.loc.getY(), this.loc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.loc), 361.0);
+            Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.bukkitLoc), 361.0);
 
             if (this.customLightning) {
-                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, this.loc2, false);
+                new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, bukkitLoc2, false);
             } else {
-                this.bukkitWorld.strikeLightning(this.loc2);
+                this.bukkitWorld.strikeLightning(bukkitLoc2);
             }
         } else if (this.cycles - 5 >= this.maxCycles) {
             this.cancel();
