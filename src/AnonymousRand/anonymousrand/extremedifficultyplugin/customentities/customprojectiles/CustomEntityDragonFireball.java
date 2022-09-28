@@ -28,31 +28,31 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
         Entity shooter = this.getShooter();
         List<EntityLiving> entities;
-        CustomEntityAreaEffectCloud entityAreaeffectcloud;
+        CustomEntityAreaEffectCloud entityAreaEffectCloud;
         boolean largerRadius = random.nextDouble() < 0.05;
 
         for (int i = -3; i < 3; i++) { /** area effect clouds are 6 blocks high and take 5 ticks less to start doing damage, but only last 5 seconds; 5% chance to create a wider area effect cloud with radius 7 */
             entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
-            entityAreaeffectcloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
+            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
-                entityAreaeffectcloud.setSource((EntityLiving)shooter);
+                entityAreaEffectCloud.setSource((EntityLiving)shooter);
             }
 
-            entityAreaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
-            entityAreaeffectcloud.setParticle(Particles.DRAGON_BREATH);
-            entityAreaeffectcloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaeffectcloud.getRadius()) / (float)entityAreaeffectcloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
-            entityAreaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
+            entityAreaEffectCloud.setPosition(this.locX(), this.locY() + i, this.locZ());
+            entityAreaEffectCloud.setParticle(Particles.DRAGON_BREATH);
+            entityAreaEffectCloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaEffectCloud.getRadius()) / (float)entityAreaEffectCloud.getDuration()); /** area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
+            entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityLiving entity : entities) {
                 if (this.d(entity.getPositionVector()) < 64.0D) { /** area effect clouds snap on to location of closest player within 8 blocks horizontally */
-                    entityAreaeffectcloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
+                    entityAreaEffectCloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
                     break;
                 }
             }
 
             this.getWorld().triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 1);
-            this.getWorld().addEntity(entityAreaeffectcloud);
+            this.getWorld().addEntity(entityAreaEffectCloud);
         }
 
         this.die();

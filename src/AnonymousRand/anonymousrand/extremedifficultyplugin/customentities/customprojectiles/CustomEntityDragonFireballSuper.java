@@ -32,29 +32,29 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
 
         Entity shooter = this.getShooter();
         List<EntityLiving> entities;
-        CustomEntityAreaEffectCloud entityAreaeffectcloud;
+        CustomEntityAreaEffectCloud entityAreaEffectCloud;
 
         for (int i = -3; i < 3; i++) { /** area effect clouds are 6 blocks high, 9 blocks wide and take 5 ticks less to start doing damage, but only last 10 seconds */
             entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(17.0, 128.0, 17.0));
-            entityAreaeffectcloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 200, 15);
+            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 200, 15);
 
             if (shooter instanceof EntityLiving) {
-                entityAreaeffectcloud.setSource((EntityLiving)shooter);
+                entityAreaEffectCloud.setSource((EntityLiving)shooter);
             }
 
-            entityAreaeffectcloud.setPosition(this.locX(), this.locY() + i, this.locZ());
-            entityAreaeffectcloud.setRadiusPerTick((7.0F - entityAreaeffectcloud.getRadius()) / (float)entityAreaeffectcloud.getDuration());
-            entityAreaeffectcloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /** super fireball area effect clouds do twice as much damage */
+            entityAreaEffectCloud.setPosition(this.locX(), this.locY() + i, this.locZ());
+            entityAreaEffectCloud.setRadiusPerTick((7.0F - entityAreaEffectCloud.getRadius()) / (float)entityAreaEffectCloud.getDuration());
+            entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /** super fireball area effect clouds do twice as much damage */
 
             for (EntityLiving entity : entities) {
                 if (this.d(entity.getPositionVector()) < 144.0D) { /** super fireball area effect clouds snap on to location of closest player within 12 blocks horizontally */
-                    entityAreaeffectcloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
+                    entityAreaEffectCloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
                     break;
                 }
             }
 
             this.getWorld().triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 3);
-            this.getWorld().addEntity(entityAreaeffectcloud);
+            this.getWorld().addEntity(entityAreaEffectCloud);
         }
 
         this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 3.0F, false, Explosion.Effect.DESTROY); /** super fireballs explode on hit */

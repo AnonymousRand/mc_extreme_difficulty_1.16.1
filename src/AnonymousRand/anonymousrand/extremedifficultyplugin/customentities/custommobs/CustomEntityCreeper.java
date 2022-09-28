@@ -97,24 +97,24 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         Collection<MobEffect> collection = this.getEffects();
 
         if (!collection.isEmpty()) {
-            EntityAreaEffectCloud entityAreaeffectcloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
+            EntityAreaEffectCloud entityAreaEffectCloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
 
-            entityAreaeffectcloud.setInvisible(true);
-            entityAreaeffectcloud.setRadius(2.5F);
-            entityAreaeffectcloud.setRadiusOnUse(-0.5F);
-            entityAreaeffectcloud.setWaitTime(10);
-            entityAreaeffectcloud.setDuration(entityAreaeffectcloud.getDuration() / 2);
-            entityAreaeffectcloud.setRadiusPerTick(-entityAreaeffectcloud.getRadius() / (float)entityAreaeffectcloud.getDuration());
+            entityAreaEffectCloud.setInvisible(true);
+            entityAreaEffectCloud.setRadius(2.5F);
+            entityAreaEffectCloud.setRadiusOnUse(-0.5F);
+            entityAreaEffectCloud.setWaitTime(10);
+            entityAreaEffectCloud.setDuration(entityAreaEffectCloud.getDuration() / 2);
+            entityAreaEffectCloud.setRadiusPerTick(-entityAreaEffectCloud.getRadius() / (float)entityAreaEffectCloud.getDuration());
 
             for (MobEffect mobeffect : collection) { /** creepers only create area effect clouds of negative effects */
                 MobEffectList effect = mobeffect.getMobEffect();
                 
                 if (effect.equals(MobEffects.BAD_OMEN) || effect.equals(MobEffects.BLINDNESS) || effect.equals(MobEffects.CONFUSION) || effect.equals(MobEffects.HUNGER) || effect.equals(MobEffects.LEVITATION)|| effect.equals(MobEffects.POISON) || effect.equals(MobEffects.SLOWER_DIG) || effect.equals(MobEffects.SLOWER_MOVEMENT) || effect.equals(MobEffects.UNLUCK) || effect.equals(MobEffects.WEAKNESS) || effect.equals(MobEffects.WITHER)) { /** creepers only create area effect clouds of negative effects */
-                    entityAreaeffectcloud.addEffect(new MobEffect(mobeffect));
+                    entityAreaEffectCloud.addEffect(new MobEffect(mobeffect));
                 }
             }
 
-            this.getWorld().addEntity(entityAreaeffectcloud);
+            this.getWorld().addEntity(entityAreaEffectCloud);
         }
 
     }
