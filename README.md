@@ -32,3 +32,5 @@ Follow this guide if the plugin doesn't seem to be doing anything and the server
 # Finally done
 
 This is a plugin made with Spigot NMS and Bukkit API.
+
+Older commits are linked to my old school account due to an email swap...don't worry, that's also me.
