@@ -509,7 +509,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
             BlockPosition blockPosition = this.raider.getChunkCoordinates();
             Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.raider.getRandom());
 
-            if (optional.isEmpty()) {
+            if (!optional.isPresent()) {
                 return false;
             } else {
                 this.c = (optional.get()).immutableCopy();

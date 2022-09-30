@@ -133,7 +133,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
 
             if (i <= 0) {
                 this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /** withers explode with power 12 instead of 7 when spawned and sets blocks on fire */
-                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 150).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /** withers summon a tornado after the spawn explosion */
+                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 160).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /** withers summon a tornado after the spawn explosion */
 
                 if (!this.isSilent()) {
                     this.world.b(1023, this.getChunkCoordinates(), 0);

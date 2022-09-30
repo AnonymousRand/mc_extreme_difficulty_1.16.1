@@ -75,45 +75,123 @@ public class ListenerEggs implements Listener {
                 int rand2 = random.nextInt(39) + 1;
 
                 switch (rand2) {
-                    case 1 -> nmsMobEffect = new MobEffect(MobEffects.ABSORBTION, 6000, 2);
-                    case 2 -> nmsMobEffect = new MobEffect(MobEffects.BAD_OMEN, 36000, 0);
-                    case 3 -> nmsMobEffect = new MobEffect(MobEffects.BLINDNESS, 150, 0);
-                    case 4 -> nmsMobEffect = new MobEffect(MobEffects.CONDUIT_POWER, 1200, 0);
-                    case 5 -> nmsMobEffect = new MobEffect(MobEffects.DOLPHINS_GRACE, 300, 0);
-                    case 6 -> nmsMobEffect = new MobEffect(MobEffects.FIRE_RESISTANCE, 700, 0);
-                    case 7 -> nmsMobEffect = new MobEffect(MobEffects.FASTER_DIG, 800, 1);
-                    case 8 -> nmsMobEffect = new MobEffect(MobEffects.FASTER_DIG, 500, 3);
-                    case 9 -> nmsMobEffect = new MobEffect(MobEffects.HEALTH_BOOST, 700, 4);
-                    case 10 -> nmsMobEffect = new MobEffect(MobEffects.HUNGER, 1200, 2);
-                    case 11 -> nmsMobEffect = new MobEffect(MobEffects.HARM, 1, 2);
-                    case 12 -> nmsMobEffect = new MobEffect(MobEffects.HEAL, 36000, 1);
-                    case 13 -> nmsMobEffect = new MobEffect(MobEffects.INVISIBILITY, 200, 0);
-                    case 14 -> nmsMobEffect = new MobEffect(MobEffects.JUMP, 500, 2);
-                    case 15 -> nmsMobEffect = new MobEffect(MobEffects.LEVITATION, 300, 0);
-                    case 16 -> nmsMobEffect = new MobEffect(MobEffects.SLOWER_DIG, 3000, 0);
-                    case 17 -> nmsMobEffect = new MobEffect(MobEffects.NIGHT_VISION, 2400, 0);
-                    case 18 -> nmsMobEffect = new MobEffect(MobEffects.POISON, 300, 1);
-                    case 19 -> nmsMobEffect = new MobEffect(MobEffects.POISON, 150, 2);
-                    case 20 -> nmsMobEffect = new MobEffect(MobEffects.REGENERATION, 500, 1);
-                    case 21 -> nmsMobEffect = new MobEffect(MobEffects.REGENERATION, 100, 3);
-                    case 22 -> nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 1200, 0);
-                    case 23 -> nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 600, 1);
-                    case 24 -> nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 300, 2);
-                    case 25 -> nmsMobEffect = new MobEffect(MobEffects.SATURATION, 8, 0);
-                    case 26 -> nmsMobEffect = new MobEffect(MobEffects.SLOW_FALLING, 400, 0);
-                    case 27 -> nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 600, 0);
-                    case 28 -> nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 400, 2);
-                    case 29 -> nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 280, 3);
-                    case 30 -> nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 600, 0);
-                    case 31 -> nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 400, 1);
-                    case 32 -> nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 280, 2);
-                    case 33 -> nmsMobEffect = new MobEffect(MobEffects.INCREASE_DAMAGE, 280, 0);
-                    case 34 -> nmsMobEffect = new MobEffect(MobEffects.INCREASE_DAMAGE, 140, 1);
-                    case 35 -> nmsMobEffect = new MobEffect(MobEffects.WATER_BREATHING, 1200, 0);
-                    case 36 -> nmsMobEffect = new MobEffect(MobEffects.WEAKNESS, 500, 0);
-                    case 37 -> nmsMobEffect = new MobEffect(MobEffects.WEAKNESS, 250, 1);
-                    case 38 -> nmsMobEffect = new MobEffect(MobEffects.WITHER, 600, 0);
-                    default -> nmsMobEffect = new MobEffect(MobEffects.WITHER, 130, 2);
+                    case 1:
+                        nmsMobEffect = new MobEffect(MobEffects.ABSORBTION, 6000, 2);
+                        break;
+                    case 2:
+                        nmsMobEffect = new MobEffect(MobEffects.BAD_OMEN, 36000, 0);
+                        break;
+                    case 3:
+                        nmsMobEffect = new MobEffect(MobEffects.BLINDNESS, 150, 0);
+                        break;
+                    case 4:
+                        nmsMobEffect = new MobEffect(MobEffects.CONDUIT_POWER, 1200, 0);
+                        break;                        
+                    case 5:
+                        nmsMobEffect = new MobEffect(MobEffects.DOLPHINS_GRACE, 300, 0);
+                        break;                        
+                    case 6:
+                        nmsMobEffect = new MobEffect(MobEffects.FIRE_RESISTANCE, 700, 0);
+                        break;                        
+                    case 7:
+                        nmsMobEffect = new MobEffect(MobEffects.FASTER_DIG, 800, 1);
+                        break;                        
+                    case 8:
+                        nmsMobEffect = new MobEffect(MobEffects.FASTER_DIG, 500, 3);
+                        break;                        
+                    case 9:
+                        nmsMobEffect = new MobEffect(MobEffects.HEALTH_BOOST, 700, 4);
+                        break;                        
+                    case 10:
+                        nmsMobEffect = new MobEffect(MobEffects.HUNGER, 1200, 2);
+                        break;                        
+                    case 11:
+                        nmsMobEffect = new MobEffect(MobEffects.HARM, 1, 2);
+                        break;                        
+                    case 12:
+                        nmsMobEffect = new MobEffect(MobEffects.HEAL, 36000, 1);
+                        break;                        
+                    case 13:
+                        nmsMobEffect = new MobEffect(MobEffects.INVISIBILITY, 200, 0);
+                        break;                        
+                    case 14:
+                        nmsMobEffect = new MobEffect(MobEffects.JUMP, 500, 2);
+                        break;                        
+                    case 15:
+                        nmsMobEffect = new MobEffect(MobEffects.LEVITATION, 300, 0);
+                        break;                        
+                    case 16:
+                        nmsMobEffect = new MobEffect(MobEffects.SLOWER_DIG, 3000, 0);
+                        break;                        
+                    case 17:
+                        nmsMobEffect = new MobEffect(MobEffects.NIGHT_VISION, 2400, 0);
+                        break;                        
+                    case 18:
+                        nmsMobEffect = new MobEffect(MobEffects.POISON, 300, 1);
+                        break;                        
+                    case 19:
+                        nmsMobEffect = new MobEffect(MobEffects.POISON, 150, 2);
+                        break;                        
+                    case 20:
+                        nmsMobEffect = new MobEffect(MobEffects.REGENERATION, 500, 1);
+                        break;                        
+                    case 21:
+                        nmsMobEffect = new MobEffect(MobEffects.REGENERATION, 100, 3);
+                        break;                        
+                    case 22:
+                        nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 1200, 0);
+                        break;                        
+                    case 23:
+                        nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 600, 1);
+                        break;                        
+                    case 24:
+                        nmsMobEffect = new MobEffect(MobEffects.RESISTANCE, 300, 2);
+                        break;                        
+                    case 25:
+                        nmsMobEffect = new MobEffect(MobEffects.SATURATION, 8, 0);
+                        break;                        
+                    case 26:
+                        nmsMobEffect = new MobEffect(MobEffects.SLOW_FALLING, 400, 0);
+                        break;                        
+                    case 27:
+                        nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 600, 0);
+                        break;                        
+                    case 28:
+                        nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 400, 2);
+                        break;                        
+                    case 29:
+                        nmsMobEffect = new MobEffect(MobEffects.SLOWER_MOVEMENT, 280, 3);
+                        break;                        
+                    case 30:
+                        nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 600, 0);
+                        break;                        
+                    case 31:
+                        nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 400, 1);
+                        break;                        
+                    case 32:
+                        nmsMobEffect = new MobEffect(MobEffects.FASTER_MOVEMENT, 280, 2);
+                        break;                        
+                    case 33:
+                        nmsMobEffect = new MobEffect(MobEffects.INCREASE_DAMAGE, 280, 0);
+                        break;                        
+                    case 34:
+                        nmsMobEffect = new MobEffect(MobEffects.INCREASE_DAMAGE, 140, 1);
+                        break;                        
+                    case 35:
+                        nmsMobEffect = new MobEffect(MobEffects.WATER_BREATHING, 1200, 0);
+                        break;                        
+                    case 36:
+                        nmsMobEffect = new MobEffect(MobEffects.WEAKNESS, 500, 0);
+                        break;                        
+                    case 37:
+                        nmsMobEffect = new MobEffect(MobEffects.WEAKNESS, 250, 1);
+                        break;                        
+                    case 38:
+                        nmsMobEffect = new MobEffect(MobEffects.WITHER, 600, 0);
+                        break;                        
+                    default:
+                        nmsMobEffect = new MobEffect(MobEffects.WITHER, 130, 2);
+                        break;                        
                 }
 
                 if (rand < 0.55) {

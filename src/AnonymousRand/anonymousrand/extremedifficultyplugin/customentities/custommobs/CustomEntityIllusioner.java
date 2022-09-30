@@ -314,7 +314,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             BlockPosition blockPosition = this.entity.getChunkCoordinates();
             Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.entity.getRandom());
 
-            if (optional.isEmpty()) {
+            if (!optional.isPresent()) {
                 return false;
             } else {
                 this.c = (optional.get()).immutableCopy();

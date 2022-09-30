@@ -40,7 +40,7 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
         }
 
         switch (type) {
-            case 1 -> {
+            case 1:
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {
@@ -50,8 +50,8 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
                         }
                     }
                 }
-            }
-            case 2 -> {
+                break;
+            case 2:
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {
@@ -61,7 +61,7 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
                         }
                     }
                 }
-            }
+                break;
         }
     }
 }

@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -73,6 +74,10 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
     public void e() {
         int attacksLocal;
         EntityEquipment bukkitEquipment = this.bukkitEntity.getEquipment();
+        org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(Material.IRON_HELMET),
+                chestplate = new org.bukkit.inventory.ItemStack(Material.IRON_CHESTPLATE),
+                leggings = new org.bukkit.inventory.ItemStack(Material.IRON_LEGGINGS),
+                boots = new org.bukkit.inventory.ItemStack(Material.IRON_BOOTS);
 
         try {
             attacksLocal = this.attacks.getInt(this.nmsEntity);
@@ -82,87 +87,95 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
         }
 
         switch (attacksLocal) {
-            case 4 -> bukkitEquipment.setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_CHESTPLATE));
-            case 8 -> bukkitEquipment.setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_LEGGINGS));
-            case 11 -> {
-                bukkitEquipment.setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_HELMET));
+            case 4:
+                bukkitEquipment.setChestplate(chestplate);
+                break;
+            case 8:
+                bukkitEquipment.setLeggings(leggings);
+                break;
+            case 11:
+                bukkitEquipment.setHelmet(helmet);
 
-                org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
                 bukkitEquipment.setBoots(boots);
-            }
-            case 15 -> bukkitEquipment.setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_CHESTPLATE));
-            case 19 -> bukkitEquipment.setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_LEGGINGS));
-            case 22 -> {
+                break;
+            case 15:
+                bukkitEquipment.setChestplate(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_CHESTPLATE));
+                break;
+            case 19:
+                bukkitEquipment.setLeggings(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_LEGGINGS));
+                break;
+            case 22:
                 bukkitEquipment.setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_HELMET));
 
-                org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_BOOTS);
+                boots = new org.bukkit.inventory.ItemStack(Material.DIAMOND_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
                 bukkitEquipment.setBoots(boots);
-            }
-            case 26 -> {
-                org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
+                break;
+            case 26:
+                chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
                 bukkitEquipment.setChestplate(chestplate);
-            }
-            case 29 -> {
-                org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
+                break;
+            case 29:
+                leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
                 bukkitEquipment.setLeggings(leggings);
-            }
-            case 32 -> {
-                org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
+                break;
+            case 32:
+                helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
                 helmet.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
                 bukkitEquipment.setHelmet(helmet);
 
-                org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
+                boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
                 bukkitEquipment.setBoots(boots);
-            }
-            case 36 -> {
-                org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
+                break;
+            case 36:
+                chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
                 bukkitEquipment.setChestplate(chestplate);
-            }
-            case 39 -> {
-                org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
+                break;
+            case 39:
+                leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
                 bukkitEquipment.setLeggings(leggings);
-            }
-            case 42 -> {
-                org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
+                break;
+            case 42:
+                helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
                 helmet.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
                 bukkitEquipment.setHelmet(helmet);
 
-                org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
+                boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 3);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.DURABILITY, 255);
                 bukkitEquipment.setBoots(boots);
-            }
-            case 50 -> {
-                org.bukkit.inventory.ItemStack chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
+                break;
+            case 50:
+                chestplate = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_CHESTPLATE);
                 chestplate.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
                 bukkitEquipment.setChestplate(chestplate);
 
-                org.bukkit.inventory.ItemStack leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
+                leggings = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_LEGGINGS);
                 leggings.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
                 bukkitEquipment.setLeggings(leggings);
 
-                org.bukkit.inventory.ItemStack helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
+                helmet = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_HELMET);
                 helmet.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
                 bukkitEquipment.setHelmet(helmet);
 
-                org.bukkit.inventory.ItemStack boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
+                boots = new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHERITE_BOOTS);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 4);
                 boots.addEnchantment(org.bukkit.enchantments.Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
                 boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
                 bukkitEquipment.setBoots(boots);
-            }
+                break;
+
         }
     }
 }

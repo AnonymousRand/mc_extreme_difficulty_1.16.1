@@ -48,71 +48,71 @@ public class AccessPathfinderGoals {
 
         try {
             switch (entity.getBukkitEntity().getType()) { // need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
-                case BEE -> {
+                case BEE:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityBee)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityBee)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case BLAZE -> {
+                    break;
+                case BLAZE:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityBlaze)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityBlaze)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case ENDERMITE -> {
+                    break;
+                case ENDERMITE:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityEndermite)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityEndermite)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case HOGLIN -> {
+                    break;
+                case HOGLIN:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityHoglin)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityHoglin)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case HUSK -> {
+                    break;
+                case HUSK:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityZombieHusk)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZombieHusk)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case MAGMA_CUBE -> {
+                    break;
+                case MAGMA_CUBE:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntitySlimeMagmaCube)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case PILLAGER -> {
+                    break;
+                case PILLAGER:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityPillager)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityPillager)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case RABBIT -> {
+                    break;
+                case RABBIT:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityRabbit)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case RAVAGER -> {
+                    break;
+                case RAVAGER:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityRavager)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityRavager)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case SILVERFISH -> {
+                    break;
+                case SILVERFISH:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntitySilverfish)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntitySilverfish)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case SLIME -> {
+                    break;
+                case SLIME:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntitySlime)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case VEX -> {
+                    break;
+                case VEX:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityVex)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityVex)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case VINDICATOR -> {
+                    break;
+                case VINDICATOR:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityVindicator)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case WITCH -> {
+                    break;
+                case WITCH:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityWitch)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityWitch)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case WITHER_SKELETON -> {
+                    break;
+                case WITHER_SKELETON:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntitySkeletonWither)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntitySkeletonWither)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case ZOGLIN -> {
+                    break;
+                case ZOGLIN:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZoglin)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case ZOMBIE -> {
+                    break;
+                case ZOMBIE:
                     if (entity instanceof CustomEntityZombieThor) {
                         goalsToRemove = getPathfinderGoals((Set) goalSet.get(((CustomEntityZombieThor) entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                         goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZombieThor)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
@@ -123,15 +123,15 @@ public class AccessPathfinderGoals {
                         goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityZombie)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                         goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZombie)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
                     }
-                }
-                case ZOMBIE_VILLAGER -> {
+                    break;
+                case ZOMBIE_VILLAGER:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityZombieVillager)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZombieVillager)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
-                case ZOMBIFIED_PIGLIN -> {
+                    break;
+                case ZOMBIFIED_PIGLIN:
                     goalsToRemove = getPathfinderGoals((Set)goalSet.get(((CustomEntityZombiePig)entity).targetSelectorVanilla), PathfinderGoalHurtByTarget.class);
                     goalsToRemove.addAll(getPathfinderGoals((Set)goalSet.get(((CustomEntityZombiePig)entity).targetSelectorVanilla), PathfinderGoalNearestAttackableTarget.class));
-                }
+                    break;
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

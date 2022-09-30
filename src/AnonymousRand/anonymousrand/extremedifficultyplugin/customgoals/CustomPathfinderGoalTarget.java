@@ -19,137 +19,95 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
         EntityType bukkitEntityType = bukkitEntity.getType();
 
         switch (bukkitEntityType) {
-            case BAT -> {
+            case BAT:
                 return ((CustomEntityBat)this.e).getFollowRange();
-            }
-            case BEE -> {
+            case BEE:
                 return ((CustomEntityBee)this.e).getFollowRange();
-            }
-            case BLAZE -> {
+            case BLAZE:
                 return ((CustomEntityBlaze)this.e).getFollowRange();
-            }
-            case CAVE_SPIDER -> {
+            case CAVE_SPIDER:
                 return ((CustomEntitySpiderCave)this.e).getFollowRange();
-            }
-            case CHICKEN -> {
+            case CHICKEN:
                 return ((CustomEntityChickenAggressive)this.e).getFollowRange();
-            }
-            case CREEPER -> {
+            case CREEPER:
                 return ((CustomEntityCreeper)this.e).getFollowRange();
-            }
-            case DROWNED -> {
+            case DROWNED:
                 return ((CustomEntityDrowned)this.e).getFollowRange();
-            }
-            case ENDER_DRAGON -> {
+            case ENDER_DRAGON:
                 return ((CustomEntityEnderDragon)this.e).getFollowRange();
-            }
-            case ENDERMAN -> {
+            case ENDERMAN:
                 return ((CustomEntityEnderman)this.e).getFollowRange();
-            }
-            case ENDERMITE -> {
+            case ENDERMITE:
                 return ((CustomEntityEndermite)this.e).getFollowRange();
-            }
-            case EVOKER -> {
+            case EVOKER:
                 return ((CustomEntityEvoker)this.e).getFollowRange();
-            }
-            case GHAST -> {
+            case GHAST:
                 return ((CustomEntityGhast)this.e).getFollowRange();
-            }
-            case GUARDIAN -> {
+            case GUARDIAN:
                 return ((CustomEntityGuardian)this.e).getFollowRange();
-            }
-            case ELDER_GUARDIAN -> {
+            case ELDER_GUARDIAN:
                 return ((CustomEntityGuardianElder)this.e).getFollowRange();
-            }
-            case HOGLIN -> {
+            case HOGLIN:
                 return ((CustomEntityHoglin)this.e).getFollowRange();
-            }
-            case HUSK -> {
+            case HUSK:
                 return ((CustomEntityZombieHusk)this.e).getFollowRange();
-            }
-            case MAGMA_CUBE -> {
+            case MAGMA_CUBE:
                 return ((CustomEntitySlimeMagmaCube)this.e).getFollowRange();
-            }
-            case ILLUSIONER -> {
+            case ILLUSIONER:
                 return ((CustomEntityIllusioner)this.e).getFollowRange();
-            }
-            case IRON_GOLEM -> {
+            case IRON_GOLEM:
                 return ((CustomEntityIronGolem)this.e).getFollowRange();
-            }
-            case LLAMA -> {
+            case LLAMA:
                 return ((CustomEntityLlama)this.e).getFollowRange();
-            }
-            case PHANTOM -> {
+            case PHANTOM:
                 return ((CustomEntityPhantom)this.e).getFollowRange();
-            }
-            case PIGLIN -> {
+            case PIGLIN:
                 return ((CustomEntityPiglin)this.e).getFollowRange();
-            }
-            case PILLAGER -> {
+            case PILLAGER:
                 return ((CustomEntityPillager)this.e).getFollowRange();
-            }
-            case PUFFERFISH -> {
+            case PUFFERFISH:
                 return ((CustomEntityPufferfish)this.e).getFollowRange();
-            }
-            case RABBIT -> {
+            case RABBIT:
                 return ((CustomEntityRabbit)this.e).getFollowRange();
-            }
-            case RAVAGER -> {
+            case RAVAGER:
                 return ((CustomEntityRavager)this.e).getFollowRange();
-            }
-            case SHEEP -> {
+            case SHEEP:
                 if (this.e instanceof CustomEntitySheepAggressive) {
-                    return ((CustomEntitySheepAggressive)this.e).getFollowRange();
+                    return ((CustomEntitySheepAggressive) this.e).getFollowRange();
                 } else {
-                    return ((CustomEntitySheep)this.e).getFollowRange();
+                    return ((CustomEntitySheep) this.e).getFollowRange();
                 }
-            }
-            case SHULKER -> {
+            case SHULKER:
                 return ((CustomEntityShulker)this.e).getFollowRange();
-            }
-            case SILVERFISH -> {
+            case SILVERFISH:
                 return ((CustomEntitySilverfish)this.e).getFollowRange();
-            }
-            case SKELETON -> {
+            case SKELETON:
                 return ((CustomEntitySkeleton)this.e).getFollowRange();
-            }
-            case SLIME -> {
+            case SLIME:
                 return ((CustomEntitySlime)this.e).getFollowRange();
-            }
-            case SPIDER -> {
+            case SPIDER:
                 return ((CustomEntitySpider)this.e).getFollowRange();
-            }
-            case STRAY -> {
+            case STRAY:
                 return ((CustomEntitySkeletonStray)this.e).getFollowRange();
-            }
-            case TRADER_LLAMA -> {
+            case TRADER_LLAMA:
                 return ((CustomEntityLlamaTrader)this.e).getFollowRange();
-            }
-            case VEX -> {
+            case VEX:
                 return ((CustomEntityVex)this.e).getFollowRange();
-            }
-            case VILLAGER -> {
+            case VILLAGER:
                 return ((CustomEntityVillagerAggressive)this.e).getFollowRange();
-            }
-            case VINDICATOR -> {
+            case VINDICATOR:
                 return ((CustomEntityVindicator)this.e).getFollowRange();
-            }
-            case WITCH -> {
+            case WITCH:
                 return ((CustomEntityWitch)this.e).getFollowRange();
-            }
-            case WITHER -> {
+            case WITHER:
                 return ((CustomEntityWither)this.e).getFollowRange();
-            }
-            case WITHER_SKELETON -> {
+            case WITHER_SKELETON:
                 return ((CustomEntitySkeletonWither)this.e).getFollowRange();
-            }
-            case WOLF -> {
+            case WOLF:
                 return ((CustomEntityWolf)this.e).getFollowRange();
-            }
-            case ZOGLIN -> {
+            case ZOGLIN:
                 return ((CustomEntityZoglin)this.e).getFollowRange();
-            }
-            case ZOMBIE -> {
+            case ZOMBIE:
                 if (this.e instanceof CustomEntityZombieThor) {
                     return ((CustomEntityZombieThor)this.e).getFollowRange();
                 } else if (this.e instanceof CustomEntityZombieSuper) {
@@ -157,13 +115,10 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 } else {
                     return ((CustomEntityZombie)this.e).getFollowRange();
                 }
-            }
-            case ZOMBIE_VILLAGER -> {
+            case ZOMBIE_VILLAGER:
                 return ((CustomEntityZombieVillager)this.e).getFollowRange();
-            }
-            case ZOMBIFIED_PIGLIN -> {
+            case ZOMBIFIED_PIGLIN:
                 return ((CustomEntityZombiePig)this.e).getFollowRange();
-            }
         }
 
         return this.e.b(GenericAttributes.FOLLOW_RANGE);

@@ -59,10 +59,18 @@ public class RunnableMobShootArrows extends BukkitRunnable {
             double rand = random.nextDouble();
 
             switch (this.arrowType) {
-                case 2 -> entityArrow = new CustomEntityArrowExploding(this.nmsWorld); // exploding arrows
-                case 3 -> entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 30) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld)); // stray spawn mob arrows
-                case 4 -> entityArrow = new CustomEntityArrowBadEffects(this.nmsWorld); // piglin bad status effects arrow
-                case 5 -> entityArrow = new CustomEntityArrowKnockback(this.nmsWorld); // extreme knockback arrows
+                case 2:
+                    entityArrow = new CustomEntityArrowExploding(this.nmsWorld); // exploding arrows
+                    break;
+                case 3:
+                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 30) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld)); // stray spawn mob arrows
+                    break;
+                case 4:
+                    entityArrow = new CustomEntityArrowBadEffects(this.nmsWorld); // piglin bad status effects arrow
+                    break;
+                case 5:
+                    entityArrow = new CustomEntityArrowKnockback(this.nmsWorld); // extreme knockback arrows
+                    break;
             }
 
             entityArrow.setShooter(this.entity);

@@ -4,7 +4,7 @@
 
 **Spigot servers, version 1.16.1**
 
-**Java version 14 (see below for setup guide)**<sup><sub><sub><sup>dont question it i also dont know why i used this java version</sup></sub></sub></sup>
+**Java version 8 (see below for setup guide)**
 
 To reduce the volume of explosion noises without affecting everything else, use the "/explosionvolume set [decimal between 0 and 1]" command (you can also use "/explosionvolume get" to check the current volume).
 
@@ -18,19 +18,19 @@ WARNING: plugin is pretty heavyweight, do not run on a server with low RAM alloc
 4. Run your server
 5. Join the server in creative mode because every player after the first one that joins gets debuffed for 15 seconds to prevent relog exploits
 
-# Java 14 setup guide:
+# Java 8 setup guide:
 
 Follow this guide if the plugin doesn't seem to be doing anything and the server log has an error about mismatched/unsupported Java versions
 
-1. Go to [AdoptOpenJDK's releases page](https://adoptopenjdk.net/releases.html) and select OpenJDK 14 Hotspot
-2. Scroll down. Windows/Mac operating systems have 4 download options while Linux has 2. Find your operating system and download the first option which should be labeled as JDK
-3. Click on the downloaded file to install the JDK (if you are using Linux, the installation is a bit more complicated but. You're using Linux. You should know what you're doing.)
-4. At a certain step during the installation, you will see an option on the left side of the window for "set JAVA_HOME variable". Click the icon next to it and select "local drive only" (wording not exact)
+1. Go to [Adoptium's release archives](https://adoptium.net/temurin/archive) and select version 8
+2. Scroll down. Find your operating system and download the "JDK" option under the "Installer" column for your operating system (if you are using Linux, the installation process is different but I trust that you know what you're doing if you're using Linux).
+3. Click on the downloaded file and follow the installation steps.
+4. At a certain step during the installation, you will see options on the left side of the window for both "set JAVA_HOME variable" and "Add to PATH". Click the icon next to both of these and select "local drive only" (wording not exact)   .
     * If you don't see this, take note of which folder the JDK is being installed into, finish the installation and search up a tutorial online for changing Java versions for your operating system
-5. Finish the installation process and you should now be running Java 14
+5. Finish the installation process and you should now be running Java 8. If you want to confirm that you are actually running the correct version, open a terminal and type "java -version".
 
 # Finally done
 
 This is a plugin made with Spigot NMS and Bukkit API.
 
-Older commits are linked to my old school account due to an email swap...don't worry, that's also me.
+Older commits are linked to my old school account due to an [email swap](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/troubleshooting-commits/why-are-my-commits-linked-to-the-wrong-user)...don't worry, that's also me.

@@ -85,11 +85,13 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
                     int attacksInt = this.attacks.getInt(this.entity);
 
                     switch (amplifier) {
-                        case 253 -> this.attacks.setInt(this.entity, attacksInt + 5);
-                        case 254 -> {
+                        case 253:
+                            this.attacks.setInt(this.entity, attacksInt + 5);
+                            break;
+                        case 254:
                             this.attacks.setInt(this.entity, attacksInt + 10);
                             this.setGoldEquipment();
-                        }
+                            break;
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();

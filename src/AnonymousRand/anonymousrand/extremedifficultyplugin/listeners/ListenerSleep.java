@@ -114,25 +114,25 @@ public class ListenerSleep implements Listener {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You must sleep for more than 5 seconds...get your sleep schedule fixed\"");
             } else { // only executes if player has been in a bed continuously for 5 seconds and just woke up from that
                 switch (cycles) {
-                    case 0 -> {
+                    case 0:
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You got woken up by a nightmare\"");
                         leaveBedTime.put(bukkitPlayer, bukkitWorld.getFullTime() - 7000);
                         bukkitWorld.setFullTime(bukkitWorld.getFullTime() - 7000); // approx 2/3 of the night
                         cycles++;
-                    }
-                    case 1 -> {
+                        break;
+                    case 1:
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"It's 3am and you need to pee\"");
                         leaveBedTime.put(bukkitPlayer, bukkitWorld.getFullTime() - 3500);
                         bukkitWorld.setFullTime(bukkitWorld.getFullTime() - 3500); // approx 1/3 of the night
                         cycles++;
                         peeCounter = 1;
-                    }
-                    case 2 -> {
+                        break;
+                    case 2:
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"Congrats, you made it through the night...enjoy all the leftover mobs\"");
                         cycles = 0;
                         leaveBedTime.put(bukkitPlayer, (long) 0);
                         peeCounter = 0;
-                    }
+                        break;
                 }
             }
         }

@@ -11,10 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RunnableMobRain extends BukkitRunnable {
 
@@ -82,7 +79,7 @@ public class RunnableMobRain extends BukkitRunnable {
     public void initMobRainArrayLists(World nmsWorld) {
         ArrayList<EntityLiving> entitiesToSpawn1, entitiesToSpawn2;
 
-        entitiesToSpawn1 = new ArrayList<>(List.of(
+        entitiesToSpawn1 = new ArrayList<>(Arrays.asList(
                 new CustomEntityBat(nmsWorld),
                 new CustomEntityBat(nmsWorld),
                 new CustomEntityBee(nmsWorld),
@@ -179,7 +176,7 @@ public class RunnableMobRain extends BukkitRunnable {
                 new CustomEntityZombieVillager(nmsWorld)
         ));
 
-        entitiesToSpawn2 = new ArrayList<>(List.of(
+        entitiesToSpawn2 = new ArrayList<>(Arrays.asList(
                 new CustomEntityGuardianElder(nmsWorld),
                 new CustomEntityIllusioner(nmsWorld),
                 new CustomEntityIronGolem(nmsWorld),

@@ -24,8 +24,12 @@ public class ListenerPlayerEat implements Listener {
         Material bukkitMaterial = event.getItem().getType();
 
         switch (bukkitMaterial) {
-            case CHICKEN, COOKED_CHICKEN -> bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /** eating chicken meat gives you hunger for 60 seconds */
-            case HONEY_BOTTLE, MILK_BUCKET -> { /** milk and poison doubles negative potion effect durations and adds +1 amplifier instead of removing them */
+            case CHICKEN:
+            case COOKED_CHICKEN:
+                bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1200, 0)); /** eating chicken meat gives you hunger for 60 seconds */
+                break;
+            case HONEY_BOTTLE:
+            case MILK_BUCKET: /** milk and poison doubles negative potion effect durations and adds +1 amplifier instead of removing them */
                 PotionEffectType bukkitPotionEffectType;
                 milkTest = false;
 
@@ -40,11 +44,12 @@ public class ListenerPlayerEat implements Listener {
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.addPotionEffect(new PotionEffect(effect.getType(), effect.getDuration() * 2, effect.getAmplifier() + 1)), 1);
                     }
                 }
-            }
-            case POISONOUS_POTATO -> { /** poisonous potatoes give 5 minutes of poison 256 and 3 seconds of hunger 256 */
+
+                break;
+            case POISONOUS_POTATO: /** poisonous potatoes give 5 minutes of poison 256 and 3 seconds of hunger 256 */
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 6000, 255));
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 60, 255));
-            }
+                break;
         }
     }
 }

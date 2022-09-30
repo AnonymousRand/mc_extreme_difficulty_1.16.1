@@ -60,26 +60,26 @@ public class RunnableMeteorRain extends BukkitRunnable {
 
         Location pos;
         switch (this.type) {
-            case 1 -> { // exploding arrows
+            case 1: // exploding arrows
                 for (int i = 0; i < 4; i++) {
                     pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
                     CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte) (random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter instanceof LivingEntity ? (LivingEntity) this.bukkitShooter : null, 1.0F); /** 25% of arrows are piecing 1 */
                     explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(explodingArrow);
                 }
-            }
-            case 2 -> { // fireballs
+                break;
+            case 2: // fireballs
                 for (int i = 0; i < 4; i++) {
                     pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
                     CustomEntityLargeFireball meteorFireball = new CustomEntityLargeFireball(EntityTypes.FIREBALL, this.nmsWorld, 2, new Vec3D(0.0, -2.9, 0.0), pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(meteorFireball);
                 }
-            }
-            case 3 -> { // lightning
+                break;
+            case 3: // lightning
                 pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.playerLoc.getX(), this.playerLoc.getY(), this.playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
                 new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, pos, false);
-            }
-            case 4 -> { // dragon's breath clouds
+                break;
+            case 4: // dragon's breath clouds
                 pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
 
                 for (int i = 0; i < 3; i++) {
@@ -89,7 +89,8 @@ public class RunnableMeteorRain extends BukkitRunnable {
                     newAEC.setPosition(pos.getX(), pos.getY() + i, pos.getZ());
                     this.nmsWorld.addEntity(newAEC);
                 }
-            }
+
+                break;
         }
     }
 }
