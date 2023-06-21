@@ -31,6 +31,5 @@ Follow this guide if the plugin doesn't seem to be doing anything and the server
 
 # Finally done
 
-This is a plugin made with Spigot NMS and Bukkit API.
+This is a plugin made with Spigot's deobfuscation mappings, as well as Bukkit API and its underlying CraftBukkit and CraftBukkit's underlying NMS (vanilla server code). Why so many layers?
 
-Older commits are linked to my old school account due to an [email swap](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/troubleshooting-commits/why-are-my-commits-linked-to-the-wrong-user)...don't worry, that's also me.
