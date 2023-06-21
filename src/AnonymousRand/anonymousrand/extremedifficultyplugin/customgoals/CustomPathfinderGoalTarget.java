@@ -73,9 +73,9 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 return ((CustomEntityRavager)this.e).getFollowRange();
             case SHEEP:
                 if (this.e instanceof CustomEntitySheepAggressive) {
-                    return ((CustomEntitySheepAggressive) this.e).getFollowRange();
+                    return ((CustomEntitySheepAggressive)this.e).getFollowRange();
                 } else {
-                    return ((CustomEntitySheep) this.e).getFollowRange();
+                    return ((CustomEntitySheep)this.e).getFollowRange();
                 }
             case SHULKER:
                 return ((CustomEntityShulker)this.e).getFollowRange();

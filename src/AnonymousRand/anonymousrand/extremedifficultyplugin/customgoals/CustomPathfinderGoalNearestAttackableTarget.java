@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -41,7 +42,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     @Override
     public void c() {
         if (this.nearestTarget != null && this.e.getGoalTarget() == null) {
-            this.e.setGoalTarget(this.nearestTarget); // must have this to work; keeps giving null pointer warnings for some reason
+            this.e.setGoalTarget(this.nearestTarget, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
         }
     }
 

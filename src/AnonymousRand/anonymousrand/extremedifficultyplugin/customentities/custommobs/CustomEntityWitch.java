@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 
@@ -69,7 +70,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
                     potionregistry = Potions.STRONG_REGENERATION;
                 }
 
-                this.setGoalTarget(null);
+                this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             } else if (f1 >= 6.0F && !entityLiving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /** gives slowness 2 up to 6 blocks away */
                 potionregistry = Potions.STRONG_SLOWNESS;
             } else if (f1 < 6.0F && !entityLiving.hasEffect(MobEffects.WEAKNESS)) { /** 100% to give weakness when player within 6 blocks */

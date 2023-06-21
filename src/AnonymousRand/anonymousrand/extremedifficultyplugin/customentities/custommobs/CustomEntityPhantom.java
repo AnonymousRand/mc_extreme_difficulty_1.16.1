@@ -7,6 +7,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -283,7 +284,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
 
         @Override
         public void d() {
-            CustomEntityPhantom.this.setGoalTarget(null);
+            CustomEntityPhantom.this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         }
 

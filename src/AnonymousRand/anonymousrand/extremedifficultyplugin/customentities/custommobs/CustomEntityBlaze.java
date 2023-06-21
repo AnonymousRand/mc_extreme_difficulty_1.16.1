@@ -61,7 +61,6 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
-        Bukkit.broadcastMessage(this.attacks + "");
     }
 
     @Override

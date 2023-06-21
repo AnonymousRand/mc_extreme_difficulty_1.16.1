@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfi
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -150,7 +151,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         @Override
         public void d() {
             this.entity.a(0);
-            this.entity.setGoalTarget(null);
+            this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             this.entity.goalRandomStroll.h();
         }
 
@@ -182,7 +183,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
                     entityLiving.damageEntity(DamageSource.c(this.entity, this.entity), f);
                     entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
-                    this.entity.setGoalTarget(null);
+                    this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 } else if (this.b + 40 == this.entity.eL()) { /** 2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player */
                     BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()), 0.5) + 1);
 

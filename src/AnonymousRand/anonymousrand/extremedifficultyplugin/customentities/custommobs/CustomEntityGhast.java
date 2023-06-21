@@ -127,12 +127,12 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
     static class PathfinderGoalGhastFireball extends PathfinderGoal {
 
         private final CustomEntityGhast ghast;
-        public int a, attackNum;
+        public int chargeTime, attackIncrement;
         private boolean power3, ring;
 
         public PathfinderGoalGhastFireball(CustomEntityGhast entityGhast) {
             this.ghast = entityGhast;
-            this.attackNum = 0;
+            this.attackIncrement = 0;
             this.power3 = false;
             this.ring = false;
         }
@@ -144,7 +144,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
         @Override
         public void c() {
-            this.a = 0;
+            this.chargeTime = 0;
         }
 
         @Override
@@ -159,17 +159,17 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
             if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /** removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.world;
 
-                ++this.a;
-                if (this.a == 10 && !this.ghast.isSilent()) {
+                ++this.chargeTime;
+                if (this.chargeTime == 10 && !this.ghast.isSilent()) { // this doesn't seem to affect anything
                     world.a(null, 1015, this.ghast.getChunkCoordinates(), 0);
                 }
 
-                this.ghast.t(this.a > 2); // shoot()ing animation only plays for 2 ticks
+                this.ghast.t(this.chargeTime > 2); // shooting animation only plays for 2 ticks
 
-                if (this.a == 5) { /** shoots a fireball every 5 ticks */
-                    if (++this.attackNum == 6) { // attacks only count every 1.5 seconds, or 6 shots
+                if (this.chargeTime == 5) { /** shoots a fireball every 5 ticks */
+                    if (++this.attackIncrement == 6) { // attacks only count every 1.5 seconds, or 6 shots
                         this.ghast.attacks++;
-                        this.attackNum = 0;
+                        this.attackIncrement = 0;
                     }
 
                     Vec3D vec3d = this.ghast.f(1.0F);
@@ -205,10 +205,10 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
                     entityLargeFireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entityLargeFireball.locZ() + vec3d.z * 4.0D);
                     world.addEntity(entityLargeFireball);
-                    this.a = 0;
+                    this.chargeTime = 0;
                 }
-            } else if (this.a > 0) {
-                --this.a;
+            } else if (this.chargeTime > 0) {
+                --this.chargeTime;
             }
         }
     }

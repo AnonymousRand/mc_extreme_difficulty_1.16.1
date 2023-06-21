@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfi
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -172,7 +173,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
         @Override
         public void d() {
             this.guardian.a(0);
-            this.guardian.setGoalTarget(null);
+            this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             this.guardian.goalRandomStroll.h();
         }
 
@@ -205,7 +206,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
                     this.guardian.attacks++;
                     entityLiving.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
                     entityLiving.damageEntity(DamageSource.mobAttack(this.guardian), (float)this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
-                    this.guardian.setGoalTarget(null);
+                    this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
 
                 if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.attacks < 10 ? 4 : 3) == 0) { /** tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */

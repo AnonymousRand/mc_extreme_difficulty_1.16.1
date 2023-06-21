@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Random;
 
@@ -178,7 +179,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, 
 
         if (this.getGoalTarget() != null) {
             if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggros if out of range
-                this.setGoalTarget(null);
+                this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             }
 
             if (this.getGoalTarget() != null) {
@@ -344,7 +345,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, 
 
         @Override
         public void e() {
-            this.entity.setGoalTarget(this.target); // simplified to deal with some bugs
+            this.entity.setGoalTarget(this.target, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false); // simplified to deal with some bugs
             super.e();
         }
     }

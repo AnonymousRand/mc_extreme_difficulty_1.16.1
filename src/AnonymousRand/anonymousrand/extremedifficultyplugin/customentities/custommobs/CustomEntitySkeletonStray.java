@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 public class CustomEntitySkeletonStray extends EntitySkeletonStray implements ICustomMob, IAttackLevelingMob {
 
@@ -98,7 +99,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
                 EntityLiving target = this.getGoalTarget();
 
                 if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y level-included sphere for performance reasons
-                    this.setGoalTarget(null);
+                    this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
             }
         }

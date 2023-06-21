@@ -16,6 +16,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -319,7 +320,7 @@ public class ListenerEggs implements Listener {
                     this.nmsWorld.getEntities(this.nmsEgg, this.nmsEgg.getBoundingBox().g(32.0), entity -> ((entity instanceof EntityMonster || entity instanceof EntityGolem) && !(entity instanceof CustomEntityWither))).forEach(entity -> {
                         EntityInsentient entityInsentient = ((EntityInsentient)entity);
                         entityInsentient.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6000, 3));
-                        entityInsentient.setGoalTarget(this.nmsPlayer);
+                        entityInsentient.setGoalTarget(this.nmsPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                         entityInsentient.getBukkitEntity().setCustomName("Won't despawn");
                     });
                 } else if (rand < 0.965) {
@@ -328,7 +329,7 @@ public class ListenerEggs implements Listener {
                         Mob bukkitEntityInsentient = (Mob)entityInsentient.getBukkitEntity();
                         bukkitEntityInsentient.setMaxHealth(bukkitEntityInsentient.getMaxHealth() * 2.0);
                         entityInsentient.setHealth(entityInsentient.getHealth() * 2.0F);
-                        entityInsentient.setGoalTarget(this.nmsPlayer);
+                        entityInsentient.setGoalTarget(this.nmsPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                         bukkitEntityInsentient.setCustomName("Won't despawn");
                     });
                 } else if (rand < 0.9675) {
@@ -376,7 +377,7 @@ public class ListenerEggs implements Listener {
                             nmsAttribute.setValue(nmsAttribute.getValue() * 2.0);
                         }
 
-                        entityInsentient.setGoalTarget(this.nmsPlayer);
+                        entityInsentient.setGoalTarget(this.nmsPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                         entityInsentient.getBukkitEntity().setCustomName("Won't despawn");
                     });
                 } else if (rand < 0.9875) {

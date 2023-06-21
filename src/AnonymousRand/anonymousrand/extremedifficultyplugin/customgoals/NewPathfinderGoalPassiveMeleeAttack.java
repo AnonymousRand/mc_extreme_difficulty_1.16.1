@@ -29,7 +29,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public boolean a() { // should execute; fires constantly
+    public boolean a() { // canUse()/shouldExecute(); fires constantly //todo: rename all goals functions
         long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) {
@@ -50,14 +50,14 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public boolean b() { // should continue executing; fires after every attack
+    public boolean b() { // canContinueToUse()/shouldContinueExecuting(); fires after every attack
         EntityLiving entityLiving = this.entity.getGoalTarget();
 
         return entityLiving == null ? false : (!entityLiving.isAlive() ? false : (!this.c ? !this.entity.getNavigation().m() : (!this.entity.a(entityLiving.getChunkCoordinates()) ? false : !(entityLiving instanceof EntityHuman) || !entityLiving.isSpectator() && !((EntityHuman) entityLiving).isCreative())));
     }
 
     @Override
-    public void c() {
+    public void c() { // start()
         this.entity.getNavigation().a(this.d, this.b);
         this.entity.setAggressive(true);
         this.h = 0;
@@ -65,13 +65,13 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public void d() {
+    public void d() { // stop()
         this.entity.setAggressive(false);
         this.entity.getNavigation().o();
     }
 
     @Override
-    public void e() { // tick; fires if continue execute or should execute is true
+    public void e() { // tick(); fires if continue execute or should execute is true
         EntityLiving entityLiving = this.entity.getGoalTarget();
 
         this.entity.getControllerLook().a(entityLiving, 30.0F, 30.0F);
