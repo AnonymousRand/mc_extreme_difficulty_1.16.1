@@ -29,7 +29,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public boolean a() { // canUse()/shouldExecute(); fires constantly //todo: rename all goals functions
+    public boolean a() { // canUse()/shouldExecute(); fires constantly
         long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) {
@@ -52,7 +52,6 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     @Override
     public boolean b() { // canContinueToUse()/shouldContinueExecuting(); fires after every attack
         EntityLiving entityLiving = this.entity.getGoalTarget();
-
         return entityLiving == null ? false : (!entityLiving.isAlive() ? false : (!this.c ? !this.entity.getNavigation().m() : (!this.entity.a(entityLiving.getChunkCoordinates()) ? false : !(entityLiving instanceof EntityHuman) || !entityLiving.isSpectator() && !((EntityHuman) entityLiving).isCreative())));
     }
 
