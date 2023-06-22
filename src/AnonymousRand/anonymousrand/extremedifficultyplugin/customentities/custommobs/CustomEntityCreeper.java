@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -171,7 +172,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

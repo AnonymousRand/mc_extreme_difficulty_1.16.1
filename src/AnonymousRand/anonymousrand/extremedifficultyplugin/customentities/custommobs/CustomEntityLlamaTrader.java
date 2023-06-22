@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLlamaSpit;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -83,7 +85,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 

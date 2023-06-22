@@ -1,12 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -55,7 +55,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -122,7 +122,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 

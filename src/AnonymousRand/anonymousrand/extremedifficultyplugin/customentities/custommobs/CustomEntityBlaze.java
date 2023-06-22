@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -8,7 +9,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfi
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -59,7 +59,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
         this.attacks = attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -174,17 +174,17 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob {
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 2);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
-                                this.blaze.increaseAttacks(1);
+                                this.blaze.incrementAttacks(1);
                             } else if (this.blaze.getAttacks() % 60 == 0 && this.blaze.getAttacks() != 0) { /** every 60 attacks, blazes shoot a fireball with explosion power 1 */
                                 CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.nmsWorld, this.blaze, d1, d2, d3, 1);
                                 entityLargeFireball.setPosition(entityLargeFireball.locX(), this.blaze.e(0.5D) + 0.5D, entityLargeFireball.locZ());
                                 this.nmsWorld.addEntity(entityLargeFireball);
-                                this.blaze.increaseAttacks(1);
+                                this.blaze.incrementAttacks(1);
                             } else {
                                 CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /** blaze has no inaccuracy */
                                 entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                                 this.nmsWorld.addEntity(entitySmallFireball);
-                                this.blaze.increaseAttacks(1);
+                                this.blaze.incrementAttacks(1);
                             }
 
                             if (this.blaze.getAttacks() % 50 == 0) { /** every 50 attacks, the blaze shoots a ring of fireballs */

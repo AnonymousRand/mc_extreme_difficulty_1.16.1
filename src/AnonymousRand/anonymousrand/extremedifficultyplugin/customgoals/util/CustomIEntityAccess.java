@@ -1,5 +1,6 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityLiving;

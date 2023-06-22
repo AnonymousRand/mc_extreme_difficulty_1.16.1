@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalPassiveMoveTowardsTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -40,7 +41,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomMob {
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

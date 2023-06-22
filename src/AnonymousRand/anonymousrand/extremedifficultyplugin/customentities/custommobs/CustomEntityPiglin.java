@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
@@ -188,7 +190,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -285,7 +287,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 

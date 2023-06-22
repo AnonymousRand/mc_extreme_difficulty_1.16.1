@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
@@ -123,7 +124,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 

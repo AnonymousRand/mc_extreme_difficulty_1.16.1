@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
@@ -51,7 +53,7 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomM
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -129,7 +131,7 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomM
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

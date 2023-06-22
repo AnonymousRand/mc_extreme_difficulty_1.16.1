@@ -71,7 +71,7 @@ public class ListenerMobDamage implements Listener {
             CustomEntityZombieVillager nmsZombieVillager = (CustomEntityZombieVillager)nmsDamager;
             LivingEntity bukkitDamager = ((LivingEntity)nmsDamager.getBukkitEntity());
 
-            nmsZombieVillager.increaseAttacks(1); /** zombie villagers' attack counts increase when attacking villagers as well */
+            nmsZombieVillager.incrementAttacks(1); /** zombie villagers' attack counts increase when attacking villagers as well */
 
             if (bukkitDamager.getMaxHealth() <= (nmsZombieVillager.getAttacks() < 12 ? 57.0 : 77.0)) {
                 bukkitDamager.setMaxHealth(bukkitDamager.getMaxHealth() + 3.0);

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -70,7 +70,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     }
 
     @Override
-    public void e() { // tick(); fires if continue execute or should execute is true
+    public void e() { // tick(); fires if shouldExecute() or shouldContinueExecuting() is true
         EntityLiving entityLiving = this.entity.getGoalTarget();
 
         this.entity.getControllerLook().a(entityLiving, 30.0F, 30.0F);

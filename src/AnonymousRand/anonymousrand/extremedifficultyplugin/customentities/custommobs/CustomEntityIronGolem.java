@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -68,7 +70,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -125,7 +127,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
     }
 
     @Override
-    public int bL() { // getMaxFallHeight
+    public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
@@ -60,7 +62,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
         return this.attacks;
     }
 
-    public void increaseAttacks(int increase) {
+    public void incrementAttacks(int increase) {
         this.attacks += increase;
     }
 
@@ -78,6 +80,11 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomM
             this.a20 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 4));
         }
+    }
+    
+    @Override
+    public int bL() {
+        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 
     static class NewPathfinderGoalHuskSandStorm extends PathfinderGoal {

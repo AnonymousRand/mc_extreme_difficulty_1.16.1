@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomIEntityAccess;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -7,6 +8,11 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
+// passes to CustomPathfinderGoalNearestAttackableTarget.g()
+// which passes to CustomIEntityAccess.customFindPlayer()
+// which passes to CustomIEntityAccess.customFindEntity()
+// which passes to CustomPathfinderTargetConditions.a()
+// which removes line of sight requirement
 public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalTarget implements CustomIEntityAccess {
     protected final Class<T> targetClass;
     protected final int targetChance;

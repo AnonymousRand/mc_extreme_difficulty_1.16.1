@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
@@ -125,10 +126,5 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
-    }
-
-    @Override
-    public int bL() { // getMaxFallHeight
-        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }
