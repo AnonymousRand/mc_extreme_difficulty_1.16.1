@@ -25,7 +25,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected int baseX, baseY, baseZ;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
-    protected Predicate<Material> blockBreakable = (type) -> blockBreakableBase.test(type) && blockBreakableBedrock.test(type) && blockBreakableHardBlocks.test(type) && blockBreakableFireWitherRose.test(type);
+    protected Predicate<Material> blockBreakable = (type) -> blockBreakable_Base.test(type) && notBedrock.test(type) && notHardBlocks.test(type) && notFireWitherRose.test(type);
     protected static final Random random = new Random();
 
     public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
@@ -100,9 +100,9 @@ public class RunnableBreakBlocks extends BukkitRunnable {
                     this.bukkitBlock = this.bukkitWorld.getBlockAt(x1, y1, z1);
                     this.bukkitMaterial = this.bukkitBlock.getType();
 
-                    if (blockBreakable.test(this.bukkitMaterial) && (this.removeFluids ? true : blockBreakableFluids.test(this.bukkitMaterial)) && (this.immuneBlocks ? blockBreakableImmuneBlocks.test(this.bukkitMaterial) : true)) { // as long as it isn't one of these blocks
+                    if (blockBreakable.test(this.bukkitMaterial) && (this.removeFluids ? true : notFluid.test(this.bukkitMaterial)) && (this.immuneBlocks ? notPreciousBlocks.test(this.bukkitMaterial) : true)) { // as long as it isn't one of these blocks
                         this.bukkitBlock.setType(Material.AIR);
-                    } else if (!blockBreakableHardBlocks.test(this.bukkitMaterial)) { // 50% chance to break these blocks
+                    } else if (!notHardBlocks.test(this.bukkitMaterial)) { // 50% chance to break these blocks
                         if (random.nextDouble() < 0.5) {
                             this.bukkitBlock.setType(Material.AIR);
                         }

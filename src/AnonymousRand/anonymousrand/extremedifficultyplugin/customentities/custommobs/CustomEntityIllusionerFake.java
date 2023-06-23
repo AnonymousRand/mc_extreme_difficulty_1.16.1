@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -55,7 +55,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         if (this.parentIllusioner.getAttacks() == 20 && !this.a20) { /** after 20 attacks, summoned fake illusioners attack faster */
             this.a20 = true;
 
-            for (PathfinderGoal goal : AccessPathfinderGoals.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
                 this.goalSelector.a(goal);
             }
 
@@ -65,7 +65,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         if (this.parentIllusioner.getAttacks() == 40 && !this.a40) { /** after 40 attacks, summoned fake illusioners attack even faster */
             this.a40 = true;
 
-            for (PathfinderGoal goal : AccessPathfinderGoals.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
                 this.goalSelector.a(goal);
             }
 

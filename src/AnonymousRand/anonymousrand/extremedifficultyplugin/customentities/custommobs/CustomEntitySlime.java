@@ -5,26 +5,26 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalSlimeMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntitySlime extends EntitySlime implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a12, a35, deathExplosion;
 
     public CustomEntitySlime(World world) {
         super(EntityTypes.SLIME, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
         this.a12 = false;
         this.a35 = false;
         this.deathExplosion = false;
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     public CustomEntitySlime(World world, int size) {

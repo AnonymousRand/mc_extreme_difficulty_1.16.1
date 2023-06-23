@@ -3,20 +3,20 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
 public class CustomEntitySkeletonWither extends EntitySkeletonWither implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a12, a50;
 
     public CustomEntitySkeletonWither(World world) {
         super(EntityTypes.WITHER_SKELETON, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_SWORD)); // makes sure that it has a sword
         this.attacks = 0;
@@ -24,7 +24,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.a50 = false;
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.0); /** wither skeletons twice as fast and have extra knockback */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

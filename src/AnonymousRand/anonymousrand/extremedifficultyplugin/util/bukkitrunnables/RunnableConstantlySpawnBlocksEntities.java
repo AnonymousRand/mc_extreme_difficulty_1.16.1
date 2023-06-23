@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 
 import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableFireWitherRose;
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.notFireWitherRose;
 
 public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
 
@@ -75,7 +75,7 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
                         this.bukkitMaterial = this.bukkitBlock.getType();
 
                         if (this.terraform) {
-                            if (this.bukkitMaterial != this.material && blockBreakableBase.test(this.bukkitMaterial) && blockBreakableBedrock.test(this.bukkitMaterial) && blockBreakableHardBlocks.test(this.bukkitMaterial) && blockBreakableFireWitherRose.test(this.bukkitMaterial) && blockBreakableFluids.test(this.bukkitMaterial)) { // as long as it isn't one of these blocks
+                            if (this.bukkitMaterial != this.material && blockBreakable_Base.test(this.bukkitMaterial) && notBedrock.test(this.bukkitMaterial) && notHardBlocks.test(this.bukkitMaterial) && notFireWitherRose.test(this.bukkitMaterial) && notFluid.test(this.bukkitMaterial)) { // as long as it isn't one of these blocks
                                 this.bukkitBlock.setType(this.material);
 
                                 if (this.material == Material.COBWEB) {

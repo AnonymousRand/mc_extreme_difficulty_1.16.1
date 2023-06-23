@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -11,13 +11,13 @@ import org.bukkit.block.Block;
 
 public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a10, a20, a40, a75;
 
     public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
@@ -28,7 +28,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /** hoglins move 75% faster (125% faster for babies), do 5 damage (8 for babies), and have extra knockback */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 8.0 : 5.0);
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

@@ -5,20 +5,20 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityVex extends EntityVex implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a20, a30, a45, a60;
 
     public CustomEntityVex(World world) {
         super(EntityTypes.VEX, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.moveController = new CustomEntityVex.ControllerMoveVex(this);
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
@@ -31,7 +31,7 @@ public class CustomEntityVex extends EntityVex implements ICustomMob, IAttackLev
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0); /** vexes only have 12 health and do 2 damage */
         this.setHealth(12.0F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

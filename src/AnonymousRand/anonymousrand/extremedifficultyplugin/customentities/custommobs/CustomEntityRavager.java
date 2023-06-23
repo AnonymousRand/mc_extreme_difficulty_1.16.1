@@ -3,19 +3,19 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityRavager extends EntityRavager implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a20, a60, a90, launchHigh;
 
     public CustomEntityRavager(World world) {
         super(EntityTypes.RAVAGER, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
@@ -28,7 +28,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomMob, IA
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(400.0);
         this.setHealth(400.0F);
         this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /** changing attributes don't work on ravagers so ravagers have speed 3 */
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override

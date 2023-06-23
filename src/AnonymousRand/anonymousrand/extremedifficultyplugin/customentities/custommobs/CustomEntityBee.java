@@ -1,43 +1,71 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IGoalRemovingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityBee extends EntityBee implements ICustomMob {
+public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemovingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private boolean firstSting;
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
-        this.targetSelectorVanilla = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.firstSting = true;
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0); /** bees do 1000 damage but only have 5 health */
-        this.setHealth(5.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        initCustom();
+        initGoalRemoval();
     }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava*/
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.firstSting = true;
+
+        this.initAttributes();
+    }
+
+    public void initAttributes() {
+        /** bees do 1000 damage but only have 5 health */
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
+        this.setHealth(5.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
+    }
+
+    public double getFollowRange() {
+        /** Bees have 16 block detection range (setting attribute doesn't work) */
+        return 16.0;
+    }
+
+    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
+    public void initGoalRemoval() {
+        this.vanillaTargetSelector = super.targetSelector;
+        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** bees are always aggro */
-    }
-
-    public double getFollowRange() { /** bees have 16 block detection range (setting attribute doesn't work) */
-        return 16.0;
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true));
+        /** Doesn't need line of sight to find targets and start attacking */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
     @Override
@@ -45,9 +73,11 @@ public class CustomEntityBee extends EntityBee implements ICustomMob {
         super.tick();
 
         if (this.hasStung()) {
-            this.setHasStung(false); /** bees don't die from stinging */
+            /** Doesn't die from stinging */
+            this.setHasStung(false);
 
-            if (this.firstSting) { /** 50% chance to duplicate after the first time stinging */
+            /** 50% chance to duplicate after the first sting */
+            if (this.firstSting) {
                 this.firstSting = false;
 
                 if (random.nextDouble() < 0.5) {

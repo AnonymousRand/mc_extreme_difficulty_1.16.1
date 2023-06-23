@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -16,14 +16,14 @@ import java.lang.reflect.Field;
 
 public class CustomEntityZombie extends EntityZombie implements ICustomMob, IAttackLevelingMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a7, a15, a25, a40, a50;
     private static Field bA;
 
     public CustomEntityZombie(World world) {
         super(EntityTypes.ZOMBIE, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
@@ -36,7 +36,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomMob, IAtt
         this.setBaby(true);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /** zombies are always babies, move 2x faster, and have a 20% chance to summon a reinforcement when hit by a player */
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.2);
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     static {

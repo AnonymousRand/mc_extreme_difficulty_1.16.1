@@ -20,6 +20,7 @@ import java.util.Map;
 public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLevelingMob {
 
     private AttackController attackController;
+    private int[] attackThresholds;
     private NewPathfinderGoalBuffMobs buffMobs;
     private boolean firstDuplicate;
 
@@ -30,10 +31,10 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
     public CustomEntityBat(World world) { /** bats are now aggressive */
         super(EntityTypes.BAT, world);
         this.initCustom();
-        this.initAttributes();
         this.initAttacks();
     }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
     public void initCustom() {
         /** No longer avoids lava (as if bats did in the first place) */
         this.a(PathType.LAVA, 0.0F);
@@ -44,6 +45,8 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         // custom goal that provides the buffing mechanism
         this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
                 32, 3, 200, 101);
+
+        this.initAttributes();
     }
 
     public void initAttributes() {
@@ -68,10 +71,6 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
     }
 
-    public void initAttacks() {
-        this.attackController = new AttackController(3, 7, 12, 24, 32);
-    }
-
     // from Spigot forums again
     public void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
@@ -81,9 +80,15 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         map.put(attributeBase, attributeModifiable);
     }
 
-    /** Bats have 16 block detection range (setting attribute doesn't work) (24 after 5 attacks, 32 after 10 attacks) */
     public double getFollowRange() {
-        return this.attackController.getAttacks() < 5 ? 16.0 : this.attackController.getAttacks() < 10 ? 24 : 32;
+        /** Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
+        return this.attackController.getAttacks() < this.attackThresholds[1] ? 16.0 : this.attackController.getAttacks() < this.attackThresholds[2] ? 24 : 32;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackThresholds = new int[]{3, 7, 12, 24, 32};
+        this.attackController = new AttackController(this.attackThresholds);
     }
 
     public int getAttacks() {
@@ -91,43 +96,40 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
     }
 
     public void incrementAttacks(int increase) {
-        switch (this.attackController.incrementAttacks(increase)) {
-            case 0:
-                return;
+        int attacks = this.attackController.incrementAttacks(increase);
+
+        if (attacks == 0) {
+            return;
+        } else if (attacks == this.attackThresholds[0] || attacks == this.attackThresholds[3]) {
             /** After 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
             /** After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds */
-            case 3:
-            case 24:
-                buffMobs.e(); // immediately apply buffs
-                return;
+            buffMobs.e(); // immediately apply buffs
+        } else if (attacks == this.attackThresholds[1]) {
             /** After 7 attacks, bats gain regen 2, speed 1, and 12 max health and health */
-            case 7:
-                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
-                this.setHealth(12.0F);
-                return;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
+            this.setHealth(12.0F);
+        } else if (attacks == this.attackThresholds[2]) {
             /** After 12 attacks, bats gain speed 2 and 15 max health and health */
             /** After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks */
-            case 12:
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
-                this.setHealth(15.0F);
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(15.0);
+            this.setHealth(15.0F);
 
-                this.goalSelector.a(this.buffMobs); // remove goal and replace
-                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(), 64, 20, 200, 101);
-                this.goalSelector.a(0, this.buffMobs);
-                this.buffMobs.e();
-                return;
+            this.goalSelector.a(this.buffMobs); // remove goal and replace
+            this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(), 64, 20, 200, 101);
+            this.goalSelector.a(0, this.buffMobs);
+            this.buffMobs.e();
+        } else if (attacks == this.attackThresholds[4]) {
             /** After 32 attacks, bats can duplicate again when hit by player and not killed */
             /** After 32 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 8 ticks */
-            case 32:
-                this.firstDuplicate = true;
-                this.buffMobs.e();
-                return;
+            this.firstDuplicate = true;
+            this.buffMobs.e();
         }
     }
 
+    //////////////////////////////////////////////////////////////////////////
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
@@ -158,9 +160,9 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         this.goalSelector.a(0, this.buffMobs);
         /** Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Doesn't need line of sight to continue attacking */
+        /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false));
-        /** Doesn't need line of sight to find target and start attacking */
+        /** Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
 
@@ -172,7 +174,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
             new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 8, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /** After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
-            if (this.getAttacks() >= 32) {
+            if (this.getAttacks() >= this.attackThresholds[4]) {
                 new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null, null, this, false, false);
             }
         }

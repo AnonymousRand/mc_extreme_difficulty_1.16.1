@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util;
 
 public interface IAttackLevelingMob {
-    void initAttacks();
+    //void initAttacks();
 
-    int getAttacks();
+    //int getAttacks();
 
-    void incrementAttacks(int increment);
+    //void incrementAttacks(int increment);
 }

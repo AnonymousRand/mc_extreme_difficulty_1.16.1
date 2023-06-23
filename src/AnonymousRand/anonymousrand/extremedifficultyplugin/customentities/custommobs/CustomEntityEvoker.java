@@ -316,9 +316,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
                                 bukkitBlock = bukkitLoc.getBlock();
                                 bukkitMaterial = bukkitBlock.getType();
 
-                                if (blockBreakableBase.test(bukkitMaterial) && blockBreakableBedrock.test(bukkitMaterial) && blockBreakableHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                                if (blockBreakable_Base.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                                     bukkitBlock.setType(org.bukkit.Material.AIR);
-                                } else if (!blockBreakableHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
+                                } else if (!notHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
                                     if (random.nextDouble() < 0.5) {
                                         bukkitBlock.setType(org.bukkit.Material.AIR);
                                     }

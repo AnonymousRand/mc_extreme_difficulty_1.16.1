@@ -49,7 +49,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public void c() { // copied in because mobs doesn't attack regularly otherwise
+    public void c() { // copied in because mobs don't attack regularly otherwise
         this.entity.getNavigation().a(this.d, this.b);
         this.entity.setAggressive(true);
         this.h = 0;
@@ -93,7 +93,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomMob) {
-                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
+                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can successfully hit you occasionally when they are out of range vertically */
                     return;
                 }
             }

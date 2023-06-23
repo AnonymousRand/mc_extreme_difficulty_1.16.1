@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.AccessPathfinderGoals;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 
 public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
-    public PathfinderGoalSelector targetSelectorVanilla;
+    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;
     private boolean a12, a30;
     private final CustomEntityAreaEffectCloud newAEC;
@@ -20,7 +20,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
 
     public CustomEntityWitch(World world) {
         super(EntityTypes.WITCH, world);
-        this.targetSelectorVanilla = super.targetSelector;
+        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
         this.attacks = 0;
@@ -29,7 +29,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomMob {
         this.a30 = false;
         this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
-        AccessPathfinderGoals.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     static {

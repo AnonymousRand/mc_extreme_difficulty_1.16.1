@@ -17,7 +17,7 @@ import java.util.EnumSet;
 import java.util.Random;
 
 import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableFireWitherRose;
+import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.notFireWitherRose;
 
 public class CustomEntityWither extends EntityWither implements ICustomMob {
 
@@ -303,7 +303,7 @@ public class CustomEntityWither extends EntityWither implements ICustomMob {
     static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
         public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
-            blockBreakable = (type) -> blockBreakableBase.test(type) && blockBreakableHardBlocks.test(type) && blockBreakableFireWitherRose.test(type); /** withers can now break bedrock */
+            blockBreakable = (type) -> blockBreakable_Base.test(type) && notHardBlocks.test(type) && notFireWitherRose.test(type); /** withers can now break bedrock */
         }
 
         @Override

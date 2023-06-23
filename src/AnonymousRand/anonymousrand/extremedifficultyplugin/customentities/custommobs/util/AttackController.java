@@ -5,7 +5,7 @@ public class AttackController {
     private int attacks;
     private int[] thresholds;
 
-    public AttackController(int... thresholds) {
+    public AttackController(int[] thresholds) {
         this.thresholds = thresholds;
         this.attacks = 0;
     }
