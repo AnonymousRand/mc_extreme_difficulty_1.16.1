@@ -12,42 +12,56 @@ import java.util.Map;
 
 public class CustomEntityChickenAggressive extends EntityChicken implements ICustomMob { // can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
-    private static Field attributeMap;
+    private Field attributeMap;
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.initCustom();
+    }
 
-        try { // register attack attributes
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
+        // pull attributeMap using reflection; code from Spigot forums
+        try {
+            this.attributeMap = AttributeMapBase.class.getDeclaredField("b");
+            this.attributeMap.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        // register new attributes using attributeMap
+        try {
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_KNOCKBACK);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /** aggressive chickens move twice as fast and do 2 damage */
+        // set new attributes
+        /** Aggressive chickens do 2 damage and move twice as fast */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }
 
-    // registers new attributes via reflection; code from Spigot forums
-    static {
-        try {
-            attributeMap = net.minecraft.server.v1_16_R1.AttributeMapBase.class.getDeclaredField("b");
-            attributeMap.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
+    // from Spigot forums again
+    private void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)attributeMap.get(attributeMapBase);
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)this.attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
     }
 
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     protected void initPathfinder() { /** chicken can't panic/breed/follow parent/be tempted with seeds */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
@@ -76,7 +90,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     public void tick() {
         super.tick();
 
-        if (this.ticksLived == 600) { /** aggressive chickens die after 30 sec */
+        /** Aggressive chickens die after 30 seconds */
+        if (this.ticksLived == 600) {
             this.die();
         }
     }

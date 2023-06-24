@@ -1,15 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IGoalRemovingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -20,7 +16,6 @@ import java.util.EnumSet;
 public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
 
     private AttackController attackController;
-    private int[] attackThresholds;
     public PathfinderGoalSelector vanillaTargetSelector;
     private boolean rapidFire;
 
@@ -33,7 +28,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
 
     //////////////////////////////  ICustomMob  //////////////////////////////
     public void initCustom() {
-        /** no longer avoids water */
+        /** No longer avoids water */
         this.a(PathType.WATER, 0.0F);
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
@@ -56,35 +51,35 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         return 40.0;
     }
 
-    /////////////////////////  IAttackLevelingMob  //////////////////////////
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
     public void initAttacks() {
-        this.attackThresholds = new int[]{75, 175, 350};
-        this.attackController = new AttackController(this.attackThresholds);
+        this.attackController = new AttackController(75, 175, 350);
     }
 
     public int getAttacks() {
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increase) {
-        int attacks = this.attackController.incrementAttacks(increase);
-
-        if (attacks == 0) {
-            return;
-        } else if (attacks == this.attackThresholds[0]) {
-            /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
-            double d1 = this.getGoalTarget().locX() - this.locX();
-            double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
-            double d3 = this.getGoalTarget().locZ() - this.locZ();
-            CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.getWorld(), this, d1, d2, d3, 1);
-            entityLargeFireball.setPosition(entityLargeFireball.locX(), this.e(0.5D) + 0.5D, entityLargeFireball.locZ());
-            this.getWorld().addEntity(entityLargeFireball);
-        } else if (attacks == this.attackThresholds[1]) {
-            /** After 175 attacks, blazes shoot out a ring of fireballs */
-            new RunnableRingOfFireballs(this, 0.5, 1).run();
-        } else if (attacks == this.attackThresholds[2]) {
-            /** After 350 attacks, blazes shoot even faster (+100% vanilla speed compared to +50%, both with no attack cooldown between volleys), and shoot 3 fireballs at a time in a cone-like shape */
-            this.rapidFire = true;
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == 0) {
+                return;
+            } else if (metThreshold == attackThresholds[0]) {
+                /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
+                double d1 = this.getGoalTarget().locX() - this.locX();
+                double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
+                double d3 = this.getGoalTarget().locZ() - this.locZ();
+                CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.getWorld(), this, d1, d2, d3, 1);
+                entityLargeFireball.setPosition(entityLargeFireball.locX(), this.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                this.getWorld().addEntity(entityLargeFireball);
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 175 attacks, blazes shoot out a ring of fireballs */
+                new RunnableRingOfFireballs(this, 0.5, 1).run();
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 350 attacks, blazes shoot even faster (+100% vanilla speed compared to +50%, both with no attack cooldown between volleys), and shoot 3 fireballs at a time in a cone-like shape */
+                this.rapidFire = true;
+            }
         }
     }
 
@@ -99,8 +94,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         return this.vanillaTargetSelector;
     }
 
-    //////////////////////////////////////////////////////////////////////////
-
+    //////////////////////  Other or vanilla functions  //////////////////////
     public boolean getRapidFire() {
         return this.rapidFire;
     }
@@ -110,7 +104,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         super.initPathfinder();
         /** Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats etc. */
+        /** Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
         /** Doesn't need line of sight to find targets and start attacking */

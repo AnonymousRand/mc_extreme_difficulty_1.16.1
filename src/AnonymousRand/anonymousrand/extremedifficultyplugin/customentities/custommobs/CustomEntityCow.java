@@ -10,21 +10,37 @@ public class CustomEntityCow extends EntityCow {
 
     public CustomEntityCow(World world) {
         super(EntityTypes.COW, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /** cows move twice as fast and have 20 health */
-        this.setHealth(20.0F);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
-
-        if (random.nextDouble() < 0.05) { /** cows have a 1 in 20 chance to spawn as a mooshroom */
-            new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
-        }
+        this.initCustom();
     }
 
+    public void initCustom() {
+        /** Cows have a 5% chance to spawn as a mooshroom instead */
+        if (random.nextDouble() < 0.05) {
+            new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
+        }
+
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
+        /** Cows move twice as fast and have 20 health */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
+        this.setHealth(20.0F);
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
     }
 }

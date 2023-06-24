@@ -2,15 +2,15 @@
 
 **Plugin trailer on Iseburg's channel: https://www.youtube.com/watch?v=7Kl9jtCHIGg**
 
-**Spigot servers, version 1.16.1**
-
-**Java version 8 (see below for setup guide)**
-
 To reduce the volume of explosion noises without affecting everything else, use the "/explosionvolume set [decimal between 0 and 1]" command (you can also use "/explosionvolume get" to check the current volume).
 
 WARNING: plugin is pretty heavyweight, do not run on a server with low RAM allocation
 
 # Installation instructions:
+
+**Spigot servers, version 1.16.1**
+
+**Java version 8 (see below for setup guide)**
 
 1. Click on "Releases" near the right side of the screen
 2. Download the jar file from the release you want under the "Assets" tab (unlike with modded clients, you do not need to download the source code zip files; those only provide the code for the mod and not the runnable file itself)
@@ -26,8 +26,8 @@ Follow this guide if the plugin doesn't seem to be doing anything and the server
 2. Scroll down. Find your operating system and download the "JDK" option under the "Installer" column for your operating system (if you are using Linux, the installation process is different but I trust that you know what you're doing if you're using Linux).
 3. Click on the downloaded file and follow the installation steps.
 4. At a certain step during the installation, you will see options on the left side of the window for both "set JAVA_HOME variable" and "Add to PATH". Click the icon next to both of these and select "local drive only" (wording not exact)   .
-    * If you don't see this, take note of which folder the JDK is being installed into, finish the installation and search up a tutorial online for changing Java versions for your operating system
-5. Finish the installation process and you should now be running Java 8. If you want to confirm that you are actually running the correct version, open a terminal and type "java -version".
+    * If you don't see this, then it should automatically have done this for you.
+5. Finish the installation process, and you should now be running Java 8. If you want to confirm that you are actually running the correct version, open a terminal or command prompt and type "java --version".
 
 # Finally done
 

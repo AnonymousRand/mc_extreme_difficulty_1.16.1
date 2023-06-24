@@ -8,7 +8,6 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
-import java.lang.reflect.Field;
 import java.util.Random;
 
 public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
@@ -18,23 +17,12 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
 
     private final World nmsWorld;
     private static final Random random = new Random();
-    private Field attacks;
 
     public NewPathfinderGoalGetBuffedByMobs(EntityInsentient entity) {
         this.entity = entity;
         this.hunger = false;
         this.unluck = false;
         this.nmsWorld = entity.getWorld();
-
-        if (this.entity instanceof IAttackLevelingMob) {
-            try {
-                this.attacks = this.entity.getClass().getDeclaredField("attacks");
-                this.attacks.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     @Override
@@ -81,20 +69,14 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
             this.entity.removeEffect(MobEffects.UNLUCK);
 
             if (this.entity instanceof IAttackLevelingMob) {
-                try {
-                    int attacksInt = this.attacks.getInt(this.entity);
-
-                    switch (amplifier) {
-                        case 253:
-                            this.attacks.setInt(this.entity, attacksInt + 5);
-                            break;
-                        case 254:
-                            this.attacks.setInt(this.entity, attacksInt + 10);
-                            this.setGoldEquipment();
-                            break;
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                switch (amplifier) {
+                    case 253:
+                        ((IAttackLevelingMob) this.entity).incrementAttacks(5);
+                        break;
+                    case 254:
+                        ((IAttackLevelingMob) this.entity).incrementAttacks(5);
+                        this.setGoldEquipment();
+                        break;
                 }
             }
         }
