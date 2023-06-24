@@ -32,7 +32,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
         this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 3, 40.0F)); /** throws a trident every 3 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D, false)); /** uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
@@ -130,8 +130,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
 
         private final CustomEntityDrowned drowned;
 
-        public PathfinderGoalDrownedAttack(CustomEntityDrowned drowned, double d0, boolean flag) {
-            super(drowned, d0, flag);
+        public PathfinderGoalDrownedAttack(CustomEntityDrowned drowned, double d0) {
+            super(drowned, d0);
             this.drowned = drowned;
         }
 

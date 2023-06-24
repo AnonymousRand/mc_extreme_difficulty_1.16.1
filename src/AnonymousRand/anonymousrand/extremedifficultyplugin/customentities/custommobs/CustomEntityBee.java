@@ -66,7 +66,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemov
         /** Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D, true));
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D));
         /** Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }

@@ -10,7 +10,10 @@ import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
 
 public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAttackLevelingMob {
 
@@ -43,8 +46,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
             this.goalSelector.a(1, new CustomPathfinderGoalCrossbowAttack<>(this, 1.0, 32.0F)); /** uses the custom goal that attacks regardless of the y level; since the behavior-controlled crossbow shots have not been removed, this can cause a faster, more irregular attacking rhythm (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinArrowAttack(this, 1.0, 10, 40.0F)); /** for frenzied phase; uses the custom goal that attacks regardless of the y level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0, true)); /** for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /** uses the custom melee attack goal that attacks regardless of the y level */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /** for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /** for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -380,8 +383,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
 
         private final CustomEntityPiglin piglin;
 
-        public PathfinderGoalPiglinFasterMelee(CustomEntityPiglin piglin, double speedTowardsTarget, boolean useLongMemory) {
-            super(piglin, speedTowardsTarget, useLongMemory);
+        public PathfinderGoalPiglinFasterMelee(CustomEntityPiglin piglin, double speedTowardsTarget) {
+            super(piglin, speedTowardsTarget);
             this.piglin = piglin;
         }
 

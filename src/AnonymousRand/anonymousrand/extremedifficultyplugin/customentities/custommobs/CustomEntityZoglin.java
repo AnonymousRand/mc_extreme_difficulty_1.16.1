@@ -2,9 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
@@ -39,7 +39,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob, IAtt
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new CustomEntityZoglin.PathfinderGoalZoglinAttack(this, 1.0D, true)); /** uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(1, new PathfinderGoalZoglinMeleeAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
@@ -160,13 +160,13 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomMob, IAtt
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 
-    static class PathfinderGoalZoglinAttack extends CustomPathfinderGoalMeleeAttack {
+    static class PathfinderGoalZoglinMeleeAttack extends CustomPathfinderGoalMeleeAttack {
 
         protected final CustomEntityZoglin zoglin;
         private boolean moveEverywhere;
 
-        public PathfinderGoalZoglinAttack(CustomEntityZoglin zoglin, double speedTowardsTarget, boolean useLongMemory) {
-            super(zoglin, speedTowardsTarget, useLongMemory);
+        public PathfinderGoalZoglinMeleeAttack(CustomEntityZoglin zoglin, double speedTowardsTarget) {
+            super(zoglin, speedTowardsTarget);
             this.zoglin = zoglin;
             this.moveEverywhere = false;
         }

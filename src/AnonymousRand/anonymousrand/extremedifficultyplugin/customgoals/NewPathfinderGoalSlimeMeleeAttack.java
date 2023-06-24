@@ -7,8 +7,8 @@ import net.minecraft.server.v1_16_R1.EnumHand;
 
 public class NewPathfinderGoalSlimeMeleeAttack extends NewPathfinderGoalPassiveMeleeAttack {
 
-    public NewPathfinderGoalSlimeMeleeAttack(EntitySlime entity, double d0, boolean flag) {
-        super(entity, d0, flag);
+    public NewPathfinderGoalSlimeMeleeAttack(EntitySlime entity, double d0) {
+        super(entity, d0);
     }
 
     @Override

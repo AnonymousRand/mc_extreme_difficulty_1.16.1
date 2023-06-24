@@ -21,10 +21,10 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
     protected long k;
     protected static final Random random = new Random();
 
-    public NewPathfinderGoalPassiveMeleeAttack(EntityInsentient entity, double d0, boolean flag) {
+    public NewPathfinderGoalPassiveMeleeAttack(EntityInsentient entity, double d0) {
         this.entity = entity;
         this.b = d0;
-        this.c = flag;
+        this.c = true; // follows target even if no line of sight anymore; basically allows it to continue attacking without LOS
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
@@ -77,7 +77,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
         double d0 = this.entity.g(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ());
 
         this.h = Math.max(this.h - 1, 0);
-        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityLiving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /** no longer requires line of sight to continue attacking */
+        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || entityLiving.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /** no longer requires line of sight to continue attacking */
             this.e = entityLiving.locX();
             this.f = entityLiving.locY();
             this.g = entityLiving.locZ();

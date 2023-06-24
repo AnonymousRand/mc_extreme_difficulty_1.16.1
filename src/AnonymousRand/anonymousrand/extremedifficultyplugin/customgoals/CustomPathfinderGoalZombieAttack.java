@@ -7,8 +7,8 @@ public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeA
     private final EntityZombie zombie;
     private int raiseArmTicks;
 
-    public CustomPathfinderGoalZombieAttack(EntityZombie entityZombie, double speedTowardsTarget, boolean useLongMemory) {
-        super(entityZombie, speedTowardsTarget, useLongMemory);
+    public CustomPathfinderGoalZombieAttack(EntityZombie entityZombie, double speedTowardsTarget) {
+        super(entityZombie, speedTowardsTarget);
         this.zombie = entityZombie;
     }
 

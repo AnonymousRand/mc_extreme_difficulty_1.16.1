@@ -19,11 +19,11 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     protected long k;
     private static final Random random = new Random();
 
-    public CustomPathfinderGoalMeleeAttack(EntityCreature entityCreature, double speedTowardsTarget, boolean useLongMemory) {
-        super(entityCreature, speedTowardsTarget, useLongMemory);
+    public CustomPathfinderGoalMeleeAttack(EntityCreature entityCreature, double speedTowardsTarget) {
+        super(entityCreature, speedTowardsTarget, true);
         this.entity = entityCreature;
         this.b = speedTowardsTarget;
-        this.c = useLongMemory;
+        this.c = true; // follows target even if no line of sight anymore; basically allows it to continue attacking without LOS
     }
 
     @Override

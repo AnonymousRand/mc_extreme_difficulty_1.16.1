@@ -82,7 +82,8 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
 
     public double getFollowRange() {
         /** Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
-        return this.attackController.getAttacks() < this.attackController.getAttackThresholds()[1] ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttackThresholds()[2] ? 24 : 32;
+        // null check since getFollowRange() is called in CustomPathfinderGoalTarget which is called in CustomPathfinderGoalNearestAttackableTarget which is called in initPathfinder() which is called in super constructor I think which is called obviously before initAttacks()/before this.attackController can be initialized in any other way
+        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttackThresholds()[1]) ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttackThresholds()[2] ? 24 : 32;
     }
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
@@ -155,11 +156,11 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
 
     @Override
     public void initPathfinder() {
-        this.goalSelector.a(0, this.buffMobs);
+        //this.goalSelector.a(0, this.buffMobs);
         /** Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
         /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0, false));
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));
         /** Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
     }
