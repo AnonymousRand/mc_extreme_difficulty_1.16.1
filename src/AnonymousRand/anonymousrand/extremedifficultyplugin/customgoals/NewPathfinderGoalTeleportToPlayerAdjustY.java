@@ -59,7 +59,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
                         creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                         try {
-                            CustomEntityCreeper.fuseTicks.setInt(creeper, 0);
+                            creeper.fuseTicks.setInt(creeper, 0);
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
@@ -82,7 +82,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
                 creeper.maxFuseTicks = ((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25; // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
 
                 try {
-                    CustomEntityCreeper.fuseTicks.setInt(creeper, 0);
+                    creeper.fuseTicks.setInt(creeper, 0);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

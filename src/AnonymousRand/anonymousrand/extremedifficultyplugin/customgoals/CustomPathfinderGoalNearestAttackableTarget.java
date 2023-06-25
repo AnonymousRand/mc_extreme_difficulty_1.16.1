@@ -19,16 +19,13 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     public EntityLiving nearestTarget;
     protected CustomPathfinderTargetCondition targetCondition;
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, boolean checkSight) {
-        this(entityInsentient, oclass, checkSight, false);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass) {
+        /** Never needs sight to find target and start attacking */
+        this(entityInsentient, oclass, 10, null);
     }
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, boolean checkSight, boolean nearbyOnly) {
-        this(entityInsentient, oclass, 10, checkSight, nearbyOnly, null);
-    }
-
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, int i, boolean flag, boolean flag1, @Nullable Predicate<EntityLiving> predicate) {
-        super(entityInsentient, flag, flag1);
+    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass, int i, @Nullable Predicate<EntityLiving> predicate) {
+        super(entityInsentient, false, false);
         this.targetClass = oclass;
         this.targetChance = i;
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));

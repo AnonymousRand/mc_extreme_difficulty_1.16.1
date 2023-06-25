@@ -40,7 +40,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         this.initAttributes();
     }
 
-    public void initAttributes() {
+    private void initAttributes() {
         /** Blazes only have 12.5 health */
         this.setHealth(12.5F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.5);
@@ -63,9 +63,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
     public void incrementAttacks(int increment) {
         for (int metThreshold : this.attackController.incrementAttacks(increment)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == 0) {
-                return;
-            } else if (metThreshold == attackThresholds[0]) {
+            if (metThreshold == attackThresholds[0]) {
                 /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
@@ -108,7 +106,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
         /** Doesn't need line of sight to find targets and start attacking */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
     @Override

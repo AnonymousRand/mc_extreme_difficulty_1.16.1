@@ -11,35 +11,39 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class CustomEntityEnderDragon extends EntityEnderDragon implements ICustomMob {
 
     public ArrayList<Entity> goalTargets = new ArrayList<>();
-    public static Field phaseManager, dragonBattle;
+    public Field phaseManager, dragonBattle;
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
         this.uniqueID = uuid; // to make sure bossbar etc. doesn't break
+    }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
         try {
-            ((DragonControllerManager)phaseManager.get(this)).setControllerPhase(DragonControllerPhase.HOLDING_PATTERN); // make sure it is moving and not perched when spawning
-        } catch (IllegalAccessException e) {
+            this.phaseManager = EntityEnderDragon.class.getDeclaredField("bN");
+            this.phaseManager.setAccessible(true);
+            this.dragonBattle = EntityEnderDragon.class.getDeclaredField("bM");
+            this.dragonBattle.setAccessible(true);
+            ((DragonControllerManager)this.phaseManager.get(this)).setControllerPhase(DragonControllerPhase.HOLDING_PATTERN); // make sure it is moving and not perched when spawning
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    static {
-        try {
-            phaseManager = EntityEnderDragon.class.getDeclaredField("bN");
-            phaseManager.setAccessible(true);
-            dragonBattle = EntityEnderDragon.class.getDeclaredField("bM");
-            dragonBattle.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+    public double getFollowRange() { /** dragon has 128 block detection range for new constant fireballs */
+        return 128.0;
     }
 
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
@@ -100,10 +104,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         }
     }
 
-    public double getFollowRange() { /** dragon has 128 block detection range for new constant fireballs */
-        return 128.0;
-    }
-
     @Override
     public double g(double d0, double d1, double d2) {
         double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
@@ -145,7 +145,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)CustomEntityEnderDragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are fewer crystals and fewer players */
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)this.dragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are fewer crystals and fewer players */
                     new RunnableDragonShootProjectiles(this.dragon).run();
                 }
             } catch (IllegalAccessException e) {

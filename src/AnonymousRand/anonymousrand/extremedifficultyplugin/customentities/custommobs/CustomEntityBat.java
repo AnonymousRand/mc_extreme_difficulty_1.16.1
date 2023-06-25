@@ -162,7 +162,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));
         /** Doesn't need line of sight to find targets and start attacking */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
     @Override

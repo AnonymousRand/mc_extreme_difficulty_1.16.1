@@ -12,7 +12,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Random;
 
 public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IAttackLevelingMob {
 
@@ -64,7 +65,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
         this.goalSelector.a(1, new CustomEntityPhantom.PathfinderGoalPhantomPickAttack());
         this.goalSelector.a(2, new PathfinderGoalPhantomSweepAttack());
         this.goalSelector.a(3, new CustomEntityPhantom.PathfinderGoalPhantomOrbitPoint());
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
     private void updateSizeStats(int change) { /** phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */

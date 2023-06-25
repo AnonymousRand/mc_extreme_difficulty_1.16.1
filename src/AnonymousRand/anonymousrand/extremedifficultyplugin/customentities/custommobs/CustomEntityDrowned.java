@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -12,66 +13,75 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IAttackLevelingMob {
 
-    private int attacks;
-    private boolean a50, a100;
+    private AttackController attackController;
 
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
-        this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT)); /** drowned always spawn with tridents */
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a50 = false;
-        this.a100 = false;
+        this.initCustom();
+        this.initAttacks();
     }
 
-    @Override
-    public void m() { /** drowned no longer target iron golems */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 3, 40.0F)); /** throws a trident every 3 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
-        this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
-        this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
-        this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, this::j)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false));
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, true, false, EntityTurtle.bv));
-    }
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
 
-    @Override
-    public boolean j(@Nullable EntityLiving entityLiving) { /** always attacks even in the day */
-        return true;
+        /** Drowned always spawn with tridents */
+        this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT));
     }
 
     public double getFollowRange() { /** drowned have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(150, 350);
     }
 
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 150 attacks, drowned summon a guardian */
+                new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 1, null, null, this, false, true);
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 350 attacks, drowned summon an elder guardian */
+                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
+    @Override
+    public void m() { /** drowned no longer target iron golems */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 6, 40.0F)); /** throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
+        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
+        this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
+        this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
+        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        /** Doesn't need line of sight to find targets and start attacking */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class));
+        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, drowned summon a guardian */
-            this.a50 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 2, null, null, this, false, true);
-        }
-
-        if (this.attacks == 100 && !this.a100) { /** after 100 attacks, drowned summon an elder guardian */
-            this.a100 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
-        }
+    public boolean j(@Nullable EntityLiving entityLiving) { /** always attacks even in the day */
+        return true;
     }
 
     @Override
@@ -301,12 +311,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
     static class PathfinderGoalDrownedTridentAttack extends CustomPathfinderGoalArrowAttack {
 
         private final CustomEntityDrowned drowned;
-        private int attackCount;
 
         public PathfinderGoalDrownedTridentAttack(IRangedEntity irangedentity, double d0, int i, float f) {
             super(irangedentity, d0, i, f);
             this.drowned = (CustomEntityDrowned)irangedentity;
-            this.attackCount = 0;
         }
 
         @Override
@@ -330,14 +338,11 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
 
         @Override
         public void e() {
-            for (int i = 0; i < (this.drowned.attacks < 30 ? 1 : this.drowned.attacks < 70 ? 3 : 5); i++) { /** shoots 1, 3 or 5 tridents at a time depending on attack count */
+            for (int i = 0; i < (this.drowned.getAttacks() < 30 ? 1 : this.drowned.getAttacks() < 70 ? 2 : 3); i++) { /** shoots 1, 2 or 3 tridents at a time depending on attack count */
                 super.e();
             }
 
-            if (++this.attackCount == 20) { // attack count only goes up every second
-                this.attackCount = 0;
-                this.drowned.attacks++;
-            }
+            this.drowned.incrementAttacks(1);
         }
     }
 }

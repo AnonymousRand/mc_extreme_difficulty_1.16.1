@@ -11,29 +11,47 @@ import java.util.Collection;
 
 public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
-    public static Field fuseTicks;
+    public Field fuseTicks;
 
     public CustomEntityCreeper(World world, int fuse) {
         super(EntityTypes.CREEPER, world);
+        this.initCustom();
         this.maxFuseTicks = fuse;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375); /** creepers move 75% faster */
     }
 
-    static {
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375); /** creepers move 75% faster */
+
         try {
-            fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
-            fuseTicks.setAccessible(true);
+            this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
+            this.fuseTicks.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
 
+    public double getFollowRange() { /** creepers have 28 block detection range (64 if powered) */
+        return this.isPowered() ? 64.0 : 28.0;
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
-    protected void initPathfinder() { /** creeper is no longer scared of cats and ocelots */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+    protected void initPathfinder() {
+        /** Creeper is no longer scared of cats and ocelots */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.001)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
@@ -43,7 +61,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        /** Doesn't need line of sight to find targets and start attacking */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
     }
 
@@ -91,7 +110,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         super.onLightningStrike(entityLightning);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(200.0); /** charged creepers have 200 health */
         this.setHealth(200.0F);
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, true)); // updates follow range
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
     }
 
     private void createEffectCloud() {
@@ -118,10 +137,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
             this.getWorld().addEntity(entityAreaEffectCloud);
         }
 
-    }
-
-    public double getFollowRange() { /** creepers have 28 block detection range (64 if powered) */
-        return this.isPowered() ? 64.0 : 28.0;
     }
 
     @Override

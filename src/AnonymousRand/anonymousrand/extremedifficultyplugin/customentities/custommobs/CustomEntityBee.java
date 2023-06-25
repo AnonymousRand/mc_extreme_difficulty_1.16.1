@@ -34,7 +34,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemov
         this.initAttributes();
     }
 
-    public void initAttributes() {
+    private void initAttributes() {
         /** bees do 1000 damage but only have 5 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
         this.setHealth(5.0F);
@@ -68,7 +68,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemov
         /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D));
         /** Doesn't need line of sight to find targets and start attacking */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, false));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
     @Override

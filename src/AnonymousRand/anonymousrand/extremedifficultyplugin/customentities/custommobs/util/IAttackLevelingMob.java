@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 public interface IAttackLevelingMob {
     //void initAttacks();
 
-    //int getAttacks();
+    int getAttacks();
 
     void incrementAttacks(int increment);
 }
