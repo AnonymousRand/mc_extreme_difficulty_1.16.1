@@ -214,7 +214,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
                             this.c = 3; /** doubled attack speed during rapidfire */
                         }
 
-                        float f = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
+                        float defaultInaccuracy = MathHelper.c(MathHelper.sqrt(d0)) * 0.5F;
 
                         if (!this.blaze.isSilent()) {
                             this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
@@ -226,7 +226,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
                             this.nmsWorld.addEntity(entitySmallFireball);
                             this.blaze.incrementAttacks(1);
                         } else {
-                            // todo prob don't use runnable and just have the 3 fireballs; test velocity direction
+                            CustomEntitySmallFireball entitySmallFireball;
+                            for (int i = 0; i < 3; i++) {
+                                /** When in rapidfire state, blazes shoot 3 fireballs at a time, with 35% of the default inaccuracy */
+                                entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 0.35, d2, d3 + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 0.35);
+                                entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
+                                this.nmsWorld.addEntity(entitySmallFireball);
+                            }
+                            this.blaze.incrementAttacks(1);
                         }
                     }
 
