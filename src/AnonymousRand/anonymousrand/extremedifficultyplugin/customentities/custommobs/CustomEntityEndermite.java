@@ -1,43 +1,92 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityEndermite extends EntityEndermite implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityEndermite extends EntityEndermite implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
 
+    private AttackController attackController;
     public PathfinderGoalSelector vanillaTargetSelector;
-    private int attacks;
-    private boolean a35, a60, a75;
 
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
-        this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a35 = false;
-        this.a60 = false;
-        this.a75 = false;
+        this.initCustom();
+        this.initAttacks();
+        this.initGoalRemoval();
+    }
+
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        /** No longer despawns or takes up the mob cab */
         this.getBukkitEntity().setCustomName("Insert name here");
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4); /** endermites move 60% faster and have 12 health, but only do 1 damage */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(12.0);
         this.setHealth(12.0F);
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
+    public double getFollowRange() { /** endmites have 20 block detection range (setting attribute doesn't work) */
+        return 20.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(35, 60);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 35 attacks, endermites get more knockback */
+                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 60 attacks, endermites get even more knockback, 14 max health and regen 2 */
+                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            }
+        }
+    }
+
+    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
+    public void initGoalRemoval() {
+        this.vanillaTargetSelector = super.targetSelector;
+        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.005)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
+        this.goalSelector.a(1, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.005)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
@@ -48,41 +97,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomMob
         }
 
         return super.damageEntity(damagesource, f);
-    }
-
-    public double getFollowRange() { /** endmites have 20 block detection range (setting attribute doesn't work) */
-        return 20.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, endermites get more knockback */
-            this.a35 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
-        }
-
-        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, endermites get even more knockback, 14 max health and regen 2 */
-            this.a60 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.attacks == 75 && !this.a75) { /** after 75 attacks, endermites explode and die */
-            this.a75 = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
-            this.die();
-        }
     }
 
     @Override

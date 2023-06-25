@@ -1,42 +1,94 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
 
+    private AttackController attackController;
     public PathfinderGoalSelector vanillaTargetSelector;
-    private int attacks;
-    private boolean a10, a20, a40, a75;
 
     public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
-        this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a10 = false;
-        this.a20 = false;
-        this.a40 = false;
-        this.a75 = false;
+    }
+
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /** hoglins move 75% faster (125% faster for babies), do 5 damage (8 for babies), and have extra knockback */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 8.0 : 5.0);
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
+    public double getFollowRange() { /** hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
+        return this.getAttacks() < 10 ? 40.0 : 64.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(10, 20, 40, 75);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 10 attacks, hoglins get regen 2 */
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 20 attacks, hoglins get regen 3 */
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 40 attacks, hoglins summon a baby hoglin */
+                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
+                newHoglin.a(true);
+                new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
+            } else if (metThreshold == attackThresholds[3]) {
+                /** After 75 attacks, hoglins summon another baby hoglin */
+                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
+                newHoglin.a(true);
+                new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
+            }
+        }
+    }
+
+    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
+    public void initGoalRemoval() {
+        this.vanillaTargetSelector = super.targetSelector;
+        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /** custom goal that breaks repellant blocks around the mob periodically */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
@@ -46,51 +98,14 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
     public void die() {
         super.die();
 
-        if (random.nextDouble() < (this.attacks < 40 ? 0.3 : 1.0)) { /** hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
+        if (random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /** hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
             new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
-    }
-
-    public double getFollowRange() { /** hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
-        return this.attacks < 10 ? 40.0 : 64.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
     }
 
     @Override
     public void tick() {
         super.tick();
-
-        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, hoglins get regen 2 */
-            this.a10 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, hoglins get regen 3 */
-            this.a20 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, hoglins summon a baby hoglin */
-            this.a40 = true;
-            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
-            newHoglin.a(true);
-            new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
-        }
-
-        if (this.attacks == 75 && !this.a75) { /** after 75 attacks, hoglins summon another baby hoglin */
-            this.a75 = true;
-            CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
-            newHoglin.a(true);
-            new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
-        }
 
         if (this.getGoalTarget() != null) {
             Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());

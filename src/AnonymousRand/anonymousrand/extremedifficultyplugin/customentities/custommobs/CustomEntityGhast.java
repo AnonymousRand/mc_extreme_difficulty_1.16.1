@@ -1,5 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -14,25 +16,55 @@ import org.bukkit.entity.LivingEntity;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityGhast extends EntityGhast implements ICustomMob {
+public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttackLevelingMob {
 
-    private int attacks;
-    private boolean a20, deathFireballs;
+    private AttackController attackController;
+    private boolean deathFireballs;
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a20 = false;
+        this.initCustom();
+        this.initAttacks();
+    }
+
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
         this.deathFireballs = false;
     }
 
+    public double getFollowRange() { /** ghasts have 80 block detection range (setting attribute doesn't work) */
+        return 80.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(20);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 20 attacks, ghasts get 16 max health and health */
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
+                this.setHealth(16.0F);
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
+
     @Override
     protected void initPathfinder() {
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
@@ -50,31 +82,13 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
         }
     }
 
-    public double getFollowRange() { /** ghasts have 80 block detection range (setting attribute doesn't work) */
-        return 80.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
     @Override
     public void tick() {
         super.tick();
 
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, ghasts get 16 max health and health */
-            this.a20 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
-            this.setHealth(16.0F);
-        }
-
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.attacks < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
+            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
         }
     }
 
@@ -169,7 +183,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
 
                 if (this.chargeTime == 5) { /** shoots a fireball every 5 ticks */
                     if (++this.attackIncrement == 6) { // attacks only count every 1.5 seconds, or 6 shots
-                        this.ghast.attacks++;
+                        this.ghast.incrementAttacks(1);
                         this.attackIncrement = 0;
                     }
 
@@ -182,22 +196,22 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob {
                         world.a(null, 1016, this.ghast.getChunkCoordinates(), 0);
                     }
 
-                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 5 == 0 && this.ring) { // reset booleans for next cycle
+                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 5 == 0 && this.ring) { // reset booleans for next cycle
                         this.ring = false;
                     }
 
-                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 7 == 0 && this.power3) { // reset booleans for next cycle
+                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 7 == 0 && this.power3) { // reset booleans for next cycle
                         this.power3 = false;
                     }
 
-                    if (this.ghast.attacks >= 30 && (this.ghast.attacks - 30) % 6 == 0 && !this.ring) { /** after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
+                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 6 == 0 && !this.ring) { /** after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
                         this.ring = true;
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
                     CustomEntityLargeFireball entityLargeFireball;
 
-                    if (this.ghast.attacks >= 50 && (this.ghast.attacks - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
+                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
                         entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {

@@ -14,7 +14,6 @@ import java.util.Random;
 public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, IAttackLevelingMob {
 
     private AttackController attackController;
-    private boolean a12, a25, a40;
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);

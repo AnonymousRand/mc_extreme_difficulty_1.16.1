@@ -20,16 +20,29 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
     public CustomEntityGuardianElder(World world) {
         super(EntityTypes.ELDER_GUARDIAN, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
     }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+    }
+
+    public double getFollowRange() { /** elder guardians have 40 block detection range (setting attribute doesn't work) */
+        return 40.0;
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(3, new CustomEntityGuardianElder.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(4, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 40.0F));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
@@ -70,10 +83,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                 entityPlayer.addEffect(new MobEffect(mobeffectlist, 1200, 2));
             }
         }
-    }
-
-    public double getFollowRange() { /** elder guardians have 40 block detection range (setting attribute doesn't work) */
-        return 40.0;
     }
 
     @Override

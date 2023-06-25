@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -23,20 +24,53 @@ import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicate
 public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAttackLevelingMob {
 
     private EntitySheep wololoTarget;
-    private int attacks;
-    private boolean a25, a36, a60;
-    private static final Random random = new Random();
+    private AttackController attackController;
 
     public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a25 = false;
-        this.a36 = false;
-        this.a60 = false;
+        this.initCustom();
+        this.initAttacks();
     }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+    }
+
+    public double getFollowRange() { /** evokers have 28 block detection range (setting attribute doesn't work) */
+        return 28.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(25, 35, 60);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 25 attacks, evokers summon 3 vexes and gain regen 2 */
+                new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 35 attacks, evokers gain regen 3 */
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 60 attacks, evokers gain speed 1 */
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         this.goalSelector.a(1, new EntityRaider.b<>(this));
@@ -44,10 +78,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
         this.goalSelector.a(5, new c(this));
         this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
 
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
         this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
@@ -65,42 +101,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
     public void die() {
         super.die();
 
-        if (this.attacks >= 60) { /** after 60 attacks, evokers summon 7 vexes when killed */
+        if (this.getAttacks() >= 60) { /** after 60 attacks, evokers summon 7 vexes when killed */
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
-        }
-    }
-
-    public double getFollowRange() { /** evokers have 28 block detection range (setting attribute doesn't work) */
-        return 28.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, evokers summon 3 vexes and gain regen 3 */
-            this.a25 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.attacks == 36 && !this.a36) { /** after 36 attacks, evokers gain regen 3 */
-            this.a36 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, evokers gain speed 1 and regen 3 */
-            this.a60 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
         }
     }
 
@@ -197,17 +199,17 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
 
         @Override
         protected void j() {
-            CustomEntityEvoker.this.attacks += 6;
+            CustomEntityEvoker.this.incrementAttacks(6);
 
             for (int i = 0; i < 6; ++i) { /** summons 6 vexes at a time instead of 3 */
-                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + CustomEntityEvoker.random.nextInt(5), 1, -2 + CustomEntityEvoker.random.nextInt(5));
+                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + random.nextInt(5), 1, -2 + random.nextInt(5));
                 CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
                 newVex.setPositionRotation(blockPosition, 0.0F, 0.0F);
                 newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition), EnumMobSpawn.MOB_SUMMONED, null, null);
                 newVex.a(CustomEntityEvoker.this);
                 newVex.g(blockPosition);
-                newVex.a(20 * (30 + CustomEntityEvoker.random.nextInt(90)));
+                newVex.a(20 * (30 + random.nextInt(90)));
                 CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
@@ -299,7 +301,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
             } while (blockPosition.getY() >= MathHelper.floor(d2) - 1);
 
             if (flag) {
-                CustomEntityEvoker.this.attacks += 2;
+                CustomEntityEvoker.this.incrementAttacks(2);
                 Location bukkitLocBase, bukkitLoc;
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
@@ -369,7 +371,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
                 if (list.isEmpty()) {
                     return false;
                 } else {
-                    CustomEntityEvoker.this.a(list.get(CustomEntityEvoker.random.nextInt(list.size())));
+                    CustomEntityEvoker.this.a(list.get(random.nextInt(list.size())));
                     return true;
                 }
             }
@@ -388,7 +390,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
 
         @Override
         protected void j() {
-            CustomEntityEvoker.this.attacks++;
+            CustomEntityEvoker.this.incrementAttacks(1);
             EntitySheep entitySheep = CustomEntityEvoker.this.fh();
 
             if (entitySheep != null && entitySheep.isAlive()) { /** instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */

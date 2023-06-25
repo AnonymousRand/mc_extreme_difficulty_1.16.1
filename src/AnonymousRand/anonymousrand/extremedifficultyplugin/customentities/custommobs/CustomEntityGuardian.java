@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -17,25 +18,60 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, IAttackLevelingMob {
 
-    private int attacks;
-    private boolean a8, a12, a40;
+    private AttackController attackController;
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a8 = false;
-        this.a12 = false;
-        this.a40 = false;
+        this.initCustom();
+        this.initAttacks();
     }
 
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+    }
+
+    public double getFollowRange() { /** guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
+        return this.getAttacks() < 8 ? 24.0 : 32.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(8, 12, 40);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 12 attacks, guardians gain regen 3 and 40 max health */
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 40 attacks, guardians summon an elder guardian */
+                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);
@@ -54,7 +90,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
 
             if (!damagesource.isExplosion()) {
                 entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /** thorns damage increased from 2 to 50% of the damage dealt */
-                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.attacks < 55 ? 0 : 1)); /** guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
+                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /** guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
             }
         }
 
@@ -63,39 +99,6 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
         }
 
         return super.damageEntity(damagesource, f);
-    }
-
-    public double getFollowRange() { /** guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
-        return this.attacks < 8 ? 24.0 : 32.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 8 && !this.a8) {
-            this.a8 = true;
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, guardians gain regen 3 and 40 max health */
-            this.a12 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, guardians summon an elder guardian */
-            this.a40 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
-        }
     }
 
     @Override
@@ -205,18 +208,18 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
                         f += 2.0F;
                     }
 
-                    this.guardian.attacks++;
+                    this.guardian.incrementAttacks(1);
                     entityLiving.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
                     entityLiving.damageEntity(DamageSource.mobAttack(this.guardian), (float)this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
                     this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
 
-                if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.attacks < 10 ? 4 : 3) == 0) { /** tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */
+                if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.getAttacks() < 10 ? 4 : 3) == 0) { /** tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */
                     LivingEntity bukkitEntity = (LivingEntity)entityLiving.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.guardian.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.guardian.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.guardian.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
 
-                    if (this.guardian.attacks >= 35) { /** after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged */
-                        if (this.guardian.attacks >= 55) { /** after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged */
+                    if (this.guardian.getAttacks() >= 35) { /** after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged */
+                        if (this.guardian.getAttacks() >= 55) { /** after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged */
                             entityLiving.addEffect(new MobEffect(MobEffects.HUNGER, 51, 0));
                             entityLiving.addEffect(new MobEffect(MobEffects.WEAKNESS, 51, 0));
                         }
