@@ -20,7 +20,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -122,7 +121,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
             case NETHER_GOLD_ORE:
             case SHULKER_BOX:
             case TRAPPED_CHEST: /** breaking these blocks causes piglins within 40 blocks horizontally to go into a frenzy for 15 seconds */
-                nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).veryAngryTicks += 300);
+                nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).frenzyTicks += 300);
 
                 if (bukkitMaterial == Material.NETHER_GOLD_ORE) { /** breaking nether gold ore has a 80% chance to cause a random block within a 5 by 5 by 5 radius to turn into lava */
                     if (random.nextDouble() < 0.8) {

@@ -21,14 +21,15 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         this.parentIllusioner = parentIllusioner;
     }
 
-    @Override
+    @Override // yes, this works
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
-        this.deathExplosion = false; // todo make sure still has bow and all the subclass overridden init works
+        this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
+        this.deathExplosion = false;
 
         this.initAttributes();
     }
@@ -41,7 +42,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
     public void initAttacks() {
-        this.attackController = new AttackController(20, 40);
+        this.attackController = new AttackController(2/*0*/, 4/*0*/);
     }
 
     public int getAttacks() {
@@ -53,18 +54,20 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 20 attacks, summoned fake illusioners attack faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+                // todo need goal removal interface?
+                // todo concurrentmodification race condition with removing goals
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
                     this.goalSelector.a(goal);
                 }
 
-                this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 12, 32.0F)); // use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
+                this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(9) + 12, 32.0F)); // use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
             } else if (metThreshold == attackThresholds[1]) {
                 /** After 40 attacks, summoned fake illusioners attack even faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
                     this.goalSelector.a(goal);
                 }
 
-                this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(4) + 5, 32.0F));
+                this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(4) + 5, 32.0F));
             }
         }
     }
@@ -84,7 +87,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
-        this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
@@ -96,7 +99,6 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
     public void tick() {
         super.tick();
 
-        // todo test diff between this and in die(); is it animation delay again? find a function that bypasses this maybe if so? and implement for ghast too
         if (this.getHealth() <= 0.0 && this.parentIllusioner.getAttacks() >= 12 && !this.deathExplosion) { /** after 12 attacks, summoned fake illusioners explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.NONE);

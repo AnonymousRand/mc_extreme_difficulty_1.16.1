@@ -66,7 +66,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         /** Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalDrownedTridentAttack(this, 1.0D, 6, 40.0F)); /** throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 6, 40.0F)); /** throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
@@ -308,13 +308,13 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         }
     }
 
-    static class PathfinderGoalDrownedTridentAttack extends CustomPathfinderGoalArrowAttack {
+    static class PathfinderGoalDrownedTridentBowAttack<T extends CustomEntityDrowned> extends CustomPathfinderGoalRangedAttack<T> {
 
         private final CustomEntityDrowned drowned;
 
-        public PathfinderGoalDrownedTridentAttack(IRangedEntity irangedentity, double d0, int i, float f) {
-            super(irangedentity, d0, i, f);
-            this.drowned = (CustomEntityDrowned)irangedentity;
+        public PathfinderGoalDrownedTridentBowAttack(T drowned, double d0, int i, float f) {
+            super(drowned, d0, i, f);
+            this.drowned = drowned;
         }
 
         @Override

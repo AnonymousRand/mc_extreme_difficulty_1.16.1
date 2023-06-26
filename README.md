@@ -32,4 +32,3 @@ Follow this guide if the plugin doesn't seem to be doing anything and the server
 # Finally done
 
 This is a plugin made with Spigot's deobfuscation mappings, as well as Bukkit API and its underlying CraftBukkit and CraftBukkit's underlying NMS (vanilla server code). Why so many layers?
-

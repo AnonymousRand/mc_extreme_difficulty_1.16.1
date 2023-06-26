@@ -18,7 +18,7 @@ import java.util.Optional;
 public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAttackLevelingMob {
 
     private int attacks;
-    public int veryAngryTicks;
+    public int frenzyTicks;
     private boolean a10, a20, a40, a55;
     private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
@@ -37,14 +37,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
         this.a20 = false;
         this.a55 = false;
         this.a40 = false;
-        this.veryAngryTicks = 0;
+        this.frenzyTicks = 0;
         this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /** piglins have speed 1, 50 max health and 30 health */
         ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(50.0);
         this.setHealth(30.0F);
 
         if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /** piglins continue attacking while trading */
-            this.goalSelector.a(1, new CustomPathfinderGoalCrossbowAttack<>(this, 1.0, 32.0F)); /** uses the custom goal that attacks regardless of the y level; since the behavior-controlled crossbow shots have not been removed, this can cause a faster, more irregular attacking rhythm (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinArrowAttack(this, 1.0, 10, 40.0F)); /** for frenzied phase; uses the custom goal that attacks regardless of the y level */
+            /** Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /** uses the custom goal that attacks regardless of the y level */
         } else {
             this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /** uses the custom melee attack goal that attacks regardless of the y level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /** for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
@@ -203,8 +203,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
 
         this.bA = 0; /** piglins never turn into zombie piglins */
 
-        if (this.veryAngryTicks > 0) {
-            this.veryAngryTicks--;
+        if (this.frenzyTicks > 0) {
+            this.frenzyTicks--;
         }
 
         if (this.attacks == 10 && !this.a10) { /** after 10 attacks, piglins get speed 2 and 60 max health */
@@ -354,7 +354,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
 
         @Override
         public boolean a() {
-            if (this.piglin.veryAngryTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
+            if (this.piglin.frenzyTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
                 if (!((EntityPlayer)this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
                     return this.piglin.getNormalDistanceSq(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
                 }
@@ -394,7 +394,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
 
             if (i - this.k < 5L) { // attacks 2 times faster
                 return false;
-            } else if (this.piglin.veryAngryTicks > 0) {
+            } else if (this.piglin.frenzyTicks > 0) {
                 this.k = i;
                 EntityLiving entityLiving = this.piglin.getGoalTarget();
 
@@ -415,30 +415,27 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAtt
         }
     }
 
-    static class PathfinderGoalPiglinArrowAttack extends CustomPathfinderGoalArrowAttack { /** piglins shoot twice a second when frenzied */
+    static class PathfinderGoalPiglinRangedCrossbowAttack<T extends CustomEntityPiglin> extends CustomPathfinderGoalRangedCrossbowAttack<T> {
 
-        private final CustomEntityPiglin piglin;
+        private final int attackIntervalNormal;
+        private final int attackIntervalFrenzied;
 
-        public PathfinderGoalPiglinArrowAttack(CustomEntityPiglin piglin, double speedTowardsTarget, int delayTimer, float maxDistance) {
-            super(piglin, speedTowardsTarget, delayTimer, maxDistance);
-            this.piglin = piglin;
+        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double speedTowardsTarget, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
+            super(piglin, speedTowardsTarget, attackIntervalNormal, maxDistance);
+            this.attackIntervalNormal = attackIntervalNormal;
+            this.attackIntervalFrenzied = attackIntervalFrenzied;
         }
 
         @Override
-        public boolean a() {
-            if (this.piglin.getGoalTarget() instanceof EntityPlayer) {
-                if (!(((EntityPlayer)this.piglin.getGoalTarget()).abilities.isInvulnerable) && this.piglin.veryAngryTicks > 0) {
-                    this.attackTarget = this.piglin.getGoalTarget();
-                    return true;
-                }
+        public void e() {
+            // control frenzied vs. non-frenzied attack speeds with hopefully optimal short-circuit evals
+            if (this.attackInterval == this.attackIntervalFrenzied && this.entity.frenzyTicks <= 0) {
+                this.attackInterval = this.attackIntervalNormal;
+            } else if (this.entity.frenzyTicks > 0 && this.attackInterval == this.attackIntervalNormal) {
+                this.attackInterval = this.attackIntervalFrenzied;
             }
 
-            return false;
-        }
-
-        @Override
-        public boolean b() {
-            return this.a();
+            super.e();
         }
     }
 }

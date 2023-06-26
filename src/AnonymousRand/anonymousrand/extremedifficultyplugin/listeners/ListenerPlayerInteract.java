@@ -49,7 +49,7 @@ public class ListenerPlayerInteract implements Listener {
                         newPiglin.setSlot(EnumItemSlot.MAINHAND, random.nextDouble() < 0.5 ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD)); // give piglin a sword or crossbow
                         PiglinAI.a(newPiglin); // code from onInitialSpawn
 
-                        nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).veryAngryTicks += 200);
+                        nmsWorld.getEntities(nmsPlayer, nmsPlayer.getBoundingBox().grow(40.0, 128.0, 40.0), entity -> entity instanceof CustomEntityPiglin).forEach(entity -> ((CustomEntityPiglin)entity).frenzyTicks += 200);
                     }
 
                     if (bukkitMaterial == Material.ANVIL || bukkitMaterial == Material.CHIPPED_ANVIL || bukkitMaterial == Material.DAMAGED_ANVIL || bukkitMaterial == Material.SMITHING_TABLE) { /** right-clicking an anvil or smithing table causes it to explode 10 seconds later */
