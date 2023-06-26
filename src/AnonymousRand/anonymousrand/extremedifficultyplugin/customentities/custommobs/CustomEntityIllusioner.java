@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -13,21 +14,58 @@ import java.util.*;
 public class CustomEntityIllusioner extends EntityIllagerIllusioner implements ICustomMob, IAttackLevelingMob {
 
     public ArrayList<CustomEntityIllusionerFake> fakeIllusioners = new ArrayList<>();
-    private int attacks;
-    private boolean a40;
+    private AttackController attackController;
 
     public CustomEntityIllusioner(World world) {
         super(EntityTypes.ILLUSIONER, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.initCustom();
+        this.initAttacks();
+    }
+
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
-        this.attacks = 0;
-        this.a40 = false;
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0); /** illusioners have 40 health */
         this.setHealth(40.0F);
         this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2)); /** illusioners and fake illusioners have regen 3 */
     }
 
+    public double getFollowRange() { /** illusioners have 32 block detection range (setting attribute doesn't work) */
+        return 32.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(40);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 40 attacks, illusioners get 50 max health and health, and regen 4+*/
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+                this.setHealth(50.0F);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(1, new EntityRaider.b<>(this));
@@ -35,10 +73,12 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(5, new CustomEntityIllusioner.c(this));
         this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
 
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(4, new PathfinderGoalIllusionerDuplicationSpell());
         this.goalSelector.a(5, new PathfinderGoalIllusionerBlindnessSpell());
@@ -53,7 +93,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     @Override
     public void a(EntityLiving entityLiving, float f) {
-        this.attacks++;
+        this.incrementAttacks(1);
 
         ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
         EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, f);
@@ -65,30 +105,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /** arrows have no inaccuracy */
         this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.world.addEntity(entityArrow);
-    }
-
-    public double getFollowRange() { /** illusioners have 32 block detection range (setting attribute doesn't work) */
-        return 32.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, illusioners get regen 4, and 50 max health and health */
-            this.a40 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
-            this.setHealth(50.0F);
-        }
     }
 
     @Override
@@ -171,7 +187,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         @Override
         protected void j() { /** only applies blindness for 5 seconds (8 seconds after 40 attacks) */
-            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.attacks < 40 ? 100 : 160));
+            CustomEntityIllusioner.this.getGoalTarget().addEffect(new MobEffect(MobEffects.BLINDNESS, CustomEntityIllusioner.this.getAttacks() < 40 ? 100 : 160));
         }
 
         @Override
@@ -223,7 +239,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             CustomEntityIllusioner.this.fakeIllusioners.clear();
             CustomEntityIllusionerFake fakeIllusioner;
 
-            for (int i = 0; i < (CustomEntityIllusioner.this.attacks < 12 ? 4 : 5); i++) { /** summons 4 additional fake illusioners that actually shoot arrows as well with varying speeds (5 after 12 attacks) */
+            for (int i = 0; i < (CustomEntityIllusioner.this.getAttacks() < 12 ? 4 : 5); i++) { /** summons 4 additional fake illusioners that actually shoot arrows as well with varying speeds (5 after 12 attacks) */
                 fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.getWorld(), CustomEntityIllusioner.this);
                 fakeIllusioner.setPosition(CustomEntityIllusioner.this.locX(), CustomEntityIllusioner.this.locY(), CustomEntityIllusioner.this.locZ());
                 CustomEntityIllusioner.this.getWorld().addEntity(fakeIllusioner);

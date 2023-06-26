@@ -1,5 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -7,22 +10,66 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.stream.Collectors;
 
-public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
+public class CustomEntityIllusionerFake extends CustomEntityIllusioner implements ICustomMob, IAttackLevelingMob {
 
+    private AttackController attackController;
     private final CustomEntityIllusioner parentIllusioner;
-    private boolean a20, a40, deathExplosion;
+    private boolean deathExplosion;
 
     public CustomEntityIllusionerFake(World world, CustomEntityIllusioner parentIllusioner) {
         super(world);
         this.parentIllusioner = parentIllusioner;
-        this.a20 = false;
-        this.a40 = false;
-        this.deathExplosion = false;
-        float health = (float)(random.nextDouble() * 12.0 + 20.0); /** fake illusioners have anywhere between 20 and 32 health */
+    }
+
+    @Override
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.deathExplosion = false; // todo make sure still has bow and all the subclass overridden init works
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
+        float health = (float) (random.nextDouble() * 12.0 + 20.0); /** fake illusioners have anywhere between 20 and 32 health */
         this.setHealth(health);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
     }
 
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(20, 40);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void incrementAttacks(int increment) {
+        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 20 attacks, summoned fake illusioners attack faster */
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+                    this.goalSelector.a(goal);
+                }
+
+                this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 12, 32.0F)); // use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 40 attacks, summoned fake illusioners attack even faster */
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
+                    this.goalSelector.a(goal);
+                }
+
+                this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(4) + 5, 32.0F));
+            }
+        }
+    }
+
+    //////////////////////  Other or vanilla functions  //////////////////////
     @Override
     public void initPathfinder() { /** no longer target iron golems or villagers, and only shoots arrows (can't apply spells) */
         this.goalSelector.a(1, new EntityRaider.b<>(this));
@@ -30,10 +77,12 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(5, new CustomEntityIllusioner.c(this));
         this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
 
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(6, new CustomPathfinderGoalBowShoot<>(this, 0.5D, random.nextInt(11) + 20, 32.0F)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
@@ -47,29 +96,10 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     public void tick() {
         super.tick();
 
+        // todo test diff between this and in die(); is it animation delay again? find a function that bypasses this maybe if so? and implement for ghast too
         if (this.getHealth() <= 0.0 && this.parentIllusioner.getAttacks() >= 12 && !this.deathExplosion) { /** after 12 attacks, summoned fake illusioners explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.NONE);
-        }
-
-        if (this.parentIllusioner.getAttacks() == 20 && !this.a20) { /** after 20 attacks, summoned fake illusioners attack faster */
-            this.a20 = true;
-
-            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
-                this.goalSelector.a(goal);
-            }
-
-            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(9) + 12, 32.0F)); // use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
-        }
-
-        if (this.parentIllusioner.getAttacks() == 40 && !this.a40) { /** after 40 attacks, summoned fake illusioners attack even faster */
-            this.a40 = true;
-
-            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalBowShoot.class)) {
-                this.goalSelector.a(goal);
-            }
-
-            this.goalSelector.a(6, new CustomPathfinderGoalArrowAttack(this, 0.5D, random.nextInt(4) + 5, 32.0F));
         }
 
         if (this.ticksLived >= 1500) { /** fake illusioners die after 75 seconds */

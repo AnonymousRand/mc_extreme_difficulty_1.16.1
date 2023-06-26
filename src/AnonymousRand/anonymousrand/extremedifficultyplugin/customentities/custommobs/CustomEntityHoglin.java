@@ -14,6 +14,9 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
 
     public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
+        this.initCustom();
+        this.initAttacks();
+        this.initGoalRemoval();
     }
 
     //////////////////////////////  ICustomMob  //////////////////////////////
