@@ -34,7 +34,7 @@ public class CustomEntityCow extends EntityCow {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();

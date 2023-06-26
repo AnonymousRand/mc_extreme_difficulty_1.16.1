@@ -34,7 +34,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         return 40.0;
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);

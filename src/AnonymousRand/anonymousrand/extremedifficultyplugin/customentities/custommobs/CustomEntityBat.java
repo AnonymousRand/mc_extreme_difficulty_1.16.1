@@ -95,8 +95,8 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3]) {
                 /** After 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
@@ -128,7 +128,7 @@ public class CustomEntityBat extends EntityBat implements ICustomMob, IAttackLev
         }
     }
 
-    //////////////////////  Other or vanilla functions  ///////////////////////
+    /////////////////////  Overridden vanilla functions  //////////////////////
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 

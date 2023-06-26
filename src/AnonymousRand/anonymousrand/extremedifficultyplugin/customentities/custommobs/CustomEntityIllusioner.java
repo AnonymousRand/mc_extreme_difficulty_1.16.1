@@ -53,8 +53,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 40 attacks, illusioners get 50 max health and health, and regen 4 */
@@ -65,7 +65,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(1, new EntityRaider.b<>(this));
@@ -93,7 +93,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     @Override
     public void a(EntityLiving entityLiving, float f) {
-        this.incrementAttacks(1);
+        this.increaseAttacks(1);
 
         ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
         EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, f);

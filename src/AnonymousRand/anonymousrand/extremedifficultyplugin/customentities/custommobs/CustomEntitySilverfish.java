@@ -57,7 +57,7 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomM
         return this.attacks;
     }
 
-    public void incrementAttacks(int increase) {
+    public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
 

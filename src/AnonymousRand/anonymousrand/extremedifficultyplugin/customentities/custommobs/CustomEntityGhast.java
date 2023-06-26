@@ -45,8 +45,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttac
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 20 attacks, ghasts get 16 max health and health */
@@ -56,7 +56,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttac
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
 
     @Override
     protected void initPathfinder() {
@@ -183,7 +183,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttac
 
                 if (this.chargeTime == 5) { /** shoots a fireball every 5 ticks */
                     if (++this.attackIncrement == 6) { // attacks only count every 1.5 seconds, or 6 shots
-                        this.ghast.incrementAttacks(1);
+                        this.ghast.increaseAttacks(1);
                         this.attackIncrement = 0;
                     }
 

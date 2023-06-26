@@ -71,10 +71,10 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
             if (this.entity instanceof IAttackLevelingMob) {
                 switch (amplifier) {
                     case 253:
-                        ((IAttackLevelingMob) this.entity).incrementAttacks(5);
+                        ((IAttackLevelingMob) this.entity).increaseAttacks(5);
                         break;
                     case 254:
-                        ((IAttackLevelingMob) this.entity).incrementAttacks(5);
+                        ((IAttackLevelingMob) this.entity).increaseAttacks(5);
                         this.setGoldEquipment();
                         break;
                 }

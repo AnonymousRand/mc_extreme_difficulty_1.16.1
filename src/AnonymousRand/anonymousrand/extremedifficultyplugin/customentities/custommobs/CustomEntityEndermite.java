@@ -51,8 +51,8 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomMob
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 35 attacks, endermites get more knockback */
@@ -77,7 +77,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomMob
         return this.vanillaTargetSelector;
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();

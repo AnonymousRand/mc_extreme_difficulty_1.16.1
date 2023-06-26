@@ -57,7 +57,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemov
         return this.vanillaTargetSelector;
     }
 
-    //////////////////////  Other or vanilla functions  ///////////////////////
+    /////////////////////  Overridden vanilla functions  //////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();

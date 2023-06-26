@@ -1,31 +1,93 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
+import java.util.stream.Collectors;
+
 public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob, IAttackLevelingMob {
 
-    private int attacks;
-    public double followRangeMultipler;
+    private AttackController attackController;
+    private double followRangeMultipler;
 
     public CustomEntityIronGolem(World world) {
         super(EntityTypes.IRON_GOLEM, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
+        this.initCustom();
+        this.initAttacks();
+    }
+
+    //////////////////////////////  ICustomMob  //////////////////////////////
+    public void initCustom() {
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
         this.followRangeMultipler = 1.0;
+
+        this.initAttributes();
+    }
+
+    private void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /** iron golems move twice as fast but do half as much damage */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
     }
 
+    public double getFollowRange() { /** iron golems have 24 block detection range (setting attribute doesn't work) */
+        return 24.0 * this.followRangeMultipler;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController();
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attackController.increaseAttacks(increase);
+        /** Every attack, iron golems increase their stats by a bit */
+        this.increaseStatsAdd(2.0, 0.5, 0.025);
+    }
+
+    ////////////////////////  Other custom functions  ////////////////////////
+    public void increaseStatsAdd(double healthIncrease, double damageIncrease, double speedIncrease) {
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + damageIncrease);
+
+        if (this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() <= (0.65 - speedIncrease)) {
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() + speedIncrease);
+        }
+
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() + healthIncrease);
+        this.setHealth((float)(this.getHealth() + healthIncrease));
+    }
+
+    public void increaseStatsMultiply(double multiplier) {
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multiplier);
+
+        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multiplier);
+        this.setHealth((float)(this.getHealth() * multiplier));
+
+        this.followRangeMultipler *= multiplier * 1.1;
+        if (this.followRangeMultipler >= 2.5) { // cap to prevent lag with too many blocks being searched
+            this.followRangeMultipler = 2.5;
+        }
+
+        VanillaPathfinderGoalsAccess.updateMobFollowRange(this);
+    }
+
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() { /** no longer targets monsters or defends villages */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
@@ -36,47 +98,6 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
         this.targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
-    }
-
-    public void increaseStatsMultiply(double multiplier) {
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multiplier);
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multiplier);
-        this.setHealth((float)(this.getHealth() * multiplier));
-        this.followRangeMultipler *= multiplier * 1.1;
-
-        if (this.followRangeMultipler >= 3.0) {
-            this.followRangeMultipler = 3.0;
-        }
-
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-    }
-
-    public void increaseStatsAdd(double healthAdd, double damageAdd, double speedAdd) {
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + damageAdd);
-
-        if (this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() <= (0.65 - speedAdd)) {
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() + speedAdd);
-        }
-
-        ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() + healthAdd);
-        this.setHealth((float)(this.getHealth() + healthAdd));
-    }
-
-    public double getFollowRange() { /** iron golems have 24 block detection range (setting attribute doesn't work) */
-        return 24.0 * this.followRangeMultipler;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void incrementAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
     }
 
     @Override

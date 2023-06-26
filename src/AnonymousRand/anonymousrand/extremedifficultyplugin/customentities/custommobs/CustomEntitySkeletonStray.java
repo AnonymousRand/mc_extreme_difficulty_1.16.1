@@ -67,7 +67,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         return this.attacks;
     }
 
-    public void incrementAttacks(int increase) {
+    public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
 

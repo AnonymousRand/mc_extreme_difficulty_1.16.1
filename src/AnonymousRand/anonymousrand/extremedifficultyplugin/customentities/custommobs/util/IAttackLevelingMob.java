@@ -5,5 +5,5 @@ public interface IAttackLevelingMob {
 
     int getAttacks();
 
-    void incrementAttacks(int increment);
+    void increaseAttacks(int increment);
 }

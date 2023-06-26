@@ -32,6 +32,10 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         this.targetCondition = (new CustomPathfinderTargetCondition()).a(this.k()).a(predicate);
     }
 
+    public void updateFollowRange() {
+        this.targetCondition.a(this.k());
+    }
+
     @Override
     public boolean a() {
         if (this.targetChance > 0 && this.e.getRandom().nextInt(this.targetChance) != 0) {
@@ -61,7 +65,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         if (this.targetClass != EntityHuman.class && this.targetClass != EntityPlayer.class) {
             this.nearestTarget = this.e.world.b(this.targetClass, this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ(), this.a(this.k()));
         } else {
-            this.nearestTarget = this.customFindPlayers(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ()); // passes to custom a() function (findPlayer()) in CustomIEntityAccess which bypasses line of sight requirement to intially find a target player
+            this.nearestTarget = this.customFindPlayers(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ()); // passes to custom a() function (findPlayer()) in CustomIEntityAccess which bypasses line of sight requirement to initially find a target player
         }
     }
 }

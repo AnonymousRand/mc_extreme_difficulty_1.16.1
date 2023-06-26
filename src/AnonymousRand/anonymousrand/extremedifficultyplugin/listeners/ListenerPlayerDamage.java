@@ -33,7 +33,7 @@ public class ListenerPlayerDamage implements Listener {
             World nmsWorld = nmsDamager.getWorld();
 
             if (nmsDamager instanceof IAttackLevelingMob) { // increase attack count by 1
-                ((IAttackLevelingMob)nmsDamager).incrementAttacks(1);
+                ((IAttackLevelingMob)nmsDamager).increaseAttacks(1);
             }
 
             switch (event.getDamager().getType()) {

@@ -35,7 +35,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
     }
 
     public double getFollowRange() { /** guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
-        return this.getAttacks() < 8 ? 24.0 : 32.0;
+        return (this.attackController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
@@ -47,8 +47,8 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
@@ -63,7 +63,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
@@ -208,7 +208,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
                         f += 2.0F;
                     }
 
-                    this.guardian.incrementAttacks(1);
+                    this.guardian.increaseAttacks(1);
                     entityLiving.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
                     entityLiving.damageEntity(DamageSource.mobAttack(this.guardian), (float)this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
                     this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);

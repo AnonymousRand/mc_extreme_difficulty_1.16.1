@@ -53,8 +53,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 25 attacks, evokers summon 3 vexes and gain regen 2 */
@@ -70,7 +70,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() { /** no longer targets iron golems */
         this.goalSelector.a(1, new EntityRaider.b<>(this));
@@ -199,7 +199,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
 
         @Override
         protected void j() {
-            CustomEntityEvoker.this.incrementAttacks(6);
+            CustomEntityEvoker.this.increaseAttacks(6);
 
             for (int i = 0; i < 6; ++i) { /** summons 6 vexes at a time instead of 3 */
                 BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + random.nextInt(5), 1, -2 + random.nextInt(5));
@@ -301,7 +301,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
             } while (blockPosition.getY() >= MathHelper.floor(d2) - 1);
 
             if (flag) {
-                CustomEntityEvoker.this.incrementAttacks(2);
+                CustomEntityEvoker.this.increaseAttacks(2);
                 Location bukkitLocBase, bukkitLoc;
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
@@ -390,7 +390,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
 
         @Override
         protected void j() {
-            CustomEntityEvoker.this.incrementAttacks(1);
+            CustomEntityEvoker.this.increaseAttacks(1);
             EntitySheep entitySheep = CustomEntityEvoker.this.fh();
 
             if (entitySheep != null && entitySheep.isAlive()) { /** instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */

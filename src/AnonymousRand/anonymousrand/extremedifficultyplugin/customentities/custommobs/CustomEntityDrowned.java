@@ -45,8 +45,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 150 attacks, drowned summon a guardian */
@@ -58,7 +58,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void m() { /** drowned no longer target iron golems */
         /** Still moves fast in cobwebs */
@@ -342,7 +342,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
                 super.e();
             }
 
-            this.drowned.incrementAttacks(1);
+            this.drowned.increaseAttacks(1);
         }
     }
 }

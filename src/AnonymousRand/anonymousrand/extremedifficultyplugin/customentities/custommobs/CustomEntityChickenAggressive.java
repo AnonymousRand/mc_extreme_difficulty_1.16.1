@@ -61,7 +61,11 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         map.put(attributeBase, attributeModifiable);
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    public double getFollowRange() { /** aggressive chickens have 16 block detection range (setting attribute doesn't work) */
+        return 16.0;
+    }
+
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() { /** chicken can't panic/breed/follow parent/be tempted with seeds */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
@@ -80,10 +84,6 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class));
         this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class));
         this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-    }
-
-    public double getFollowRange() { /** aggressive chickens have 16 block detection range (setting attribute doesn't work) */
-        return 16.0;
     }
 
     @Override

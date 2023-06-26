@@ -13,7 +13,7 @@ public class AttackController {
     }
 
     // increments attacks and returns all met or exceeded thresholds
-    public int[] incrementAttacks(int increment) {
+    public int[] increaseAttacks(int increment) {
         if (increment == 1) {
             this.attacks += increment;
             for (int attackThreshold : this.attackThresholds) {

@@ -8,6 +8,7 @@ import net.minecraft.server.v1_16_R1.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VanillaPathfinderGoalsAccess {
 
@@ -21,6 +22,8 @@ public class VanillaPathfinderGoalsAccess {
             e.printStackTrace();
         }
     }
+
+    private VanillaPathfinderGoalsAccess() {} // private constructor = protect against accidental instantiation
 
     public static ArrayList<PathfinderGoal> getPathfinderGoals(Set<?> goalSet, Class<? extends PathfinderGoal> pathfinderGoalClass) {
         ArrayList<PathfinderGoal> goalsFound = new ArrayList<>();
@@ -147,6 +150,12 @@ public class VanillaPathfinderGoalsAccess {
             if (entity instanceof EntityCreature) {
                 entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
             }
+        }
+    }
+
+    public static void updateMobFollowRange(EntityInsentient entityInsentient) {
+        for (PathfinderGoal goal : getPathfinderGoals(entityInsentient.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalNearestAttackableTarget.class)) {
+            ((CustomPathfinderGoalNearestAttackableTarget<?>) goal).updateFollowRange();
         }
     }
 }

@@ -20,7 +20,7 @@ public class CustomEntityChicken extends EntityChicken {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();

@@ -49,8 +49,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 20 attacks, summoned fake illusioners attack faster */
@@ -66,7 +66,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         }
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() { /** no longer target iron golems or villagers, and only shoots arrows (can't apply spells) */
         this.goalSelector.a(1, new EntityRaider.b<>(this));

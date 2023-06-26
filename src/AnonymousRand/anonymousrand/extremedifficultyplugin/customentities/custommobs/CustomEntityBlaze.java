@@ -60,8 +60,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
@@ -92,11 +92,12 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         return this.vanillaTargetSelector;
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    ////////////////////////  Other custom functions  ////////////////////////
     public boolean getRapidFire() {
         return this.rapidFire;
     }
 
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
@@ -224,7 +225,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
                             CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze, d1, d2, d3); /** blaze has no inaccuracy */
                             entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                             this.nmsWorld.addEntity(entitySmallFireball);
-                            this.blaze.incrementAttacks(1);
+                            this.blaze.increaseAttacks(1);
                         } else {
                             CustomEntitySmallFireball entitySmallFireball;
                             for (int i = 0; i < 3; i++) {
@@ -233,7 +234,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
                                 entitySmallFireball.setPosition(entitySmallFireball.locX(), this.blaze.e(0.5D) + 0.5D, entitySmallFireball.locZ());
                                 this.nmsWorld.addEntity(entitySmallFireball);
                             }
-                            this.blaze.incrementAttacks(1);
+                            this.blaze.increaseAttacks(1);
                         }
                     }
 

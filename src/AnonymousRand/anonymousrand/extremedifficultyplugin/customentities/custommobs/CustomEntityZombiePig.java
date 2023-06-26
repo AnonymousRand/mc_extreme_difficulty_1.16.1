@@ -48,7 +48,7 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomMob
         return this.attacks;
     }
 
-    public void incrementAttacks(int increase) {
+    public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
 

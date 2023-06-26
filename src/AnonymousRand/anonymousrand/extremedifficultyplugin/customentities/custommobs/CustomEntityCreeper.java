@@ -44,7 +44,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         return this.isPowered() ? 64.0 : 28.0;
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() {
         /** Creeper is no longer scared of cats and ocelots */

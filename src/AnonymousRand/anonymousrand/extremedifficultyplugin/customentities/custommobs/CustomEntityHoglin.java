@@ -36,7 +36,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
     }
 
     public double getFollowRange() { /** hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
-        return this.getAttacks() < 10 ? 40.0 : 64.0;
+        return (this.attackController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
     }
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
@@ -48,8 +48,8 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 10 attacks, hoglins get regen 2 */
@@ -83,7 +83,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
         return this.vanillaTargetSelector;
     }
 
-    //////////////////////  Other or vanilla functions  //////////////////////
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
@@ -101,7 +101,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
     public void die() {
         super.die();
 
-        if (random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /** hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
+        if (this.attackController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /** hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
             new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
     }

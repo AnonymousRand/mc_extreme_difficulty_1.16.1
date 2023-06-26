@@ -39,7 +39,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, 
     }
 
     public double getFollowRange() { /** endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks) */
-        return this.getAttacks() < 12 ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
+        return (this.attackController == null || this.getAttacks() < 12) ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
@@ -51,8 +51,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, 
         return this.attackController.getAttacks();
     }
 
-    public void incrementAttacks(int increment) {
-        for (int metThreshold : this.attackController.incrementAttacks(increment)) {
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 12 attacks, endermen gain speed 1 */
