@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityShulkerBullet;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -10,13 +11,12 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 public class CustomEntityShulker extends EntityShulker implements ICustomMob, IAttackLevelingMob {
 
     private int attacks;
     private boolean a10, a21, a40;
-    private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal1;
-    private static NewPathfinderGoalSpawnBlocksEntitiesOnMob goal2;
 
     public CustomEntityShulker(World world) {
         super(EntityTypes.SHULKER, world);
@@ -24,12 +24,6 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob, IA
         this.a10 = false;
         this.a21 = false;
         this.a40 = false;
-        CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
-        newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
-        goal1 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, newAEC, 19);
-        newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
-        newAEC.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
-        goal2 = new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, newAEC, 19);
         this.getAttributeInstance(GenericAttributes.ARMOR).setValue(12.0); /** shulkers have 12 armor points, and even more when it is closed */
     }
 
@@ -86,14 +80,19 @@ public class CustomEntityShulker extends EntityShulker implements ICustomMob, IA
 
         if (this.attacks == 21 && !this.a21) { /** after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds */
             this.a21 = true;
-            this.goalSelector.a(1, goal1);
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
+            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
         }
 
         if (this.attacks == 40 && !this.a40) { /** after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
             this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
-            this.goalSelector.a(goal1);
-            this.goalSelector.a(1, goal2);
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
+            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
+            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
+                ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
+            }
         }
     }
 

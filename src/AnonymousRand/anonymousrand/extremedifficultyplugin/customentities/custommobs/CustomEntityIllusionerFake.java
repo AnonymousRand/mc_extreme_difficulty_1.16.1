@@ -42,7 +42,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
 
     //////////////////////////  IAttackLevelingMob  //////////////////////////
     public void initAttacks() {
-        this.attackController = new AttackController(2/*0*/, 4/*0*/);
+        this.attackController = new AttackController(20, 40);
     }
 
     public int getAttacks() {
@@ -54,20 +54,14 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
             int[] attackThresholds = this.attackController.getAttackThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 20 attacks, summoned fake illusioners attack faster */
-                // todo need goal removal interface?
-                // todo concurrentmodification race condition with removing goals
                 for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
-                    this.goalSelector.a(goal);
+                    ((CustomPathfinderGoalRangedBowAttack<?>) goal).changeAttackInterval(random.nextInt(9) + 12);
                 }
-
-                this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(9) + 12, 32.0F)); // use this instead of bowshoot as bowshoot doesn't seem to be able to go below a certain attack speed
             } else if (metThreshold == attackThresholds[1]) {
                 /** After 40 attacks, summoned fake illusioners attack even faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
-                    this.goalSelector.a(goal);
+                    ((CustomPathfinderGoalRangedBowAttack<?>) goal).changeAttackInterval(random.nextInt(4) + 5);
                 }
-
-                this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(4) + 5, 32.0F));
             }
         }
     }

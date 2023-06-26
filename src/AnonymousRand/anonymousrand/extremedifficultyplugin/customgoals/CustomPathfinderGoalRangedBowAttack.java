@@ -25,6 +25,10 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
+    public void changeAttackInterval(int attackInterval) {
+        this.attackInterval = attackInterval;
+    }
+
     @Override
     public void e() {
         EntityLiving attackTarget = this.entity.getGoalTarget();

@@ -1,16 +1,18 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableConstantlySpawnBlocksEntities;
-import net.minecraft.server.v1_16_R1.*;
+import net.minecraft.server.v1_16_R1.Entity;
+import net.minecraft.server.v1_16_R1.EntityInsentient;
+import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import org.bukkit.Material;
 
 public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
 
     protected final EntityInsentient entity;
-    protected final Material material;
-    protected final Entity firstEntityToSpawn;
-    protected final int delayTimer, xRadius, yRadius, zRadius;
-    protected final double yOffset;
+    protected Material material;
+    protected Entity firstEntityToSpawn;
+    protected int delayTimer, xRadius, yRadius, zRadius;
+    protected double yOffset;
     protected boolean terraform;
 
     public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
@@ -59,6 +61,10 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.zRadius = zRadius;
         this.yOffset = yOffset;
         this.terraform = false;
+    }
+
+    public void changeSpawnedEntity(Entity entityToBeSpawned) {
+        this.firstEntityToSpawn = entityToBeSpawned;
     }
 
     @Override
