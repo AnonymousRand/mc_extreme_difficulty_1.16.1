@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomIEntityAccess;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
 
     public void updateFollowRange() {
         this.targetCondition.a(this.k());
+        Bukkit.broadcastMessage("3; new range: " + this.k());
     }
 
     @Override

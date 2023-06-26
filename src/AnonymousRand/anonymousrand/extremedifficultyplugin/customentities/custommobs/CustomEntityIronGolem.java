@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.stream.Collectors;
@@ -72,9 +73,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multiplier);
         this.setHealth((float)(this.getHealth() * multiplier));
 
-        this.followRangeMultipler *= multiplier * 1.1;
-        if (this.followRangeMultipler >= 2.5) { // cap to prevent lag with too many blocks being searched
-            this.followRangeMultipler = 2.5;
+        this.followRangeMultipler *= multiplier;
+        if (this.followRangeMultipler >= 3.0) { // cap to prevent lag with too many blocks being searched
+            this.followRangeMultipler = 3.0;
         }
 
         VanillaPathfinderGoalsAccess.updateMobFollowRange(this);

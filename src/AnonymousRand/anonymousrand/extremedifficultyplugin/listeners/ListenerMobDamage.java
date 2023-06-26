@@ -40,8 +40,8 @@ public class ListenerMobDamage implements Listener {
             }
         }
 
-        if (bukkitEntityType != IRON_GOLEM && bukkitEntityType != PLAYER) { /** golems within 50 blocks horizontally of damaged entity get a 10% stat boost */
-            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(50.0, 128.0, 50.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.1));
+        if (bukkitEntityType != IRON_GOLEM && bukkitEntityType != PLAYER) { /** golems within 60 blocks of damaged entity get a 5% stat boost */
+            nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(60.0, 60.0, 60.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.05));
         }
     }
 
