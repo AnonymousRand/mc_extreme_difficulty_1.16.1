@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.EntitySlime;
 import net.minecraft.server.v1_16_R1.EnumHand;
@@ -16,8 +16,8 @@ public class NewPathfinderGoalSlimeMeleeAttack extends NewPathfinderGoalPassiveM
         double d1 = this.a(entityLiving);
 
         if (d0 <= d1 && this.i <= 0) {
-            if (this.entity instanceof ICustomMob) {
-                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.875) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
+            if (this.entity instanceof ICustomHostile) {
+                if (((ICustomHostile)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.875) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
                     return;
                 }
             }

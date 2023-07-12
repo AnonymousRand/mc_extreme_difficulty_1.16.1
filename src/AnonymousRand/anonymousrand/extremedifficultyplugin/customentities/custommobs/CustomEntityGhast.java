@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
@@ -16,7 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
     private boolean deathFireballs;
@@ -27,7 +27,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomMob, IAttac
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         this.deathFireballs = false;
     }

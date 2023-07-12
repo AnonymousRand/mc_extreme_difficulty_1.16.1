@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
 
@@ -21,7 +21,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomMob, IA
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

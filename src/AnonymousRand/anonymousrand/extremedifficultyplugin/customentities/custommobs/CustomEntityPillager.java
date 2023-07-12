@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Arrays;
 
-public class CustomEntityPillager extends EntityPillager implements ICustomMob {
+public class CustomEntityPillager extends EntityPillager implements ICustomHostile {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;

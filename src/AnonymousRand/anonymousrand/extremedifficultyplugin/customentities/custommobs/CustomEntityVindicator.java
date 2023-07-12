@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -11,7 +11,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Arrays;
 
-public class CustomEntityVindicator extends EntityVindicator implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityVindicator extends EntityVindicator implements ICustomHostile, IAttackLevelingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;

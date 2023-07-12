@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
@@ -10,7 +10,7 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntityVillagerAggressive extends EntityVillager implements ICustomMob {
+public class CustomEntityVillagerAggressive extends EntityVillager implements ICustomHostile {
 
     private static Field attributeMap;
 

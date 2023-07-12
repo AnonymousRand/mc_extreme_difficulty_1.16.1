@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -9,7 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
+public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile {
 
     public Field fuseTicks;
 
@@ -19,8 +19,15 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
         this.maxFuseTicks = fuse;
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
+        try {
+            this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
+            this.fuseTicks.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -31,13 +38,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomMob {
 
     private void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375); /** creepers move 75% faster */
-
-        try {
-            this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
-            this.fuseTicks.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
 
     public double getFollowRange() { /** creepers have 28 block detection range (64 if powered) */

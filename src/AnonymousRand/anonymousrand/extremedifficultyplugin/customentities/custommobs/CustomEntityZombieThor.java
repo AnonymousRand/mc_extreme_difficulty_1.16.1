@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
@@ -15,7 +15,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityZombieThor extends EntityZombie implements ICustomMob {
+public class CustomEntityZombieThor extends EntityZombie implements ICustomHostile {
 
     public PathfinderGoalSelector vanillaTargetSelector;
 

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
@@ -12,7 +12,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomHostile, IAttackLevelingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;

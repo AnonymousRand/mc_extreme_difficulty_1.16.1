@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityGuardian extends EntityGuardian implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
 
@@ -26,7 +26,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomMob, 
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

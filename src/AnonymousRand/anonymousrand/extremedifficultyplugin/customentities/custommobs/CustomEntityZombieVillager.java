@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
@@ -14,7 +14,7 @@ import org.bukkit.Location;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class CustomEntityZombieVillager extends EntityZombieVillager implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityZombieVillager extends EntityZombieVillager implements ICustomHostile, IAttackLevelingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;

@@ -13,7 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 
-public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
+public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     private AttackController attackController;
     public PathfinderGoalSelector vanillaTargetSelector;
@@ -26,7 +26,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomMob, IAttac
         initGoalRemoval();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids water */
         this.a(PathType.WATER, 0.0F);

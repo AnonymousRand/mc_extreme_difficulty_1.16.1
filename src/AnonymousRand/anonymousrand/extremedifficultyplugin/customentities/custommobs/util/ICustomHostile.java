@@ -1,9 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util;
 
-import net.minecraft.server.v1_16_R1.PathType;
 import net.minecraft.server.v1_16_R1.Vec3D;
 
-public interface ICustomMob {
+public interface ICustomHostile {
 
     //void initCustom();
 

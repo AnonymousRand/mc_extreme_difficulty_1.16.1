@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
@@ -8,7 +8,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityPufferfish extends EntityPufferFish implements ICustomMob {
+public class CustomEntityPufferfish extends EntityPufferFish implements ICustomHostile {
 
     private int lastStingTicks;
     private static Field jumpTicks;

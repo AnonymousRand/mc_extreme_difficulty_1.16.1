@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class CustomEntityPiglin extends EntityPiglin implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, IAttackLevelingMob {
 
     private int attacks;
     public int frenzyTicks;

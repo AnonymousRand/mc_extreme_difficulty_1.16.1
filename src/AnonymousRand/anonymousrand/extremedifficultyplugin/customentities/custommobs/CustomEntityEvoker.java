@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
@@ -21,7 +21,7 @@ import java.util.*;
 
 import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
 
-public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, IAttackLevelingMob {
 
     private EntitySheep wololoTarget;
     private AttackController attackController;
@@ -32,7 +32,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomMob, IAtt
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

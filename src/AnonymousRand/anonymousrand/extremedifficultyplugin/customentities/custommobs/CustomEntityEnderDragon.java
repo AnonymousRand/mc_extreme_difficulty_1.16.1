@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityDragonFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityDragonFireballSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
@@ -16,17 +16,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class CustomEntityEnderDragon extends EntityEnderDragon implements ICustomMob {
+public class CustomEntityEnderDragon extends EntityEnderDragon implements ICustomHostile {
 
     public ArrayList<Entity> goalTargets = new ArrayList<>();
     public Field phaseManager, dragonBattle;
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
+        this.initCustom();
         this.uniqueID = uuid; // to make sure bossbar etc. doesn't break
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         try {
             this.phaseManager = EntityEnderDragon.class.getDeclaredField("bN");

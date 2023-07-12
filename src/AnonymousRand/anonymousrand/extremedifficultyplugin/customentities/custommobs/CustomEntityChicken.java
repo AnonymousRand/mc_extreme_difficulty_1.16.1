@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomPeaceful;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -8,10 +9,15 @@ import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.GenericAttributes;
 import net.minecraft.server.v1_16_R1.World;
 
-public class CustomEntityChicken extends EntityChicken {
+public class CustomEntityChicken extends EntityChicken implements ICustomPeaceful {
     
     public CustomEntityChicken(World world) {
         super(EntityTypes.CHICKEN, world);
+        this.initCustom();
+    }
+
+    ////////////////////////////  ICustomPeaceful  ///////////////////////////
+    public void initCustom() { // questionable design choice but such is the nature of Java
         this.initAttributes();
     }
 

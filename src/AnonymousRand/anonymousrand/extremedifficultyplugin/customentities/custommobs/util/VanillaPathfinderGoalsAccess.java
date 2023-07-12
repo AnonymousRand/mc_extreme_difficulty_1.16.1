@@ -4,12 +4,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class VanillaPathfinderGoalsAccess {
 
@@ -28,11 +26,12 @@ public class VanillaPathfinderGoalsAccess {
 
     public static ArrayList<PathfinderGoal> getPathfinderGoals(Set<?> goalSet, Class<? extends PathfinderGoal> pathfinderGoalClass) {
         ArrayList<PathfinderGoal> goalsFound = new ArrayList<>();
+        Field pathfinderGoalField;
         PathfinderGoal pathfinderGoal;
 
         for (Object pathfinderGoalWrapped : goalSet) {
             try {
-                Field pathfinderGoalField = pathfinderGoalWrapped.getClass().getDeclaredField("a"); // a is the field that contains the pathfinder goal in the wrapped pathfinder goal object
+                pathfinderGoalField = pathfinderGoalWrapped.getClass().getDeclaredField("a"); // a is the field that contains the pathfinder goal in the wrapped pathfinder goal object
                 pathfinderGoalField.setAccessible(true);
                 pathfinderGoal = (PathfinderGoal)pathfinderGoalField.get(pathfinderGoalWrapped);
 

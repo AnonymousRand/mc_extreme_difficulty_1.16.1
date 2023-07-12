@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Random;
@@ -91,8 +91,8 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         double d1 = this.a(entityLiving);
 
         if (d0 <= d1 && this.i <= 0) {
-            if (this.entity instanceof ICustomMob) {
-                if (((ICustomMob)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can successfully hit you occasionally when they are out of range vertically */
+            if (this.entity instanceof ICustomHostile) {
+                if (((ICustomHostile)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can successfully hit you occasionally when they are out of range vertically */
                     return;
                 }
             }

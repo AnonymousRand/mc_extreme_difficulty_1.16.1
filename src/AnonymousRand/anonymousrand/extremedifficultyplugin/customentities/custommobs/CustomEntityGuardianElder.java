@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
@@ -16,13 +16,13 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class CustomEntityGuardianElder extends EntityGuardianElder implements ICustomMob {
+public class CustomEntityGuardianElder extends EntityGuardianElder implements ICustomHostile {
 
     public CustomEntityGuardianElder(World world) {
         super(EntityTypes.ELDER_GUARDIAN, world);
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

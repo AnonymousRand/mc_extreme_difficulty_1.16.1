@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Random;
 
-public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
 
@@ -21,7 +21,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomMob, 
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids water */
         this.a(PathType.WATER, 0.0F);

@@ -1,14 +1,14 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
-import java.util.stream.Collectors;
-
-public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
     private double followRangeMultipler;
@@ -19,7 +19,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
         this.initAttacks();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
@@ -126,7 +126,6 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomMob
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

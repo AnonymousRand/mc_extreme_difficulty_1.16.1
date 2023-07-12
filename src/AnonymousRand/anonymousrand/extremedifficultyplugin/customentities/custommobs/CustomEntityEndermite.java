@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityEndermite extends EntityEndermite implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
+public class CustomEntityEndermite extends EntityEndermite implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     private AttackController attackController;
     public PathfinderGoalSelector vanillaTargetSelector;
@@ -18,7 +18,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomMob
         this.initGoalRemoval();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

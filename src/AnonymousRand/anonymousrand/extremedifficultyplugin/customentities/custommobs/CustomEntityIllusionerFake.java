@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.stream.Collectors;
 
-public class CustomEntityIllusionerFake extends CustomEntityIllusioner implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityIllusionerFake extends CustomEntityIllusioner implements ICustomHostile, IAttackLevelingMob {
 
     private AttackController attackController;
     private final CustomEntityIllusioner parentIllusioner;

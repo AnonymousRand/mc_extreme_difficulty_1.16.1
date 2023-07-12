@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -18,7 +18,7 @@ import java.util.Random;
 
 import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
 
-public class CustomEntityWither extends EntityWither implements ICustomMob {
+public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
     protected boolean dash;
     private static Field bB, bC;

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -8,7 +8,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.UUID;
 
-public class CustomEntityWolf extends EntityWolf implements ICustomMob {
+public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
 
     public CustomEntityWolf(World world) {
         super(EntityTypes.WOLF, world);

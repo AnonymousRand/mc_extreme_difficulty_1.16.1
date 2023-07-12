@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntitySheepAggressive extends EntitySheep implements ICustomMob, IAttackLevelingMob {
+public class CustomEntitySheepAggressive extends EntitySheep implements ICustomHostile, IAttackLevelingMob {
 
     private int attacks;
     private boolean a20, a40, a65, die, launchHigh;

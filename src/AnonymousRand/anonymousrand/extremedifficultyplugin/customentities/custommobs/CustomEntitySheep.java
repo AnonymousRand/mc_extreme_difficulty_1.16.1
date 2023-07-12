@@ -1,12 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalPassiveMoveTowardsTarget;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntitySheep extends EntitySheep implements ICustomMob {
+public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
@@ -11,7 +11,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemovingMob {
+public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private boolean firstSting;
@@ -22,7 +22,7 @@ public class CustomEntityBee extends EntityBee implements ICustomMob, IGoalRemov
         initGoalRemoval();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava*/
         this.a(PathType.LAVA, 0.0F);

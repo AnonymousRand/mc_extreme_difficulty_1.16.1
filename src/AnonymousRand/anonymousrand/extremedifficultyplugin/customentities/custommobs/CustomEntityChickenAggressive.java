@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
@@ -10,7 +10,7 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class CustomEntityChickenAggressive extends EntityChicken implements ICustomMob { // can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
+public class CustomEntityChickenAggressive extends EntityChicken implements ICustomHostile { // can't extend CustomEntityChicken as CustomEntityChicken has a function call in its tick() that spawns new aggressive chickens which would cause an infinite loop if we inherited from it
 
     private Field attributeMap;
 
@@ -19,7 +19,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.initCustom();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

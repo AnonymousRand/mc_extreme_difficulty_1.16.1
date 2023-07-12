@@ -7,7 +7,7 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAttackLevelingMob, IGoalRemovingMob {
+public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     private AttackController attackController;
     public PathfinderGoalSelector vanillaTargetSelector;
@@ -19,7 +19,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomMob, IAtt
         this.initGoalRemoval();
     }
 
-    //////////////////////////////  ICustomMob  //////////////////////////////
+    ////////////////////////////  ICustomHostile  ////////////////////////////
     public void initCustom() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);

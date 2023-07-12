@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityWitch extends EntityWitch implements ICustomMob {
+public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;

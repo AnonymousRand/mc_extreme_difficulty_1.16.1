@@ -1,23 +1,32 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomPeaceful;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 
-public class CustomEntityMushroomCow extends EntityMushroomCow {
+public class CustomEntityMushroomCow extends EntityMushroomCow implements ICustomPeaceful {
 
     public CustomEntityMushroomCow(World world) {
         super(EntityTypes.MOOSHROOM, world);
+        this.initCustom();
+    }
+
+    ////////////////////////////  ICustomPeaceful  ///////////////////////////
+    public void initCustom() {
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
     }
 
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
     }
 
     @Override

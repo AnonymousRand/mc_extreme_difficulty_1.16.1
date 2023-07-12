@@ -1,7 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLlamaSpit;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -12,37 +13,73 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICustomHostile, IAttackLevelingMob {
 
-    private int attacks;
-    private boolean a15;
-    private static Field bH;
+    private AttackController attackController;
+    private Field didSpit;
 
     public CustomEntityLlamaTrader(World world) {
         super(EntityTypes.TRADER_LLAMA, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.attacks = 0;
-        this.a15 = false;
-        this.setStrength(1); /** makes sure zombies etc. don't run away from trader llamas */
-        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /** trader llamas have 30 health */
-        this.setHealth(30.0F);
+        this.initCustom();
+        this.initAttacks();
     }
 
-    static {
+    ////////////////////////////  ICustomHostile  ////////////////////////////
+    public void initCustom() {
         try {
-            bH = EntityLlama.class.getDeclaredField("bH");
-            bH.setAccessible(true);
+            this.didSpit = EntityLlama.class.getDeclaredField("bH");
+            this.didSpit.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.setStrength(1); /** makes sure wolves etc. don't run away from llamas; also makes their inventory smaller */
+
+        this.initAttributes();
     }
 
+    private void initAttributes() {
+        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /** Trader llamas have 30 health */
+        this.setHealth(30.0F);
+    }
+
+    public double getFollowRange() { /** trader llamas have 24 block detection range (setting attribute doesn't work) */
+        return 24.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(15);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 15 attacks, trader llamas get 50 max health and health */
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
+                this.setHealth(50.0F);
+            }
+        }
+    }
+
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() { /** llamas won't panic anymore, are always aggro towards players, don't stop attacking after spitting once, and no longer defend wolves */
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
         this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F));
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));
@@ -55,9 +92,9 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     public void a(EntityLiving entityLiving, float f) { // shoot()s custom spit instead of vanilla
-        this.attacks++;
+        this.increaseAttacks(1);
 
-        CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.attacks < 6 ? 12.0 : 18.0); /** after 6 attacks, trader llamas do 18 damage */
+        CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.getAttacks() < 6 ? 12.0 : 18.0); /** after 6 attacks, trader llamas do 18 damage */
         double d0 = entityLiving.locX() - this.locX();
         double d1 = entityLiving.e(0.3333333333333333D) - entityLlamaspit.locY();
         double d2 = entityLiving.locZ() - this.locZ();
@@ -71,32 +108,9 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.world.addEntity(entityLlamaspit);
 
         try {
-            bH.setBoolean(this, true);
+            this.didSpit.setBoolean(this, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    public double getFollowRange() { /** trader llamas have 24 block detection range (setting attribute doesn't work) */
-        return 24.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, trader llamas get 40 max health */
-            this.a15 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
-            this.setHealth(50.0F);
         }
     }
 }

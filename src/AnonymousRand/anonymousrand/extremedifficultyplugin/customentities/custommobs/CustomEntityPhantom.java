@@ -1,7 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
@@ -13,15 +14,13 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 import java.util.EnumSet;
-import java.util.Random;
 
-public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IAttackLevelingMob {
+public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile, IAttackLevelingMob {
 
-    private int attacks;
-    private boolean a30, deathExplosion, duplicate;
+    private AttackController attackController;
+    private boolean deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
-    private static Field orbitPosition, orbitOffset;
-    private static final Random random = new Random();
+    private Field orbitPosition, orbitOffset;
 
     public CustomEntityPhantom(World world, int size, boolean duplicate) {
         this(world);
@@ -36,30 +35,61 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
 
     public CustomEntityPhantom(World world) {
         super(EntityTypes.PHANTOM, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.initCustom();
+        this.initAttacks();
+    }
+
+    ////////////////////////////  ICustomHostile  ////////////////////////////
+    public void initCustom() {
+        try {
+            this.orbitPosition = EntityPhantom.class.getDeclaredField("d");
+            this.orbitPosition.setAccessible(true);
+            this.orbitOffset = EntityPhantom.class.getDeclaredField("c");
+            this.orbitOffset.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        /** No longer avoids lava */
+        this.a(PathType.LAVA, 0.0F);
+        /** No longer avoids fire */
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
+
         ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /** every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
         this.noclip = true; /** phantoms can fly through blocks */
-        this.attacks = 0;
-        this.a30 = false;
         this.deathExplosion = false;
         this.duplicate = false;
-        this.getBukkitEntity().setCustomName("You voted for me");
+
+        /** No longer despawns or takes up the mob cab */
+        this.getBukkitEntity().setCustomName("Do you regret voting for me");
     }
 
-    static {
-        try {
-            orbitPosition = EntityPhantom.class.getDeclaredField("d");
-            orbitPosition.setAccessible(true);
-            orbitOffset = EntityPhantom.class.getDeclaredField("c");
-            orbitOffset.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+    public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */
+        return 64.0;
+    }
+
+    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    public void initAttacks() {
+        this.attackController = new AttackController(30);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttackThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 30 attacks, phantoms get regen 3 */
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            }
         }
     }
 
+    /////////////////////  Overridden vanilla functions  /////////////////////
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(1, new CustomEntityPhantom.PathfinderGoalPhantomPickAttack());
@@ -80,49 +110,33 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
     }
 
     @Override
-    public void die() {
-        super.die();
-
-        if (this.attacks >= 40 || this.duplicate) { /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, up to size 4 */
-            if (this.getSize() > 7) {
-                new SpawnEntity(this.getWorld(), this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
-            }
-        }
-    }
-
-    public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */
-        return 64.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.attacks < 10 ? 170 : this.attacks < 20 ? 150 : this.attacks < 30 ? 120 : 100) == 0 && this.ticksLived != 0 && this.getHealth() > 0.0) { /** phantoms increase in size by 1 every 8.5 seconds (7.5 seconds after 10 attacks, 6 seconds after 20 attacks, 5 seconds after 30 attacks) */
+        if (this.ticksLived % (this.getAttacks() < 10 ? 170 : this.getAttacks() < 20 ? 150 : this.getAttacks() < 30 ? 120 : 100) == 0 && this.ticksLived != 0 && this.getHealth() > 0.0) { /** phantoms increase in size by 1 every 8.5 seconds (7.5 seconds after 10 attacks, 6 seconds after 20 attacks, 5 seconds after 30 attacks) */
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }
 
-        if (this.getHealth() <= 0.0 && this.attacks >= 15 && !this.deathExplosion) { /** after 15 attacks, phantoms explode when killed */
+        if (this.getHealth() <= 0.0 && this.getAttacks() >= 15 && !this.deathExplosion) { /** after 15 attacks, phantoms explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
         }
 
-        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, phantoms get regen 3 */
-            this.a30 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-
         if (this.ticksLived == 5) {
             this.updateSizeStats(this.getSize());
+        }
+    }
+
+    @Override
+    public void die() {
+        super.die();
+
+        if (this.getAttacks() >= 40 || this.duplicate) {
+            /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, all the way down to size 4 */
+            if (this.getSize() > 7) {
+                new SpawnEntity(this.getWorld(), (int) this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
+            }
         }
     }
 
@@ -145,7 +159,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
                 int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
                     this.die();
                 } else if (d0 < (double)l) {
                     this.ticksFarFromPlayer = 0;
@@ -188,7 +202,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
 
         protected boolean g() {
             try {
-                return ((Vec3D)CustomEntityPhantom.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0D;
+                return ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0D;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 return false;
@@ -206,7 +220,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
         public boolean a() {
             EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
-            return entityLiving != null ? CustomEntityPhantom.this.a(CustomEntityPhantom.this.getGoalTarget(), CustomPathfinderTargetCondition.a) : false;
+            return entityLiving != null && CustomEntityPhantom.this.a(CustomEntityPhantom.this.getGoalTarget(), CustomPathfinderTargetCondition.a);
         }
 
         @Override
@@ -219,7 +233,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
         @Override
         public void d() {
             try {
-                CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.random.nextInt(20)));
+                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -232,8 +246,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
                 if (this.b <= 0) {
                     CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.SWOOP;
                     this.g();
-                    this.b = (8 + CustomEntityPhantom.random.nextInt(4)) * 20;
-                    CustomEntityPhantom.this.playSound(SoundEffects.ENTITY_PHANTOM_SWOOP, 10.0F, 0.95F + CustomEntityPhantom.random.nextFloat() * 0.1F);
+                    this.b = (8 + CustomEntityPhantom.this.random.nextInt(4)) * 20;
+                    CustomEntityPhantom.this.playSound(SoundEffects.ENTITY_PHANTOM_SWOOP, 10.0F, 0.95F + CustomEntityPhantom.this.random.nextFloat() * 0.1F);
                 }
             }
         }
@@ -241,11 +255,11 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
         private void g() {
             if (CustomEntityPhantom.this.getGoalTarget() != null) {
                 try {
-                    CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.random.nextInt(20)));
-                    BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this));
+                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.this.random.nextInt(20)));
+                    BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this));
 
                     if (orbitPos.getY() < CustomEntityPhantom.this.world.getSeaLevel()) {
-                        CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
+                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -296,7 +310,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
             EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
             try {
-                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityLiving.locX(), entityLiving.e(0.5D), entityLiving.locZ()));
+                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityLiving.locX(), entityLiving.e(0.5D), entityLiving.locZ()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -331,19 +345,19 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
 
         @Override
         public void c() {
-            this.d = 5.0F + CustomEntityPhantom.random.nextFloat() * 10.0F;
-            this.e = -4.0F + CustomEntityPhantom.random.nextFloat() * 9.0F;
-            this.f = CustomEntityPhantom.random.nextBoolean() ? 1.0F : -1.0F;
+            this.d = 5.0F + CustomEntityPhantom.this.random.nextFloat() * 10.0F;
+            this.e = -4.0F + CustomEntityPhantom.this.random.nextFloat() * 9.0F;
+            this.f = CustomEntityPhantom.this.random.nextBoolean() ? 1.0F : -1.0F;
             this.h();
         }
 
         @Override
         public void e() {
-            if (CustomEntityPhantom.random.nextInt(350) == 0) {
-                this.e = -4.0F + CustomEntityPhantom.random.nextFloat() * 9.0F;
+            if (CustomEntityPhantom.this.random.nextInt(350) == 0) {
+                this.e = -4.0F + CustomEntityPhantom.this.random.nextFloat() * 9.0F;
             }
 
-            if (CustomEntityPhantom.random.nextInt(250) == 0) {
+            if (CustomEntityPhantom.this.random.nextInt(250) == 0) {
                 ++this.d;
                 if (this.d > 15.0F) {
                     this.d = 5.0F;
@@ -351,8 +365,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
                 }
             }
 
-            if (CustomEntityPhantom.random.nextInt(450) == 0) {
-                this.c = CustomEntityPhantom.random.nextFloat() * 2.0F * 3.1415927F;
+            if (CustomEntityPhantom.this.random.nextInt(450) == 0) {
+                this.c = CustomEntityPhantom.this.random.nextFloat() * 2.0F * 3.1415927F;
                 this.h();
             }
 
@@ -361,7 +375,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
             }
 
             try {
-                Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.orbitOffset.get(CustomEntityPhantom.this));
+                Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this));
 
                 if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
                     this.e = Math.max(1.0F, this.e);
@@ -379,13 +393,13 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomMob, IA
 
         private void h() {
             try {
-                BlockPosition orbitPos = (BlockPosition)CustomEntityPhantom.orbitPosition.get(CustomEntityPhantom.this);
+                BlockPosition orbitPos = (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this);
                 if (BlockPosition.ZERO.equals(orbitPos)) {
-                    CustomEntityPhantom.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getChunkCoordinates());
+                    CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getChunkCoordinates());
                 }
 
                 this.c += this.f * 15.0F * 0.017453292F;
-                CustomEntityPhantom.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b(orbitPos).add((this.d * MathHelper.cos(this.c)), (-4.0F + this.e), (this.d * MathHelper.sin(this.c))));
+                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, Vec3D.b(orbitPos).add((this.d * MathHelper.cos(this.c)), (-4.0F + this.e), (this.d * MathHelper.sin(this.c))));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
