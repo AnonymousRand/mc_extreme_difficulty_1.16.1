@@ -29,6 +29,24 @@ Follow this guide if the plugin doesn't seem to be doing anything and the server
     * If you don't see this, then it should automatically have done this for you.
 5. Finish the installation process, and you should now be running Java 8. If you want to confirm that you are actually running the correct version, open a terminal or command prompt and type "java --version".
 
+# Developer guide (IntelliJ):
+
+1. `git clone`
+2. In **File > Project Structure**:
+   * Use a Java 8 JDK
+   * Use language level 8
+   * In Modules on the left, select the main module, go to **Dependencies > + > JARs or Directories...**, and select [spigot-1.16.1.jar](spigot-1.16.1.jar)
+   * In Artifacts on the left, go to **+ > JAR > From modules with dependencies... > OK**
+      * Then, click the **+** icon on the right panel (which should have a little arrow under it), click **File**, and select [src/plugin.yml](src/plugin.yml)
+* To create a Spigot 1.16.1 server, copy [spigot-1.16.1.jar](spigot-1.16.1.jar) (or download it from their site) into a folder in `.minecraft/`. In that folder, create `start.bat` with the following:
+   ```
+   @echo off
+   java -jar spigot-1.16.1.jar nogui
+   pause
+   ```
+  and run it. You will probably also need to create a `plugins/` folder manually.
+* To build the plugin JAR, go to **Build > Build Artifacts... > Build**. By default, this artifact should be located in the output directory [out/artifacts/1_16_1_Extreme_Difficulty_jar/1.16.1-Extreme-Difficulty.jar](out/artifacts/1_16_1_Extreme_Difficulty_jar/1.16.1-Extreme-Difficulty.jar). Copy this into the `plugins/` folder in `.minecraft/[server folder]/`.
+
 # Finally done
 
 This is a plugin made with Spigot's deobfuscation mappings, as well as Bukkit API and its underlying CraftBukkit and CraftBukkit's underlying NMS (vanilla server code). Why so many layers?
