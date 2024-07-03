@@ -108,7 +108,7 @@ public class ListenerProjectile implements Listener {
             Material bukkitMaterial = hitBlock.getType();
 
             if (nmsProjectile instanceof CustomEntityArrow && !(bukkitShooter instanceof Player)) { /** arrows when shot by an entity other than a player has a 20% chance to destroy the block that it hits without dropping anything */
-                if (blockBreakable_Base.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFireWitherRose.test(bukkitMaterial) && notFluid.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial) && notPreciousBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFireOrWitherRose.test(bukkitMaterial) && notFluid.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial) && notPreciousBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                     if (random.nextDouble() <= 0.2) {
                         hitBlock.setType(Material.AIR); // set the block as air instead of breaking it as there is no way to break it directly without it dropping
                     }
@@ -121,7 +121,7 @@ public class ListenerProjectile implements Listener {
             }
 
             if (nmsProjectile instanceof CustomEntityThrownTrident) { /** tridents when shot by an entity other than a player has a 10% chance to destroy the block that it hits without dropping anything */
-                if (blockBreakable_Base.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFireWitherRose.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial) && notPreciousBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFireOrWitherRose.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial) && notPreciousBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                     if (random.nextDouble() <= 0.1) {
                         hitBlock.setType(Material.AIR);
                     }

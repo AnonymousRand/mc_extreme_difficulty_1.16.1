@@ -25,7 +25,11 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected int baseX, baseY, baseZ;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
-    protected Predicate<Material> blockBreakable = (type) -> blockBreakable_Base.test(type) && notBedrock.test(type) && notHardBlocks.test(type) && notFireWitherRose.test(type);
+    protected Predicate<Material> blockBreakable = (type)
+            -> blockBreakableDefault.test(type)
+            && notBedrock.test(type)
+            && notHardBlocks.test(type)
+            && notFireOrWitherRose.test(type);
     protected static final Random random = new Random();
 
     public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {

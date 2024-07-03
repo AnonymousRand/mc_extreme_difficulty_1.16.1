@@ -1,4 +1,9 @@
 todo:
+
+    comment syntax update
+
+    listeners group by event?
+
 	reorganize all custommobs to use new attacks thing and whatever (including blaze)
 	
 	breakblocksaround goals make sure never remove blocks underneath unless intentional?

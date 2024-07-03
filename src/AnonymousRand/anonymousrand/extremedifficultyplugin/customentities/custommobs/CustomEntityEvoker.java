@@ -318,7 +318,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                                 bukkitBlock = bukkitLoc.getBlock();
                                 bukkitMaterial = bukkitBlock.getType();
 
-                                if (blockBreakable_Base.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                                     bukkitBlock.setType(org.bukkit.Material.AIR);
                                 } else if (!notHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
                                     if (random.nextDouble() < 0.5) {

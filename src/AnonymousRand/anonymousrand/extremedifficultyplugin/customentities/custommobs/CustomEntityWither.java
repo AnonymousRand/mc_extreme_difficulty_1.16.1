@@ -302,7 +302,10 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
         public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
-            blockBreakable = (type) -> blockBreakable_Base.test(type) && notHardBlocks.test(type) && notFireWitherRose.test(type); /** withers can now break bedrock */
+            blockBreakable = (type) /** withers can now break bedrock */
+                    -> blockBreakableDefault.test(type)
+                    && notHardBlocks.test(type)
+                    && notFireOrWitherRose.test(type);
         }
 
         @Override

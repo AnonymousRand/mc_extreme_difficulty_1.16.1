@@ -96,7 +96,7 @@ public class RunnableTornado extends BukkitRunnable {
             for (Block bukkitBlock : this.bukkitBlocksTemp) { // turn those new blocks into falling blocks
                 org.bukkit.Material bukkitMaterial = bukkitBlock.getType();
 
-                if (blockBreakable_Base.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFluid.test(bukkitMaterial) && notHardBlocks.test((bukkitMaterial))) { // as long as it isn't one of these blocks
+                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFluid.test(bukkitMaterial) && notHardBlocks.test((bukkitMaterial))) { // as long as it isn't one of these blocks
                     FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
                     fallingBlock.setGravity(false);
                     fallingBlock.setVelocity(vec);
