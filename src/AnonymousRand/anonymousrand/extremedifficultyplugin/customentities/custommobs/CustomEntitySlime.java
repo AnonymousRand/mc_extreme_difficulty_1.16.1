@@ -95,43 +95,6 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /** after 22 attacks, slimes explode when killed */
-            this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
-        }
-
-        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */
-            this.a12 = true;
-
-            if (this.getSize() < 8) {
-                this.setSize(this.getSize() + 1, true);
-            }
-        }
-
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, slimes get extra knockback */
-            this.a35 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
-        }
-
-        if (this.ticksLived == 5) {
-            if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -182,5 +145,42 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /** after 22 attacks, slimes explode when killed */
+            this.deathExplosion = true;
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
+        }
+
+        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */
+            this.a12 = true;
+
+            if (this.getSize() < 8) {
+                this.setSize(this.getSize() + 1, true);
+            }
+        }
+
+        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, slimes get extra knockback */
+            this.a35 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
+        }
+
+        if (this.ticksLived == 5) {
+            if (this.getSize() > 3) {
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+            }
+        }
     }
 }

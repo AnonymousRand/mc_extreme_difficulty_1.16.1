@@ -48,47 +48,6 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
         return 16.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks % 24 == 0 && this.a25) { // reset right before the next cycle
-            this.a25 = false;
-        }
-
-        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) { /** every 25 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself */
-            this.a25 = true;
-            new RunnableSpawnBlocksAround(this, org.bukkit.Material.COBWEB, 1).run();
-        }
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, spiders gain speed 1 */
-            this.a20 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-        }
-
-        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, spiders summon 2 vanilla cave spiders */
-            this.a50 = true;
-            new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
-        }
-
-        if (this.attacks == 80 && !this.a80) { /** after 80 attacks, spiders summon 2 cave spiders */
-            this.a80 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 2, null, null, this, false, true);
-        }
-
-        if (this.isClimbing()) { /** spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
-            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -139,5 +98,46 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks % 24 == 0 && this.a25) { // reset right before the next cycle
+            this.a25 = false;
+        }
+
+        if (this.attacks % 25 == 0 && this.attacks != 0 && !this.a25) { /** every 25 attacks, spiders lay down cobwebs that last 5 seconds in a 3 by 3 cube around itself */
+            this.a25 = true;
+            new RunnableSpawnBlocksAround(this, org.bukkit.Material.COBWEB, 1).run();
+        }
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, spiders gain speed 1 */
+            this.a20 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+        }
+
+        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, spiders summon 2 vanilla cave spiders */
+            this.a50 = true;
+            new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
+        }
+
+        if (this.attacks == 80 && !this.a80) { /** after 80 attacks, spiders summon 2 cave spiders */
+            this.a80 = true;
+            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 2, null, null, this, false, true);
+        }
+
+        if (this.isClimbing()) { /** spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
+            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
+        }
     }
 }

@@ -29,12 +29,13 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     public CustomEntityBat(World world) { /** bats are now aggressive */
         super(EntityTypes.BAT, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava (as if bats did in the first place) */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -82,12 +83,68 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     public double getFollowRange() {
         /** Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
-        // null check since getFollowRange() is called in CustomPathfinderGoalTarget which is called in CustomPathfinderGoalNearestAttackableTarget which is called in initPathfinder() which is called in super constructor I think which is called obviously before initAttacks()/before this.attackController can be initialized in any other way
-        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttackThresholds()[1]) ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttackThresholds()[2] ? 24 : 32;
+        // null check since getFollowRange() is called in CustomPathfinderGoalTarget which is called in CustomPathfinderGoalNearestAttackableTarget which is called in initPathfinder() which is called in super constructor I think which is called obviously before initAttackLevelingMob()/before this.attackController can be initialized in any other way
+        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[1]) ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[2] ? 24 : 32;
     }
 
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
+    @Override
+    public void checkDespawn() {
+        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+            this.die();
+        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
+                int i = this.getEntityType().e().f();
+                int j = i * i;
+
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                }
+
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
+                int l = k * k;
+
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                } else if (d0 < (double)l) {
+                    this.ticksFarFromPlayer = 0;
+                }
+            }
+
+        } else {
+            this.ticksFarFromPlayer = 0;
+        }
+    }
+
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d5 = this.locZ() - d2;
+
+        if (random.nextDouble() < 0.1) {
+            return d3 * d3 + Math.pow(this.locY() - d1, 2) + d5 * d5;
+        } else {
+            return d3 * d3 + d5 * d5;
+        }
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d2 = this.locZ() - vec3d.z;
+
+        if (random.nextDouble() < 0.1) {
+            return d0 * d0 + Math.pow(this.locY() - vec3d.y, 2) + d2 * d2;
+        } else {
+            return d0 * d0 + d2 * d2;
+        }
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
         this.attackController = new AttackController(3, 7, 12, 24, 32);
     }
 
@@ -97,7 +154,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3]) {
                 /** After 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /** After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds */
@@ -128,7 +185,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         }
     }
 
-    /////////////////////  Overridden vanilla functions  //////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
@@ -173,7 +231,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 8, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /** After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
-            if (this.getAttacks() >= this.attackController.getAttackThresholds()[4]) {
+            if (this.getAttacks() >= this.attackController.getAttacksThresholds()[4]) {
                 new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null, null, this, false, false);
             }
         }
@@ -233,61 +291,6 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
             this.ba = 0.5F;
             this.yaw += f1;
-        }
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
-            this.die();
-        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
-
-            if (entityHuman != null) {
-                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
-                int i = this.getEntityType().e().f();
-                int j = i * i;
-
-                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
-                    this.die();
-                }
-
-                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
-                int l = k * k;
-
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
-                    this.die();
-                } else if (d0 < (double)l) {
-                    this.ticksFarFromPlayer = 0;
-                }
-            }
-
-        } else {
-            this.ticksFarFromPlayer = 0;
-        }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
-
-        if (random.nextDouble() < 0.1) {
-            return d3 * d3 + Math.pow(this.locY() - d1, 2) + d5 * d5;
-        } else {
-            return d3 * d3 + d5 * d5;
-        }
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
-
-        if (random.nextDouble() < 0.1) {
-            return d0 * d0 + Math.pow(this.locY() - vec3d.y, 2) + d2 * d2;
-        } else {
-            return d0 * d0 + d2 * d2;
         }
     }
 }

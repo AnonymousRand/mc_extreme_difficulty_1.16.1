@@ -23,73 +23,18 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         this.deathFireballs = false;
     }
 
     public double getFollowRange() { /** ghasts have 80 block detection range (setting attribute doesn't work) */
         return 80.0;
-    }
-
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
-        this.attackController = new AttackController(20);
-    }
-
-    public int getAttacks() {
-        return this.attackController.getAttacks();
-    }
-
-    public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == attackThresholds[0]) {
-                /** After 20 attacks, ghasts get 16 max health and health */
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
-                this.setHealth(16.0F);
-            }
-        }
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-
-    @Override
-    protected void initPathfinder() {
-        /** Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
-        this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-    }
-
-    @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (this.isInvulnerable(damagesource)) {
-            return false;
-        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /** rebounded fireballs do not do damage */
-            return false;
-        } else {
-            return super.damageEntity(damagesource, f);
-        }
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
-            this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
-        }
     }
 
     @Override
@@ -137,6 +82,63 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
+        this.attackController = new AttackController(20);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 20 attacks, ghasts get 16 max health and health */
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
+                this.setHealth(16.0F);
+            }
+        }
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    protected void initPathfinder() {
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
+        this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        if (this.isInvulnerable(damagesource)) {
+            return false;
+        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /** rebounded fireballs do not do damage */
+            return false;
+        } else {
+            return super.damageEntity(damagesource, f);
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
+            this.deathFireballs = true;
+            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
+        }
     }
 
     static class PathfinderGoalGhastFireball extends PathfinderGoal {

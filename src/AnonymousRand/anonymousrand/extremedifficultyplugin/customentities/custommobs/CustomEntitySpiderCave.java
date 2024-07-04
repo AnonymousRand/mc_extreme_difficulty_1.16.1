@@ -48,41 +48,6 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
         return 16.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.ticksLived == 500) { /** duplicates if it has been alive for 25 seconds */
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
-            this.getBukkitEntity().setCustomName("Good luck making me despawn"); // doesn't despawn and doesn't count towards mob cap
-        } else if (this.ticksLived == 4800) { /** explodes and dies after 4 minutes to reduce lag */
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
-            this.die();
-        }
-
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, cave spiders gain speed 2 */
-            this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs */
-            this.a60 = true;
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 4));
-        }
-
-        if (this.isClimbing()) { /** cave spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
-            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -133,5 +98,40 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.ticksLived == 500) { /** duplicates if it has been alive for 25 seconds */
+            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
+            this.getBukkitEntity().setCustomName("Good luck making me despawn"); // doesn't despawn and doesn't count towards mob cap
+        } else if (this.ticksLived == 4800) { /** explodes and dies after 4 minutes to reduce lag */
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
+            this.die();
+        }
+
+        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, cave spiders gain speed 2 */
+            this.a25 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
+        }
+
+        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs */
+            this.a60 = true;
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 4));
+        }
+
+        if (this.isClimbing()) { /** cave spiders move vertically 2 times as fast (for some reason this still applies to jumping) */
+            this.setMot(this.getMot().x, this.getMot().y * 2.0, this.getMot().z);
+        }
     }
 }

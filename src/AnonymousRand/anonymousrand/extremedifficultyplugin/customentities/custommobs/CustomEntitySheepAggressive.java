@@ -92,49 +92,6 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, aggressive sheep gain speed 1 */
-            this.a65 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); // updates follow range
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4 */
-            this.a40 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
-        }
-
-        if (this.attacks == 65 && !this.a65) { /** after 65 attacks, aggressive sheep get extra knockback */
-            this.a65 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
-        }
-
-        if (this.getHealth() <= 0.0 && !this.die) {
-            this.die = true;
-
-            if (this.attacks >= 20) { /** after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed */
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
-
-                if (this.attacks >= 65) { /** after 65 attacks, aggressive sheep summon an evoker when killed */
-                    new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
-                }
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -185,5 +142,48 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, aggressive sheep gain speed 1 */
+            this.a65 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); // updates follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4 */
+            this.a40 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
+        }
+
+        if (this.attacks == 65 && !this.a65) { /** after 65 attacks, aggressive sheep get extra knockback */
+            this.a65 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
+        }
+
+        if (this.getHealth() <= 0.0 && !this.die) {
+            this.die = true;
+
+            if (this.attacks >= 20) { /** after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed */
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
+
+                if (this.attacks >= 65) { /** after 65 attacks, aggressive sheep summon an evoker when killed */
+                    new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
+                }
+            }
+        }
     }
 }

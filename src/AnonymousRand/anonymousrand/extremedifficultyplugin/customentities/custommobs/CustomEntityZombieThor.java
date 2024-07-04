@@ -15,7 +15,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityZombieThor extends EntityZombie implements ICustomHostile {
+public class CustomEntityZombieThor extends EntityZombie implements ICustomHostile { // todo expend custom zombie?
 
     public PathfinderGoalSelector vanillaTargetSelector;
 
@@ -59,21 +59,6 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
 
     public double getFollowRange() { /** thor zombies have 64 block detection range (setting attribute doesn't work) */
         return 64.0;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        ListenerLightningStrike.storm = true; /** thors can't summon other thors */
-
-        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /** doesn't convert to drowned */
-            this.drownedConversionTime = Integer.MAX_VALUE;
-        }
-
-        if (this.ticksLived == 5) {
-            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /** thor causes thunderstorm */
-        }
     }
 
     @Override
@@ -126,6 +111,21 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        ListenerLightningStrike.storm = true; /** thors can't summon other thors */
+
+        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /** doesn't convert to drowned */
+            this.drownedConversionTime = Integer.MAX_VALUE;
+        }
+
+        if (this.ticksLived == 5) {
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /** thor causes thunderstorm */
+        }
     }
 
     public static class PathfinderGoalThorSummonLightning extends PathfinderGoal {

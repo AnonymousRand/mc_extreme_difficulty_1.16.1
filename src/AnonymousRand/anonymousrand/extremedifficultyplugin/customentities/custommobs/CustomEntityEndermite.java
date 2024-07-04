@@ -13,13 +13,14 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
 
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
         this.initGoalRemoval();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -40,63 +41,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
 
     public double getFollowRange() { /** endmites have 20 block detection range (setting attribute doesn't work) */
         return 20.0;
-    }
-
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
-        this.attackController = new AttackController(35, 60);
-    }
-
-    public int getAttacks() {
-        return this.attackController.getAttacks();
-    }
-
-    public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == attackThresholds[0]) {
-                /** After 35 attacks, endermites get more knockback */
-                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
-            } else if (metThreshold == attackThresholds[1]) {
-                /** After 60 attacks, endermites get even more knockback, 14 max health and regen 2 */
-                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
-                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            }
-        }
-    }
-
-    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
-    public void initGoalRemoval() {
-        this.vanillaTargetSelector = super.targetSelector;
-        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
-    }
-
-    public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-    @Override
-    public void initPathfinder() {
-        super.initPathfinder();
-        /** Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.005)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-    }
-
-    @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /** duplicates when hit by player and not killed */
-            new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
-        }
-
-        return super.damageEntity(damagesource, f);
     }
 
     @Override
@@ -149,5 +93,65 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
+        this.attackController = new AttackController(35, 60);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 35 attacks, endermites get more knockback */
+                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 60 attacks, endermites get even more knockback, 14 max health and regen 2 */
+                this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(14);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            }
+        }
+    }
+
+    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+
+    public void initGoalRemoval() {
+        this.vanillaTargetSelector = super.targetSelector;
+        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    public void initPathfinder() {
+        super.initPathfinder();
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(1, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 1.0, random.nextDouble() * 3.0, 0.005)); /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /** duplicates when hit by player and not killed */
+            new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+        }
+
+        return super.damageEntity(damagesource, f);
     }
 }

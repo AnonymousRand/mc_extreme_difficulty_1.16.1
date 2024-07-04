@@ -31,16 +31,6 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
-        if (this.isTamed() && this.ticksLived % 10 == 0) { /** wolves can't be tamed */
-            this.setTamed(false);
-            this.setOwnerUUID(UUID.randomUUID());
-        }
-    }
-
-    @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
@@ -90,5 +80,15 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.isTamed() && this.ticksLived % 10 == 0) { /** wolves can't be tamed */
+            this.setTamed(false);
+            this.setOwnerUUID(UUID.randomUUID());
+        }
     }
 }

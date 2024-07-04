@@ -23,12 +23,13 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
-        this.initCustom();
+        this.initCustomHostile();
         this.uniqueID = uuid; // to make sure bossbar etc. doesn't break
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         try {
             this.phaseManager = EntityEnderDragon.class.getDeclaredField("bN");
             this.phaseManager.setAccessible(true);
@@ -44,7 +45,23 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         return 128.0;
     }
 
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
     @Override
     public void initPathfinder() {
         super.initPathfinder();
@@ -103,22 +120,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
             this.currentEnderCrystal = entityEnderCrystal;
         }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
-
-        return d3 * d3 + d5 * d5;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
-
-        return d0 * d0 + d2 * d2;
     }
 
     static class PathfinderGoalDragonFireball extends PathfinderGoal {

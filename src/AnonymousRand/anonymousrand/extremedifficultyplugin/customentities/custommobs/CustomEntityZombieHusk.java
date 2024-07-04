@@ -58,6 +58,58 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
         return 40.0;
     }
 
+    @Override
+    public void checkDespawn() {
+        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+            this.die();
+        } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
+            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+
+            if (entityHuman != null) {
+                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
+                int i = this.getEntityType().e().f();
+                int j = i * i;
+
+                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                }
+
+                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
+                int l = k * k;
+
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                    this.die();
+                } else if (d0 < (double)l) {
+                    this.ticksFarFromPlayer = 0;
+                }
+            }
+
+        } else {
+            this.ticksFarFromPlayer = 0;
+        }
+    }
+
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public int bL() {
+        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
     public int getAttacks() {
         return this.attacks;
     }
@@ -80,11 +132,6 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
             this.a20 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 4));
         }
-    }
-    
-    @Override
-    public int bL() {
-        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 
     static class NewPathfinderGoalHuskSandStorm extends PathfinderGoal {

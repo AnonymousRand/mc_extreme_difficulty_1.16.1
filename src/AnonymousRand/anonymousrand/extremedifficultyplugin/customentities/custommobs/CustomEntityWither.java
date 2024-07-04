@@ -168,6 +168,22 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -184,22 +200,6 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         if (!(this instanceof CustomEntityWitherMini) && this.ticksLived == 5) {
             Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /** wither causes thunderstorm */
         }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
-
-        return d3 * d3 + d5 * d5;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
-
-        return d0 * d0 + d2 * d2;
     }
 
     protected double getHeadX(int i) { // util methods

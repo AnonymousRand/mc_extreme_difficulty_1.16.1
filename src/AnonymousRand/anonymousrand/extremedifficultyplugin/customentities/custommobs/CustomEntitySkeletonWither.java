@@ -56,30 +56,6 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, wither skeletons get regen 2 and 30 max health */
-            this.a12 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
-        }
-
-        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, wither skeletons summon a mini wither */
-            this.a50 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -130,5 +106,29 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, wither skeletons get regen 2 and 30 max health */
+            this.a12 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
+        }
+
+        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, wither skeletons summon a mini wither */
+            this.a50 = true;
+            new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
+        }
     }
 }

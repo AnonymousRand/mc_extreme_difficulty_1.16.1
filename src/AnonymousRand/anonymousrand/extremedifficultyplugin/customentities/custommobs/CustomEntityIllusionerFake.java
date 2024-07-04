@@ -22,7 +22,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
     }
 
     @Override // yes, this works
-    public void initCustom() {
+    public void initCustomHostile() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -40,8 +40,9 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
     }
 
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
         this.attackController = new AttackController(20, 40);
     }
 
@@ -51,7 +52,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
@@ -66,7 +67,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         }
     }
 
-    /////////////////////  Overridden vanilla functions  /////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     public void initPathfinder() { /** no longer target iron golems or villagers, and only shoots arrows (can't apply spells) */
         this.goalSelector.a(1, new EntityRaider.b<>(this));

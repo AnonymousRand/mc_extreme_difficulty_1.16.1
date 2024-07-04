@@ -74,7 +74,8 @@ public class RunnableBreakBlocks extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (++this.cycles > this.maxCycles) {
+        this.cycles++;
+        if (this.cycles > this.maxCycles) {
             this.cancel();
             return;
         }

@@ -58,15 +58,6 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
-        if (this.ticksLived % 3 == 0) {
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> this.pickup((EntityHuman)entity)); /** pufferfish have a poison/wither range of 5 blocks horizontally */
-        }
-    }
-
-    @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
@@ -111,6 +102,15 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.ticksLived % 3 == 0) {
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> this.pickup((EntityHuman)entity)); /** pufferfish have a poison/wither range of 5 blocks horizontally */
+        }
     }
 
     @Override

@@ -5,18 +5,22 @@ import java.util.ArrayList;
 public class AttackController {
 
     private int attacks;
-    private int[] attackThresholds;
+    private int[] attacksThresholds;
 
-    public AttackController(int... attackThresholds) {
-        this.attackThresholds = attackThresholds;
+    public AttackController(int... attacksThresholds) {
+        this.attacksThresholds = attacksThresholds;
         this.attacks = 0;
     }
 
-    // increments attacks and returns all met or exceeded thresholds
+    /**
+     * Increase attacks.
+     *
+     * @return           all newly met or exceeded thresholds
+     */
     public int[] increaseAttacks(int increment) {
         if (increment == 1) {
             this.attacks += increment;
-            for (int attackThreshold : this.attackThresholds) {
+            for (int attackThreshold : this.attacksThresholds) {
                 if (this.attacks == attackThreshold) {
                     return new int[]{this.attacks};
                 }
@@ -26,13 +30,12 @@ public class AttackController {
             ArrayList<Integer> metThresholds = new ArrayList<>();
             int attacksBefore = this.attacks;
             this.attacks += increment;
-            for (int attackThreshold : this.attackThresholds) {
+            for (int attackThreshold : this.attacksThresholds) {
                 if (attacksBefore < attackThreshold && this.attacks >= attackThreshold) {
                     metThresholds.add(attackThreshold);
                 }
             }
-            // dankly convert ArrayList<Integer> to int[]
-            return metThresholds.stream().mapToInt(Integer::intValue).toArray(); // still hate Java :: btw; like ????
+            return metThresholds.stream().mapToInt(Integer::intValue).toArray(); // dankly convert ArrayList<Integer> to int[]
         }
 
         return new int[]{};
@@ -42,7 +45,7 @@ public class AttackController {
         return this.attacks;
     }
 
-    public int[] getAttackThresholds() {
-        return this.attackThresholds;
+    public int[] getAttacksThresholds() {
+        return this.attacksThresholds;
     }
 }

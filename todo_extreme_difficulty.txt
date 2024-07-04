@@ -1,11 +1,25 @@
 todo:
 
-    comment syntax update
+    comment syntax update, line lengths. stopped before: customentitybat
+
+    standard multiline comment for all new features
 
     listeners group by event?
 
+    nms, bukkit etc labels use underscore?
+
+    catalog and test super zombie health nerf + xp health gain
+
+    custom class for large fireball summon lightning and separate newpathfindergoalshootlargefireballs too; also test todo in lightning storm runnable
+
 	reorganize all custommobs to use new attacks thing and whatever (including blaze)
-	
+
+	after that: have initattacklevelingmob function just accept attack thresholds and default in interface
+
+	investigate why some mobs dont need bl() (maxfallheight) or g() and d()
+
+	todo comments in like elder guardian
+
 	breakblocksaround goals make sure never remove blocks underneath unless intentional?
 	
 	pay with targetchance in nearestattackabletarget; seems to try and stagger execution of goals?
@@ -47,11 +61,11 @@ todo:
 	check all the goals comments esp ranged to add clarification to y level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
 	
 	see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
-	
+
+	make dragon fight logic cleaner, as well as ending messages? find exploits
+
 	move some broadcast messages like the end of the dragon fight to disaply full screen? search google for how
-	
-	less uber long lines
-	
+
 	piglin frenzy etc use proper getters and setters
 	
 	piglin still attacks in creative (isinvulnerable check somewhere?)

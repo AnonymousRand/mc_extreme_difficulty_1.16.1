@@ -61,46 +61,6 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.getHealth() <= 0.0 && this.attacks >= 30 && !this.deathExplosion) { /** after 30 attacks, magma cubes explode when killed */
-            this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)) / 2.0F, true, Explosion.Effect.DESTROY);
-        }
-
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, magma cubes increase in size by 2 unless it is already at the largest possible size or is going to exceed it */
-            this.a15 = true;
-
-            if (this.getSize() < 15) {
-                this.setSize(this.getSize() + 2, true);
-            }
-        }
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, magma cubes increase in size by 3 unless it is already at the largest possible size or is going to exceed it */
-            this.a40 = true;
-
-            if (this.getSize() < 14) {
-                this.setSize(this.getSize() + 3, true);
-            }
-        }
-
-        if (this.ticksLived == 5) {
-            if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -151,6 +111,46 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.getHealth() <= 0.0 && this.attacks >= 30 && !this.deathExplosion) { /** after 30 attacks, magma cubes explode when killed */
+            this.deathExplosion = true;
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)) / 2.0F, true, Explosion.Effect.DESTROY);
+        }
+
+        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, magma cubes increase in size by 2 unless it is already at the largest possible size or is going to exceed it */
+            this.a15 = true;
+
+            if (this.getSize() < 15) {
+                this.setSize(this.getSize() + 2, true);
+            }
+        }
+
+        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, magma cubes increase in size by 3 unless it is already at the largest possible size or is going to exceed it */
+            this.a40 = true;
+
+            if (this.getSize() < 14) {
+                this.setSize(this.getSize() + 3, true);
+            }
+        }
+
+        if (this.ticksLived == 5) {
+            if (this.getSize() > 3) {
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+            }
+        }
     }
 
     static class PathfinderGoalMagmaCubeFireAndLava extends PathfinderGoal {

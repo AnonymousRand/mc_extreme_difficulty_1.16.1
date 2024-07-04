@@ -20,12 +20,13 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
 
     public CustomEntityLlamaTrader(World world) {
         super(EntityTypes.TRADER_LLAMA, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         try {
             this.didSpit = EntityLlama.class.getDeclaredField("bH");
             this.didSpit.setAccessible(true);
@@ -52,8 +53,9 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         return 24.0;
     }
 
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
         this.attackController = new AttackController(15);
     }
 
@@ -63,7 +65,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /** After 15 attacks, trader llamas get 50 max health and health */
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);
@@ -72,7 +74,8 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         }
     }
 
-    /////////////////////  Overridden vanilla functions  /////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     protected void initPathfinder() { /** llamas won't panic anymore, are always aggro towards players, don't stop attacking after spitting once, and no longer defend wolves */
         /** Still moves fast in cobwebs */

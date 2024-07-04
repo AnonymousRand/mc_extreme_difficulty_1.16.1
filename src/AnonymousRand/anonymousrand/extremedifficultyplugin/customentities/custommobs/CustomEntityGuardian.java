@@ -22,12 +22,13 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -36,69 +37,6 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
 
     public double getFollowRange() { /** guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
         return (this.attackController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
-    }
-
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
-        this.attackController = new AttackController(8, 12, 40);
-    }
-
-    public int getAttacks() {
-        return this.attackController.getAttacks();
-    }
-
-    public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == attackThresholds[0]) {
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-            } else if (metThreshold == attackThresholds[1]) {
-                /** After 12 attacks, guardians gain regen 3 and 40 max health */
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (metThreshold == attackThresholds[2]) {
-                /** After 40 attacks, guardians summon an elder guardian */
-                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
-            }
-        }
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-    @Override
-    public void initPathfinder() {
-        PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
-        this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
-        /** Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
-        this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
-        this.goalSelector.a(7, this.goalRandomStroll);
-        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
-        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityGuardian.class, 12.0F, 0.01F));
-        this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
-        this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-    }
-
-    @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving)damagesource.j();
-
-            if (!damagesource.isExplosion()) {
-                entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /** thorns damage increased from 2 to 50% of the damage dealt */
-                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /** guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
-            }
-        }
-
-        if (this.goalRandomStroll != null) {
-            this.goalRandomStroll.h();
-        }
-
-        return super.damageEntity(damagesource, f);
     }
 
     @Override
@@ -146,6 +84,71 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
+        this.attackController = new AttackController(8, 12, 40);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 12 attacks, guardians gain regen 3 and 40 max health */
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 40 attacks, guardians summon an elder guardian */
+                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+            }
+        }
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    public void initPathfinder() {
+        PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
+        this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
+        this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
+        this.goalSelector.a(7, this.goalRandomStroll);
+        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
+        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityGuardian.class, 12.0F, 0.01F));
+        this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
+        this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
+        pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
+            EntityLiving entityLiving = (EntityLiving)damagesource.j();
+
+            if (!damagesource.isExplosion()) {
+                entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /** thorns damage increased from 2 to 50% of the damage dealt */
+                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /** guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
+            }
+        }
+
+        if (this.goalRandomStroll != null) {
+            this.goalRandomStroll.h();
+        }
+
+        return super.damageEntity(damagesource, f);
     }
 
     static class PathfinderGoalGuardianAttack extends PathfinderGoal { /** guardian no longer stops attacking if player is too close */

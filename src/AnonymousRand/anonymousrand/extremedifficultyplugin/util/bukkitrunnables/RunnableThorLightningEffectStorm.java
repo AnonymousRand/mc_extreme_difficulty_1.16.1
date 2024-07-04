@@ -41,7 +41,8 @@ public class RunnableThorLightningEffectStorm extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (++this.cycles <= this.maxCycles) {
+        this.cycles++;
+        if (this.cycles > this.maxCycles) {
             Location bukkitLoc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
             for (int i = 0; i < 4; i++) {

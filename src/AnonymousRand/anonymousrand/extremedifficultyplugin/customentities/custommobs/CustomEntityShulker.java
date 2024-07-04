@@ -60,42 +60,6 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, shulkers get 15 armor points and regen 2 */
-            this.a10 = true;
-            this.getAttributeInstance(GenericAttributes.ARMOR).setValue(15.0);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.attacks == 21 && !this.a21) { /** after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds */
-            this.a21 = true;
-            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
-            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
-        }
-
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
-            this.a40 = true;
-            this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
-            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
-            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
-            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
-                ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -141,6 +105,42 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, shulkers get 15 armor points and regen 2 */
+            this.a10 = true;
+            this.getAttributeInstance(GenericAttributes.ARMOR).setValue(15.0);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        }
+
+        if (this.attacks == 21 && !this.a21) { /** after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds */
+            this.a21 = true;
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
+            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
+        }
+
+        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
+            this.a40 = true;
+            this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
+            areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
+            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
+                ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
+            }
+        }
     }
 
     class PathfinderGoalShulkerBulletAttack extends PathfinderGoal {

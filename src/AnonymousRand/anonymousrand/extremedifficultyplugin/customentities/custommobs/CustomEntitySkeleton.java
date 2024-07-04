@@ -71,41 +71,6 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
         return this.attacks < 20 ? 24.0 : 32.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, skeletons get 35 max health and health */
-            this.a20 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(35.0);
-            this.setHealth(35.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, skeletons summon an iron golem */
-            this.a90 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
-        }
-
-        if (this.ticksLived % (random.nextInt(2) + 2) == 0) {
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y level-included sphere for performance reasons
-                    this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
-                }
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -140,5 +105,40 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, skeletons get 35 max health and health */
+            this.a20 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(35.0);
+            this.setHealth(35.0F);
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, skeletons summon an iron golem */
+            this.a90 = true;
+            new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
+        }
+
+        if (this.ticksLived % (random.nextInt(2) + 2) == 0) {
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y level-included sphere for performance reasons
+                    this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
+                }
+            }
+        }
     }
 }

@@ -18,12 +18,13 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
-        initCustom();
+        initCustomHostile();
         initGoalRemoval();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava*/
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -46,7 +47,24 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         return 16.0;
     }
 
-    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
+    @Override
+    public double g(double d0, double d1, double d2) {
+        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d5 = this.locZ() - d2;
+
+        return d3 * d3 + d5 * d5;
+    }
+
+    @Override
+    public double d(Vec3D vec3d) {
+        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d2 = this.locZ() - vec3d.z;
+
+        return d0 * d0 + d2 * d2;
+    }
+
+    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+
     public void initGoalRemoval() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
@@ -57,7 +75,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         return this.vanillaTargetSelector;
     }
 
-    /////////////////////  Overridden vanilla functions  //////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     public void initPathfinder() {
         super.initPathfinder();
@@ -88,21 +107,5 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
                 }
             }
         }
-    }
-
-    @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
-
-        return d3 * d3 + d5 * d5;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
-
-        return d0 * d0 + d2 * d2;
     }
 }

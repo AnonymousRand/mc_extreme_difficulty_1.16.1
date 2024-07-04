@@ -49,40 +49,6 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomH
         return this.attacks < 10 ? 24.0 : 32.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, vindicators get diamond axes which increases damage by 0-1 */
-            this.a10 = true;
-            this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
-            this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.DIAMOND_AXE));
-            this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.DIAMOND_AXE));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, vindicators get strength 2 */
-            this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, vindicators get netherite axes and strength 3 */
-            this.a35 = true;
-            this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.NETHERITE_AXE));
-            this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.NETHERITE_AXE));
-            this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.NETHERITE_AXE));
-            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -133,5 +99,39 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomH
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, vindicators get diamond axes which increases damage by 0-1 */
+            this.a10 = true;
+            this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
+            this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.DIAMOND_AXE));
+            this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.DIAMOND_AXE));
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, vindicators get strength 2 */
+            this.a25 = true;
+            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
+        }
+
+        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, vindicators get netherite axes and strength 3 */
+            this.a35 = true;
+            this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.NETHERITE_AXE));
+            this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.NETHERITE_AXE));
+            this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.NETHERITE_AXE));
+            this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
+        }
     }
 }

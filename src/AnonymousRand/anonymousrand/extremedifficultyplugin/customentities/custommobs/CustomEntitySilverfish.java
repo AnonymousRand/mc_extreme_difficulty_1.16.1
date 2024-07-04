@@ -53,30 +53,6 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
         return 20.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, silverfish gain speed 3 */
-            this.a15 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
-        }
-
-        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, silverfish spawns a 5 by 5 by 5 block of invested stone around it and dies */
-            this.a90 = true;
-            new RunnableSpawnBlocksAround(this, org.bukkit.Material.INFESTED_STONE, 2).run();
-            this.die();
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -127,5 +103,29 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, silverfish gain speed 3 */
+            this.a15 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2));
+        }
+
+        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, silverfish spawns a 5 by 5 by 5 block of invested stone around it and dies */
+            this.a90 = true;
+            new RunnableSpawnBlocksAround(this, org.bukkit.Material.INFESTED_STONE, 2).run();
+            this.die();
+        }
     }
 }

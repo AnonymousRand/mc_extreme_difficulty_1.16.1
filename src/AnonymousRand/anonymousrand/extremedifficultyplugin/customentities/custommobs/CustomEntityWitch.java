@@ -127,29 +127,6 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
         return 24.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 12 && !this.a12) { /** after 12 attakcs, witches summon a ring of dragon fireballs */
-            this.a12 = true;
-            new RunnableRingOfFireballs(this, 1.0, 2, 1).run();
-        }
-
-        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, witches summon area effect clouds wherever it goes */
-            this.a30 = true;
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1, 0, 1, 0, 1.0));
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -200,5 +177,28 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 12 && !this.a12) { /** after 12 attakcs, witches summon a ring of dragon fireballs */
+            this.a12 = true;
+            new RunnableRingOfFireballs(this, 1.0, 2, 1).run();
+        }
+
+        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, witches summon area effect clouds wherever it goes */
+            this.a30 = true;
+            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1, 0, 1, 0, 1.0));
+        }
     }
 }

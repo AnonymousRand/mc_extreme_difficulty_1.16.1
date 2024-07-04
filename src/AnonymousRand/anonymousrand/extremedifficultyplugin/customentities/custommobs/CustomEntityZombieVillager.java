@@ -56,30 +56,6 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         return 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombie villagers get regen 4 */
-            this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
-        }
-
-        if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { // do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
-            this.deathLightningStorm = true;
-            ListenerLightningStrike.storm = true;
-            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /** after 40 attacks, zombie villagers summon a lightning storm when killed */
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -130,5 +106,29 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombie villagers get regen 4 */
+            this.a25 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
+        }
+
+        if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { // do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
+            this.deathLightningStorm = true;
+            ListenerLightningStrike.storm = true;
+            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /** after 40 attacks, zombie villagers summon a lightning storm when killed */
+        }
     }
 }

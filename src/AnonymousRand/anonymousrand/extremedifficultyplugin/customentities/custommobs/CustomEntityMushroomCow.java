@@ -10,16 +10,18 @@ public class CustomEntityMushroomCow extends EntityMushroomCow implements ICusto
 
     public CustomEntityMushroomCow(World world) {
         super(EntityTypes.MOOSHROOM, world);
-        this.initCustom();
+        this.initCustomPeaceful();
     }
 
-    ////////////////////////////  ICustomPeaceful  ///////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomPeaceful  //////////////////////////////////////
+
+    public void initCustomPeaceful() {
         this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
     }
 
-    /////////////////////  Overridden vanilla functions  /////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     public void initPathfinder() {
         super.initPathfinder();

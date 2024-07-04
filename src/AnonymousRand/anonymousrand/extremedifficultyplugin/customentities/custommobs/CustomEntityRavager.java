@@ -59,36 +59,6 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
         return this.attacks < 20 ? 40.0 : 80.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, ravagers gain speed 5 and 1 damage */
-            this.a20 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, ravagers get extra knockback */
-            this.a60 = true;
-            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.5);
-        }
-
-        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, ravagers get regen 3 */
-            this.a90 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -139,5 +109,35 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, ravagers gain speed 5 and 1 damage */
+            this.a20 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, ravagers get extra knockback */
+            this.a60 = true;
+            this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.5);
+        }
+
+        if (this.attacks == 90 && !this.a90) { /** after 90 attacks, ravagers get regen 3 */
+            this.a90 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+        }
     }
 }

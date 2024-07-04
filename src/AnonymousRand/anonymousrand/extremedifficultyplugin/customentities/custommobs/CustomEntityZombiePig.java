@@ -44,42 +44,6 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
         return 20.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 5 && !this.a5) { /** after 5 attacks, zombie piglins can aggro other zombie piglins up to 25 blocks away and get regen 2 */
-            this.a5 = true;
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(25.0);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-        }
-
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, zombie piglins can aggro other zombie piglins up to 32 blocks away and get 30 max health */
-            this.a15 = true;
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(32.0);
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
-        }
-
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombie piglins can aggro other zombie piglins up to 40 blocks away and get regen 3 */
-            this.a25 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(40.0);
-        }
-
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, zombie piglins can aggro other zombie piglins up to 50 blocks away */
-            this.a35 = true;
-            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(50.0);
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -130,5 +94,41 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 5 && !this.a5) { /** after 5 attacks, zombie piglins can aggro other zombie piglins up to 25 blocks away and get regen 2 */
+            this.a5 = true;
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(25.0);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+        }
+
+        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, zombie piglins can aggro other zombie piglins up to 32 blocks away and get 30 max health */
+            this.a15 = true;
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(32.0);
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
+        }
+
+        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombie piglins can aggro other zombie piglins up to 40 blocks away and get regen 3 */
+            this.a25 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(40.0);
+        }
+
+        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, zombie piglins can aggro other zombie piglins up to 50 blocks away */
+            this.a35 = true;
+            this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(50.0);
+        }
     }
 }

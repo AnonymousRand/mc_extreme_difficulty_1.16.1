@@ -1,5 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util;
 
 public interface ICustomPeaceful {
-    void initCustom();
+    void initCustomPeaceful();
 }

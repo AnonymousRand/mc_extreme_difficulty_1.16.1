@@ -29,19 +29,19 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
     }
 
     @Override
+    public int bL() {
+        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
         if (this.getGoalTarget() != null) {
             if (this.d(this.getGoalTarget().getPositionVector()) <= 4.0) { /** sheep explode instantly when it is less than 2 blocks away from player */
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, true, Explosion.Effect.DESTROY);
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }
         }
-    }
-
-    @Override
-    public int bL() {
-        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
     }
 }

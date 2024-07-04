@@ -65,48 +65,6 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 28.0 : 40.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.getRabbitType() == 99) {
-            if (this.attacks == 5 && !this.a5) { /** after 5 attacks, killer bunnies gain speed 4 */
-                this.a5 = true;
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-            }
-
-            if (this.attacks == 15 && !this.a15) { /** after 15 attacks, killer bunnies gain speed 5 */
-                this.a15 = true;
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-            }
-
-            if (this.attacks == 25 && !this.a25) { /** after 25 attacks, killer bunnies gain speed 6 and 10 max health and health */
-                this.a25 = true;
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 5));
-                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
-                this.setHealth(10.0F);
-            }
-
-            if (this.getHealth() <= 0.0 && !this.die) {
-                this.die = true;
-
-                if (this.attacks >= 25) { /** after 25 attacks, killer bunnies explode when killed */
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
-                }
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -157,6 +115,48 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.getRabbitType() == 99) {
+            if (this.attacks == 5 && !this.a5) { /** after 5 attacks, killer bunnies gain speed 4 */
+                this.a5 = true;
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+            }
+
+            if (this.attacks == 15 && !this.a15) { /** after 15 attacks, killer bunnies gain speed 5 */
+                this.a15 = true;
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+            }
+
+            if (this.attacks == 25 && !this.a25) { /** after 25 attacks, killer bunnies gain speed 6 and 10 max health and health */
+                this.a25 = true;
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 5));
+                ((LivingEntity)this.getBukkitEntity()).setMaxHealth(10.0);
+                this.setHealth(10.0F);
+            }
+
+            if (this.getHealth() <= 0.0 && !this.die) {
+                this.die = true;
+
+                if (this.attacks >= 25) { /** after 25 attacks, killer bunnies explode when killed */
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
+                }
+            }
+        }
     }
 
     static class PathfinderGoalKillerRabbitMeleeAttack extends CustomPathfinderGoalMeleeAttack {

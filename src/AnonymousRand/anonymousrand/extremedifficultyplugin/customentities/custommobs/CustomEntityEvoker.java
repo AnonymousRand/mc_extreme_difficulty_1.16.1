@@ -28,12 +28,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
-        this.initCustom();
-        this.initAttacks();
+        this.initCustomHostile();
+        this.initAttackLevelingMob();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -42,68 +43,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     public double getFollowRange() { /** evokers have 28 block detection range (setting attribute doesn't work) */
         return 28.0;
-    }
-
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
-        this.attackController = new AttackController(25, 35, 60);
-    }
-
-    public int getAttacks() {
-        return this.attackController.getAttacks();
-    }
-
-    public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == attackThresholds[0]) {
-                /** After 25 attacks, evokers summon 3 vexes and gain regen 2 */
-                new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
-                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            } else if (metThreshold == attackThresholds[1]) {
-                /** After 35 attacks, evokers gain regen 3 */
-                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (metThreshold == attackThresholds[2]) {
-                /** After 60 attacks, evokers gain speed 1 */
-                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            }
-        }
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-    @Override
-    protected void initPathfinder() { /** no longer targets iron golems */
-        this.goalSelector.a(1, new EntityRaider.b<>(this));
-        this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
-        this.goalSelector.a(5, new c(this));
-        this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
-
-        /** Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
-        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
-        this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
-        this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
-        this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
-        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
-        this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-        this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
-    }
-
-    @Override
-    public void die() {
-        super.die();
-
-        if (this.getAttacks() >= 60) { /** after 60 attacks, evokers summon 7 vexes when killed */
-            new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
-        }
     }
 
     @Override
@@ -156,6 +95,70 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
+        this.attackController = new AttackController(25, 35, 60);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 25 attacks, evokers summon 3 vexes and gain regen 2 */
+                new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 35 attacks, evokers gain regen 3 */
+                this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 60 attacks, evokers gain speed 1 */
+                this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
+            }
+        }
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    protected void initPathfinder() { /** no longer targets iron golems */
+        this.goalSelector.a(1, new EntityRaider.b<>(this));
+        this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
+        this.goalSelector.a(5, new c(this));
+        this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
+
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
+        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
+        this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
+        this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
+        this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
+        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
+        this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
+        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
+    }
+
+    @Override
+    public void die() {
+        super.die();
+
+        if (this.getAttacks() >= 60) { /** after 60 attacks, evokers summon 7 vexes when killed */
+            new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
+        }
     }
 
     private void a(@Nullable EntitySheep entitySheep) { // private setWololoTarget()

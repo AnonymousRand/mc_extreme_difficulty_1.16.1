@@ -46,7 +46,14 @@ public class RunnableLightningStorm extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (++this.cycles <= this.maxCycles) {
+        this.cycles++;
+        if (this.cycles - 5 >= this.maxCycles) { // todo what is letting cycles go 5 past for
+            this.cancel();
+            ListenerLightningStrike.storm = false;
+            return;
+        }
+
+        if (this.cycles <= this.maxCycles) {
             Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.bukkitLoc), 361.0);
 
             if (this.customLightning) {
@@ -54,9 +61,6 @@ public class RunnableLightningStorm extends BukkitRunnable {
             } else {
                 this.bukkitWorld.strikeLightning(bukkitLoc2);
             }
-        } else if (this.cycles - 5 >= this.maxCycles) {
-            this.cancel();
-            ListenerLightningStrike.storm = false;
         }
     }
 }

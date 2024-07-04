@@ -16,11 +16,12 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
-        this.initCustom();
+        this.initCustomHostile();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
         /** No longer avoids fire */
@@ -63,37 +64,6 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
 
     public double getFollowRange() { /** aggressive chickens have 16 block detection range (setting attribute doesn't work) */
         return 16.0;
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-    @Override
-    protected void initPathfinder() { /** chicken can't panic/breed/follow parent/be tempted with seeds */
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob move towards the player */
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
-        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
-        this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class)); /** attack priority: silverfish, endermite, other monsters, players, chickens, aggressive chickens, exploding aggressive chickens */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class));
-        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class));
-        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class));
-        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class));
-        this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        /** Aggressive chickens die after 30 seconds */
-        if (this.ticksLived == 600) {
-            this.die();
-        }
     }
 
     @Override
@@ -141,5 +111,37 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    protected void initPathfinder() { /** chicken can't panic/breed/follow parent/be tempted with seeds */
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob move towards the player */
+        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
+        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
+        this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class)); /** attack priority: silverfish, endermite, other monsters, players, chickens, aggressive chickens, exploding aggressive chickens */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class));
+        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
+        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class));
+        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class));
+        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class));
+        this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        /** Aggressive chickens die after 30 seconds */
+        if (this.ticksLived == 600) {
+            this.die();
+        }
     }
 }

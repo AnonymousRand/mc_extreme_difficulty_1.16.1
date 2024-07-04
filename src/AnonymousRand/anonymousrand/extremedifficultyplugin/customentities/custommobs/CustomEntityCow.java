@@ -11,11 +11,12 @@ public class CustomEntityCow extends EntityCow implements ICustomPeaceful {
 
     public CustomEntityCow(World world) {
         super(EntityTypes.COW, world);
-        this.initCustom();
+        this.initCustomPeaceful();
     }
 
-    ////////////////////////////  ICustomPeaceful  ///////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomPeaceful  //////////////////////////////////////
+
+    public void initCustomPeaceful() {
         /** Cows have a 5% chance to spawn as a mooshroom instead */
         if (random.nextDouble() < 0.05) {
             new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
@@ -36,7 +37,8 @@ public class CustomEntityCow extends EntityCow implements ICustomPeaceful {
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 
-    /////////////////////  Overridden vanilla functions  /////////////////////
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     public void initPathfinder() {
         super.initPathfinder();

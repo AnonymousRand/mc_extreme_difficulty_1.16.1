@@ -55,47 +55,6 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         return 32.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, vexes summon a bat */
-            this.a20 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null, null, this, false, false);
-        }
-
-        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, vexes heal itself and all other vexes within 16 blocks horizontally to full health */
-            this.a30 = true;
-            this.setHealth(11.0F);
-
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex).forEach(entity -> ((CustomEntityVex)entity).setHealth(11.0F));
-        }
-
-        if (attacks == 45 && !this.a45) { /** after 45 attacks, vexes heal itself and all other evokers and vexes within 32 blocks horizontally to full health */
-            this.a45 = true;
-            this.setHealth(11.0F);
-
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> ((EntityLiving)entity).setHealth(11.0F));
-        }
-
-        if (this.attacks >= 60 && !this.a60) { /** after 60 attacks, vexes teleport ASAP to their goal target, explode and die */
-            if (this.getGoalTarget() != null) {
-                this.a60 = true;
-                this.setPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.5F, false, Explosion.Effect.NONE);
-                this.die();
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -141,6 +100,47 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, vexes summon a bat */
+            this.a20 = true;
+            new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null, null, this, false, false);
+        }
+
+        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, vexes heal itself and all other vexes within 16 blocks horizontally to full health */
+            this.a30 = true;
+            this.setHealth(11.0F);
+
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(16.0, 128.0, 16.0), entity -> entity instanceof CustomEntityVex).forEach(entity -> ((CustomEntityVex)entity).setHealth(11.0F));
+        }
+
+        if (attacks == 45 && !this.a45) { /** after 45 attacks, vexes heal itself and all other evokers and vexes within 32 blocks horizontally to full health */
+            this.a45 = true;
+            this.setHealth(11.0F);
+
+            this.getWorld().getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> ((EntityLiving)entity).setHealth(11.0F));
+        }
+
+        if (this.attacks >= 60 && !this.a60) { /** after 60 attacks, vexes teleport ASAP to their goal target, explode and die */
+            if (this.getGoalTarget() != null) {
+                this.a60 = true;
+                this.setPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());
+                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.5F, false, Explosion.Effect.NONE);
+                this.die();
+            }
+        }
     }
 
     class ControllerMoveVex extends ControllerMove {

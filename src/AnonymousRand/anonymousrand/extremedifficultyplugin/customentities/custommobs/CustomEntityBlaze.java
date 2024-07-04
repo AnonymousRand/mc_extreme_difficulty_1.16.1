@@ -21,13 +21,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
     public CustomEntityBlaze(World world) {
         super(EntityTypes.BLAZE, world);
-        initCustom();
-        initAttacks();
+        initCustomHostile();
+        initAttackLevelingMob();
         initGoalRemoval();
     }
 
-    ////////////////////////////  ICustomHostile  ////////////////////////////
-    public void initCustom() {
+    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+
+    public void initCustomHostile() {
         /** No longer avoids water */
         this.a(PathType.WATER, 0.0F);
         /** No longer avoids lava */
@@ -49,71 +50,6 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     public double getFollowRange() {
         /** Blazes have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
-    }
-
-    //////////////////////////  IAttackLevelingMob  //////////////////////////
-    public void initAttacks() {
-        this.attackController = new AttackController(75, 175, 350);
-    }
-
-    public int getAttacks() {
-        return this.attackController.getAttacks();
-    }
-
-    public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttackThresholds();
-            if (metThreshold == attackThresholds[0]) {
-                /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
-                double d1 = this.getGoalTarget().locX() - this.locX();
-                double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
-                double d3 = this.getGoalTarget().locZ() - this.locZ();
-                CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.getWorld(), this, d1, d2, d3, 1);
-                entityLargeFireball.setPosition(entityLargeFireball.locX(), this.e(0.5D) + 0.5D, entityLargeFireball.locZ());
-                this.getWorld().addEntity(entityLargeFireball);
-            } else if (metThreshold == attackThresholds[1]) {
-                /** After 175 attacks, blazes shoot out a ring of fireballs */
-                new RunnableRingOfFireballs(this, 0.5, 1).run();
-            } else if (metThreshold == attackThresholds[2]) {
-                /** After 350 attacks, blazes shoot even faster (+100% vanilla speed compared to +50%, both with no attack cooldown between volleys), and shoot 3 fireballs at a time in a cone-like shape */
-                this.rapidFire = true;
-            }
-        }
-    }
-
-    ///////////////////////////  IGoalRemovingMob  ///////////////////////////
-    public void initGoalRemoval() {
-        this.vanillaTargetSelector = super.targetSelector;
-        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
-    }
-
-    public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
-    }
-
-    ////////////////////////  Other custom functions  ////////////////////////
-    public boolean getRapidFire() {
-        return this.rapidFire;
-    }
-
-    /////////////////////  Overridden vanilla functions  /////////////////////
-    @Override
-    protected void initPathfinder() {
-        super.initPathfinder();
-        /** Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
-        /** Doesn't need line of sight to find targets and start attacking */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
-    }
-
-    @Override
-    public boolean dN() {
-        /** No longer damaged by water */
-        return false;
     }
 
     @Override
@@ -161,6 +97,75 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
+    }
+
+    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+
+    public void initAttackLevelingMob() {
+        this.attackController = new AttackController(75, 175, 350);
+    }
+
+    public int getAttacks() {
+        return this.attackController.getAttacks();
+    }
+
+    public void increaseAttacks(int increase) {
+        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackController.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0]) {
+                /** After 75 attacks, blazes shoot an exploding fireball with power 1 */
+                double d1 = this.getGoalTarget().locX() - this.locX();
+                double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
+                double d3 = this.getGoalTarget().locZ() - this.locZ();
+                CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.getWorld(), this, d1, d2, d3, 1);
+                entityLargeFireball.setPosition(entityLargeFireball.locX(), this.e(0.5D) + 0.5D, entityLargeFireball.locZ());
+                this.getWorld().addEntity(entityLargeFireball);
+            } else if (metThreshold == attackThresholds[1]) {
+                /** After 175 attacks, blazes shoot out a ring of fireballs */
+                new RunnableRingOfFireballs(this, 0.5, 1).run();
+            } else if (metThreshold == attackThresholds[2]) {
+                /** After 350 attacks, blazes shoot even faster (+100% vanilla speed compared to +50%, both with no attack cooldown between volleys), and shoot 3 fireballs at a time in a cone-like shape */
+                this.rapidFire = true;
+            }
+        }
+    }
+
+    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+
+    public void initGoalRemoval() {
+        this.vanillaTargetSelector = super.targetSelector;
+        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
+        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
+    }
+
+    //////////////////////////////////  Other custom functions  ///////////////////////////////////
+
+    public boolean getRapidFire() {
+        return this.rapidFire;
+    }
+
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
+    @Override
+    protected void initPathfinder() {
+        super.initPathfinder();
+        /** Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        /** Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
+        /** Doesn't need line of sight to find targets and start attacking */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
+    }
+
+    @Override
+    public boolean dN() {
+        /** No longer damaged by water */
+        return false;
     }
 
     static class PathfinderGoalBlazeFireballAttack extends PathfinderGoal {

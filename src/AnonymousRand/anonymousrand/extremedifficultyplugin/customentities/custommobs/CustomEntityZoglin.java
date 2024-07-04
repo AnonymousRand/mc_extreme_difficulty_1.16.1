@@ -65,47 +65,8 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         }
     }
 
-    @Override
-    protected BehaviorController<?> a(Dynamic<?> dynamic) { // removes all the weird behavior-controlled attack goals and instead use the standard pathfinder goals
-        return this.cJ().a(dynamic);
-    }
-
     public double getFollowRange() { /** zoglins have 64 block detection range (setting attribute doesn't work) */
         return 64.0;
-    }
-
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 8 && !this.a8) { /** after 8 attacks, zoglins gain regen 2 and shoot a power 1 ghast fireball every 5 seconds */
-            this.a8 = true;
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false));
-        }
-
-        if (this.attacks == 30 &&!this.a30) { /** after 30 attacks, zoglins gain speed 5 */
-            this.a30 = true;
-            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-        }
-
-        if (this.ticksLived % 10 == 0 && this.getGoalTarget() != null) {
-            Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
-
-            if (bukkitLoc.getBlock().getType() == org.bukkit.Material.AIR) { /** zoglins create a path of power 1 tnt on itself as long as it is inside an air block */
-                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /** after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds */
-                newTNT.setPosition(this.locX(), this.locY(), this.locZ());
-                this.getWorld().addEntity(newTNT);
-            }
-        }
     }
 
     @Override
@@ -158,6 +119,45 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    protected BehaviorController<?> a(Dynamic<?> dynamic) { // removes all the weird behavior-controlled attack goals and instead use the standard pathfinder goals
+        return this.cJ().a(dynamic);
+    } // todo what?
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 8 && !this.a8) { /** after 8 attacks, zoglins gain regen 2 and shoot a power 1 ghast fireball every 5 seconds */
+            this.a8 = true;
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false));
+        }
+
+        if (this.attacks == 30 &&!this.a30) { /** after 30 attacks, zoglins gain speed 5 */
+            this.a30 = true;
+            this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
+        }
+
+        if (this.ticksLived % 10 == 0 && this.getGoalTarget() != null) {
+            Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+
+            if (bukkitLoc.getBlock().getType() == org.bukkit.Material.AIR) { /** zoglins create a path of power 1 tnt on itself as long as it is inside an air block */
+                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /** after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds */
+                newTNT.setPosition(this.locX(), this.locY(), this.locZ());
+                this.getWorld().addEntity(newTNT);
+            }
+        }
     }
 
     static class PathfinderGoalZoglinMeleeAttack extends CustomPathfinderGoalMeleeAttack {

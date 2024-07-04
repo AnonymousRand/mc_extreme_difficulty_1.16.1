@@ -63,50 +63,6 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         return this.attacks < 20 ? 24.0 : 32.0;
     }
 
-    public int getAttacks() {
-        return this.attacks;
-    }
-
-    public void increaseAttacks(int increase) {
-        this.attacks += increase;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, strays get 30 max health and health */
-            this.a20 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
-            this.setHealth(30.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 45 && !this.a45) { /** after 45 attacks, strays get 40 max health and health and regen 2 */
-            this.a45 = true;
-            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
-            this.setHealth(40.0F);
-            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
-        }
-
-        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, strays summon 5 vanilla skeletons */
-            this.a60 = true;
-
-            new SpawnEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 5, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
-        }
-
-        if (this.ticksLived % 2 == 0) {
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y level-included sphere for performance reasons
-                    this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
-                }
-            }
-        }
-    }
-
     @Override
     public void checkDespawn() {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -157,5 +113,49 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
     @Override
     public int bL() {
         return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+    }
+
+    public int getAttacks() {
+        return this.attacks;
+    }
+
+    public void increaseAttacks(int increase) {
+        this.attacks += increase;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, strays get 30 max health and health */
+            this.a20 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
+            this.setHealth(30.0F);
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 45 && !this.a45) { /** after 45 attacks, strays get 40 max health and health and regen 2 */
+            this.a45 = true;
+            ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
+            this.setHealth(40.0F);
+            this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
+        }
+
+        if (this.attacks == 60 && !this.a60) { /** after 60 attacks, strays summon 5 vanilla skeletons */
+            this.a60 = true;
+
+            new SpawnEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 5, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
+        }
+
+        if (this.ticksLived % 2 == 0) {
+            if (this.getGoalTarget() != null) {
+                EntityLiving target = this.getGoalTarget();
+
+                if (this.getNormalDistanceSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y level-included sphere for performance reasons
+                    this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
+                }
+            }
+        }
     }
 }
