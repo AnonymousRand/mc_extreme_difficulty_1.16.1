@@ -40,7 +40,9 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
     }
 
-    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                    IAttackLevelingMob                                     //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
         this.attackController = new AttackController(20, 40);
@@ -67,7 +69,9 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         }
     }
 
-    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                               Overridden vanilla functions                                //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public void initPathfinder() { /** no longer target iron golems or villagers, and only shoots arrows (can't apply spells) */

@@ -19,7 +19,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.initAttackLevelingMob();
     }
 
-    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
         /** No longer avoids lava */
@@ -96,7 +98,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         return Integer.MAX_VALUE;
     }
 
-    ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                    IAttackLevelingMob                                     //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
         this.attackController = new AttackController();
@@ -112,7 +116,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.increaseStatsAdd(2.0, 0.5, 0.025);
     }
 
-    //////////////////////////////////  Other custom functions  ///////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                  Other custom functions                                   //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void increaseStatsAdd(double healthIncrease, double damageIncrease, double speedIncrease) {
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + damageIncrease);
@@ -139,7 +145,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         VanillaPathfinderGoalsAccess.updateMobFollowRange(this);
     }
 
-    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                               Overridden vanilla functions                                //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void initPathfinder() { /** no longer targets monsters or defends villages */

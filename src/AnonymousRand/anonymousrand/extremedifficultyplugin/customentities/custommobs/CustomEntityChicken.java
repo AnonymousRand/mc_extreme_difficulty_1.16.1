@@ -16,7 +16,9 @@ public class CustomEntityChicken extends EntityChicken implements ICustomPeacefu
         this.initCustomPeaceful();
     }
 
-    //////////////////////////////////////  ICustomPeaceful  //////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomPeaceful                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomPeaceful() { // questionable design choice but such is the nature of Java
         this.initAttributes();
@@ -27,7 +29,9 @@ public class CustomEntityChicken extends EntityChicken implements ICustomPeacefu
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }
 
-    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                               Overridden vanilla functions                                //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public void initPathfinder() {

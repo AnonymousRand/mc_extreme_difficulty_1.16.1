@@ -19,7 +19,9 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.initCustomHostile();
     }
 
-    //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
         /** No longer avoids lava */
@@ -117,7 +119,9 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         return dist_x * dist_x + dist_z * dist_z;
     }
 
-    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                               Overridden vanilla functions                                //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void initPathfinder() { /** chicken can't panic/breed/follow parent/be tempted with seeds */
