@@ -42,7 +42,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
 
     ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
 
-    public void initAttackLevelingMob() {
+    private void initAttackLevelingMob() {
         this.attackController = new AttackController(20, 40);
     }
 

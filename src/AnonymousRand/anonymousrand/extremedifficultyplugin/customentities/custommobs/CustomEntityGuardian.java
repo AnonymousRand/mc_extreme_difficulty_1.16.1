@@ -47,20 +47,24 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
+                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
+                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
+                /** Random despawn distance increased to 40 blocks */
+                int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
+                        && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
-                } else if (d0 < (double)l) {
+                } else if (distToNearestPlayer < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -71,24 +75,24 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
+    public double g(double x, double y, double z) {
+        double dist_x = this.locX() - x;
+        double dist_z = this.locZ() - z;
 
-        return d3 * d3 + d5 * d5;
+        return dist_x * dist_x + dist_z * dist_z;
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
+        double dist_x = this.locX() - vec3d.x;
+        double dist_z = this.locZ() - vec3d.z;
 
-        return d0 * d0 + d2 * d2;
+        return dist_x * dist_x + dist_z * dist_z;
     }
 
     ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
 
-    public void initAttackLevelingMob() {
+    private void initAttackLevelingMob() {
         this.attackController = new AttackController(8, 12, 40);
     }
 

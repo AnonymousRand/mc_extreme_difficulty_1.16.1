@@ -1,8 +1,8 @@
 todo:
 
-    comment syntax update, line lengths. stopped before: customentitybat
+    overriden functions like checkdespawn try to use descriptive variable names
 
-    standard multiline comment for all new features
+    comment syntax update, line lengths. stopped before: customentitybee
 
     listeners group by event?
 
@@ -19,6 +19,7 @@ todo:
 	investigate why some mobs dont need bl() (maxfallheight) or g() and d()
 
 	todo comments in like elder guardian
+
 
 	breakblocksaround goals make sure never remove blocks underneath unless intentional?
 	
@@ -75,9 +76,7 @@ todo:
 	fake illusioner little damage but big tankiness
 	
 	copy all a() b() etc documentation from passivemeleeattack goal to all goals
-	
-	create full documentation from all /** comments?
-	
+
 	custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
 	
 	try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
@@ -122,6 +121,7 @@ todo:
 	
 	mobs dont get affected by soul sand or magma blocks in water
 	
-	
+	create full documentation of changes from all /** comments and that google doc?
+
 balance changes catalog:
 	striders die faster

@@ -51,7 +51,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
 
     ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
 
-    public void initAttackLevelingMob() {
+    private void initAttackLevelingMob() {
         this.attackController = new AttackController(15);
     }
 

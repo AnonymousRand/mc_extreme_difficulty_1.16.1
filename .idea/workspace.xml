@@ -6,14 +6,12 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3c74af50-3b69-43b3-85d1-680e55ef75f1" name="Changes" comment="">
+    <list default="true" id="3c74af50-3b69-43b3-85d1-680e55ef75f1" name="Changes" comment="comment and style refactoring">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBee.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBee.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBlaze.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityBlaze.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityChicken.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityChicken.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityChickenAggressive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityChickenAggressive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityCow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityCow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityCreeper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityCreeper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityDrowned.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityDrowned.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityEnderDragon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityEnderDragon.java" afterDir="false" />
@@ -29,7 +27,6 @@
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityIronGolem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityIronGolem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityLlama.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityLlama.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityLlamaTrader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityLlamaTrader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityMushroomCow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityMushroomCow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPhantom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPhantom.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPiglin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPiglin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPillager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityPillager.java" afterDir="false" />
@@ -48,6 +45,7 @@
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntitySpider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntitySpider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntitySpiderCave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntitySpiderCave.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVillagerAggressive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVillagerAggressive.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVindicator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityVindicator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityWitch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityWitch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityWither.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityWither.java" afterDir="false" />
@@ -59,18 +57,7 @@
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieSuper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieSuper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieThor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieThor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieVillager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/CustomEntityZombieVillager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/AttackController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/AttackController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/IAttackLevelingMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/IAttackLevelingMob.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/ICustomHostile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/ICustomHostile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/ICustomPeaceful.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/customentities/custommobs/util/ICustomPeaceful.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableBreakBlocks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableBreakBlocks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableConstantlySpawnBlocksEntities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableConstantlySpawnBlocksEntities.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableLightningStorm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableLightningStorm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableMeteorRain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableMeteorRain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableMobShootArrows.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableMobShootArrows.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableRingOfFireballs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableRingOfFireballs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableThorLightningEffectStorm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableThorLightningEffectStorm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableTornado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonymousRand/anonymousrand/extremedifficultyplugin/util/bukkitrunnables/RunnableTornado.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo_extreme_difficulty.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo_extreme_difficulty.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,6 +97,14 @@
       <option name="presentableId" value="Default" />
       <updated>1719968618798</updated>
     </task>
+    <task id="LOCAL-00001" summary="comment and style refactoring">
+      <created>1720076175815</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720076175815</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -122,5 +117,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="comment and style refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="comment and style refactoring" />
   </component>
 </project>

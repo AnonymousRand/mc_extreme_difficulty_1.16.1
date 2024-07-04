@@ -60,18 +60,18 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
     }
 
     @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
+    public double g(double x, double y, double z) {
+        double dist_x = this.locX() - x;
+        double dist_z = this.locZ() - z;
 
-        return d3 * d3 + d5 * d5;
+        return dist_x * dist_x + dist_z * dist_z;
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
+        double dist_x = this.locX() - vec3d.x;
+        double dist_z = this.locZ() - vec3d.z;
 
-        return d0 * d0 + d2 * d2;
+        return dist_x * dist_x + dist_z * dist_z;
     }
 }

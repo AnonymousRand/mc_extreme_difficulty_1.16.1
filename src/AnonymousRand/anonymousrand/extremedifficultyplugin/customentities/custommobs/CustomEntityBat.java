@@ -23,7 +23,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     private NewPathfinderGoalBuffMobs buffMobs;
     private boolean firstDuplicate;
 
-    private static final CustomPathfinderTargetCondition c = (new CustomPathfinderTargetCondition()).a(4.0D).b();
+    private static final CustomPathfinderTargetCondition c = (new CustomPathfinderTargetCondition()).a(4.0D).b(); // todo what?
     private BlockPosition targetPosition;
     private Field attributeMap;
 
@@ -36,9 +36,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     //////////////////////////////////////  ICustomHostile  ///////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava (as if bats did in the first place) */
+        /** No longer avoids lava and fire (as if bats did in the first place) */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.firstDuplicate = true;
@@ -73,8 +72,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     // from Spigot forums again
-    private void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
-        AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
+    private void registerGenericAttribute(org.bukkit.entity.Entity bukkitEntity, Attribute attribute) throws IllegalAccessException {
+        AttributeMapBase attributeMapBase = ((CraftLivingEntity)bukkitEntity).getHandle().getAttributeMap();
         Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)this.attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
@@ -83,8 +82,12 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     public double getFollowRange() {
         /** Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
-        // null check since getFollowRange() is called in CustomPathfinderGoalTarget which is called in CustomPathfinderGoalNearestAttackableTarget which is called in initPathfinder() which is called in super constructor I think which is called obviously before initAttackLevelingMob()/before this.attackController can be initialized in any other way
-        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[1]) ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[2] ? 24 : 32;
+        // null check since getFollowRange() is called in CustomPathfinderGoalTarget
+        // which is called in CustomPathfinderGoalNearestAttackableTarget
+        // which is called in initPathfinder() which is called in super constructor I think
+        // which is called obviously before initAttackLevelingMob()/before this.attackController can be initialized in any other way
+        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[1])
+                ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[2] ? 24 : 32;
     }
 
     @Override
@@ -95,20 +98,24 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                double d0 = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2) + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2); /** mobs only despawn along horizontal axes; if you are at y level 256 mobs will still spawn below you at y64 and prevent sleepingdouble d0 = entityHuman.h(this); */
+                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (d0 > (double)j && this.isTypeNotPersistent(d0)) {
+                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
                 }
 
-                int k = this.getEntityType().e().g() + 8; /** random despawn distance increased to 40 blocks */
+                /** Random despawn distance increased to 40 blocks */
+                int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
+                        && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
-                } else if (d0 < (double)l) {
+                } else if (distToNearestPlayer < (double)l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -119,32 +126,32 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     @Override
-    public double g(double d0, double d1, double d2) {
-        double d3 = this.locX() - d0; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d5 = this.locZ() - d2;
+    public double g(double x, double y, double z) {
+        double dist_x = this.locX() - x;
+        double dist_z = this.locZ() - z;
 
-        if (random.nextDouble() < 0.1) {
-            return d3 * d3 + Math.pow(this.locY() - d1, 2) + d5 * d5;
+        if (random.nextDouble() < 0.1) { // todo is this from org?
+            return dist_x * dist_x + Math.pow(this.locY() - y, 2) + dist_z * dist_z;
         } else {
-            return d3 * d3 + d5 * d5;
+            return dist_x * dist_x + dist_z * dist_z;
         }
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /** for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
-        double d2 = this.locZ() - vec3d.z;
+        double dist_x = this.locX() - vec3d.x;
+        double dist_z = this.locZ() - vec3d.z;
 
         if (random.nextDouble() < 0.1) {
-            return d0 * d0 + Math.pow(this.locY() - vec3d.y, 2) + d2 * d2;
+            return dist_x * dist_x + Math.pow(this.locY() - vec3d.y, 2) + dist_z * dist_z;
         } else {
-            return d0 * d0 + d2 * d2;
+            return dist_x * dist_x + dist_z * dist_z;
         }
     }
 
     ////////////////////////////////////  IAttackLevelingMob  /////////////////////////////////////
 
-    public void initAttackLevelingMob() {
+    private void initAttackLevelingMob() {
         this.attackController = new AttackController(3, 7, 12, 24, 32);
     }
 
@@ -173,7 +180,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 this.setHealth(15.0F);
 
                 this.goalSelector.a(this.buffMobs); // remove goal and replace
-                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(), 64, 20, 200, 101);
+                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(),
+                        64, 20, 200, 101);
                 this.goalSelector.a(0, this.buffMobs);
                 this.buffMobs.e();
             } else if (metThreshold == attackThresholds[4]) {
@@ -185,7 +193,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         }
     }
 
-    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+    //////////////////////////////////  Other custom functions  ///////////////////////////////////
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
@@ -212,9 +220,11 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         return buffs;
     }
 
+    ///////////////////////////////  Overridden vanilla functions  ////////////////////////////////
+
     @Override
     public void initPathfinder() {
-        //this.goalSelector.a(0, this.buffMobs);
+        //this.goalSelector.a(0, this.buffMobs); // todo should this be uncommented?
         /** Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
         /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
@@ -228,17 +238,20 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         /** Summons 8-10 vanilla bats when hit by player and not killed for the first time */
         if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) {
             this.firstDuplicate = false;
-            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 8, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
+            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 8,
+                    CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /** After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
             if (this.getAttacks() >= this.attackController.getAttacksThresholds()[4]) {
-                new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null, null, this, false, false);
+                new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null,
+                        null, this, false, false);
             }
         }
 
         return super.damageEntity(damagesource, f);
     }
 
+    // Override pathfinding (it doesn't use a goal for some reason)
     @Override
     protected void mobTick() {
         BlockPosition blockPosition = this.getChunkCoordinates();
@@ -273,17 +286,21 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 this.targetPosition = null;
             }
 
-            if (this.targetPosition == null && this.getGoalTarget() != null) { /** always flies towards goal target if possible; pathfinder goals and navigator doesn't work because bats' movement doesn't follow them, only this method */
+            /** Always flies towards goal target if possible */
+            if (this.targetPosition == null && this.getGoalTarget() != null) {
                 this.targetPosition = new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());
             } else if (targetPosition == null) {
-                this.targetPosition = new BlockPosition(this.locX() + (double)random.nextInt(7) - (double)random.nextInt(7), this.locY() + (double)random.nextInt(6) - 2.0D, this.locZ() + (double)random.nextInt(7) - (double)random.nextInt(7));
+                this.targetPosition = new BlockPosition(this.locX() + (double)random.nextInt(7)
+                        - (double)random.nextInt(7), this.locY() + (double)random.nextInt(6) - 2.0D,
+                        this.locZ() + (double)random.nextInt(7) - (double)random.nextInt(7));
             }
 
             double d0 = (double)this.targetPosition.getX() + 0.5D - this.locX();
             double d1 = (double)this.targetPosition.getY() + 0.1D - this.locY();
             double d2 = (double)this.targetPosition.getZ() + 0.5D - this.locZ();
             Vec3D vec3d = this.getMot();
-            Vec3D vec3d1 = vec3d.add((Math.signum(d0) * 0.5D - vec3d.x) * 0.10000000149011612D, (Math.signum(d1) * 0.699999988079071D - vec3d.y) * 0.10000000149011612D, (Math.signum(d2) * 0.5D - vec3d.z) * 0.10000000149011612D);
+            Vec3D vec3d1 = vec3d.add((Math.signum(d0) * 0.5D - vec3d.x) * 0.10000000149011612D, (Math.signum(d1)
+                    * 0.699999988079071D - vec3d.y) * 0.10000000149011612D, (Math.signum(d2) * 0.5D - vec3d.z) * 0.10000000149011612D);
 
             this.setMot(vec3d1);
             float f = (float)(MathHelper.d(vec3d1.z, vec3d1.x) * 57.2957763671875D) - 90.0F;

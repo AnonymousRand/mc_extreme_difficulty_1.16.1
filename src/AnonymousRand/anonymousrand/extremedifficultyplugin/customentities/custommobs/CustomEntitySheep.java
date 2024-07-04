@@ -30,7 +30,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
     @Override
     public int bL() {
-        return Integer.MAX_VALUE; /** mobs are willing to take any fall to reach the player as they don't take fall damage */
+        return Integer.MAX_VALUE;
     }
 
     @Override
