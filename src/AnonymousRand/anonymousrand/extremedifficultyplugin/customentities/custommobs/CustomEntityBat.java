@@ -204,24 +204,24 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
-        ArrayList<MobEffect> attacks3 = new ArrayList<>();
-        ArrayList<MobEffect> attacks12 = new ArrayList<>();
-        ArrayList<MobEffect> attacks24 = new ArrayList<>();
-        ArrayList<MobEffect> attacks32 = new ArrayList<>();
+        ArrayList<MobEffect> attacks_1 = new ArrayList<>();
+        ArrayList<MobEffect> attacks_2 = new ArrayList<>();
+        ArrayList<MobEffect> attacks_3 = new ArrayList<>();
+        ArrayList<MobEffect> attacks_4 = new ArrayList<>();
 
-        attacks3.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
-        attacks3.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
-        attacks3.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
-        attacks12.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
-        attacks12.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 1));
-        attacks12.add(new MobEffect(MobEffects.REGENERATION, 4800, 2));
-        attacks24.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
-        attacks32.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
+        attacks_1.add(new MobEffect(MobEffects.REGENERATION, 4800, 1));
+        attacks_1.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
+        attacks_1.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
+        attacks_2.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
+        attacks_2.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 1));
+        attacks_2.add(new MobEffect(MobEffects.REGENERATION, 4800, 2));
+        attacks_3.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
+        attacks_4.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
 
-        buffs.put(3, attacks3);
-        buffs.put(12, attacks12);
-        buffs.put(24, attacks24);
-        buffs.put(32, attacks32);
+        buffs.put(3, attacks_1);
+        buffs.put(12, attacks_2);
+        buffs.put(24, attacks_3);
+        buffs.put(32, attacks_4);
 
         return buffs;
     }
@@ -259,7 +259,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         return super.damageEntity(damagesource, f);
     }
 
-    // Override pathfinding (it doesn't use a goal for some reason)
+    // Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out)
     @Override
     protected void mobTick() {
         BlockPosition blockPosition = this.getChunkCoordinates();

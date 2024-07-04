@@ -2,7 +2,7 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths. stopped before: customentitybee
+    comment syntax update, line lengths, remove last newline. stopped before: customentitybee
 
     listeners group by event?
 
