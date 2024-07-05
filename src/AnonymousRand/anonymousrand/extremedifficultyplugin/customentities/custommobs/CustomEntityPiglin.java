@@ -26,29 +26,29 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     public CustomEntityPiglin(World world) {
         super(EntityTypes.PIGLIN, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         double rand = random.nextDouble();
-        this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.95 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /** piglins have a 45% chance to be armed with a crossbow or a sword each, a 5% chance to have a netherite hoe, and a 5% chance to have a netherite sword */
-        Arrays.fill(this.dropChanceHand, 0.0f); /** piglins can't drop the items they are holding */
-        Arrays.fill(this.dropChanceArmor, 0.0f); /** piglins can't drop armor */
+        this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.95 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /* piglins have a 45% chance to be armed with a crossbow or a sword each, a 5% chance to have a netherite hoe, and a 5% chance to have a netherite sword */
+        Arrays.fill(this.dropChanceHand, 0.0f); /* piglins can't drop the items they are holding */
+        Arrays.fill(this.dropChanceArmor, 0.0f); /* piglins can't drop armor */
         this.attacks = 0;
         this.a10 = false;
         this.a20 = false;
         this.a55 = false;
         this.a40 = false;
         this.frenzyTicks = 0;
-        this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /** piglins have speed 1, 50 max health and 30 health */
+        this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0)); /* piglins have speed 1, 50 max health and 30 health */
         ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(50.0);
         this.setHealth(30.0F);
 
-        if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /** piglins continue attacking while trading */
-            /** Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /** uses the custom goal that attacks regardless of the y level */
+        if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attacking while trading */
+            /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /** uses the custom melee attack goal that attacks regardless of the y level */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /** for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /** for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y level */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
         this.goalSelector.a(0, this.buffPiglins);
@@ -75,13 +75,13 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /** custom goal that removes fear of zombie piglins etc. */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /** buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
+    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /* buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
 
         ArrayList<MobEffect> attacks20 = new ArrayList<>();
@@ -99,7 +99,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         return buffs;
     }
 
-    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapInsentient() { /** buffs: after 55 attacks, all mobs within 40 block sphere get +10 attacks, and gold helmets, chestplates, and leggings, and gold swords if they don't have anything in their main hand */
+    protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapInsentient() { /* buffs: after 55 attacks, all mobs within 40 block sphere get +10 attacks, and gold helmets, chestplates, and leggings, and gold swords if they don't have anything in their main hand */
         HashMap<Integer, ArrayList<MobEffect>> buffs = new HashMap<>();
         ArrayList<MobEffect> attacks55 = new ArrayList<>();
         attacks55.add(new MobEffect(MobEffects.UNLUCK, Integer.MAX_VALUE, 254));
@@ -110,15 +110,15 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void a(EntityLiving entityLiving, float f) { // shoot()
         this.attacks++;
-        this.setHealth((float)(this.getHealth() + 0.75)); /** piglins heal by 0.75 every time its attacks increase by 1 */
+        this.setHealth((float)(this.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
 
-        if (this.attacks == 1) { /** first attack always shoots knockback arrows */
+        if (this.attacks == 1) { /* first attack always shoots knockback arrows */
             new RunnableMobShootArrows(this, entityLiving, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
         } else {
             int rand = random.nextInt(4);
 
-            if (rand < 2) { /** shoots 15 arrows at a time with increased inaccuracy to seem like a cone; 25% of arrows shot are piercing 1 */
-                new RunnableMobShootArrows(this, entityLiving, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /** 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
+            if (rand < 2) { /* shoots 15 arrows at a time with increased inaccuracy to seem like a cone; 25% of arrows shot are piercing 1 */
+                new RunnableMobShootArrows(this, entityLiving, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /* 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
             } else {
                 new RunnableMobShootArrows(this, entityLiving, 15, 2 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run();
             }
@@ -127,7 +127,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && !this.isBaby()) {  /** adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
+        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
             if (random.nextDouble() < 0.075) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
                 newPiglin.a(true);
@@ -166,7 +166,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public void playSound(SoundEffect soundeffect, float soundVolume, float pitch) {
         super.playSound(soundeffect, soundVolume, pitch);
 
-        if (soundeffect == SoundEffects.ENTITY_PIGLIN_ANGRY && this.attacks >= 35) { /** after 35 attacks, piglins get +2.5 max health every time they play the angry sound */
+        if (soundeffect == SoundEffects.ENTITY_PIGLIN_ANGRY && this.attacks >= 35) { /* after 35 attacks, piglins get +2.5 max health every time they play the angry sound */
             LivingEntity bukkitEntity = (LivingEntity)this.getBukkitEntity();
             bukkitEntity.setMaxHealth(bukkitEntity.getMaxHealth() + 2.5);
         }
@@ -177,15 +177,15 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         super.die();
 
         if (this.attacks >= 20) {
-            if (this.attacks >= 55) { /** after 55 attacks, piglins spawn a zombie piglin when killed */
+            if (this.attacks >= 55) { /* after 55 attacks, piglins spawn a zombie piglin when killed */
                 new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
-            } else if (random.nextDouble() < 0.5) { /** after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed */
+            } else if (random.nextDouble() < 0.5) { /* after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed */
                 new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
             }
         }
     }
 
-    public double getFollowRange() { /** piglins have 32 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* piglins have 32 block detection range (setting attribute doesn't work) */
         return 32.0;
     }
 
@@ -197,7 +197,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
@@ -207,7 +207,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
+                /* Random despawn distance increased to 40 blocks */
                 int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
@@ -256,13 +256,13 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public void tick() {
         super.tick();
 
-        this.bA = 0; /** piglins never turn into zombie piglins */
+        this.bA = 0; /* piglins never turn into zombie piglins */
 
         if (this.frenzyTicks > 0) {
             this.frenzyTicks--;
         }
 
-        if (this.attacks == 10 && !this.a10) { /** after 10 attacks, piglins get speed 2 and 60 max health */
+        if (this.attacks == 10 && !this.a10) { /* after 10 attacks, piglins get speed 2 and 60 max health */
             this.a10 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
             ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(60.0);
@@ -270,18 +270,18 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
         if (this.attacks == 20 && !this.a20) {
             this.a20 = true;
-            this.buffPiglins.e(); /** buffs are immediately applied the first time */
+            this.buffPiglins.e(); /* buffs are immediately applied the first time */
         }
 
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, piglins get 75 max health */
+        if (this.attacks == 40 && !this.a40) { /* after 40 attacks, piglins get 75 max health */
             this.a40 = true;
             ((LivingEntity)(this.getBukkitEntity())).setMaxHealth(75.0);
-            this.buffPiglins.e(); /** buffs are immediately applied the first time */
+            this.buffPiglins.e(); /* buffs are immediately applied the first time */
         }
 
-        if (this.attacks == 55 && !this.a55) { /** after 55 attacks, piglins get gold helmets, chestplates and leggings if they didn't already have something equipped there */
+        if (this.attacks == 55 && !this.a55) { /* after 55 attacks, piglins get gold helmets, chestplates and leggings if they didn't already have something equipped there */
             this.a55 = true;
-            this.buffMobs.e(); /** buffs are immediately applied the first time */
+            this.buffMobs.e(); /* buffs are immediately applied the first time */
 
             LivingEntity livingEntity = ((LivingEntity)this.getBukkitEntity());
             if (livingEntity.getEquipment().getHelmet().getType() == org.bukkit.Material.AIR) {
@@ -321,24 +321,24 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         @Override
         public void e() {
             if (this.brain.getMemory(MemoryModuleType.HURT_BY_ENTITY).isPresent()) { // constantly resets these specific memory modules to empty as these tasks are not supposed to be performed
-                if (!(this.brain.getMemory(MemoryModuleType.HURT_BY_ENTITY).get() instanceof EntityPlayer)) { /** piglins no longer retaliate against non-player mobs */
+                if (!(this.brain.getMemory(MemoryModuleType.HURT_BY_ENTITY).get() instanceof EntityPlayer)) { /* piglins no longer retaliate against non-player mobs */
                     this.brain.setMemory(MemoryModuleType.HURT_BY_ENTITY, Optional.empty());
                 }
             }
 
-            if (this.brain.getMemory(MemoryModuleType.ATTACK_TARGET).isPresent()) { /** piglins no longer attack wither skeletons etc. */
+            if (this.brain.getMemory(MemoryModuleType.ATTACK_TARGET).isPresent()) { /* piglins no longer attack wither skeletons etc. */
                 if (!(this.brain.getMemory(MemoryModuleType.ATTACK_TARGET).get() instanceof EntityPlayer)) {
                     this.brain.setMemory(MemoryModuleType.ATTACK_TARGET, Optional.empty());
                 }
             }
 
-            if (this.brain.getMemory(MemoryModuleType.ANGRY_AT).isPresent() && this.piglin.getGoalTarget() != null) { /** piglins no longer attack wither skeletons etc. */
+            if (this.brain.getMemory(MemoryModuleType.ANGRY_AT).isPresent() && this.piglin.getGoalTarget() != null) { /* piglins no longer attack wither skeletons etc. */
                 if (this.brain.getMemory(MemoryModuleType.ANGRY_AT).get() != this.piglin.getGoalTarget().getUniqueID()) {
                     this.brain.setMemory(MemoryModuleType.ANGRY_AT, Optional.empty());
                 }
             }
 
-            this.brain.setMemory(MemoryModuleType.AVOID_TARGET, Optional.empty()); /** piglins no longer run from zombie piglins, soul fire etc., and no longer hunt hoglins */
+            this.brain.setMemory(MemoryModuleType.AVOID_TARGET, Optional.empty()); /* piglins no longer run from zombie piglins, soul fire etc., and no longer hunt hoglins */
             this.brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMSIS, Optional.empty());
             this.brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, Optional.empty());
             this.brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, Optional.empty());
@@ -346,7 +346,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-    static class PathfinderGoalPiglinExplode extends PathfinderGoal { /** piglins explode within 2 blocks of player and die if baby */
+    static class PathfinderGoalPiglinExplode extends PathfinderGoal { /* piglins explode within 2 blocks of player and die if baby */
 
         private final CustomEntityPiglin piglin;
         private int cooldown;
@@ -374,7 +374,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
         @Override
         public void c() {
-            this.cooldown = 400; /** can only explode once every 20 seconds */
+            this.cooldown = 400; /* can only explode once every 20 seconds */
             this.piglin.getWorld().createExplosion(this.piglin, this.piglin.locX(), this.piglin.locY(), this.piglin.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
 
             if (this.piglin.isBaby()) {
@@ -383,7 +383,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-    static class PathfinderGoalPiglinFasterMelee extends CustomPathfinderGoalMeleeAttack { /** piglins attack 2 times faster when frenzied */
+    static class PathfinderGoalPiglinFasterMelee extends CustomPathfinderGoalMeleeAttack { /* piglins attack 2 times faster when frenzied */
 
         private final CustomEntityPiglin piglin;
 

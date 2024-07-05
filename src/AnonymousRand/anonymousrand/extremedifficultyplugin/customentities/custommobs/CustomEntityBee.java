@@ -27,9 +27,9 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava*/
+        /* No longer avoids lava*/
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.firstSting = true;
@@ -38,14 +38,14 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     }
 
     private void initAttributes() {
-        /** bees do 1000 damage but only have 5 health */
+        /* bees do 1000 damage but only have 5 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
         this.setHealth(5.0F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
     }
 
     public double getFollowRange() {
-        /** Bees have 16 block detection range (setting attribute doesn't work) */
+        /* Bees have 16 block detection range (setting attribute doesn't work) */
         return 16.0;
     }
 
@@ -84,13 +84,13 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        /** Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
+        /* Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D));
-        /** Doesn't need line of sight to find targets and start attacking */
+        /* Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
@@ -99,10 +99,10 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         super.tick();
 
         if (this.hasStung()) {
-            /** Doesn't die from stinging */
+            /* Doesn't die from stinging */
             this.setHasStung(false);
 
-            /** 50% chance to duplicate after the first sting */
+            /* 50% chance to duplicate after the first sting */
             if (this.firstSting) {
                 this.firstSting = false;
 

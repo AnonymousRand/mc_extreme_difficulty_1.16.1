@@ -12,7 +12,7 @@ public class CustomEntityChickenAggressiveExploding extends CustomEntityChickenA
     public void tick() {
         super.tick();
 
-        /** Aggressive exploding chickens die after 20 seconds */
+        /* Aggressive exploding chickens die after 20 seconds */
         if (this.ticksLived == 400) {
             this.die();
         }

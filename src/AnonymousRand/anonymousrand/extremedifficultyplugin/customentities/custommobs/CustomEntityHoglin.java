@@ -24,21 +24,21 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.initAttributes();
     }
 
     private void initAttributes() {
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /** hoglins move 75% faster (125% faster for babies), do 5 damage (8 for babies), and have extra knockback */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /* hoglins move 75% faster (125% faster for babies), do 5 damage (8 for babies), and have extra knockback */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 8.0 : 5.0);
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
     }
 
-    public double getFollowRange() { /** hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
+    public double getFollowRange() { /* hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
         return (this.attackController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
     }
 
@@ -47,27 +47,27 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -114,19 +114,19 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /** After 10 attacks, hoglins get regen 2 */
+                /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
             } else if (metThreshold == attackThresholds[1]) {
-                /** After 20 attacks, hoglins get regen 3 */
+                /* After 20 attacks, hoglins get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             } else if (metThreshold == attackThresholds[2]) {
-                /** After 40 attacks, hoglins summon a baby hoglin */
+                /* After 40 attacks, hoglins summon a baby hoglin */
                 CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
                 newHoglin.a(true);
                 new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
             } else if (metThreshold == attackThresholds[3]) {
-                /** After 75 attacks, hoglins summon another baby hoglin */
+                /* After 75 attacks, hoglins summon another baby hoglin */
                 CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
                 newHoglin.a(true);
                 new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
@@ -153,21 +153,21 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /** custom goal that breaks repellant blocks around the mob periodically */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /* custom goal that breaks repellant blocks around the mob periodically */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
     public void die() {
         super.die();
 
-        if (this.attackController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /** hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
+        if (this.attackController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /* hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
             new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
     }
@@ -180,7 +180,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
             Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
             Block bukkitBlock = bukkitLoc.getBlock();
 
-            if (bukkitBlock.getType() == org.bukkit.Material.AIR) { /** hoglins lay down fire trails on itself as long as it is inside an air block */
+            if (bukkitBlock.getType() == org.bukkit.Material.AIR) { /* hoglins lay down fire trails on itself as long as it is inside an air block */
                 bukkitBlock.setType(org.bukkit.Material.FIRE);
             }
         }

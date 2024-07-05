@@ -17,8 +17,8 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
     public CustomEntityZombiePig(World world) {
         super(EntityTypes.ZOMBIFIED_PIGLIN, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD)); // makes sure that it has a sword
         this.attacks = 0;
         this.a5 = false;
@@ -31,16 +31,16 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 5.0, random.nextDouble() * 5 + 10.0, 0.0005));  /** custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0005)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
-        this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /** custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
-        this.goalSelector.a(1, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** always aggro; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 5.0, random.nextDouble() * 5 + 10.0, 0.0005));  /* custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0005)); /* custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
+        this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /* custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
+        this.goalSelector.a(1, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* always aggro; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public double getFollowRange() { /** zombie piglins have 20 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* zombie piglins have 20 block detection range (setting attribute doesn't work) */
         return 20.0;
     }
 
@@ -49,27 +49,27 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -112,25 +112,25 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
     public void tick() {
         super.tick();
 
-        if (this.attacks == 5 && !this.a5) { /** after 5 attacks, zombie piglins can aggro other zombie piglins up to 25 blocks away and get regen 2 */
+        if (this.attacks == 5 && !this.a5) { /* after 5 attacks, zombie piglins can aggro other zombie piglins up to 25 blocks away and get regen 2 */
             this.a5 = true;
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(25.0);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
         }
 
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, zombie piglins can aggro other zombie piglins up to 32 blocks away and get 30 max health */
+        if (this.attacks == 15 && !this.a15) { /* after 15 attacks, zombie piglins can aggro other zombie piglins up to 32 blocks away and get 30 max health */
             this.a15 = true;
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(32.0);
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
         }
 
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombie piglins can aggro other zombie piglins up to 40 blocks away and get regen 3 */
+        if (this.attacks == 25 && !this.a25) { /* after 25 attacks, zombie piglins can aggro other zombie piglins up to 40 blocks away and get regen 3 */
             this.a25 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(40.0);
         }
 
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, zombie piglins can aggro other zombie piglins up to 50 blocks away */
+        if (this.attacks == 35 && !this.a35) { /* after 35 attacks, zombie piglins can aggro other zombie piglins up to 50 blocks away */
             this.a35 = true;
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(50.0);
         }

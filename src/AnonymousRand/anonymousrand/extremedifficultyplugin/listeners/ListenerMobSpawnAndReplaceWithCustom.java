@@ -101,14 +101,14 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityBee(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case BLAZE:
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /** blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead */
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /* blazes not spawned from spawners have a 10% chance to spawn as a magma cube instead */
                         CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
-                        int i = random.nextInt(3) + 2;  /** all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
+                        int i = random.nextInt(3) + 2;  /* all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
                         int j = 1 << i;
                         newMagmaCube.setSize(j, true);
                         new SpawnEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
                         return;
-                    } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /** blaze spawners have a 10% chance to spawn a wither skeleton instead */
+                    } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /* blaze spawners have a 10% chance to spawn a wither skeleton instead */
                         new SpawnEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
                         return;
                     }
@@ -128,7 +128,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                 case SALMON:
                 case SQUID:
                 case TROPICAL_FISH:
-                    new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, false, true); /** all fish spawn in an additional 4 pufferfish */
+                    new SpawnEntity(nmsWorld, new CustomEntityPufferfish(nmsWorld), 4, null, bukkitEntity, null, false, true); /* all fish spawn in an additional 4 pufferfish */
                     break;
                 case COW:
                     new SpawnEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -138,7 +138,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     break;
                 case DONKEY:
                 case HORSE:
-                case MULE: /** donkeys, horses and mules spawn in as a skeleton horse trap instead; becuase of this listener, the skeletons and horses are separate, not rider-passenger */
+                case MULE: /* donkeys, horses and mules spawn in as a skeleton horse trap instead; becuase of this listener, the skeletons and horses are separate, not rider-passenger */
                     EntityHorseSkeleton newSkeletonHorse = new EntityHorseSkeleton(EntityTypes.SKELETON_HORSE, nmsWorld);
                     newSkeletonHorse.t(true);
                     new SpawnEntity(nmsWorld, newSkeletonHorse, 1, null, bukkitEntity, null, true, true);
@@ -156,7 +156,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityEndermite(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case EVOKER:
-                    new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityEvoker(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
                 case GHAST:
                     new SpawnEntity(nmsWorld, new CustomEntityGhast(nmsWorld), 1, null, bukkitEntity, null, true, false);
@@ -171,7 +171,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityZombieHusk(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case MAGMA_CUBE:
-                    if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && random.nextDouble() < 0.3) { /** naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead */
+                    if (spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL && random.nextDouble() < 0.3) { /* naturally-spawning magma cubes have a 10% chance to spawn as a shulker and a 20% chance to spawn as a strider instead */
                         if (random.nextDouble() < 0.666666666) {
                             new SpawnEntity(nmsWorld, new CustomEntityStrider(nmsWorld), 1, null, bukkitEntity, null, true, true);
                         } else {
@@ -181,7 +181,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         return;
                     }
 
-                    int i = random.nextInt(3) + 2;  /** all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
+                    int i = random.nextInt(3) + 2;  /* all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
                     int j = 1 << i;
                     int orgSize = ((EntityMagmaCube)nmsEntity).getSize();
 
@@ -189,7 +189,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         new SpawnEntity(nmsWorld, new CustomEntitySlimeMagmaCube(nmsWorld, j), 1, null, bukkitEntity, null, true, true);
                     } else if (spawnReason == CreatureSpawnEvent.SpawnReason.SLIME_SPLIT && orgSize >= 2) {
                         new SpawnEntity(nmsWorld, new CustomEntitySlimeMagmaCube(nmsWorld, orgSize), 1, null, bukkitEntity, null, true, true);
-                    } else { /** magma cubes can't exist at size 1 to prevent lag from too many cubes */
+                    } else { /* magma cubes can't exist at size 1 to prevent lag from too many cubes */
                         bukkitEntity.remove();
                     }
                     break;
@@ -197,7 +197,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityIronGolem(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case ILLUSIONER:
-                    new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityIllusioner(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
                 case LLAMA:
                     new SpawnEntity(nmsWorld, new CustomEntityLlama(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -207,7 +207,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     break;
                 case PHANTOM:
                     int rand = spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER ? 1 : random.nextInt(3) + 10;
-                    new SpawnEntity(nmsWorld, (int)phantomSize, new CustomEntityPhantom(nmsWorld, (int)phantomSize), rand, null, bukkitEntity, null, true, false); /** when phantoms spawn naturally at night, they spawn random 10-12 at a time (10-24 on easy, 10-36 on medium, 10-48 on hard) */
+                    new SpawnEntity(nmsWorld, (int)phantomSize, new CustomEntityPhantom(nmsWorld, (int)phantomSize), rand, null, bukkitEntity, null, true, false); /* when phantoms spawn naturally at night, they spawn random 10-12 at a time (10-24 on easy, 10-36 on medium, 10-48 on hard) */
                     break;
                 case PIG:
                     new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);
@@ -216,15 +216,15 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityPiglin(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case PILLAGER:
-                    new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
                 case RABBIT:
-                    new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), 5, null, bukkitEntity, null, true, true); /** rabbits are spawned in as 5 killer bunnies instead */
+                    new SpawnEntity(nmsWorld, new CustomEntityRabbit(nmsWorld), 5, null, bukkitEntity, null, true, true); /* rabbits are spawned in as 5 killer bunnies instead */
                     break;
                 case RAVAGER:
-                    new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityRavager(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
-                case SHEEP: /** pink sheep are spawned in as 2 aggressive pink sheep instead */
+                case SHEEP: /* pink sheep are spawned in as 2 aggressive pink sheep instead */
                     if (((Sheep)bukkitEntity).getColor() == DyeColor.PINK) {
                         new SpawnEntity(nmsWorld, new CustomEntitySheepAggressive(nmsWorld), 2, null, bukkitEntity, null, true, true);
                     } else {
@@ -243,7 +243,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     }
                     break;
                 case SLIME:
-                    i = random.nextInt(3) + 1;  /** all slimes spawn one "size" larger from sizes 2, 4, and 8 compared to 1, 2, and 4 only */
+                    i = random.nextInt(3) + 1;  /* all slimes spawn one "size" larger from sizes 2, 4, and 8 compared to 1, 2, and 4 only */
                     j = 1 << i;
 
                     if (spawnReason != CreatureSpawnEvent.SpawnReason.SLIME_SPLIT) {
@@ -269,18 +269,18 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityVex(nmsWorld), 1, null, bukkitEntity, null, true, false);
                     break;
                 case VINDICATOR:
-                    new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityVindicator(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
                 case WITCH:
-                    new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /** raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
+                    new SpawnEntity(nmsWorld, new CustomEntityWitch(nmsWorld), 1, spawnReason, bukkitEntity, null, spawnReason != CreatureSpawnEvent.SpawnReason.RAID, true); /* raids spawn double of every mob, a normal one and a custom one to increase difficulty and make sure that the raid doesn't immediately finish (raids have a Stream to store its spawned mobs, and removing them for the replacement process removes them from the Stream as if they had been killed) */
                     break;
                 case WITHER:
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> new SpawnEntity(nmsWorld, new CustomEntityWither(nmsWorld), 1, null, bukkitEntity, null, true, true), 1); // delay by 1 tick so that soul sand/soil and skulls are deleted
                     break;
                 case WITHER_SKELETON:
-                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /** wither skeletons not spawned from spawners have a 10% chance to spawn as a magma cube instead */
+                    if (spawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER && random.nextDouble() < 0.1) { /* wither skeletons not spawned from spawners have a 10% chance to spawn as a magma cube instead */
                         CustomEntitySlimeMagmaCube newMagmaCube = new CustomEntitySlimeMagmaCube(nmsWorld);
-                        i = random.nextInt(3) + 2;  /** all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
+                        i = random.nextInt(3) + 2;  /* all magma cubes spawn two "sizes" larger from sizes 4, 8, and 16 compared to 1, 2, and 4 only */
                         j = 1 << i;
                         newMagmaCube.setSize(j, true);
                         new SpawnEntity(nmsWorld, newMagmaCube, 1, CreatureSpawnEvent.SpawnReason.SPAWNER, bukkitEntity, null, true, true);
@@ -414,7 +414,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                             Location bukkitLoc = bukkitEntity.getLocation();
 
                             CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(nmsWorld);
-                            newCrystal.setPosition(bukkitLoc.getX(), bukkitLoc.getY() + 15, bukkitLoc.getZ()); /** end crystals are now spawned 15 blocks higher */
+                            newCrystal.setPosition(bukkitLoc.getX(), bukkitLoc.getY() + 15, bukkitLoc.getZ()); /* end crystals are now spawned 15 blocks higher */
                             nmsWorld.addEntity(newCrystal);
                             bukkitEntity.remove();
                             break;
@@ -460,7 +460,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                         case PILLAGER:
                             new SpawnEntity(nmsWorld, new CustomEntityPillager(nmsWorld), 1, null, bukkitEntity, null, true, true);
                             break;
-                        case RABBIT: /** rabbits are spawned in as 5 killer bunnies instead */
+                        case RABBIT: /* rabbits are spawned in as 5 killer bunnies instead */
                             if (((EntityRabbit) nmsEntity).getRabbitType() == 99) { // to avoid infinite duplication when joining world
                                 return;
                             }

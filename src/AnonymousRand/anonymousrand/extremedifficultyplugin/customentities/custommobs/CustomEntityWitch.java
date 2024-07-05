@@ -21,8 +21,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     public CustomEntityWitch(World world) {
         super(EntityTypes.WITCH, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.attacks = 0;
         this.attackNum = 0;
         this.a12 = false;
@@ -44,10 +44,10 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalRangedAttack<>(this, 1.0D, 5, 24.0F)); /** throws a potion every 5 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(1, new CustomPathfinderGoalRangedAttack<>(this, 1.0D, 5, 24.0F)); /* throws a potion every 5 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
@@ -62,21 +62,21 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
             double d1 = entityLiving.getHeadY() - 1.100000023841858D - this.locY();
             double d2 = entityLiving.locZ() + vec3d.z - this.locZ();
             float f1 = MathHelper.sqrt(d0 * d0 + d2 * d2);
-            PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /** after 45 attacks, witches throw harming 2 instead of 1 */
+            PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /* after 45 attacks, witches throw harming 2 instead of 1 */
 
             if (entityLiving instanceof EntityRaider) {
-                if (entityLiving.getHealth() <= 10.0F) { /** gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
+                if (entityLiving.getHealth() <= 10.0F) { /* gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
                     potionregistry = Potions.STRONG_HEALING;
                 } else {
                     potionregistry = Potions.STRONG_REGENERATION;
                 }
 
                 this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
-            } else if (f1 >= 6.0F && !entityLiving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /** gives slowness 2 up to 6 blocks away */
+            } else if (f1 >= 6.0F && !entityLiving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /* gives slowness 2 up to 6 blocks away */
                 potionregistry = Potions.STRONG_SLOWNESS;
-            } else if (f1 < 6.0F && !entityLiving.hasEffect(MobEffects.WEAKNESS)) { /** 100% to give weakness when player within 6 blocks */
+            } else if (f1 < 6.0F && !entityLiving.hasEffect(MobEffects.WEAKNESS)) { /* 100% to give weakness when player within 6 blocks */
                 potionregistry = Potions.WEAKNESS;
-            } else if (f1 >= 5.0F) { /** gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming */
+            } else if (f1 >= 5.0F) { /* gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming */
                 potionregistry = Potions.STRONG_POISON;
             }
 
@@ -101,12 +101,12 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
             if (!this.m()) {
                 PotionRegistry potionregistry = null;
 
-                /** witches don't drink water breathing potions as they no longer take drowning damage */
-                if ((this.isBurning() || this.dl() != null && this.dl().isFire()) && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) { /** witches always drink fire resistance when they are burning */
+                /* witches don't drink water breathing potions as they no longer take drowning damage */
+                if ((this.isBurning() || this.dl() != null && this.dl().isFire()) && !this.hasEffect(MobEffects.FIRE_RESISTANCE)) { /* witches always drink fire resistance when they are burning */
                     potionregistry = Potions.FIRE_RESISTANCE;
-                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /** below 5.2 health, witches always drink turtle master 2 */
+                } else if (this.getHealth() < this.getMaxHealth() * 0.2 && !this.hasEffect(MobEffects.RESISTANCE)) { /* below 5.2 health, witches always drink turtle master 2 */
                     potionregistry = Potions.STRONG_TURTLE_MASTER;
-                } else if (this.getHealth() < this.getMaxHealth() * 0.5) { /** below 13 health, witches always drink instant health 2 */
+                } else if (this.getHealth() < this.getMaxHealth() * 0.5) { /* below 13 health, witches always drink instant health 2 */
                     potionregistry = Potions.STRONG_HEALING;
                 }
 
@@ -116,14 +116,14 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
             }
         }
 
-        try { /** witches drink potions 3 times as fast */
+        try { /* witches drink potions 3 times as fast */
             bx.setInt(this, bx.getInt(this) - 2);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    public double getFollowRange() { /** witches have 24 blocks detection range */
+    public double getFollowRange() { /* witches have 24 blocks detection range */
         return 24.0;
     }
 
@@ -132,27 +132,27 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -195,12 +195,12 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     public void tick() {
         super.tick();
 
-        if (this.attacks == 12 && !this.a12) { /** after 12 attakcs, witches summon a ring of dragon fireballs */
+        if (this.attacks == 12 && !this.a12) { /* after 12 attakcs, witches summon a ring of dragon fireballs */
             this.a12 = true;
             new RunnableRingOfFireballs(this, 1.0, 2, 1).run();
         }
 
-        if (this.attacks == 30 && !this.a30) { /** after 30 attacks, witches summon area effect clouds wherever it goes */
+        if (this.attacks == 30 && !this.a30) { /* after 30 attacks, witches summon area effect clouds wherever it goes */
             this.a30 = true;
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 1, 0, 1, 0, 1.0));
         }

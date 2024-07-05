@@ -18,8 +18,8 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     public CustomEntitySlime(World world) {
         super(EntityTypes.SLIME, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.attacks = 0;
         this.a12 = false;
         this.a35 = false;
@@ -33,15 +33,15 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     }
 
     @Override
-    protected void initPathfinder() { /** no longer targets iron golems */
+    protected void initPathfinder() { /* no longer targets iron golems */
         super.initPathfinder();
 
-        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /** small slimes also do damage; uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); for some reason the slimes run away after a while without the extra parameters */
+        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* small slimes also do damage; uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); for some reason the slimes run away after a while without the extra parameters */
     }
 
     @Override
-    public void setSize(int i, boolean flag) { /** toned down stats a bit to account for potential size 8 slimes */
+    public void setSize(int i, boolean flag) { /* toned down stats a bit to account for potential size 8 slimes */
         super.setSize(i, flag);
         this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(1.0 + ((Math.log10(i) / Math.log10(2)) * ((2 * Math.log10(i) + 1) / (Math.log10(1.6))))); // approx: 1 health for size 1, 8.849 health for size 2, 22.596 health for size 4, 42.243 health for size 8
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.325F + 0.05F * (float)i)); // 0.375 for 1, 0.425 for 2, 0.525 for 4, 0.725 for 8
@@ -52,13 +52,13 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     }
 
     @Override
-    protected void j(EntityLiving entityLiving) {} /** slimes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
+    protected void j(EntityLiving entityLiving) {} /* slimes use the NewPathfinderGoalSlimeMeleeAttack instead of this attack function */
 
     @Override
     public void die() {
         super.die();
 
-        if (this.attacks >= 35) { /** after 35 attacks, slimes summon 6-8 mini-slimes when killed instead of 2-4 */
+        if (this.attacks >= 35) { /* after 35 attacks, slimes summon 6-8 mini-slimes when killed instead of 2-4 */
             int i = this.getSize();
 
             if (!this.world.isClientSide && i > 1 && this.dk()) {
@@ -87,11 +87,11 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         }
     }
 
-    protected int eK() { /** slimes jump faster */
+    protected int eK() { /* slimes jump faster */
         return random.nextInt(3) + 6;
     }
 
-    public double getFollowRange() { /** slimes have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* slimes have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
     }
 
@@ -100,27 +100,27 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -163,12 +163,12 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     public void tick() {
         super.tick();
 
-        if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /** after 22 attacks, slimes explode when killed */
+        if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /* after 22 attacks, slimes explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
         }
 
-        if (this.attacks == 12 && !this.a12) { /** after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */
+        if (this.attacks == 12 && !this.a12) { /* after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */
             this.a12 = true;
 
             if (this.getSize() < 8) {
@@ -176,14 +176,14 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
             }
         }
 
-        if (this.attacks == 35 && !this.a35) { /** after 35 attacks, slimes get extra knockback */
+        if (this.attacks == 35 && !this.a35) { /* after 35 attacks, slimes get extra knockback */
             this.a35 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
         }
 
         if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
             }
         }
     }

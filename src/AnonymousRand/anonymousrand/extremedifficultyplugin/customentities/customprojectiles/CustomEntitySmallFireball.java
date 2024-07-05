@@ -15,7 +15,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
         if (!this.world.isClientSide) {
             Entity entity = movingObjectPositionEntity.getEntity();
 
-            if (!(entity instanceof EntityPlayer)) { /** small fireballs can only impact players */
+            if (!(entity instanceof EntityPlayer)) { /* small fireballs can only impact players */
                 return;
             }
 
@@ -24,7 +24,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
                 int i = entity.getFireTicks();
 
                 entity.setOnFire(5);
-                boolean flag = entity.damageEntity(DamageSource.fireball(this, entity1), 1.5F); /** small fireballs only do 1.5 direct damage */
+                boolean flag = entity.damageEntity(DamageSource.fireball(this, entity1), 1.5F); /* small fireballs only do 1.5 direct damage */
 
                 if (!flag) {
                     entity.setFireTicks(i);
@@ -48,7 +48,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived > 70) { /** small fireballs despawn after 3.5 seconds to reduce lag */
+        if (this.ticksLived > 70) { /* small fireballs despawn after 3.5 seconds to reduce lag */
             this.die();
         }
     }

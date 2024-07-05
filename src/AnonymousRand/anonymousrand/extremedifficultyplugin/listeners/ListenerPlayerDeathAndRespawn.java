@@ -33,13 +33,13 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     @EventHandler
     public void playerDeath(PlayerDeathEvent event) {
         Player bukkitPlayer = event.getEntity();
-        collections.put(bukkitPlayer, bukkitPlayer.getActivePotionEffects()); /** negative status effects now last after respawning */
+        collections.put(bukkitPlayer, bukkitPlayer.getActivePotionEffects()); /* negative status effects now last after respawning */
 
-        if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /** when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc */
+        if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /* when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc */
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
             CustomEntityZombieSuper nmsNewZombie = new CustomEntityZombieSuper(nmsWorld);
             LivingEntity bukkitNewZombie = ((LivingEntity)nmsNewZombie.getBukkitEntity());
-            bukkitNewZombie.setMaxHealth(bukkitNewZombie.getMaxHealth() + bukkitPlayer.getTotalExperience() / 50.0); /** super zombies gain health according to the player's XP when they died */
+            bukkitNewZombie.setMaxHealth(bukkitNewZombie.getMaxHealth() + bukkitPlayer.getTotalExperience() / 50.0); /* super zombies gain health according to the player's XP when they died */
             nmsNewZombie.setHealth(nmsNewZombie.getHealth() + bukkitPlayer.getTotalExperience() / 50.0F);
             nmsNewZombie.getBukkitEntity().setCustomName("Dinnerbone");
             new SpawnEntity(nmsWorld, nmsNewZombie, 1, null, bukkitPlayer.getLocation(), true);
@@ -62,16 +62,16 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
 
             respawnCount.put(bukkitPlayer, respawnCount.getOrDefault(bukkitPlayer, 0) + 1);
 
-            if (respawnCount.get(bukkitPlayer) % 2 == 0) { /** create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors */
+            if (respawnCount.get(bukkitPlayer) % 2 == 0) { /* create explosion on respawn location every 2 respawns regardless of if they switched beds/anchors */
                 bukkitPlayer.getWorld().createExplosion(event.getRespawnLocation(), 1.5F);
             }
 
-            if (respawnCount.get(bukkitPlayer) % 5 == 0) { /** summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5 */
+            if (respawnCount.get(bukkitPlayer) % 5 == 0) { /* summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5 */
                 World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
                 new SpawnEntity(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
             }
 
-            if (superZombies.size() >= (3 * Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0))) { /** don't have more than 3 super zombies per player in the world at a time to avoid lag */
+            if (superZombies.size() >= (3 * Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0))) { /* don't have more than 3 super zombies per player in the world at a time to avoid lag */
                 superZombies.get(0).die();
                 superZombies.remove(0);
             }
@@ -82,7 +82,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     public void totemUse(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player) {
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
-                for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /** totems leave the player at 1 heart without any status effects */
+                for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /* totems leave the player at 1 heart without any status effects */
                     event.getEntity().removePotionEffect(effect.getType());
                 }
             }, 4L);

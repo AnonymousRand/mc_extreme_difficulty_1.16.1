@@ -37,7 +37,7 @@ public class ListenerRaidAndVillager implements Listener {
         Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
 
         if ((event.getEntityType() == VILLAGER)) {
-            if (nmsDamager instanceof EntityPlayer) { /** villagers give players bad omen if they are hit by a player */
+            if (nmsDamager instanceof EntityPlayer) { /* villagers give players bad omen if they are hit by a player */
                 ((EntityPlayer)nmsDamager).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
             } else if (nmsDamager instanceof CustomEntityArrow) {
                 if (((CustomEntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) {
@@ -53,11 +53,11 @@ public class ListenerRaidAndVillager implements Listener {
             LivingEntity bukkitVillager = event.getEntity();
             EntityLiving nmsEntity = ((CraftLivingEntity)bukkitVillager).getHandle();
 
-            if (!(nmsEntity instanceof CustomEntityVillagerAggressive) || !(nmsEntity.getLastDamager() instanceof EntityPlayer)) { /** when killed, villagers summon an aggressive villager (aggressive villagers can continue to respawn if they are not killed by a player) */
+            if (!(nmsEntity instanceof CustomEntityVillagerAggressive) || !(nmsEntity.getLastDamager() instanceof EntityPlayer)) { /* when killed, villagers summon an aggressive villager (aggressive villagers can continue to respawn if they are not killed by a player) */
                 World nmsWorld = ((CraftLivingEntity)bukkitVillager).getHandle().getWorld();
                 new SpawnEntity(nmsWorld, new CustomEntityVillagerAggressive(nmsWorld), 1, null, bukkitVillager.getLocation(), true);
 
-                nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /** golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds */
+                nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /* golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds */
                     ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
                     new RunnableThorLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
                 });
@@ -66,7 +66,7 @@ public class ListenerRaidAndVillager implements Listener {
     }
 
     @EventHandler
-    public void raidFinish(RaidFinishEvent event) { /** summon meteor rain when raid ends on random player */
+    public void raidFinish(RaidFinishEvent event) { /* summon meteor rain when raid ends on random player */
         Player bukkitPlayer = event.getWinners().get(random.nextInt(event.getWinners().size()));
 
         new RunnableMeteorRain(bukkitPlayer, 1, 70.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
@@ -76,7 +76,7 @@ public class ListenerRaidAndVillager implements Listener {
 
     @EventHandler
     public void openVillagerInventory(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() instanceof AbstractVillager) { /** replaces villager trades with these troll trades */
+        if (event.getInventory().getHolder() instanceof AbstractVillager) { /* replaces villager trades with these troll trades */
             ArrayList<org.bukkit.inventory.MerchantRecipe> trades = new ArrayList<>();
 
             org.bukkit.inventory.MerchantRecipe recipe = new org.bukkit.inventory.MerchantRecipe(new org.bukkit.inventory.ItemStack(Material.POISONOUS_POTATO), 2);
@@ -111,7 +111,7 @@ public class ListenerRaidAndVillager implements Listener {
             ((AbstractVillager)event.getInventory().getHolder()).setRecipes(trades);
         }
 
-        if (event.getInventory().getHolder() instanceof WanderingTrader) { /** replaces wandering trader trades */
+        if (event.getInventory().getHolder() instanceof WanderingTrader) { /* replaces wandering trader trades */
             ArrayList<org.bukkit.inventory.MerchantRecipe> trades = new ArrayList<>();
 
             org.bukkit.inventory.MerchantRecipe recipe = new org.bukkit.inventory.MerchantRecipe(new org.bukkit.inventory.ItemStack(Material.AIR), 1);

@@ -47,7 +47,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         }
 
         double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
-        /** breaking line of sight does not stop the mob from attacking */
+        /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
 
         if (distanceToSquared <= (double) (this.maxDistance * this.maxDistance) && this.seeTime >= 5) {

@@ -22,7 +22,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
     @Override
     public boolean a() {
         if (this.entity.getGoalTarget() instanceof EntityPlayer) {
-            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < this.chancePerTick) { /** every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player */
+            if (Math.abs(this.entity.getGoalTarget().locY() - this.entity.locY()) > this.yLevelDifferenceToActivate && random.nextDouble() < this.chancePerTick) { /* every tick the creeper is more than 2.5 blocks of elevation different from its target, it has a 0.15% chance to teleport near or onto the target onto a block that is within 3 y levels of the player */
                 return true;
             }
         }
@@ -135,7 +135,7 @@ public class NewPathfinderGoalTeleportToPlayerAdjustY extends PathfinderGoal {
 
             if (flag2) {
                 this.entity.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this.entity)) { /** can teleport onto fluids */
+                if (world.getCubes(this.entity)) { /* can teleport onto fluids */
                     flag1 = true;
                 }
             }

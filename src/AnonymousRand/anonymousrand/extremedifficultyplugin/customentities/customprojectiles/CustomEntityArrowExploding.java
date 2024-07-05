@@ -21,6 +21,6 @@ public class CustomEntityArrowExploding extends CustomEntityArrow {
     @Override
     public void die() {
         super.die();
-        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), this.yield, false, Explosion.Effect.DESTROY); /** these arrows explode when they die */
+        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), this.yield, false, Explosion.Effect.DESTROY); /* these arrows explode when they die */
     }
 }

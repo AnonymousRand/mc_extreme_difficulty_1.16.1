@@ -49,7 +49,7 @@ public class NewPathfinderGoalShootLargeFireballs extends PathfinderGoal {
             CustomEntityLargeFireball entityLargeFireball = new CustomEntityLargeFireball(this.entity.getWorld(), this.entity, d2, d3, d4, this.intYield, this.summonLightning);
             entityLargeFireball.setPosition(this.entity.locX() + vec3d.x * 4.0D, this.entity.e(0.5D) + 0.5D, entityLargeFireball.locZ() + vec3d.z * 4.0D);
             this.entity.getWorld().addEntity(entityLargeFireball);
-            entityLargeFireball.getBukkitEntity().setVelocity(entityLargeFireball.getBukkitEntity().getVelocity().add(new Vector(d2 / 3.0, d3 / 3.0, d4 / 3.0))); /** fireballs move much faster */
+            entityLargeFireball.getBukkitEntity().setVelocity(entityLargeFireball.getBukkitEntity().getVelocity().add(new Vector(d2 / 3.0, d3 / 3.0, d4 / 3.0))); /* fireballs move much faster */
         }
     }
 }

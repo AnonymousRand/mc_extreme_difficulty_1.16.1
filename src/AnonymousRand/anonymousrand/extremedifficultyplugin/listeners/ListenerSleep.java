@@ -28,12 +28,12 @@ public class ListenerSleep implements Listener {
     }
 
     @EventHandler
-    public void playerBedEnter(PlayerBedEnterEvent event) { /** players can't sleep even if there are monsters below or above it (doesn't count horizontal range; no monster range increased to 30 blocks) */
+    public void playerBedEnter(PlayerBedEnterEvent event) { /* players can't sleep even if there are monsters below or above it (doesn't count horizontal range; no monster range increased to 30 blocks) */
         EntityPlayer nmsPlayer = ((CraftPlayer)event.getPlayer()).getHandle();
         Block bukkitBed = event.getBed();
         World nmsWorld = ((CraftWorld)event.getPlayer().getWorld()).getHandle();
 
-        if (nmsWorld.getMinecraftWorld().isRainingAt(new BlockPosition(bukkitBed.getX(), bukkitBed.getY(), bukkitBed.getZ())) && nmsWorld.isDay()) { /** can't sleep in day thunderstorm anymore */
+        if (nmsWorld.getMinecraftWorld().isRainingAt(new BlockPosition(bukkitBed.getX(), bukkitBed.getY(), bukkitBed.getZ())) && nmsWorld.isDay()) { /* can't sleep in day thunderstorm anymore */
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + nmsPlayer.getName() + " \"The thunder is too loud and you can't fall asleep\"");
             event.setCancelled(true);
             return;
@@ -56,7 +56,7 @@ public class ListenerSleep implements Listener {
             pufferfishDistanceNoY = Integer.MAX_VALUE;
         }
 
-        if (pufferfishDistanceNoY < monsterDistanceNoY) { /** pufferfish also count as monsters to prevent sleeping */
+        if (pufferfishDistanceNoY < monsterDistanceNoY) { /* pufferfish also count as monsters to prevent sleeping */
             closestMonster = closestPufferfish;
             monsterDistanceNoY = pufferfishDistanceNoY;
         }

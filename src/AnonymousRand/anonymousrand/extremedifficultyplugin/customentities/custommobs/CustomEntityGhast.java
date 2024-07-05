@@ -35,7 +35,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.deathFireballs = false;
     }
 
-    public double getFollowRange() { /** ghasts have 80 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* ghasts have 80 block detection range (setting attribute doesn't work) */
         return 80.0;
     }
 
@@ -44,27 +44,27 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 32;
-                int l = k * k;
+                /* Random despawn distance increased to 64 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 32;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -106,7 +106,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /** After 20 attacks, ghasts get 16 max health and health */
+                /* After 20 attacks, ghasts get 16 max health and health */
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);
                 this.setHealth(16.0F);
             }
@@ -119,22 +119,22 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     @Override
     protected void initPathfinder() {
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (this.isInvulnerable(damagesource)) {
             return false;
-        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /** rebounded fireballs do not do damage */
+        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /* rebounded fireballs do not do damage */
             return false;
         } else {
             return super.damageEntity(damagesource, f);
@@ -147,7 +147,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /** when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
+            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /* when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
         }
     }
 
@@ -183,7 +183,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /** removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.world;
 
                 ++this.chargeTime;
@@ -193,7 +193,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
                 this.ghast.t(this.chargeTime > 2); // shooting animation only plays for 2 ticks
 
-                if (this.chargeTime == 5) { /** shoots a fireball every 5 ticks */
+                if (this.chargeTime == 5) { /* shoots a fireball every 5 ticks */
                     if (++this.attackIncrement == 6) { // attacks only count every 1.5 seconds, or 6 shots
                         this.ghast.increaseAttacks(1);
                         this.attackIncrement = 0;
@@ -216,14 +216,14 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                         this.power3 = false;
                     }
 
-                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 6 == 0 && !this.ring) { /** after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
+                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 6 == 0 && !this.ring) { /* after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
                         this.ring = true;
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
                     CustomEntityLargeFireball entityLargeFireball;
 
-                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 8 == 0 && !this.power3) { /** after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
+                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 8 == 0 && !this.power3) { /* after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
                         entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {

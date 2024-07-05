@@ -137,7 +137,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
             if (flag2) {
                 this.entity.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this.entity)) { /** can teleport onto fluids */
+                if (world.getCubes(this.entity)) { /* can teleport onto fluids */
                     flag1 = true;
                 }
             }

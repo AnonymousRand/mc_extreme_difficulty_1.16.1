@@ -80,7 +80,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
         double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
 
         this.h = Math.max(this.h - 1, 0);
-        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || attackTarget.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /** no longer requires line of sight to continue attacking */
+        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || attackTarget.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
             this.e = attackTarget.locX();
             this.f = attackTarget.locY();
             this.g = attackTarget.locZ();
@@ -105,7 +105,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomHostile) {
-                if (((ICustomHostile)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /** mobs can only successfully hit you occasionally when they are very distant vertically */
+                if (((ICustomHostile)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /* mobs can only successfully hit you occasionally when they are very distant vertically */
                     return;
                 }
             }

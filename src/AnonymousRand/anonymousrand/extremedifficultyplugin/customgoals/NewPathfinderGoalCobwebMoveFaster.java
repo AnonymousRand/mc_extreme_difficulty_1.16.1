@@ -29,9 +29,9 @@ public class NewPathfinderGoalCobwebMoveFaster extends PathfinderGoal {
             for (int y = (int)hitbox.minY; y <= (int)Math.ceil(hitbox.maxY); y++) {
                 for (int z = (int)hitbox.minZ; z <= (int)Math.ceil(hitbox.maxZ); z++) {
                     if (bukkitWorld.getBlockAt(x - 1, y, z - 1).getType() == org.bukkit.Material.COBWEB) { // the hitboxes seem to be off so I need x - 1 and z - 1
-                        this.entity.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6, 10)); /** non-player mobs gain Speed 11 while in a cobweb (approx original speed) */
+                        this.entity.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6, 10)); /* non-player mobs gain Speed 11 while in a cobweb (approx original speed) */
 
-                        if (this.entity.getGoalTarget() != null) { /** mobs also move faster vertically and horizontally through cobwebs if their goal target is on a different y-level by 1 or more */
+                        if (this.entity.getGoalTarget() != null) { /* mobs also move faster vertically and horizontally through cobwebs if their goal target is on a different y-level by 1 or more */
                             EntityLiving target = this.entity.getGoalTarget();
 
                             if (this.entity.locY() - target.locY() > 1) {

@@ -53,23 +53,23 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             e.printStackTrace();
         }
 
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
-        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /** every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */
+        ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /* every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */
         this.setSize(0);
         this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
-        this.noclip = true; /** phantoms can fly through blocks */
+        this.noclip = true; /* phantoms can fly through blocks */
         this.deathExplosion = false;
         this.duplicate = false;
 
-        /** No longer despawns or takes up the mob cab */
+        /* No longer despawns or takes up the mob cab */
         this.getBukkitEntity().setCustomName("Do you regret voting for me");
     }
 
-    public double getFollowRange() { /** phantoms have 64 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* phantoms have 64 block detection range (setting attribute doesn't work) */
         return 64.0;
     }
 
@@ -78,26 +78,27 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.isTypeNotPersistent(d0)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (d0 < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -139,7 +140,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /** After 30 attacks, phantoms get regen 3 */
+                /* After 30 attacks, phantoms get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             }
         }
@@ -157,7 +158,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
-    private void updateSizeStats(int change) { /** phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */
+    private void updateSizeStats(int change) { /* phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */
         this.updateSize();
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0 + 0.125 * this.getSize());
         double maxHealth = 11.0 + 0.3 * this.getSize();
@@ -172,12 +173,12 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (this.getAttacks() < 10 ? 170 : this.getAttacks() < 20 ? 150 : this.getAttacks() < 30 ? 120 : 100) == 0 && this.ticksLived != 0 && this.getHealth() > 0.0) { /** phantoms increase in size by 1 every 8.5 seconds (7.5 seconds after 10 attacks, 6 seconds after 20 attacks, 5 seconds after 30 attacks) */
+        if (this.ticksLived % (this.getAttacks() < 10 ? 170 : this.getAttacks() < 20 ? 150 : this.getAttacks() < 30 ? 120 : 100) == 0 && this.ticksLived != 0 && this.getHealth() > 0.0) { /* phantoms increase in size by 1 every 8.5 seconds (7.5 seconds after 10 attacks, 6 seconds after 20 attacks, 5 seconds after 30 attacks) */
             this.setSize(this.getSize() + 1);
             this.updateSizeStats(1);
         }
 
-        if (this.getHealth() <= 0.0 && this.getAttacks() >= 15 && !this.deathExplosion) { /** after 15 attacks, phantoms explode when killed */
+        if (this.getHealth() <= 0.0 && this.getAttacks() >= 15 && !this.deathExplosion) { /* after 15 attacks, phantoms explode when killed */
             this.deathExplosion = true;
             this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
         }
@@ -192,7 +193,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         super.die();
 
         if (this.getAttacks() >= 40 || this.duplicate) {
-            /** after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, all the way down to size 4 */
+            /* after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, all the way down to size 4 */
             if (this.getSize() > 7) {
                 new SpawnEntity(this.getWorld(), (int) this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
             }
@@ -303,7 +304,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                 return false;
             } else if (!this.a()) {
                 return false;
-            } else { /** phantoms are no longer scared of cats and ocelots */
+            } else { /* phantoms are no longer scared of cats and ocelots */
                 return true;
             }
         }

@@ -10,21 +10,21 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /** sheep move 2x faster and have 20 health */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /* sheep move 2x faster and have 20 health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
+        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /* uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
     }
 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public double getFollowRange() { /** sheep have 32 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* sheep have 32 block detection range (setting attribute doesn't work) */
         return 32.0;
     }
 
@@ -38,7 +38,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            if (this.d(this.getGoalTarget().getPositionVector()) <= 4.0) { /** sheep explode instantly when it is less than 2 blocks away from player */
+            if (this.d(this.getGoalTarget().getPositionVector()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }

@@ -28,10 +28,10 @@ public class ListenerMobDamage implements Listener {
         boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON) || cause.equals(EntityDamageEvent.DamageCause.CRAMMING);
 
         if (checkCause) {
-            if (bukkitEntityType != PLAYER && bukkitEntityType != ENDER_DRAGON && bukkitEntityType != WITHER) { /** all non-player mobs take no damage from these sources */
+            if (bukkitEntityType != PLAYER && bukkitEntityType != ENDER_DRAGON && bukkitEntityType != WITHER) { /* all non-player mobs take no damage from these sources */
                 event.setCancelled(true);
                 return;
-            } else if (bukkitEntityType == ENDER_DRAGON || bukkitEntityType == WITHER) { /** ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
+            } else if (bukkitEntityType == ENDER_DRAGON || bukkitEntityType == WITHER) { /* ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
                 LivingEntity livingEntity = (LivingEntity)event.getEntity();
                 livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.2);
                 livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.2);
@@ -40,7 +40,7 @@ public class ListenerMobDamage implements Listener {
             }
         }
 
-        if (bukkitEntityType != IRON_GOLEM && bukkitEntityType != PLAYER) { /** golems within 60 blocks of damaged entity get a 5% stat boost */
+        if (bukkitEntityType != IRON_GOLEM && bukkitEntityType != PLAYER) { /* golems within 60 blocks of damaged entity get a 5% stat boost */
             nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(60.0, 60.0, 60.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.05));
         }
     }
@@ -51,27 +51,27 @@ public class ListenerMobDamage implements Listener {
         Entity nmsDamager = ((CraftEntity)event.getDamager()).getHandle();
 
         if (nmsDamager instanceof EntityArrow) {
-            if (((EntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) { /** player-shot arrows still do damage */
+            if (((EntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) { /* player-shot arrows still do damage */
                 return;
             }
         }
 
-        if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsEntity instanceof EntityVillagerAbstract) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /** hostile mobs can't damage each other except aggressive chickens and villagers/traders */ // gettype doesn't seem to work so I'm using instanceof
+        if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsEntity instanceof EntityVillagerAbstract) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /* hostile mobs can't damage each other except aggressive chickens and villagers/traders */ // gettype doesn't seem to work so I'm using instanceof
             event.setCancelled(true);
         }
 
         if (nmsDamager instanceof CustomEntityEnderDragon) { // just to make sure
-            if (!(nmsEntity instanceof EntityPlayer)) { /** ender dragon can't fling non-player mobs */
+            if (!(nmsEntity instanceof EntityPlayer)) { /* ender dragon can't fling non-player mobs */
                 event.setCancelled(true);
                 nmsEntity.setMot(0.0, 0.0, 0.0);
             }
         }
 
-        if (nmsEntity instanceof EntityVillagerAbstract && nmsDamager instanceof CustomEntityZombieVillager) { /** up to 60 max health (80 after 12 attacks), zombie villagers gain 3 max health and health when hitting a villager */
+        if (nmsEntity instanceof EntityVillagerAbstract && nmsDamager instanceof CustomEntityZombieVillager) { /* up to 60 max health (80 after 12 attacks), zombie villagers gain 3 max health and health when hitting a villager */
             CustomEntityZombieVillager nmsZombieVillager = (CustomEntityZombieVillager)nmsDamager;
             LivingEntity bukkitDamager = ((LivingEntity)nmsDamager.getBukkitEntity());
 
-            nmsZombieVillager.increaseAttacks(1); /** zombie villagers' attack counts increase when attacking villagers as well */
+            nmsZombieVillager.increaseAttacks(1); /* zombie villagers' attack counts increase when attacking villagers as well */
 
             if (bukkitDamager.getMaxHealth() <= (nmsZombieVillager.getAttacks() < 12 ? 57.0 : 77.0)) {
                 bukkitDamager.setMaxHealth(bukkitDamager.getMaxHealth() + 3.0);

@@ -25,7 +25,7 @@ public class CustomEntityChicken extends EntityChicken implements ICustomPeacefu
     }
 
     private void initAttributes() {
-        /** Chickens move twice as fast */
+        /* Chickens move twice as fast */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }
 
@@ -36,9 +36,9 @@ public class CustomEntityChicken extends EntityChicken implements ICustomPeacefu
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
     }
 
@@ -46,7 +46,7 @@ public class CustomEntityChicken extends EntityChicken implements ICustomPeacefu
     public void tick() {
         super.tick();
 
-        /** 25% chance to spawn in as an aggressive chicken instead */
+        /* 25% chance to spawn in as an aggressive chicken instead */
         if (this.ticksLived == 5) {
             if (random.nextDouble() < 0.25) {
                 new SpawnEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1, null, null, this, true, true);

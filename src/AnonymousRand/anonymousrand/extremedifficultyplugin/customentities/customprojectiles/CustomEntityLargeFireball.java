@@ -32,7 +32,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     @Override
     protected void a(MovingObjectPosition movingObjectPosition) { // in order for the new yield value to register
         if (movingObjectPosition instanceof MovingObjectPositionEntity) {
-            if (((MovingObjectPositionEntity)movingObjectPosition).getEntity() instanceof EntityPlayer) { /** large fireballs can only impact players */
+            if (((MovingObjectPositionEntity)movingObjectPosition).getEntity() instanceof EntityPlayer) { /* large fireballs can only impact players */
                 this.a((MovingObjectPositionEntity)movingObjectPosition);
             }
 
@@ -56,13 +56,13 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
         if (!this.world.isClientSide) {
             Entity entity = movingObjectPositionEntity.getEntity();
 
-            if (!(entity instanceof EntityPlayer)) { /** large fireballs can only impact players */
+            if (!(entity instanceof EntityPlayer)) { /* large fireballs can only impact players */
                 return;
             }
 
             Entity entity1 = this.getShooter();
 
-            entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /** large fireballs only do 1 direct damage */
+            entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /* large fireballs only do 1 direct damage */
             if (entity1 instanceof EntityLiving) {
                 this.a((EntityLiving)entity1, entity);
             }
@@ -80,7 +80,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived > 100) { /** large fireballs despawn after 5 seconds to reduce lag */
+        if (this.ticksLived > 100) { /* large fireballs despawn after 5 seconds to reduce lag */
             this.die();
         }
     }

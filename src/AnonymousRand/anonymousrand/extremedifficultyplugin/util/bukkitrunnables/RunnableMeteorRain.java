@@ -64,7 +64,7 @@ public class RunnableMeteorRain extends BukkitRunnable {
             case 1: // exploding arrows
                 for (int i = 0; i < 4; i++) {
                     pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
-                    CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte) (random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter instanceof LivingEntity ? (LivingEntity) this.bukkitShooter : null, 1.0F); /** 25% of arrows are piecing 1 */
+                    CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte) (random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter instanceof LivingEntity ? (LivingEntity) this.bukkitShooter : null, 1.0F); /* 25% of arrows are piecing 1 */
                     explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(explodingArrow);
                 }

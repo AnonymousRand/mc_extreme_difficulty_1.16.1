@@ -75,9 +75,9 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void changeProperties_BlastResistance() {
-        BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /** end stone now has a blast resistance of 16 */
+        BlockOverride endStone = new BlockOverride(Blocks.END_STONE); /* end stone now has a blast resistance of 16 */
         endStone.set("durability", 16.0F);
-        BlockOverride obsidian = new BlockOverride(Blocks.OBSIDIAN); /** obsidian, crying obsidian, anvils, enchanting tables, ancient debris and respawn anchors now has a blast resistance of 6, the same as cobblestone */
+        BlockOverride obsidian = new BlockOverride(Blocks.OBSIDIAN); /* obsidian, crying obsidian, anvils, enchanting tables, ancient debris and respawn anchors now has a blast resistance of 6, the same as cobblestone */
         obsidian.set("durability", 6.0F);
         BlockOverride cryingObsidian = new BlockOverride(Blocks.CRYING_OBSIDIAN);
         cryingObsidian.set("durability", 6.0F);
@@ -89,13 +89,13 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
         ancientDebris.set("durability", 6.0F);
         BlockOverride respawnAnchor = new BlockOverride(Blocks.RESPAWN_ANCHOR);
         respawnAnchor.set("durability", 6.0F);
-        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /** spawners are now indestructible by explosions */
+        BlockOverride spawner = new BlockOverride(Blocks.SPAWNER); /* spawners are now indestructible by explosions */
         spawner.set("durability", 3600000.0F);
-        BlockOverride conduit = new BlockOverride(Blocks.CONDUIT); /** conduits are now indestructible by explosions */
+        BlockOverride conduit = new BlockOverride(Blocks.CONDUIT); /* conduits are now indestructible by explosions */
         conduit.set("durability", 3600000.0F);
     }
 
-    /** Eye of Ender recipe is much harder */
+    /* Eye of Ender recipe is much harder */
     private void changeRecipes_eyeOfEnder() {
         Bukkit.getServer().removeRecipe(NamespacedKey.minecraft("ender_eye"));
         NamespacedKey key = new NamespacedKey(this, "eye_of_ender");

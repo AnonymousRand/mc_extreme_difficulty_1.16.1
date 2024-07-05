@@ -148,7 +148,7 @@ public class VanillaPathfinderGoalsAccess {
             }
 
             if (entity instanceof EntityCreature) {
-                entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+                entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature)entity)); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
             }
         }
     }

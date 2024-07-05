@@ -26,16 +26,16 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
-        /** Drowned always spawn with tridents */
+        /* Drowned always spawn with tridents */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT));
     }
 
-    public double getFollowRange() { /** drowned have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* drowned have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
     }
 
@@ -44,27 +44,27 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -111,10 +111,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /** After 150 attacks, drowned summon a guardian */
+                /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 1, null, null, this, false, true);
             } else if (metThreshold == attackThresholds[1]) {
-                /** After 350 attacks, drowned summon an elder guardian */
+                /* After 350 attacks, drowned summon an elder guardian */
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
             }
         }
@@ -125,27 +125,27 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void m() { /** drowned no longer target iron golems */
-        /** Still moves fast in cobwebs */
+    public void m() { /* drowned no longer target iron golems */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 6, 40.0F)); /** throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /* custom goal that spawns lightning randomly */
+        this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 6, 40.0F)); /* throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        /** Doesn't need line of sight to find targets and start attacking */
+        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        /* Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
     @Override
-    public boolean j(@Nullable EntityLiving entityLiving) { /** always attacks even in the day */
+    public boolean j(@Nullable EntityLiving entityLiving) { /* always attacks even in the day */
         return true;
     }
 
@@ -351,7 +351,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         @Override
         public void e() {
-            for (int i = 0; i < (this.drowned.getAttacks() < 30 ? 1 : this.drowned.getAttacks() < 70 ? 2 : 3); i++) { /** shoots 1, 2 or 3 tridents at a time depending on attack count */
+            for (int i = 0; i < (this.drowned.getAttacks() < 30 ? 1 : this.drowned.getAttacks() < 70 ? 2 : 3); i++) { /* shoots 1, 2 or 3 tridents at a time depending on attack count */
                 super.e();
             }
 

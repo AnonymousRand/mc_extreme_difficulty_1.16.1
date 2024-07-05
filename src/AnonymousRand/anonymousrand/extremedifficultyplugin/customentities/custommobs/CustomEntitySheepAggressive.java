@@ -21,8 +21,8 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     public CustomEntitySheepAggressive(World world) {
         super(EntityTypes.SHEEP, world);
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.setColor(EnumColor.PINK); // always pink
         this.attacks = 0;
         this.a20 = false;
@@ -38,7 +38,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);/** aggressive sheep move 2.1x as fast, do 10 damage, have extra knockback, have 125 health, and have regen 3 */
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);/* aggressive sheep move 2.1x as fast, do 10 damage, have extra knockback, have 125 health, and have regen 3 */
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.483);
         this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
@@ -65,18 +65,18 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
     }
 
     @Override
-    protected void initPathfinder() { /** sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority) */
+    protected void initPathfinder() { /* sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attacking (higher goal priority) */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /** uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /** uses the custom goal that makes this mob move towards the player */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /* uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); /* uses the custom goal that makes this mob move towards the player */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
-    protected void f(EntityLiving entityLiving) { /** sheep heals when its attack is blocked by a shield */
+    protected void f(EntityLiving entityLiving) { /* sheep heals when its attack is blocked by a shield */
         this.heal(this.attacks < 15 ? 15.0F : 25.0F);
     }
 
@@ -88,7 +88,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.launchHigh = launchHigh;
     }
 
-    public double getFollowRange() { /** aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks) */
+    public double getFollowRange() { /* aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks) */
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 
@@ -97,27 +97,27 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 32;
-                int l = k * k;
+                /* Random despawn distance increased to 64 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 32;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -160,20 +160,20 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
     public void tick() {
         super.tick();
 
-        if (this.attacks == 20 && !this.a20) { /** after 20 attacks, aggressive sheep gain speed 1 */
+        if (this.attacks == 20 && !this.a20) { /* after 20 attacks, aggressive sheep gain speed 1 */
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float)this.getFollowRange())); // updates follow range
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
         }
 
-        if (this.attacks == 40 && !this.a40) { /** after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4 */
+        if (this.attacks == 40 && !this.a40) { /* after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4 */
             this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
         }
 
-        if (this.attacks == 65 && !this.a65) { /** after 65 attacks, aggressive sheep get extra knockback */
+        if (this.attacks == 65 && !this.a65) { /* after 65 attacks, aggressive sheep get extra knockback */
             this.a65 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.5);
         }
@@ -181,10 +181,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         if (this.getHealth() <= 0.0 && !this.die) {
             this.die = true;
 
-            if (this.attacks >= 20) { /** after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed */
+            if (this.attacks >= 20) { /* after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed */
                 this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
 
-                if (this.attacks >= 65) { /** after 65 attacks, aggressive sheep summon an evoker when killed */
+                if (this.attacks >= 65) { /* after 65 attacks, aggressive sheep summon an evoker when killed */
                     new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
                 }
             }

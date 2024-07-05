@@ -21,7 +21,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     protected CustomPathfinderTargetCondition targetCondition;
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient entityInsentient, Class<T> oclass) {
-        /** Never needs sight to find target and start attacking */
+        /* Never needs sight to find target and start attacking */
         this(entityInsentient, oclass, 10, null);
     }
 

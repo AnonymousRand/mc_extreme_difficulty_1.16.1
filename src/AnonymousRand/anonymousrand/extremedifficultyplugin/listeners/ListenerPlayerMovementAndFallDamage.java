@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 
-public class ListenerPlayerMovementAndFallDamage implements Listener { /** fall damage starts counting at 2 blocks instead of 4 and water only negates 45-80% of fall damage and feather falling does nothing */
+public class ListenerPlayerMovementAndFallDamage implements Listener { /* fall damage starts counting at 2 blocks instead of 4 and water only negates 45-80% of fall damage and feather falling does nothing */
     public static HashMap<Player, Double> fallHeight = new HashMap<>();
 
     @EventHandler
@@ -65,16 +65,16 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /** fall 
 
         if (bukkitMaterial == Material.GRASS || bukkitMaterial == Material.TALL_GRASS) {
             if (bukkitMaterial == Material.GRASS) {
-                bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0)); /** grass gives players slowness 1 for half a second */
+                bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0)); /* grass gives players slowness 1 for half a second */
             } else {
-                bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /** tall grass gives players slowness 1 for 1 second and weakness 1 for 3 seconds */
+                bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0)); /* tall grass gives players slowness 1 for 1 second and weakness 1 for 3 seconds */
                 bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 0));
             }
 
             return;
         }
 
-        if (bukkitMaterial == Material.WATER && bukkitPlayer.getEyeLocation().getBlock().getType() != Material.WATER && !bukkitPlayer.isInvulnerable() && !bukkitPlayer.isInsideVehicle()) { /** player loses air even if they are standing in 1-deep water (but twice as fast, as the player is still inhaling as well), as long as they are moving (to prevent using shallow water to slow down mobs) */
+        if (bukkitMaterial == Material.WATER && bukkitPlayer.getEyeLocation().getBlock().getType() != Material.WATER && !bukkitPlayer.isInvulnerable() && !bukkitPlayer.isInsideVehicle()) { /* player loses air even if they are standing in 1-deep water (but twice as fast, as the player is still inhaling as well), as long as they are moving (to prevent using shallow water to slow down mobs) */
             bukkitPlayer.setRemainingAir(bukkitPlayer.getRemainingAir() - (bukkitPlayer.getRemainingAir() <= 0 ? 5 : 8));
 
             if (bukkitPlayer.getRemainingAir() <= -20) {
@@ -86,7 +86,7 @@ public class ListenerPlayerMovementAndFallDamage implements Listener { /** fall 
             return;
         }
 
-        if (bukkitMaterial == Material.SOUL_FIRE) { /** soul fire sets players on fire for 10 minutes */
+        if (bukkitMaterial == Material.SOUL_FIRE) { /* soul fire sets players on fire for 10 minutes */
             bukkitPlayer.setFireTicks(12000);
         }
     }

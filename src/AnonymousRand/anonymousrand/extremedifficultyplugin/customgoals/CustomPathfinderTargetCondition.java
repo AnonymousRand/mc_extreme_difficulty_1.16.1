@@ -62,7 +62,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
                     return false;
                 }
 
-                if (this.followRange > 0.0D) { /** skulls and invis potions no longer do anything against detection range */
+                if (this.followRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */
                     double entityDistanceSq = attacker.g(target.locX(), target.locY(), target.locZ());
 
                     if (entityDistanceSq > this.followRange * this.followRange) {

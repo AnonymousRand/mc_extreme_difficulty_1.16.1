@@ -2,11 +2,15 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths, remove last newline. stopped before: customentitybee
+    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped before: customentitybee
 
     listeners group by event?
 
     nms, bukkit etc labels use underscore?
+
+    check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
+
+    check if bat customtargetcondition thingy needs follow range > 4.0
 
     catalog and test super zombie health nerf + xp health gain
 
@@ -20,47 +24,52 @@ todo:
 
 	todo comments in like elder guardian
 
+    todo increment attacks in attack method/goal instead of listener?
+
+    check that bats never sleep
+
+    remove unnecessary casts???
 
 	breakblocksaround goals make sure never remove blocks underneath unless intentional?
-	
+
 	pay with targetchance in nearestattackabletarget; seems to try and stagger execution of goals?
-	
+
 	iron golem bug s till tries to attack other entities after plaayer goes into creative (and also calls statmultiply from listener?)
-	
+
 	fix iron golem spawning with iron blocks not removing iron blocks
-	
+
 	villagerdamage and death listeners from raidandvillager to just mob damage? and rename raidandvillager to just raid
-			
+
 	less hacky way for bukkitplayer set velocity runnable in playerdamagelistener? setDeltaMovement() from forge; check spigot equiv (for lauunching player)
-	
+
 	iron golem sethelath in increashealthadd change to heal? and make sure works
-	
-	registerGenericAttribute() into util with static?
-	
+
+	registerGenericAttribute() into util with static? pass in this. pulling attributemap too
+
 	should all utils be static? id tech has them static
-	
-	capitalize all after /** and try to move all to new lines
-	
+
+	capitalize all after /* and try to move all to new lines
+
 	balancing and small nerfs like ghast or something, more consistent but less endermites on enderman death etc, no magma cube spawns from blaze
-	
+
 	make lava spread fast in overworld if possible?
-	
+
 	swap grass and tall grass effects
-	
+
 	remove blank line before cobnstrcutors/fields
-		
+
 	dont add customhurtbytarget in vanillapthfindergoalsaccess? and do it individually
-	
+
 	hoglin fire trails to custom goal?
-	
+
 	should reflection fields be static?
-	
+
 	phantom more linear size increases?
-	
+
 	phantom check that die() override delay doesn't matter
-	
+
 	check all the goals comments esp ranged to add clarification to y level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
-	
+
 	see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
 
 	make dragon fight logic cleaner, as well as ending messages? find exploits
@@ -68,60 +77,61 @@ todo:
 	move some broadcast messages like the end of the dragon fight to disaply full screen? search google for how
 
 	piglin frenzy etc use proper getters and setters
-	
+
 	piglin still attacks in creative (isinvulnerable check somewhere?)
-	
+
 	bug: piglins seem to still drop item theyre holding; check other mobs too
-	
+
 	fake illusioner little damage but big tankiness
-	
+
 	copy all a() b() etc documentation from passivemeleeattack goal to all goals
 
 	custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
-	
+
 	try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
-	
+
 	see if possible to create utils for shooting large and small fireballs etc?
-	
+
 	getbuffedbymobs goal: increase attacks by a percentage
-	
+
 	try to move stuff from listeners like listenermobdeath to the mobs themselves
-	
+
 	some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
-	
+
 	creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
-	
+
 	those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
-	
+
 	check weather changes works
-	
+
 	try to debofuscate goals using idtech thing, experiment with changing seetime requirement etc
-	
+
 	change back all casts to have space
-	
+
 	util functions to set (decrease or increase) max health and health?
-	
+
 	more creative effects for mooshroom milking (maybe random sus stew with most chance for bad effects instead)
-	
+
 	reduce magma cube jump distance so they dont overshoot following range
-	
+
 	break blocks ruunnable instead of booleans to remove dluuids etc just pass in a static predicate to the constrcutor
-	
+
 	slimes and magma blocks sometimes just run away?
-	
+
 	check balance for slime/magma cube damage and melee attack radius
-	
+
 	players still lose bubbles slower when fully submerged than when feet submerged
-	
+
 	players dont lose bubbles when feet submerged and not moving due to playermovelistener being used
-	
+
 	mobs still taking magma block damage?
-	
+
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
-	
+
 	mobs dont get affected by soul sand or magma blocks in water
-	
-	create full documentation of changes from all /** comments and that google doc?
+
+	create full documentation of changes from all /* comments and that google doc?
 
 balance changes catalog:
-	striders die faster
+	striders die faster (find number!)
+	elder guardian random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)

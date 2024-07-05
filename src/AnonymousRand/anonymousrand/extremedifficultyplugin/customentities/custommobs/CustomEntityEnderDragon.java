@@ -43,7 +43,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         }
     }
 
-    public double getFollowRange() { /** dragon has 128 block detection range for new constant fireballs */
+    public double getFollowRange() { /* dragon has 128 block detection range for new constant fireballs */
         return 128.0;
     }
 
@@ -69,19 +69,19 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonFireball(this)); /** custom goal that allows the dragon to constantly shoot fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /** for the custom fireball goal; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonFireball(this)); /* custom goal that allows the dragon to constantly shoot fireballs instead of only during the strafe phase */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /* for the custom fireball goal; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
     public void a(EntityEnderCrystal entityEnderCrystal, BlockPosition blockPosition, DamageSource damagesource) { // oncrystaldestroyed
         super.a(entityEnderCrystal, blockPosition, damagesource);
 
-        if (entityEnderCrystal == this.currentEnderCrystal) { /** blowing up the end crystal that the dragon is currently healing from does not damage the dragon */
+        if (entityEnderCrystal == this.currentEnderCrystal) { /* blowing up the end crystal that the dragon is currently healing from does not damage the dragon */
             this.heal(10.0F);
         }
 
-        if (damagesource.getEntity() != null) { /** dragon shoots a super fireball when crystal destroyed and rapidfires 10 normal custom fireballs, then shoots another super fireball */
+        if (damagesource.getEntity() != null) { /* dragon shoots a super fireball when crystal destroyed and rapidfires 10 normal custom fireballs, then shoots another super fireball */
             Entity entity = damagesource.getEntity();
             new RunnableDragonRapidShootFireballs(this, entity, 12).runTaskTimer(StaticPlugin.plugin, 0L, 4L);
         }
@@ -95,7 +95,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         this.targetSelector.doTick();
 
         if (!this.dk()) {
-            this.healFromCrystal(); /** crystals heal the dragon 10 health per half second */
+            this.healFromCrystal(); /* crystals heal the dragon 10 health per half second */
         }
     }
 
@@ -109,7 +109,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         }
 
         if (this.random.nextInt(10) == 0) {
-            List<EntityEnderCrystal> list = this.world.a(EntityEnderCrystal.class, this.getBoundingBox().grow(64.0, 128.0, 64.0)); /** dragon has double the horizontal range for finding end crystals */
+            List<EntityEnderCrystal> list = this.world.a(EntityEnderCrystal.class, this.getBoundingBox().grow(64.0, 128.0, 64.0)); /* dragon has double the horizontal range for finding end crystals */
             EntityEnderCrystal entityEnderCrystal = null;
             double d0 = Double.MAX_VALUE;
 
@@ -151,7 +151,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         @Override
         public void e() {
             try {
-                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)this.dragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /** shoots faster when there are fewer crystals and fewer players */
+                if (this.dragon.ticksLived % Math.floor((45 + 9 * ((EnderDragonBattle)this.dragon.dragonBattle.get(this.dragon)).c()) + 200 * Math.log10(Bukkit.getServer().getOnlinePlayers().size() + 1)) == 0) { /* shoots faster when there are fewer crystals and fewer players */
                     new RunnableDragonShootProjectiles(this.dragon).run();
                 }
             } catch (IllegalAccessException e) {
@@ -202,8 +202,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double rand = random.nextDouble();
             double rand2 = random.nextDouble();
 
-            for (Entity entity : this.dragon.goalTargets) { /** dragon shoots a random projectile/fireball at every player within 128 blocks */
-                if (rand2 < 0.5) { /** 50% of the time the dragon shoots the same projectile to every player */
+            for (Entity entity : this.dragon.goalTargets) { /* dragon shoots a random projectile/fireball at every player within 128 blocks */
+                if (rand2 < 0.5) { /* 50% of the time the dragon shoots the same projectile to every player */
                     rand = random.nextDouble();
                 }
 
@@ -215,7 +215,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                 double y = entity.e(0.5D) - this.dragon.e(0.5D);
                 double z = entity.locZ() - this.dragon.locZ();
 
-                if (rand < 0.65) { /** dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 65% chance to shoot a custom normal fireball, 22.5% chance to shoot a power 2 ghast fireball, 8.5% chance to shoot an arrow barrage, and 4% chance to shoot a super fireball */
+                if (rand < 0.65) { /* dragon shoots a fireball every (45 + 8 * numberOfAliveCrystals) ticks, with a 65% chance to shoot a custom normal fireball, 22.5% chance to shoot a power 2 ghast fireball, 8.5% chance to shoot an arrow barrage, and 4% chance to shoot a super fireball */
                     CustomEntityDragonFireball newFireball = new CustomEntityDragonFireball(this.nmsWorld, this.dragon, x, y, z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
@@ -224,7 +224,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
                 } else if (rand < 0.96) {
-                    new RunnableMobShootArrows(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /** 2 pierce; fewer cycles with more players to reduce lag */
+                    new RunnableMobShootArrows(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /* 2 pierce; fewer cycles with more players to reduce lag */
                 } else {
                     CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, x, y, z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());

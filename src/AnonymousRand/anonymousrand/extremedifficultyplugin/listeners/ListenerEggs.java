@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class ListenerEggs implements Listener {
     @EventHandler
-    public void eggLand(ProjectileHitEvent event) { /** thrown eggs have chances to summon mobs/effects etc. */
+    public void eggLand(ProjectileHitEvent event) { /* thrown eggs have chances to summon mobs/effects etc. */
         if (event.getEntity() instanceof Egg) {
             new RunnableEggLand(event.getEntity());
         }

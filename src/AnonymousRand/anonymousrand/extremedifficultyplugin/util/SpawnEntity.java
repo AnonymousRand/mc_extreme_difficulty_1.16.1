@@ -32,7 +32,7 @@ public class SpawnEntity extends BukkitRunnable {
 
     static {
         boots = new ItemStack(Material.LEATHER_BOOTS);
-        boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /** most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
+        boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3); /* most mobs spawn with depth strider 3 to avoid loopholes such as using water flow to keep them back */
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 255);
     }
 

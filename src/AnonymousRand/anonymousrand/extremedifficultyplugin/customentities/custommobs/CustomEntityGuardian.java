@@ -31,13 +31,13 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
-    public double getFollowRange() { /** guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
+    public double getFollowRange() { /* guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
         return (this.attackController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 
@@ -46,27 +46,27 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -110,11 +110,11 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             if (metThreshold == attackThresholds[0]) {
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
             } else if (metThreshold == attackThresholds[1]) {
-                /** After 12 attacks, guardians gain regen 3 and 40 max health */
+                /* After 12 attacks, guardians gain regen 3 and 40 max health */
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             } else if (metThreshold == attackThresholds[2]) {
-                /** After 40 attacks, guardians summon an elder guardian */
+                /* After 40 attacks, guardians summon an elder guardian */
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
             }
         }
@@ -128,9 +128,9 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     public void initPathfinder() {
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
@@ -140,7 +140,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     @Override
@@ -149,8 +149,8 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             EntityLiving entityLiving = (EntityLiving)damagesource.j();
 
             if (!damagesource.isExplosion()) {
-                entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /** thorns damage increased from 2 to 50% of the damage dealt */
-                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /** guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
+                entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /* thorns damage increased from 2 to 50% of the damage dealt */
+                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /* guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
             }
         }
 
@@ -161,7 +161,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         return super.damageEntity(damagesource, f);
     }
 
-    static class PathfinderGoalGuardianAttack extends PathfinderGoal { /** guardian no longer stops attacking if player is too close */
+    static class PathfinderGoalGuardianAttack extends PathfinderGoal { /* guardian no longer stops attacking if player is too close */
 
         private final CustomEntityGuardian guardian;
         private int b;
@@ -203,7 +203,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             this.guardian.getControllerLook().a(entityLiving, 90.0F, 90.0F);
 
             if (entityLiving != null) {
-                ++this.b; /** laser no longer disengages when there is a block between guardian and player */
+                ++this.b; /* laser no longer disengages when there is a block between guardian and player */
 
                 if (this.b == 0) {
                     this.guardian.a(this.guardian.getGoalTarget().getId());
@@ -227,12 +227,12 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
                     this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
 
-                if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.getAttacks() < 10 ? 4 : 3) == 0) { /** tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */
+                if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.getAttacks() < 10 ? 4 : 3) == 0) { /* tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */
                     LivingEntity bukkitEntity = (LivingEntity)entityLiving.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.guardian.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.guardian.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.guardian.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
 
-                    if (this.guardian.getAttacks() >= 35) { /** after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged */
-                        if (this.guardian.getAttacks() >= 55) { /** after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged */
+                    if (this.guardian.getAttacks() >= 35) { /* after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged */
+                        if (this.guardian.getAttacks() >= 55) { /* after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged */
                             entityLiving.addEffect(new MobEffect(MobEffects.HUNGER, 51, 0));
                             entityLiving.addEffect(new MobEffect(MobEffects.WEAKNESS, 51, 0));
                         }

@@ -14,7 +14,7 @@ public class CustomEntityStrider extends EntityStrider {
     public void tick() {
         super.tick();
 
-        if (this.hasSinglePlayerPassenger() && random.nextDouble() < 0.001) { /** if they have a rider, striders have a 0.1% chance per tick to disappear */
+        if (this.hasSinglePlayerPassenger() && random.nextDouble() < 0.001) { /* if they have a rider, striders have a 0.1% chance per tick to disappear */
             this.die();
         }
     }

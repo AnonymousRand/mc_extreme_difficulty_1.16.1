@@ -24,9 +24,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.followRangeMultipler = 1.0;
@@ -35,11 +35,11 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     private void initAttributes() {
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /** iron golems move twice as fast but do half as much damage */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /* iron golems move twice as fast but do half as much damage */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
     }
 
-    public double getFollowRange() { /** iron golems have 24 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* iron golems have 24 block detection range (setting attribute doesn't work) */
         return 24.0 * this.followRangeMultipler;
     }
 
@@ -51,7 +51,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
@@ -61,7 +61,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
+                /* Random despawn distance increased to 40 blocks */
                 int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
@@ -112,7 +112,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
 
     public void increaseAttacks(int increase) {
         this.attackController.increaseAttacks(increase);
-        /** Every attack, iron golems increase their stats by a bit */
+        /* Every attack, iron golems increase their stats by a bit */
         this.increaseStatsAdd(2.0, 0.5, 0.025);
     }
 
@@ -150,13 +150,13 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected void initPathfinder() { /** no longer targets monsters or defends villages */
-        /** Still moves fast in cobwebs */
+    protected void initPathfinder() { /* no longer targets monsters or defends villages */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));
@@ -164,7 +164,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* always hostile to players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
         this.targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 }

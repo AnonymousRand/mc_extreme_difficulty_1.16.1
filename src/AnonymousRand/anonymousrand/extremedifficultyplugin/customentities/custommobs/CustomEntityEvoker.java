@@ -37,13 +37,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /** No longer avoids lava */
+        /* No longer avoids lava */
         this.a(PathType.LAVA, 0.0F);
-        /** No longer avoids fire */
+        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
-    public double getFollowRange() { /** evokers have 28 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* evokers have 28 block detection range (setting attribute doesn't work) */
         return 28.0;
     }
 
@@ -52,27 +52,27 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -119,14 +119,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         for (int metThreshold : this.attackController.increaseAttacks(increase)) {
             int[] attackThresholds = this.attackController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /** After 25 attacks, evokers summon 3 vexes and gain regen 2 */
+                /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             } else if (metThreshold == attackThresholds[1]) {
-                /** After 35 attacks, evokers gain regen 3 */
+                /* After 35 attacks, evokers gain regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             } else if (metThreshold == attackThresholds[2]) {
-                /** After 60 attacks, evokers gain speed 1 */
+                /* After 60 attacks, evokers gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             }
         }
@@ -137,17 +137,17 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected void initPathfinder() { /** no longer targets iron golems */
+    protected void initPathfinder() { /* no longer targets iron golems */
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
         this.goalSelector.a(5, new c(this));
         this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
 
-        /** Still moves fast in cobwebs */
+        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /** Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /** custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
@@ -157,8 +157,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /** custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
         this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
     }
 
@@ -166,7 +166,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     public void die() {
         super.die();
 
-        if (this.getAttacks() >= 60) { /** after 60 attacks, evokers summon 7 vexes when killed */
+        if (this.getAttacks() >= 60) { /* after 60 attacks, evokers summon 7 vexes when killed */
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 7, null, null, this, false, false);
         }
     }
@@ -202,19 +202,19 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         @Override
         protected int g() { // attack delay for any spell
-            return 0; /** does not increase global attack cooldown */
+            return 0; /* does not increase global attack cooldown */
         }
 
         @Override
         protected int h() { // attack delay between each vex summon spell
-            return 500; /** delay between each vex spawn increased to 25 seconds */
+            return 500; /* delay between each vex spawn increased to 25 seconds */
         }
 
         @Override
         protected void j() {
             CustomEntityEvoker.this.increaseAttacks(6);
 
-            for (int i = 0; i < 6; ++i) { /** summons 6 vexes at a time instead of 3 */
+            for (int i = 0; i < 6; ++i) { /* summons 6 vexes at a time instead of 3 */
                 BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + random.nextInt(5), 1, -2 + random.nextInt(5));
                 CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
@@ -246,11 +246,11 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         @Override
         protected int g() {
-            return 0; /** does not increase global attack cooldown */
+            return 0; /* does not increase global attack cooldown */
         }
 
         @Override
-        protected int h() { /** summons fangs every 85 ticks instead of 100 */
+        protected int h() { /* summons fangs every 85 ticks instead of 100 */
             return 85;
         }
 
@@ -283,7 +283,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /** every time the fangs attack, the player is slowed for 1.2 seconds */
+            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /* every time the fangs attack, the player is slowed for 1.2 seconds */
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
@@ -320,7 +320,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 org.bukkit.Material bukkitMaterial;
 
                 BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int)Math.ceil(CustomEntityEvoker.this.getFollowRange()));
-                while (iterator.hasNext()) { /** every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
+                while (iterator.hasNext()) { /* every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
                     bukkitLocBase = iterator.next().getLocation();
                     Random random = new Random();
 
@@ -361,7 +361,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     class PathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
 
         private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityLiving)-> {
-            return !((EntitySheep)entityLiving).getColor().equals(EnumColor.PINK); /** can target all non-pink sheep now within 32 blocks and with line of sight */
+            return !((EntitySheep)entityLiving).getColor().equals(EnumColor.PINK); /* can target all non-pink sheep now within 32 blocks and with line of sight */
         });
 
         public PathfinderGoalEvokerWololoSpell() {
@@ -406,7 +406,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             CustomEntityEvoker.this.increaseAttacks(1);
             EntitySheep entitySheep = CustomEntityEvoker.this.fh();
 
-            if (entitySheep != null && entitySheep.isAlive()) { /** instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */
+            if (entitySheep != null && entitySheep.isAlive()) { /* instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */
                 new SpawnEntity(entitySheep.getWorld(), new CustomEntitySheepAggressive(entitySheep.getWorld()), 1, null, null, entitySheep, true, true);
             }
         }

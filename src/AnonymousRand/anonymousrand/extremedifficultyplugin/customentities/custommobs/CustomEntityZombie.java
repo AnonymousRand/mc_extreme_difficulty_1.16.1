@@ -24,8 +24,8 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
     public CustomEntityZombie(World world) {
         super(EntityTypes.ZOMBIE, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /** no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /** no longer avoids fire */
+        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
+        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.attacks = 0;
         this.a7 = false;
         this.a15 = false;
@@ -34,7 +34,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         this.a50 = false;
         this.expToDrop = 1; // to differentiate between vanilla villagers in listenermobspawnandreplace to avoid potential infinite loops
         this.setBaby(true);
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /** zombies are always babies, move 2x faster, and have a 20% chance to summon a reinforcement when hit by a player */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /* zombies are always babies, move 2x faster, and have a 20% chance to summon a reinforcement when hit by a player */
         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.2);
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
@@ -49,15 +49,15 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
     }
 
     @Override
-    protected void initPathfinder() { /** no longer targets iron golems */
+    protected void initPathfinder() { /* no longer targets iron golems */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /** custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /** custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /** custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /** custom goal that spawns lightning randomly */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0015)); /** custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /** uses the custom melee attack goal that attacks regardless of the y level */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /** uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
+        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* custom goal that spawns lightning randomly */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.0015)); /* custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
+        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class));
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
@@ -71,15 +71,15 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
                 entityLiving = (EntityLiving)damagesource.getEntity();
             }
 
-            if (!(entityLiving instanceof EntityPlayer)) { /** only player damage can trigger reinforcement spawning */
+            if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
                 return true;
             }
 
-            if (this.attacks >= 30) { /** after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
+            if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
                 this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
             }
 
-            if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /** zombies can now spawn reinforcements on any difficulty */
+            if ((double)random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */
                 int i = MathHelper.floor(this.locX());
                 int j = MathHelper.floor(this.locY());
                 int k = MathHelper.floor(this.locZ());
@@ -98,7 +98,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
                         if (!this.getWorld().isPlayerNearby(i1, j1, k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
                             this.getWorld().addEntity(newZombie);
                             newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
-                            this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /** zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
+                            this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
                             newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.2, AttributeModifier.Operation.ADDITION));
                             break;
                         }
@@ -112,7 +112,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         }
     }
 
-    public double getFollowRange() { /** zombies have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* zombies have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
     }
 
@@ -121,27 +121,27 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
-            if (entityHuman != null) {
-                /** Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
-                double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
-                        + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
-                int i = this.getEntityType().e().f();
-                int j = i * i;
+            if (nearestPlayer != null) {
+                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                        + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
+                int forceDespawnDist = this.getEntityType().e().f();
+                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
-                /** Random despawn distance increased to 40 blocks */
-                int k = this.getEntityType().e().g() + 8;
-                int l = k * k;
+                /* Random despawn distance increased to 40 blocks */
+                int randomDespawnDist = this.getEntityType().e().g() + 8;
+                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
-                        && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -184,7 +184,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
     public void tick() {
         super.tick();
 
-        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /** converts to drowned 4 times faster */
+        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /* converts to drowned 4 times faster */
             if (this.isDrownConverting()) {
                 this.drownedConversionTime -= 3;
                 if (this.drownedConversionTime < 0) {
@@ -203,12 +203,12 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             }
         }
 
-        if (this.attacks == 7 && !this.a7) { /** after 7 attacks, zombies get 15% more reinforcement summon chance */
+        if (this.attacks == 7 && !this.a7) { /* after 7 attacks, zombies get 15% more reinforcement summon chance */
             this.a7 = true;
             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).setValue(0.35);
         }
 
-        if (this.attacks == 15 && !this.a15) { /** after 15 attacks, zombies get regen 2, 30 max health and summon 2 vanilla zombies */
+        if (this.attacks == 15 && !this.a15) { /* after 15 attacks, zombies get regen 2, 30 max health and summon 2 vanilla zombies */
             this.a15 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(30.0);
@@ -216,19 +216,19 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             new SpawnEntity(this.getWorld(), new EntityZombie(EntityTypes.ZOMBIE, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
         }
 
-        if (this.attacks == 25 && !this.a25) { /** after 25 attacks, zombies get 40 max health and health and summon another baby zombie */
+        if (this.attacks == 25 && !this.a25) { /* after 25 attacks, zombies get 40 max health and health and summon another baby zombie */
             this.a25 = true;
             ((LivingEntity)this.getBukkitEntity()).setMaxHealth(40.0);
             this.setHealth(40.0F);
             new SpawnEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 1, null, null, this, false, true);
         }
 
-        if (this.attacks == 50 && !this.a50) { /** after 50 attacks, zombies summon thor */
+        if (this.attacks == 50 && !this.a50) { /* after 50 attacks, zombies summon thor */
             this.a50 = true;
             new SpawnEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
         }
 
-        if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /** after 40 attacks, zombies summon a small meteor rain when it dies */
+        if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /* after 40 attacks, zombies summon a small meteor rain when it dies */
             this.a40 = true; // do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
             new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(StaticPlugin.plugin, 0L, 2L);

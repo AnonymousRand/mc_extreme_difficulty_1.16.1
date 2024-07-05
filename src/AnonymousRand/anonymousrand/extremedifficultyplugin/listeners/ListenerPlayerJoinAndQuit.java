@@ -33,7 +33,7 @@ public class ListenerPlayerJoinAndQuit implements Listener {
             bukkitPlayer.getWorld().setDifficulty(Difficulty.EASY);
         }
 
-        if (bukkitPlayer.getServer().getOnlinePlayers().size() == 1) { /** remove projectiles etc. to reduce lag if this is the first player to join the server */
+        if (bukkitPlayer.getServer().getOnlinePlayers().size() == 1) { /* remove projectiles etc. to reduce lag if this is the first player to join the server */
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=arrow]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=small_fireball]");
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kill @e[type=fireball]");

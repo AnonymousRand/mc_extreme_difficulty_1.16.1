@@ -12,7 +12,7 @@ public class AttackController {
         this.attacks = 0;
     }
 
-    /**
+    /*
      * Increase attacks.
      *
      * @return           all newly met or exceeded thresholds
