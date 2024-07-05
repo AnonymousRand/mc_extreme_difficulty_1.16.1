@@ -53,9 +53,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             e.printStackTrace();
         }
 
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /* every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */

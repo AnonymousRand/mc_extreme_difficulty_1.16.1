@@ -2,7 +2,7 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped before: customentitybee
+    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped after: customentitybee
 
     listeners group by event?
 
@@ -99,6 +99,8 @@ todo:
 	some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
 
 	creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
+
+    wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
 
 	those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
 

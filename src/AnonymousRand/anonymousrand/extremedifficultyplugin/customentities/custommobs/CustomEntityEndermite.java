@@ -15,7 +15,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
         super(EntityTypes.ENDERMITE, world);
         this.initCustomHostile();
         this.initAttackLevelingMob();
-        this.initGoalRemoval();
+        this.initGoalRemovingMob();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,9 +23,8 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         /* No longer despawns or takes up the mob cab */
@@ -128,9 +127,11 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
         }
     }
 
-    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     IGoalRemovingMob                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemoval() {
+    public void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);

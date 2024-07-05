@@ -26,9 +26,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         /* Drowned always spawn with tridents */

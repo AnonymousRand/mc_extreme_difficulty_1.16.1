@@ -39,6 +39,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
+        this.initAttributes();
+
         /* No longer avoids lava and fire (as if bats did in the first place) */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -47,8 +49,6 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         // custom goal that provides the buffing mechanism
         this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
                 32, 3, 200, 101);
-
-        this.initAttributes();
     }
 
     private void initAttributes() {

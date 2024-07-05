@@ -16,7 +16,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         super(EntityTypes.HOGLIN, world);
         this.initCustomHostile();
         this.initAttackLevelingMob();
-        this.initGoalRemoval();
+        this.initGoalRemovingMob();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,9 +24,8 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.initAttributes();
@@ -134,9 +133,11 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         }
     }
 
-    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     IGoalRemovingMob                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemoval() {
+    public void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);

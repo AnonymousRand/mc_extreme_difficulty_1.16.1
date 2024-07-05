@@ -23,7 +23,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         super(EntityTypes.BLAZE, world);
         initCustomHostile();
         initAttackLevelingMob();
-        initGoalRemoval();
+        initGoalRemovingMob();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,9 +33,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     public void initCustomHostile() {
         /* No longer avoids water */
         this.a(PathType.WATER, 0.0F);
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.rapidFire = false;
@@ -138,9 +137,11 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         }
     }
 
-    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     IGoalRemovingMob                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemoval() {
+    public void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);

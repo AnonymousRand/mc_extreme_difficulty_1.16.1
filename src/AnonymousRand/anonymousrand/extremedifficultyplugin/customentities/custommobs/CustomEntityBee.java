@@ -19,7 +19,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
         initCustomHostile();
-        initGoalRemoval();
+        initGoalRemovingMob();
+        this.firstSting = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,18 +28,15 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /* No longer avoids lava*/
-        this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
-        this.a(PathType.DAMAGE_FIRE, 0.0F);
-
-        this.firstSting = true;
-
         this.initAttributes();
+
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
     private void initAttributes() {
-        /* bees do 1000 damage but only have 5 health */
+        /* Bees do 1000 damage but only have 5 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
         this.setHealth(5.0F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
@@ -65,9 +63,11 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         return dist_x * dist_x + dist_z * dist_z;
     }
 
-    /////////////////////////////////////  IGoalRemovingMob  //////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     IGoalRemovingMob                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemoval() {
+    public void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
@@ -99,15 +99,16 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         super.tick();
 
         if (this.hasStung()) {
-            /* Doesn't die from stinging */
+            /* Bees don't die from stinging */
             this.setHasStung(false);
 
-            /* 50% chance to duplicate after the first sting */
             if (this.firstSting) {
                 this.firstSting = false;
 
+                /* Bees have a 50% chance to duplicate after the first sting */
                 if (random.nextDouble() < 0.5) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null,
+                            null, this, false, true);
                 }
             }
         }

@@ -24,9 +24,8 @@ public class CustomEntityCow extends EntityCow implements ICustomPeaceful {
             new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);
         }
 
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.initAttributes();

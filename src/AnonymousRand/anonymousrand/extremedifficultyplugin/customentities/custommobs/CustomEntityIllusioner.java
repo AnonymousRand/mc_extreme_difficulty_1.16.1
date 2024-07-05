@@ -27,9 +27,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void initCustomHostile() {
-        /* No longer avoids lava */
+        /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
-        /* No longer avoids fire */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
