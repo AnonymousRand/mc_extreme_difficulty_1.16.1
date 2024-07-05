@@ -1,8 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
@@ -10,9 +8,9 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.stream.Collectors;
 
-public class CustomEntityIllusionerFake extends CustomEntityIllusioner implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     private final CustomEntityIllusioner parentIllusioner;
     private boolean deathExplosion;
 
@@ -21,8 +19,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
         this.parentIllusioner = parentIllusioner;
     }
 
-    @Override // yes, this works
-    public void initCustomHostile() {
+    // this will be called on super() constructor // todo make sure
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -44,16 +42,16 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner implement
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(20, 40);
+        this.attackLevelingController = new AttackLevelingController(20, 40);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {

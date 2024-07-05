@@ -20,15 +20,25 @@ todo:
 
 	after that: have initattacklevelingmob function just accept attack thresholds and default in interface
 
-	investigate why some mobs dont need bl() (maxfallheight) or g() and d()
+	investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
+
+	optimize predicates (not bedrock into base? etc)
+
+	standardize customentity.this vs this.customentity in inner goal classes
 
 	todo comments in like elder guardian
 
     todo increment attacks in attack method/goal instead of listener?
 
+    test blaze slight inaccuracy and slower attakc speed
+
+    all -- and ++ to after if possible
+
     check that bats never sleep
 
     remove unnecessary casts???
+
+    util function for Bukkit.getServer().getOnlinePlayers().size()?
 
 	breakblocksaround goals make sure never remove blocks underneath unless intentional?
 
@@ -62,7 +72,7 @@ todo:
 
 	hoglin fire trails to custom goal?
 
-	should reflection fields be static?
+	should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
 
 	phantom more linear size increases?
 
@@ -137,3 +147,7 @@ todo:
 balance changes catalog:
 	striders die faster (find number!)
 	elder guardian random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
+	blaze inaccuracy non rapidfire 0% -> 20% vanilla
+	blaze inaccuracy rapidfire 35% -> 40% vanilla
+	blaze normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
+	blaze rapidfire attack cooldown 3 ticks -> 4

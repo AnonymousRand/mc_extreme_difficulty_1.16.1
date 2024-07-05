@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWither;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -13,8 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
 
 public class RunnableTornado extends BukkitRunnable {
 
@@ -97,13 +96,13 @@ public class RunnableTornado extends BukkitRunnable {
             for (Block bukkitBlock : this.bukkitBlocksTemp) { // turn those new blocks into falling blocks
                 org.bukkit.Material bukkitMaterial = bukkitBlock.getType();
 
-                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notFluid.test(bukkitMaterial) && notHardBlocks.test((bukkitMaterial))) { // as long as it isn't one of these blocks
+                if (Predicates.blockBreakableDefault.test(bukkitMaterial) && Predicates.notBedrock.test(bukkitMaterial) && Predicates.notFluid.test(bukkitMaterial) && Predicates.notHardBlocks.test((bukkitMaterial))) { // as long as it isn't one of these blocks
                     FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
                     fallingBlock.setGravity(false);
                     fallingBlock.setVelocity(vec);
                     this.fallingBlocksAll.put(fallingBlock, this.cycles);
                     bukkitBlock.setType(org.bukkit.Material.AIR);
-                } else if (!notHardBlocks.test(bukkitMaterial)) { // 50% chance to pick up these blocks
+                } else if (!Predicates.notHardBlocks.test(bukkitMaterial)) { // 50% chance to pick up these blocks
                     if (random.nextDouble() < 0.5) {
                         FallingBlock fallingBlock = this.bukkitWorld.spawnFallingBlock(randomLoc, bukkitBlock.getBlockData());
                         fallingBlock.setGravity(false);

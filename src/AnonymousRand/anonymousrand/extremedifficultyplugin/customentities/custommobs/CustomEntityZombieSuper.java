@@ -106,7 +106,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();

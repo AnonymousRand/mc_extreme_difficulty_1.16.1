@@ -23,15 +23,11 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.uniqueID = uuid; // to make sure bossbar etc. doesn't break
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         try {
             this.phaseManager = EntityEnderDragon.class.getDeclaredField("bN");
             this.phaseManager.setAccessible(true);
@@ -42,6 +38,10 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             e.printStackTrace();
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() { /* dragon has 128 block detection range for new constant fireballs */
         return 128.0;
@@ -81,7 +81,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             this.heal(10.0F);
         }
 
-        if (damagesource.getEntity() != null) { /* dragon shoots a super fireball when crystal destroyed and rapidfires 10 normal custom fireballs, then shoots another super fireball */
+        if (damagesource.getEntity() != null) { /* dragon shoots a super fireball when crystal destroyed and rapid fires 10 normal custom fireballs, then shoots another super fireball */
             Entity entity = damagesource.getEntity();
             new RunnableDragonRapidShootFireballs(this, entity, 12).runTaskTimer(StaticPlugin.plugin, 0L, 4L);
         }

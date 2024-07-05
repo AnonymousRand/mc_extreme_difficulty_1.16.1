@@ -8,21 +8,17 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityEndermite extends EntityEndermite implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     public PathfinderGoalSelector vanillaTargetSelector;
 
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
         this.initGoalRemovingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -40,6 +36,10 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
         this.setHealth(12.0F);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* endmites have 20 block detection range (setting attribute doesn't work) */
         return 20.0;
     }
@@ -52,7 +52,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -105,16 +105,16 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(35, 60);
+        this.attackLevelingController = new AttackLevelingController(35, 60);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 35 attacks, endermites get more knockback */
                 this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
@@ -131,7 +131,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemovingMob() {
+    private void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);

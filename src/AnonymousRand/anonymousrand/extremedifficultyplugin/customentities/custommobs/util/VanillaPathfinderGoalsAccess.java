@@ -46,6 +46,11 @@ public class VanillaPathfinderGoalsAccess {
         return goalsFound;
     }
 
+    /**
+     * Remove vanilla <code>HurtByTarget</code> and <code>HurtByTarget</code> goals in order to replace them with custom ones.
+     *
+     * @param entity the entity to remove the goal from
+     */
     public static void removePathfinderGoals(EntityInsentient entity) {
         ArrayList<PathfinderGoal> goalsToRemove = new ArrayList<>();
 
@@ -140,7 +145,7 @@ public class VanillaPathfinderGoalsAccess {
             e.printStackTrace();
         }
 
-        if (goalsToRemove.size() > 0) {
+        if (!goalsToRemove.isEmpty()) {
             for (PathfinderGoal goal : goalsToRemove) { // but somehow removing vanilla goals from custom target selectors still works
                 if (!(goal instanceof CustomPathfinderGoalHurtByTarget) && !(goal instanceof CustomPathfinderGoalNearestAttackableTarget)) {
                     entity.targetSelector.a(goal); // remove goal

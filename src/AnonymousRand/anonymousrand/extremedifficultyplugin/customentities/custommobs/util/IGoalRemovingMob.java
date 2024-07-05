@@ -3,6 +3,5 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
 
 public interface IGoalRemovingMob {
-    void initGoalRemovingMob();
     PathfinderGoalSelector getVanillaTargetSelector();
 }

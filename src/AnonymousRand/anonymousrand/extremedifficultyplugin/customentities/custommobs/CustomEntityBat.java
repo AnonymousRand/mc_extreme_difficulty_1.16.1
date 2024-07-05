@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     private NewPathfinderGoalBuffMobs buffMobs;
     private boolean firstDuplicate;
 
@@ -30,15 +30,11 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public CustomEntityBat(World world) {
         super(EntityTypes.BAT, world);
         /* Bats are now aggressive */
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         this.initAttributes();
 
         /* No longer avoids lava and fire (as if bats did in the first place) */
@@ -84,14 +80,18 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         map.put(attributeBase, attributeModifiable);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() {
         /* Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
         // null check since getFollowRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
         // which is called in initPathfinder() which is called in super constructor I think
         // which is called obviously before initAttackLevelingMob()/before this.attackController can be initialized in any other way
-        return (this.attackController == null || this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[1])
-                ? 16.0 : this.attackController.getAttacks() < this.attackController.getAttacksThresholds()[2] ? 24 : 32;
+        return (this.attackLevelingController == null || this.attackLevelingController.getAttacks() < this.attackLevelingController.getAttacksThresholds()[1])
+                ? 16.0 : this.attackLevelingController.getAttacks() < this.attackLevelingController.getAttacksThresholds()[2] ? 24 : 32;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -158,16 +158,16 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(3, 7, 12, 24, 32);
+        this.attackLevelingController = new AttackLevelingController(3, 7, 12, 24, 32);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3]) {
                 /* After 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /* After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds */
@@ -252,7 +252,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
-            if (this.getAttacks() >= this.attackController.getAttacksThresholds()[4]) {
+            if (this.getAttacks() >= this.attackLevelingController.getAttacksThresholds()[4]) {
                 new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null,
                         null, this, false, false);
             }

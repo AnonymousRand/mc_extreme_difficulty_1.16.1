@@ -197,7 +197,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();

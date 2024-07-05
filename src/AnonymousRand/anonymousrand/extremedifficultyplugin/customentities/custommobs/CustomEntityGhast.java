@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
@@ -18,22 +18,22 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     private boolean deathFireballs;
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
+    }
+
+    private void initCustom() {
+        this.deathFireballs = false;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
-        this.deathFireballs = false;
-    }
 
     public double getFollowRange() { /* ghasts have 80 block detection range (setting attribute doesn't work) */
         return 80.0;
@@ -47,7 +47,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -95,16 +95,16 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(20);
+        this.attackLevelingController = new AttackLevelingController(20);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, ghasts get 16 max health and health */
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(16.0);

@@ -25,6 +25,7 @@ public class BlockOverride {
 
     /** 
      * Update the given field with a new value.
+     *
      * @param  fieldName                name of field
      * @param  value                    new value
      * @throws IllegalArgumentException if the field name is null or the field doesn't exist
@@ -40,6 +41,7 @@ public class BlockOverride {
 
     /** 
      * Retrieves the current field value.
+     *
      * @param  fieldName                name of field
      * @throws IllegalArgumentException if the field name is null or the field doesn't exist
      * @throws RuntimeException         if we don't have security clearance

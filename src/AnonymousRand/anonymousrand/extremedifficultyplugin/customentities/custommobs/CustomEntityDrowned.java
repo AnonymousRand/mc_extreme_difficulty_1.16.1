@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -13,19 +13,15 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
 
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -33,6 +29,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         /* Drowned always spawn with tridents */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT));
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() { /* drowned have 40 block detection range (setting attribute doesn't work) */
         return 40.0;
@@ -46,7 +46,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -99,16 +99,16 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(150, 350);
+        this.attackLevelingController = new AttackLevelingController(150, 350);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 1, null, null, this, false, true);

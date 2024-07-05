@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,9 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.notFireOrWitherRose;
 
 public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
 
@@ -76,7 +74,7 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
                         this.bukkitMaterial = this.bukkitBlock.getType();
 
                         if (this.terraform) {
-                            if (this.bukkitMaterial != this.material && blockBreakableDefault.test(this.bukkitMaterial) && notBedrock.test(this.bukkitMaterial) && notHardBlocks.test(this.bukkitMaterial) && notFireOrWitherRose.test(this.bukkitMaterial) && notFluid.test(this.bukkitMaterial)) { // as long as it isn't one of these blocks
+                            if (this.bukkitMaterial != this.material && Predicates.blockBreakableDefault.test(this.bukkitMaterial) && Predicates.notBedrock.test(this.bukkitMaterial) && Predicates.notHardBlocks.test(this.bukkitMaterial) && Predicates.notFireOrWitherRose.test(this.bukkitMaterial) && Predicates.notFluid.test(this.bukkitMaterial)) { // as long as it isn't one of these blocks
                                 this.bukkitBlock.setType(this.material);
 
                                 if (this.material == Material.COBWEB) {

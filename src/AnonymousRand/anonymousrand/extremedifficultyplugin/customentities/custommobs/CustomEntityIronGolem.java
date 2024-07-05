@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
@@ -10,20 +10,16 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     private double followRangeMultipler;
 
     public CustomEntityIronGolem(World world) {
         super(EntityTypes.IRON_GOLEM, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -38,6 +34,10 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* iron golems have 24 block detection range (setting attribute doesn't work) */
         return 24.0 * this.followRangeMultipler;
     }
@@ -50,7 +50,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
@@ -102,15 +102,15 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController();
+        this.attackLevelingController = new AttackLevelingController();
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        this.attackController.increaseAttacks(increase);
+        this.attackLevelingController.increaseAttacks(increase);
         /* Every attack, iron golems increase their stats by a bit */
         this.increaseStatsAdd(2.0, 0.5, 0.025);
     }

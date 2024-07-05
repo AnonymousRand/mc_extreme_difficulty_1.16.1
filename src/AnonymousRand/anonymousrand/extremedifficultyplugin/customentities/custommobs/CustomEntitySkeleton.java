@@ -57,7 +57,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             new RunnableMobShootArrows(this, entityLiving, 10, 2, 40.0, 0, false, false).run();
         } else if (this.attacks < 30) { /* shoots 50 arrows at a time with increased inaccuracy to seem like a cone */
             new RunnableMobShootArrows(this, entityLiving, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /* 2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y level */
-        } else { /* if more than 30 attacks, rapidfire; if more than 40, even faster rapidfire */
+        } else { /* if more than 30 attacks, rapid fire; if more than 40, even faster rapid fire */
             new RunnableMobShootArrows(this, entityLiving, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(StaticPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /* 5% of arrows shot are piercing 1 */
         }
     }
@@ -79,7 +79,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();

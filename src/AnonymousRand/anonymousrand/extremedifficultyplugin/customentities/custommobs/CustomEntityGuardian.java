@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -18,26 +18,26 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardian extends EntityGuardian implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
+    }
+
+    private void initCustom() {
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initCustomHostile() {
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
-        this.a(PathType.DAMAGE_FIRE, 0.0F);
-    }
-
     public double getFollowRange() { /* guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
-        return (this.attackController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
+        return (this.attackLevelingController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -96,16 +96,16 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(8, 12, 40);
+        this.attackLevelingController = new AttackLevelingController(8, 12, 40);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // updates follow range
             } else if (metThreshold == attackThresholds[1]) {

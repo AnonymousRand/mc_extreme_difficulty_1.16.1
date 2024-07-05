@@ -1,9 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.google.common.collect.Lists;
@@ -19,28 +20,26 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
-
 public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, IAttackLevelingMob {
 
     private EntitySheep wololoTarget;
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
 
     public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
+    }
+
+    private void initCustom() {
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
-        this.a(PathType.DAMAGE_FIRE, 0.0F);
-    }
 
     public double getFollowRange() { /* evokers have 28 block detection range (setting attribute doesn't work) */
         return 28.0;
@@ -54,7 +53,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -107,16 +106,16 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(25, 35, 60);
+        this.attackLevelingController = new AttackLevelingController(25, 35, 60);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
@@ -330,9 +329,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                                 bukkitBlock = bukkitLoc.getBlock();
                                 bukkitMaterial = bukkitBlock.getType();
 
-                                if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial) && notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                                if (Predicates.blockBreakableDefault.test(bukkitMaterial) && Predicates.notBedrock.test(bukkitMaterial) && Predicates.notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                                     bukkitBlock.setType(org.bukkit.Material.AIR);
-                                } else if (!notHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
+                                } else if (!Predicates.notHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
                                     if (random.nextDouble() < 0.5) {
                                         bukkitBlock.setType(org.bukkit.Material.AIR);
                                     }

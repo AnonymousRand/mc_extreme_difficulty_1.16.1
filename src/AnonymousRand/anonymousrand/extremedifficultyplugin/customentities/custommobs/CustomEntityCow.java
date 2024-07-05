@@ -1,24 +1,19 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomPeaceful;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityCow extends EntityCow implements ICustomPeaceful {
+public class CustomEntityCow extends EntityCow {
 
     public CustomEntityCow(World world) {
         super(EntityTypes.COW, world);
-        this.initCustomPeaceful();
+        this.initCustom();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomPeaceful                                      //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomPeaceful() {
+    private void initCustom() {
         /* Cows have a 5% chance to spawn as a mooshroom instead */
         if (random.nextDouble() < 0.05) {
             new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null, null, this, true, true);

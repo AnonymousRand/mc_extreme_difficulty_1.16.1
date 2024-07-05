@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
@@ -13,19 +13,15 @@ import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids water */
         this.a(PathType.WATER, 0.0F);
         /* No longer avoids lava and fire */
@@ -40,8 +36,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks) */
-        return (this.attackController == null || this.getAttacks() < 12) ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
+        return (this.attackLevelingController == null || this.getAttacks() < 12) ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
 
 
@@ -53,7 +53,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -106,16 +106,16 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(12, 25, 40);
+        this.attackLevelingController = new AttackLevelingController(12, 25, 40);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));

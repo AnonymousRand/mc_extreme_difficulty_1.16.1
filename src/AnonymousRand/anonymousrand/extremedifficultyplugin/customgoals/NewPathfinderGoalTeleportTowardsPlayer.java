@@ -1,14 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.Random;
-
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.blockBreakableDefault;
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.notBedrock;
 
 public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
 
@@ -84,7 +82,7 @@ public class NewPathfinderGoalTeleportTowardsPlayer extends PathfinderGoal {
                     bukkitBlock = bukkitLoc.getBlock();
                     bukkitMaterial = bukkitBlock.getType();
 
-                    if (blockBreakableDefault.test(bukkitMaterial) && notBedrock.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                    if (Predicates.blockBreakableDefault.test(bukkitMaterial) && Predicates.notBedrock.test(bukkitMaterial)) { // as long as it isn't one of these blocks
                         bukkitBlock.setType(org.bukkit.Material.AIR);
                     }
                 }

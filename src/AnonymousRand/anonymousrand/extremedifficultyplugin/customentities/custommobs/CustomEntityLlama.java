@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackController;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLlamaSpit;
@@ -11,20 +11,16 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 
 public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IAttackLevelingMob {
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     private Field didSpit;
 
     public CustomEntityLlama(World world) {
         super(EntityTypes.LLAMA, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         try {
             this.didSpit = EntityLlama.class.getDeclaredField("bH");
             this.didSpit.setAccessible(true);
@@ -46,6 +42,10 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.setHealth(30.0F);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* llamas have 24 block detection range (setting attribute doesn't work) */
         return 24.0;
     }
@@ -55,16 +55,16 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(15);
+        this.attackLevelingController = new AttackLevelingController(15);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 15 attacks, llamas get 50 max health and health */
                 ((LivingEntity)this.getBukkitEntity()).setMaxHealth(50.0);

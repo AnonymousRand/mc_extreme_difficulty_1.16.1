@@ -27,7 +27,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public boolean a() { // copied in because first two attacks are rapidfire otherwise
+    public boolean a() { // copied in because first two attacks are rapid fire otherwise
         long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) { // this line dictates attack cooldown

@@ -18,29 +18,30 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
 
     public CustomEntityBee(World world) {
         super(EntityTypes.BEE, world);
-        initCustomHostile();
+        initCustom();
         initGoalRemovingMob();
-        this.firstSting = true;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         this.initAttributes();
 
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+
+        this.firstSting = true;
     }
 
     private void initAttributes() {
-        /* Bees do 1000 damage but only have 5 health */
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1000.0);
+        /* Bees do 420 damage but only have 5 health */
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(420.0);
         this.setHealth(5.0F);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(5.0);
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() {
         /* Bees have 16 block detection range (setting attribute doesn't work) */
@@ -67,9 +68,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemovingMob() {
+    private void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
-        // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
     }
 

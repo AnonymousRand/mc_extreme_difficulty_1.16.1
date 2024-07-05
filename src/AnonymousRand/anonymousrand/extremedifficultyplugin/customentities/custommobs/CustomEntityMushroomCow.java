@@ -1,23 +1,18 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomPeaceful;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 
-public class CustomEntityMushroomCow extends EntityMushroomCow implements ICustomPeaceful {
+public class CustomEntityMushroomCow extends EntityMushroomCow {
 
     public CustomEntityMushroomCow(World world) {
         super(EntityTypes.MOOSHROOM, world);
-        this.initCustomPeaceful();
+        this.initCustom();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomPeaceful                                      //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomPeaceful() {
+    private void initCustom() {
         this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
     }

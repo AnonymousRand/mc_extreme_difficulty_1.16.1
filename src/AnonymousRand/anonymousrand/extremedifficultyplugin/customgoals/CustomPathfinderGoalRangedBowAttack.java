@@ -75,7 +75,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
 
         if (this.entity.isHandRaised()) {
             this.entity.clearActiveItem();
-            this.entity.a(attackTarget, ItemBow.a(20)); // shoot(); ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (manually setting it to the normal 20 here to allow rapidfire, because normally this only runs if mob has charged bow for 20 ticks)
+            this.entity.a(attackTarget, ItemBow.a(20)); // shoot(); ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (manually setting it to the normal 20 here to allow rapid fire, because normally this only runs if mob has charged bow for 20 ticks)
             this.attackRemainingCooldown = this.attackInterval;
         } else if (--this.attackRemainingCooldown <= 0 && this.seeTime >= -60) {
             this.entity.c(ProjectileHelper.a(this.entity, Items.BOW)); // startUsingItem()

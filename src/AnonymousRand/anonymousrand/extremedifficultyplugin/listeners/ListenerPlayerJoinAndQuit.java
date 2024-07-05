@@ -17,10 +17,6 @@ import java.lang.reflect.Field;
 
 public class ListenerPlayerJoinAndQuit implements Listener {
 
-    public static double explosionVolumeMultiplier, defaultVolume;
-    public static boolean firstExplosion;
-    private static Field c;
-
     @EventHandler
     public void playerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();

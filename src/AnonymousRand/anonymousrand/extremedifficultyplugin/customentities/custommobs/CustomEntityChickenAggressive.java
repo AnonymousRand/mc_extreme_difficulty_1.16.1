@@ -16,14 +16,10 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
 
     public CustomEntityChickenAggressive(World world) {
         super(EntityTypes.CHICKEN, world);
-        this.initCustomHostile();
+        this.initCustom();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -63,6 +59,10 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         map.put(attributeBase, attributeModifiable);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* aggressive chickens have 16 block detection range (setting attribute doesn't work) */
         return 16.0;
     }
@@ -75,7 +75,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();

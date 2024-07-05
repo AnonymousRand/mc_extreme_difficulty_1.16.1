@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import org.bukkit.Location;
@@ -10,8 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 import java.util.function.Predicate;
-
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
 
 public class RunnableBreakBlocks extends BukkitRunnable {
 
@@ -26,10 +25,10 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
     protected Predicate<Material> blockBreakable = (type)
-            -> blockBreakableDefault.test(type)
-            && notBedrock.test(type)
-            && notHardBlocks.test(type)
-            && notFireOrWitherRose.test(type);
+            -> Predicates.blockBreakableDefault.test(type)
+            && Predicates.notBedrock.test(type)
+            && Predicates.notHardBlocks.test(type)
+            && Predicates.notFireOrWitherRose.test(type);
     protected static final Random random = new Random();
 
     public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
@@ -105,9 +104,9 @@ public class RunnableBreakBlocks extends BukkitRunnable {
                     this.bukkitBlock = this.bukkitWorld.getBlockAt(x1, y1, z1);
                     this.bukkitMaterial = this.bukkitBlock.getType();
 
-                    if (blockBreakable.test(this.bukkitMaterial) && (this.removeFluids ? true : notFluid.test(this.bukkitMaterial)) && (this.immuneBlocks ? notPreciousBlocks.test(this.bukkitMaterial) : true)) { // as long as it isn't one of these blocks
+                    if (blockBreakable.test(this.bukkitMaterial) && (this.removeFluids ? true : Predicates.notFluid.test(this.bukkitMaterial)) && (this.immuneBlocks ? Predicates.notPreciousBlocks.test(this.bukkitMaterial) : true)) { // as long as it isn't one of these blocks
                         this.bukkitBlock.setType(Material.AIR);
-                    } else if (!notHardBlocks.test(this.bukkitMaterial)) { // 50% chance to break these blocks
+                    } else if (!Predicates.notHardBlocks.test(this.bukkitMaterial)) { // 50% chance to break these blocks
                         if (random.nextDouble() < 0.5) {
                             this.bukkitBlock.setType(Material.AIR);
                         }

@@ -9,21 +9,17 @@ import org.bukkit.block.Block;
 
 public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    private AttackController attackController;
+    private AttackLevelingController attackLevelingController;
     public PathfinderGoalSelector vanillaTargetSelector;
 
     public CustomEntityHoglin(World world) {
         super(EntityTypes.HOGLIN, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.initAttackLevelingMob();
         this.initGoalRemovingMob();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
@@ -37,8 +33,12 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* hoglins have 40 block detection range (setting attribute doesn't work) (64 after 10 attacks) */
-        return (this.attackController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
+        return (this.attackLevelingController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -102,16 +102,16 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackController = new AttackController(10, 20, 40, 75);
+        this.attackLevelingController = new AttackLevelingController(10, 20, 40, 75);
     }
 
     public int getAttacks() {
-        return this.attackController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackController.getAttacksThresholds();
+        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
@@ -137,7 +137,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void initGoalRemovingMob() {
+    private void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
@@ -168,7 +168,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     public void die() {
         super.die();
 
-        if (this.attackController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /* hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
+        if (this.attackLevelingController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /* hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
             new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
         }
     }

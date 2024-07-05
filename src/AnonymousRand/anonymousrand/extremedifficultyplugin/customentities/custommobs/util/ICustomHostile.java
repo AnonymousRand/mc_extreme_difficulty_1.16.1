@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import net.minecraft.server.v1_16_R1.Vec3D;
 
 public interface ICustomHostile {
-    //void initCustomHostile(); // todo uncomment once all have been converted
     double getFollowRange();
     void checkDespawn();                    // vanilla override
     /* For determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */

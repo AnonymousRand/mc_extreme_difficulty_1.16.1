@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
@@ -15,8 +16,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 import java.util.Random;
-
-import static AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates.*;
 
 public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
@@ -303,9 +302,9 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
             super(entity, radX, radY, radZ, yOffset, removeFluids);
             blockBreakable = (type) /* withers can now break bedrock */
-                    -> blockBreakableDefault.test(type)
-                    && notHardBlocks.test(type)
-                    && notFireOrWitherRose.test(type);
+                    -> Predicates.blockBreakableDefault.test(type)
+                    && Predicates.notHardBlocks.test(type)
+                    && Predicates.notFireOrWitherRose.test(type);
         }
 
         @Override

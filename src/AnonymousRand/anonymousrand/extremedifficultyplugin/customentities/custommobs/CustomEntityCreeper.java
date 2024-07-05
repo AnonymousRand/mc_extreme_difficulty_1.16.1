@@ -15,15 +15,11 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
     public CustomEntityCreeper(World world, int fuse) {
         super(EntityTypes.CREEPER, world);
-        this.initCustomHostile();
+        this.initCustom();
         this.maxFuseTicks = fuse;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void initCustomHostile() {
+    private void initCustom() {
         try {
             this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
             this.fuseTicks.setAccessible(true);
@@ -42,6 +38,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375); /* creepers move 75% faster */
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      ICustomHostile                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public double getFollowRange() { /* creepers have 28 block detection range (64 if powered) */
         return this.isPowered() ? 64.0 : 28.0;
     }
@@ -54,7 +54,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
