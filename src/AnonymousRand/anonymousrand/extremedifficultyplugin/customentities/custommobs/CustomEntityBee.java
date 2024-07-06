@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -85,7 +85,7 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     public void initPathfinder() {
         super.initPathfinder();
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         /* Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */

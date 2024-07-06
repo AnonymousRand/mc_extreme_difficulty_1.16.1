@@ -12,7 +12,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
     protected Material material;
     protected Entity firstEntityToSpawn;
     protected int delayTimer, xRadius, yRadius, zRadius;
-    protected double yOffset;
+    protected double offsetY;
     protected boolean terraform;
 
     public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
@@ -23,11 +23,11 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.xRadius = 0;
         this.yRadius = 0;
         this.zRadius = 0;
-        this.yOffset = 0.0;
+        this.offsetY = 0.0;
         this.terraform = false;
     }
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double yOffset, boolean terraform) {
+    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = null;
@@ -35,7 +35,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.xRadius = xRadius;
         this.yRadius = yRadius;
         this.zRadius = zRadius;
-        this.yOffset = yOffset;
+        this.offsetY = offsetY;
         this.terraform = terraform;
     }
 
@@ -47,11 +47,11 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.xRadius = 0;
         this.yRadius = 0;
         this.zRadius = 0;
-        this.yOffset = 0.0;
+        this.offsetY = 0.0;
         this.terraform = false;
     }
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double yOffset) {
+    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY) {
         this.entity = entity;
         this.material = null;
         this.firstEntityToSpawn = entityToBeSpawned;
@@ -59,7 +59,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.xRadius = xRadius;
         this.yRadius = yRadius;
         this.zRadius = zRadius;
-        this.yOffset = yOffset;
+        this.offsetY = offsetY;
         this.terraform = false;
     }
 
@@ -80,7 +80,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
     @Override
     public void e() {
         if ((this.entity.ticksLived - 10) % this.delayTimer == 0) {
-            new RunnableConstantlySpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.yOffset, this.terraform).run();
+            new RunnableConstantlySpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.offsetY, this.terraform).run();
         }
     }
 }

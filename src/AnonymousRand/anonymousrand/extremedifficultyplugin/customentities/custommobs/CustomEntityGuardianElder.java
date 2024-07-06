@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import net.minecraft.server.v1_16_R1.*;
@@ -44,13 +44,14 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -58,8 +59,8 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -96,7 +97,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(3, new CustomEntityGuardianElder.PathfinderGoalGuardianAttack(this));
@@ -105,13 +106,13 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         this.goalSelector.a(7, this.goalRandomStroll);
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving)damagesource.j();
+            EntityLiving entityLiving = (EntityLiving) damagesource.j();
 
             if (!damagesource.isExplosion()) {
                 entityLiving.damageEntity(DamageSource.a(this), f); /* thorns damage increased from 2 to 100% of the damage dealt */
@@ -131,7 +132,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         if ((this.ticksLived  + this.getId()) % 40 == 0) { /* applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute */
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
-            List<EntityPlayer> list = ((WorldServer)this.getWorld()).a((entityPlayer) -> this.h((Entity)entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
+            List<EntityPlayer> list = ((WorldServer)this.getWorld()).a((entityPlayer) -> this.h((Entity) entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
 
             for (EntityPlayer entityPlayer : list) {
                 // plays the animation every time mining fatigue happens (every second)
@@ -202,10 +203,10 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                     }
 
                     entityLiving.damageEntity(DamageSource.c(this.entity, this.entity), f);
-                    entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float)this.entity.b(GenericAttributes.ATTACK_DAMAGE));
+                    entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 } else if (this.b + 40 == this.entity.eL()) { /* 2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player */
-                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int)Math.pow(this.entity.getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()), 0.5) + 1);
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(this.entity.get3DDistSquared(this.entity.getPositionVector(), entityLiving.getPositionVector()), 0.5) + 1);
 
                     while (iterator.hasNext()) {
                         new RunnableBreakBlocks(iterator.next().getLocation(), this.entity.getWorld().getWorld(), 1, 1, 1, 0, false).run();

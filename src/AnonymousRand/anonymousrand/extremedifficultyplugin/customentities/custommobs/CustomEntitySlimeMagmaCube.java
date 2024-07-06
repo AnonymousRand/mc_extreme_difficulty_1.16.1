@@ -34,8 +34,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     protected void initPathfinder() { /* no longer targets iron golems */
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /* custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count */
-        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* uses the custom goal that atstacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement); for some reason the magma cubes run away after a while without the extra parameters */
+        this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* uses the custom goal that atstacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to find a target; for some reason the magma cubes run away after a while without the extra parameters */
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         super.setSize(i, flag);
         this.getAttributeInstance(GenericAttributes.ARMOR).setValue(0.0); /* magma cubes don't have armor */
         this.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(1.0 + ((Math.log10(i) / Math.log10(2.15)) * ((Math.log10(i) + 0.6) / (Math.log10(1.4))))); // approx: 6.58 health for size 2, 15.9 health for size 4, 28.94 health for size 8, 45.72 health for size 16
-        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.375F + 0.025F * (float)i)); // 0.425 for 2, 0.475 for 4, 0.575 for 8, 0.775 for 16
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(Math.ceil(0.375F + 0.025F * (float) i)); // 0.425 for 2, 0.475 for 4, 0.575 for 8, 0.775 for 16
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(Math.floor(((0.4 + Math.log10(i)) / (Math.log10(2))) * Math.pow(1.03, i))); // 2 for 2, 3 for 4, 5 for 8, 8 for 16
         if (flag) {
             this.setHealth(this.getMaxHealth());
@@ -69,13 +69,14 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -83,8 +84,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -131,7 +132,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         if (this.getHealth() <= 0.0 && this.attacks >= 30 && !this.deathExplosion) { /* after 30 attacks, magma cubes explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(Math.log10(this.getSize()) / Math.log10(2.0)) / 2.0F, true, Explosion.Effect.DESTROY);
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (Math.log10(this.getSize()) / Math.log10(2.0)) / 2.0F, true, Explosion.Effect.DESTROY);
         }
 
         if (this.attacks == 15 && !this.a15) { /* after 15 attacks, magma cubes increase in size by 2 unless it is already at the largest possible size or is going to exceed it */
@@ -152,7 +153,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
         if (this.ticksLived == 5) {
             if (this.getSize() > 3) {
-                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+                this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 10, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, this.getSize() / 4 + 1, false)); /* Breaks most blocks around the mob periodically */
             }
         }
     }
@@ -180,7 +181,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         @Override
         public void e() {
             if (this.cube.isOnGround()) { /* magma cube spawns fire on it while on the ground and magma blocks below it */
-                int diameter = (int)(Math.floor(this.cube.getBoundingBox().maxX - this.cube.getBoundingBox().minX) + 2);
+                int diameter = (int) (Math.floor(this.cube.getBoundingBox().maxX - this.cube.getBoundingBox().minX) + 2);
 
                 if (this.firstLand <= 0) { // to reduce lag, this can only happen every 10 ticks
                     this.firstLand = 10;

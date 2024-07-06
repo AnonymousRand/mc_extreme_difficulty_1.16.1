@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custo
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -32,8 +32,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
@@ -47,7 +47,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
 
         if (!this.isSilent() && (this.ticksLived - this.lastStingTicks) > 100) {
             this.lastStingTicks = this.ticksLived; /* only plays sting sound once per 5 seconds */
-            ((EntityPlayer)entityHuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
+            ((EntityPlayer) entityHuman).playerConnection.sendPacket(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.j, 0.0F));
         }
 
         entityHuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /* poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80 */
@@ -65,13 +65,14 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -79,8 +80,8 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -138,13 +139,13 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         }
 
         if (this.bb > 0) {
-            double d0 = this.locX() + (this.bc - this.locX()) / (double)this.bb;
-            double d1 = this.locY() + (this.bd - this.locY()) / (double)this.bb;
-            double d2 = this.locZ() + (this.be - this.locZ()) / (double)this.bb;
-            double d3 = MathHelper.g(this.bf - (double)this.yaw);
+            double d0 = this.locX() + (this.bc - this.locX()) / (double) this.bb;
+            double d1 = this.locY() + (this.bd - this.locY()) / (double) this.bb;
+            double d2 = this.locZ() + (this.be - this.locZ()) / (double) this.bb;
+            double d3 = MathHelper.g(this.bf - (double) this.yaw);
 
-            this.yaw = (float)((double)this.yaw + d3 / (double)this.bb);
-            this.pitch = (float)((double)this.pitch + (this.bg - (double)this.pitch) / (double)this.bb);
+            this.yaw = (float) ((double) this.yaw + d3 / (double) this.bb);
+            this.pitch = (float) ((double) this.pitch + (this.bg - (double) this.pitch) / (double) this.bb);
             --this.bb;
             this.setPosition(d0, d1, d2);
             this.setYawPitch(this.yaw, this.pitch);
@@ -153,7 +154,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         }
 
         if (this.bi > 0) {
-            this.aJ = (float)((double)this.aJ + MathHelper.g(this.bh - (double)this.aJ) / (double)this.bi);
+            this.aJ = (float) ((double) this.aJ + MathHelper.g(this.bh - (double) this.aJ) / (double) this.bi);
             --this.bi;
         }
 

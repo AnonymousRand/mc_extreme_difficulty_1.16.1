@@ -207,7 +207,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                     rand = random.nextDouble();
                 }
 
-                if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment() != org.bukkit.World.Environment.THE_END || ((EntityPlayer)entity).abilities.isInvulnerable) {
+                if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment() != org.bukkit.World.Environment.THE_END || ((EntityPlayer) entity).abilities.isInvulnerable) {
                     continue;
                 }
 
@@ -224,7 +224,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());
                     this.nmsWorld.addEntity(newFireball);
                 } else if (rand < 0.96) {
-                    new RunnableMobShootArrows(this.dragon, (EntityLiving)entity, 12, 1, 30.0, 2, true, true, (int)Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /* 2 pierce; fewer cycles with more players to reduce lag */
+                    new RunnableMobShootArrows(this.dragon, (EntityLiving) entity, 12, 1, 30.0, 2, true, true, (int) Math.ceil(10 * Math.pow(0.9, Bukkit.getServer().getOnlinePlayers().size() + 6))).runTaskTimer(StaticPlugin.plugin, 0L, 4L); /* 2 pierce; fewer cycles with more players to reduce lag */
                 } else {
                     CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld, this.dragon, x, y, z, true);
                     newFireball.setPosition(this.dragon.locX(), this.dragon.locY(), this.dragon.locZ());

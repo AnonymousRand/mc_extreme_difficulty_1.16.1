@@ -38,10 +38,10 @@ public class ListenerRaidAndVillager implements Listener {
 
         if ((event.getEntityType() == VILLAGER)) {
             if (nmsDamager instanceof EntityPlayer) { /* villagers give players bad omen if they are hit by a player */
-                ((EntityPlayer)nmsDamager).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
+                ((EntityPlayer) nmsDamager).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
             } else if (nmsDamager instanceof CustomEntityArrow) {
                 if (((CustomEntityArrow)nmsDamager).getShooter() instanceof EntityPlayer) {
-                    ((EntityPlayer)((CustomEntityArrow)nmsDamager).getShooter()).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
+                    ((EntityPlayer) ((CustomEntityArrow)nmsDamager).getShooter()).addEffect(new MobEffect(MobEffects.BAD_OMEN, Integer.MAX_VALUE, 255));
                 }
             }
         }

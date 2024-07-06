@@ -68,7 +68,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
 
             if (respawnCount.get(bukkitPlayer) % 5 == 0) { /* summon phantoms on respawn location every 5 respawns equal to the number of respawns divided by 5 */
                 World nmsWorld = ((CraftWorld)bukkitPlayer.getWorld()).getHandle();
-                new SpawnEntity(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
+                new SpawnEntity(nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize), respawnCount.get(bukkitPlayer) / 5, null, bukkitPlayer.getLocation(), false);
             }
 
             if (superZombies.size() >= (3 * Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0))) { /* don't have more than 3 super zombies per player in the world at a time to avoid lag */

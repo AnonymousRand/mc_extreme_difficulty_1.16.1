@@ -13,7 +13,7 @@ public class ListenerPiglinBarter implements Listener {
         if (((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityPiglin) { /* trading increases a piglin's attacks by 1 */
             CustomEntityPiglin piglin = (CustomEntityPiglin)((CraftEntity)event.getEntity()).getHandle();
             piglin.increaseAttacks(1);
-            piglin.setHealth((float)(piglin.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
+            piglin.setHealth((float) (piglin.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
         }
     }
 }

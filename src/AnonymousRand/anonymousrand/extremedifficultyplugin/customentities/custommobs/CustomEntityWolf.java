@@ -18,7 +18,7 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
     public void initPathfinder() { /* no longer avoids llamas, breeds, follows/defends owners, begs, and attack skeletons */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(4, new PathfinderGoalLeapAtTarget(this, 0.4F));
-        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(10, new PathfinderGoalRandomLookaround(this));
@@ -38,13 +38,14 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -52,8 +53,8 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;

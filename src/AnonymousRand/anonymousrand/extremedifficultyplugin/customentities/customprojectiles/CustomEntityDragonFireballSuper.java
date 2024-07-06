@@ -39,11 +39,11 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 200, 15);
 
             if (shooter instanceof EntityLiving) {
-                entityAreaEffectCloud.setSource((EntityLiving)shooter);
+                entityAreaEffectCloud.setSource((EntityLiving) shooter);
             }
 
             entityAreaEffectCloud.setPosition(this.locX(), this.locY() + i, this.locZ());
-            entityAreaEffectCloud.setRadiusPerTick((7.0F - entityAreaEffectCloud.getRadius()) / (float)entityAreaEffectCloud.getDuration());
+            entityAreaEffectCloud.setRadiusPerTick((7.0F - entityAreaEffectCloud.getRadius()) / (float) entityAreaEffectCloud.getDuration());
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /* super fireball area effect clouds do twice as much damage */
 
             for (EntityLiving entity : entities) {
@@ -102,7 +102,7 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y-level does not matter, e.g. mob follow range, attacking (can hit player no matter the y-level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

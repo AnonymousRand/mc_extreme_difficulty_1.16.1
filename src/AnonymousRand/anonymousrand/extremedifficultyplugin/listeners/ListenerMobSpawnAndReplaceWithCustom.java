@@ -207,7 +207,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     break;
                 case PHANTOM:
                     int rand = spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER ? 1 : random.nextInt(3) + 10;
-                    new SpawnEntity(nmsWorld, (int)phantomSize, new CustomEntityPhantom(nmsWorld, (int)phantomSize), rand, null, bukkitEntity, null, true, false); /* when phantoms spawn naturally at night, they spawn random 10-12 at a time (10-24 on easy, 10-36 on medium, 10-48 on hard) */
+                    new SpawnEntity(nmsWorld, (int) phantomSize, new CustomEntityPhantom(nmsWorld, (int) phantomSize), rand, null, bukkitEntity, null, true, false); /* when phantoms spawn naturally at night, they spawn random 10-12 at a time (10-24 on easy, 10-36 on medium, 10-48 on hard) */
                     break;
                 case PIG:
                     new SpawnEntity(nmsWorld, new CustomEntityPig(nmsWorld), 1, null, bukkitEntity, null, true, true);

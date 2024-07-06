@@ -53,13 +53,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -67,8 +68,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -135,20 +136,20 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     @Override
     protected void initPathfinder() { /* no longer targets endermites, avoids water and stops if stared at */
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));  /* uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));  /* Continues attacking regardless of y-level and LoS (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
         this.goalSelector.a(11, new CustomEntityEnderman.PathfinderGoalEndermanPickupBlock(this));
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal that removes line of sight requirement but more importantly targets players regardless of if they are angry or not */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target, and always aggros instead of only when angry */
     }
 
     @Override
@@ -175,7 +176,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     protected boolean eM() { // teleportRandomly()
         if (!this.getWorld().s_() && this.isAlive()) {
             double d0 = this.locX() + (random.nextDouble() - 0.5D) * 20.0D; /* random teleportation range decreased to 10 blocks so that if it teleports away due to fire etc. it is still in range of the player */
-            double d1 = this.locY() + (double)(random.nextInt(64) - 32);
+            double d1 = this.locY() + (double) (random.nextInt(64) - 32);
             double d2 = this.locZ() + (random.nextDouble() - 0.5D) * 24.0D;
 
             return this.o(d0, d1, d2);
@@ -189,7 +190,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         vec3d = vec3d.d();
         double d1 = this.locX() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
-        double d2 = this.locY() + (double)(random.nextInt(16) - 8) - vec3d.y * 16.0D;
+        double d2 = this.locY() + (double) (random.nextInt(16) - 8) - vec3d.y * 16.0D;
         double d3 = this.locZ() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
 
         return this.o(d1, d2, d3);
@@ -391,8 +392,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             BlockPosition blockPosition = new BlockPosition(i, j, k);
             IBlockData iblockdata = world.getType(blockPosition);
             Block block = iblockdata.getBlock();
-            Vec3D vec3d = new Vec3D((double)MathHelper.floor(this.entity.locX()) + 0.5D, (double)j + 0.5D, (double)MathHelper.floor(this.entity.locZ()) + 0.5D);
-            Vec3D vec3d1 = new Vec3D((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
+            Vec3D vec3d = new Vec3D((double) MathHelper.floor(this.entity.locX()) + 0.5D, (double) j + 0.5D, (double) MathHelper.floor(this.entity.locZ()) + 0.5D);
+            Vec3D vec3d1 = new Vec3D((double) i + 0.5D, (double) j + 0.5D, (double) k + 0.5D);
             MovingObjectPositionBlock movingObjectPositionBlock = world.rayTrace(new RayTrace(vec3d, vec3d1, RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.entity));
             boolean flag = movingObjectPositionBlock.getBlockPosition().equals(blockPosition);
 

@@ -20,10 +20,10 @@ public interface CustomIEntityAccess {
 
         for (T entity : list) {
             if (entity instanceof EntityLiving) {
-                EntityLiving potentialTarget = (EntityLiving)entity;
+                EntityLiving potentialTarget = (EntityLiving) entity;
 
                 if (pathfindertargetcondition.a(entityLiving, potentialTarget)) { // uses overriden a() method in CustomPathfinderTargetCondition which turns off line of sight requirement to initially find a target player
-                    double d4 = potentialTarget.g(d0, d1, d2);
+                    double d4 = potentialTarget.g(d0, d1, d2); // uses overriden g() // todo instead of having every mob provide a copy of this function just find all uses of g() and make custom method in here or soemthing?
 
                     if (d3 == -1.0D || d4 < d3) {
                         d3 = d4;

@@ -30,6 +30,10 @@ todo:
 
     todo increment attacks in attack method/goal instead of listener?
 
+    in the todos, there is a possibiliity of making g() and d() global. if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions
+
+    make checkdespawn global too?
+
     comment/javadoc custom goals functions. see customentityblaze inner class for example
 
     attacks comments/docs all into initattack method instead of increase attacks?
@@ -84,7 +88,7 @@ todo:
 
 	lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
 
-	check all the goals comments esp ranged to add clarification to y level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
+	check all the goals comments esp ranged to add clarification to y-level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
 
 	see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
 

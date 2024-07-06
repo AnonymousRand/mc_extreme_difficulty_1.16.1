@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.EntityChicken;
@@ -31,20 +31,19 @@ public class CustomEntityChicken extends EntityChicken {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
-        /* Takes buffs from bats and piglins etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        /* 25% chance to spawn in as an aggressive chicken instead */
+        /* 25% chance to spawn as an aggressive chicken instead */ // todo why not by listener?
         if (this.ticksLived == 5) {
             if (random.nextDouble() < 0.25) {
-                new SpawnEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1, null, null, this, true, true);
+                new SpawnEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1,
+                        null, null, this, true, true);
             }
         }
     }

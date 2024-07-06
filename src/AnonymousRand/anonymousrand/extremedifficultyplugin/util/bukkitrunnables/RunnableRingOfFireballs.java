@@ -45,9 +45,9 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {
-                            CustomEntitySmallFireball entitySmallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.entity, x, y, z);
-                            entitySmallFireball.setPosition(entitySmallFireball.locX(), this.entity.e(0.5D) + 0.5D, entitySmallFireball.locZ());
-                            this.nmsWorld.addEntity(entitySmallFireball);
+                            CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.entity, x, y, z);
+                            smallFireball.setPosition(smallFireball.locX(), this.entity.e(0.5D) + 0.5D, smallFireball.locZ());
+                            this.nmsWorld.addEntity(smallFireball);
                         }
                     }
                 }

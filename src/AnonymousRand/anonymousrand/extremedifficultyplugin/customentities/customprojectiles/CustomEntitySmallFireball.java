@@ -29,7 +29,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
                 if (!flag) {
                     entity.setFireTicks(i);
                 } else if (entity1 instanceof EntityLiving) {
-                    this.a((EntityLiving)entity1, entity);
+                    this.a((EntityLiving) entity1, entity);
                 }
             }
         }

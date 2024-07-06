@@ -17,7 +17,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected final Entity entity;
     protected final World bukkitWorld;
     protected Location bukkitLoc;
-    protected final int radX, radY, radZ, yOffset;
+    protected final int radX, radY, radZ, offsetY;
     protected final boolean removeFluids, immuneBlocks;
     protected int cycles;
     protected final int maxCycles;
@@ -31,40 +31,40 @@ public class RunnableBreakBlocks extends BukkitRunnable {
             && Predicates.notFireOrWitherRose.test(type);
     protected static final Random random = new Random();
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
+    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
-        this.yOffset = yOffset;
+        this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
         this.cycles = 0;
         this.maxCycles = 1;
     }
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids, boolean immuneBlocks, int maxCycles) {
+    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int maxCycles) {
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
-        this.yOffset = yOffset;
+        this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = immuneBlocks;
         this.cycles = 0;
         this.maxCycles = maxCycles;
     }
 
-    public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
+    public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
         this.entity = null;
         this.bukkitLoc = bukkitLoc;
         this.bukkitWorld = bukkitWorld;
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
-        this.yOffset = yOffset;
+        this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
         this.cycles = 0;
@@ -80,18 +80,18 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         }
 
         if (this.entity != null) {
-            this.baseX = (int)Math.floor(this.entity.getPositionVector().getX());
-            this.baseY = (int)Math.floor(this.entity.getPositionVector().getY()) + this.yOffset;
-            this.baseZ = (int)Math.floor(this.entity.getPositionVector().getZ());
+            this.baseX = (int) Math.floor(this.entity.getPositionVector().getX());
+            this.baseY = (int) Math.floor(this.entity.getPositionVector().getY()) + this.offsetY;
+            this.baseZ = (int) Math.floor(this.entity.getPositionVector().getZ());
         } else {
-            this.baseX = (int)Math.floor(this.bukkitLoc.getX());
-            this.baseY = (int)Math.floor(this.bukkitLoc.getY()) + this.yOffset;
-            this.baseZ = (int)Math.floor(this.bukkitLoc.getZ());
+            this.baseX = (int) Math.floor(this.bukkitLoc.getX());
+            this.baseY = (int) Math.floor(this.bukkitLoc.getY()) + this.offsetY;
+            this.baseZ = (int) Math.floor(this.bukkitLoc.getZ());
         }
 
         if (this.entity instanceof EntityInsentient) {
-            if (((EntityInsentient)this.entity).getGoalTarget() != null) {
-                if (((EntityInsentient)this.entity).getGoalTarget().locY() < this.entity.locY()) { // move downwards if player is below entity
+            if (((EntityInsentient) this.entity).getGoalTarget() != null) {
+                if (((EntityInsentient) this.entity).getGoalTarget().locY() < this.entity.locY()) { // move downwards if player is below entity
                     this.baseY--;
                 }
             }

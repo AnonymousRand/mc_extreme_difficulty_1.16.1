@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custom
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalCobwebMoveFaster;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
@@ -47,13 +47,14 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -61,8 +62,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -120,14 +121,14 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     @Override
     protected void initPathfinder() {
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and LoS (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
     @Override
@@ -221,17 +222,17 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                         new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
                     }
 
-                    CustomEntityLargeFireball entityLargeFireball;
+                    CustomEntityLargeFireball largeFireball;
 
                     if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 8 == 0 && !this.power3) { /* after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
                         this.power3 = true;
-                        entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
+                        largeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
                     } else {
-                        entityLargeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
+                        largeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
                     }
 
-                    entityLargeFireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, entityLargeFireball.locZ() + vec3d.z * 4.0D);
-                    world.addEntity(entityLargeFireball);
+                    largeFireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, largeFireball.locZ() + vec3d.z * 4.0D);
+                    world.addEntity(largeFireball);
                     this.chargeTime = 0;
                 }
             } else if (this.chargeTime > 0) {
@@ -259,7 +260,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             if (this.a.getGoalTarget() == null) {
                 Vec3D vec3d = this.a.getMot();
 
-                this.a.yaw = -((float)MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
+                this.a.yaw = -((float) MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
                 this.a.aH = this.a.yaw;
             } else {
                 EntityLiving entityLiving = this.a.getGoalTarget();
@@ -268,7 +269,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                     double d1 = entityLiving.locX() - this.a.locX();
                     double d2 = entityLiving.locZ() - this.a.locZ();
 
-                    this.a.yaw = -((float)MathHelper.d(d1, d2)) * 57.295776F;
+                    this.a.yaw = -((float) MathHelper.d(d1, d2)) * 57.295776F;
                     this.a.aH = this.a.yaw;
                 }
             }
@@ -309,9 +310,9 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         @Override
         public void c() {
             Random random = this.a.getRandom();
-            double d0 = this.a.locX() + (double)((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
-            double d1 = this.a.locY() + (double)((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
-            double d2 = this.a.locZ() + (double)((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
+            double d0 = this.a.locX() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
+            double d1 = this.a.locY() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
+            double d2 = this.a.locZ() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
 
             this.a.getControllerMove().a(d0, d1, d2, 1.0D);
         }

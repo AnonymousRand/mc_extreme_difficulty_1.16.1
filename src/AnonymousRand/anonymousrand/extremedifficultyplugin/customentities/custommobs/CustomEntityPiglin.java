@@ -44,10 +44,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
         if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attacking while trading */
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y level */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y level */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y level */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -75,10 +75,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /* buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
@@ -110,7 +110,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void a(EntityLiving entityLiving, float f) { // shoot()
         this.attacks++;
-        this.setHealth((float)(this.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
+        this.setHealth((float) (this.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
 
         if (this.attacks == 1) { /* first attack always shoots knockback arrows */
             new RunnableMobShootArrows(this, entityLiving, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
@@ -152,7 +152,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public EntityLiving getGoalTarget() { // uses normal EntityInsentient getGoalTarget() method that doesn't use the piglin's memory modules because they were removed along with its brain and behavior goals
         try {
             if ((goalTarget.get(this)) != null) {
-                return (EntityLiving)goalTarget.get(this);
+                return (EntityLiving) goalTarget.get(this);
             } else {
                 return null;
             }
@@ -197,13 +197,13 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distToNearestPlayer > (double) j && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
                 }
 
@@ -211,10 +211,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
                 int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double) l
                         && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distToNearestPlayer < (double) l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -359,8 +359,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         @Override
         public boolean a() {
             if (this.piglin.frenzyTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
-                if (!((EntityPlayer)this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
-                    return this.piglin.getNormalDistanceSq(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
+                if (!((EntityPlayer) this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
+                    return this.piglin.get3DDistSquared(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
                 }
             }
 

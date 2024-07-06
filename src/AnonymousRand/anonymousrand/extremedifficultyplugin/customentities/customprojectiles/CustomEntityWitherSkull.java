@@ -21,9 +21,9 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             boolean flag;
 
             if (entity1 instanceof EntityLiving) {
-                EntityLiving entityLiving = (EntityLiving)entity1;
+                EntityLiving entityLiving = (EntityLiving) entity1;
 
-                flag = entity.damageEntity(DamageSource.a(this, (Entity)entityLiving), 2.0F); /* wither skulls only do 2 direct damage */
+                flag = entity.damageEntity(DamageSource.a(this, (Entity) entityLiving), 2.0F); /* wither skulls only do 2 direct damage */
                 if (flag) {
                     if (entity.isAlive()) {
                         this.a(entityLiving, entity);
@@ -46,7 +46,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
                     b0 = 25;
                 }
 
-                ((EntityLiving)entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));
+                ((EntityLiving) entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));
 
                 Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
                 this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /* blue skulls explode power 2 */

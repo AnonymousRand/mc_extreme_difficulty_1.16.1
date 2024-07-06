@@ -53,13 +53,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -67,8 +68,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -142,10 +143,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
 
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
@@ -155,8 +156,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* Doesn't take into account y-level or line of sight to aggro a target */
         this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
     }
 
@@ -257,27 +258,27 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
             double d0 = Math.min(entityLiving.locY(), CustomEntityEvoker.this.locY());
             double d1 = Math.max(entityLiving.locY(), CustomEntityEvoker.this.locY()) + 1.0D;
-            float f = (float)MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
+            float f = (float) MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
             int i;
 
-            if (CustomEntityEvoker.this.h((Entity)entityLiving) < 9.0) {
+            if (CustomEntityEvoker.this.h((Entity) entityLiving) < 9.0) {
                 float f1;
 
                 for (i = 0; i < 5; ++i) {
-                    f1 = f + (float)i * 3.1415927F * 0.4F;
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double)MathHelper.cos(f1) * 1.5D, CustomEntityEvoker.this.locZ() + (double)MathHelper.sin(f1) * 1.5D, d0, d1, f1, 0);
+                    f1 = f + (float) i * 3.1415927F * 0.4F;
+                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 1.5D, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 1.5D, d0, d1, f1, 0);
                 }
 
                 for (i = 0; i < 8; ++i) {
-                    f1 = f + (float)i * 3.1415927F * 2.0F / 8.0F + 1.2566371F;
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double)MathHelper.cos(f1) * 2.5D, CustomEntityEvoker.this.locZ() + (double)MathHelper.sin(f1) * 2.5D, d0, d1, f1, 3);
+                    f1 = f + (float) i * 3.1415927F * 2.0F / 8.0F + 1.2566371F;
+                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 2.5D, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 2.5D, d0, d1, f1, 3);
                 }
             } else {
                 for (i = 0; i < CustomEntityEvoker.this.getFollowRange(); ++i) { // fang range increased to the same as follow range
-                    double d2 = 1.25D * (double)(i + 1);
+                    double d2 = 1.25D * (double) (i + 1);
                     int j = 1 * i;
 
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double)MathHelper.cos(f) * d2, CustomEntityEvoker.this.locZ() + (double)MathHelper.sin(f) * d2, d0, d1, f, j);
+                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f) * d2, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f) * d2, d0, d1, f, j);
                 }
             }
 
@@ -317,7 +318,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
 
-                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int)Math.ceil(CustomEntityEvoker.this.getFollowRange()));
+                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getFollowRange()));
                 while (iterator.hasNext()) { /* every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
                     bukkitLocBase = iterator.next().getLocation();
                     Random random = new Random();
@@ -341,7 +342,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     }
                 }
 
-                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double)blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
+                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double) blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
             }
         }
 
@@ -444,9 +445,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         @Override
         public void e() {
             if (CustomEntityEvoker.this.getGoalTarget() != null) {
-                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.getGoalTarget(), (float)CustomEntityEvoker.this.ep(), (float)CustomEntityEvoker.this.eo());
+                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.getGoalTarget(), (float) CustomEntityEvoker.this.ep(), (float) CustomEntityEvoker.this.eo());
             } else if (CustomEntityEvoker.this.fh() != null) {
-                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.fh(), (float)CustomEntityEvoker.this.ep(), (float)CustomEntityEvoker.this.eo());
+                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.fh(), (float) CustomEntityEvoker.this.ep(), (float) CustomEntityEvoker.this.eo());
             }
         }
     }
@@ -534,7 +535,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         @Override
         public boolean b() {
-            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a(this.raider.getPositionVector(), this.raider.getWidth() + (float)this.e) && !this.f;
+            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a(this.raider.getPositionVector(), this.raider.getWidth() + (float) this.e) && !this.f;
         }
 
         @Override

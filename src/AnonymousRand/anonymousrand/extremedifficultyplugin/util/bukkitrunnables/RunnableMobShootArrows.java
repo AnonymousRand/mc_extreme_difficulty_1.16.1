@@ -90,7 +90,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
                 entityArrow.setNoGravity(true);
             }
 
-            entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float)(this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /* mob-spawning arrows have no inaccuracy */
+            entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float) (this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /* mob-spawning arrows have no inaccuracy */
 
             if (this.entity instanceof CustomEntityIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
                 entityArrow.setDamage(1.5); /* illusioners, piglins, pillagers, skeletons and strays always do 3 damage with arrows and distance does not play a factor in determining damage */

@@ -102,13 +102,14 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -116,8 +117,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -236,7 +237,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo should this be uncommented?
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));
         /* Doesn't need line of sight to find targets and start attacking */
@@ -307,15 +308,15 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 }
             }
 
-            double d0 = (double)this.targetPosition.getX() + 0.5D - this.locX();
-            double d1 = (double)this.targetPosition.getY() + 0.1D - this.locY();
-            double d2 = (double)this.targetPosition.getZ() + 0.5D - this.locZ();
+            double d0 = (double) this.targetPosition.getX() + 0.5D - this.locX();
+            double d1 = (double) this.targetPosition.getY() + 0.1D - this.locY();
+            double d2 = (double) this.targetPosition.getZ() + 0.5D - this.locZ();
             Vec3D currentMotion = this.getMot();
             Vec3D newMotion = currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D, (Math.signum(d1)
                     * 0.7D - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
 
             this.setMot(newMotion);
-            float f = (float)(MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;
+            float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;
             float yawIncrease = MathHelper.g(f - this.yaw);
 
             this.ba = 0.5F;

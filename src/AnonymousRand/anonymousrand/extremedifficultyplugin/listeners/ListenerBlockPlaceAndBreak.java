@@ -36,7 +36,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         if (event.getPlayer() != null) {
             Player bukkitPlayer = event.getPlayer();
 
-            if (bukkitBlock.getLocation().getY() >= 129.0) { /* can't build above y level 128 in all dimensions to prevent towering up etc. to avoid mobs */
+            if (bukkitBlock.getLocation().getY() >= 129.0) { /* can't build above y-level 128 in all dimensions to prevent towering up etc. to avoid mobs */
                 event.setCancelled(true);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You have reached the build height limit of 128 blocks :tf:\"");
                 return;

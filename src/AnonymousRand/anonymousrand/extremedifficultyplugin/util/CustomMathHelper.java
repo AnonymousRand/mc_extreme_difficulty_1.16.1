@@ -30,8 +30,8 @@ public class CustomMathHelper {
             angle %= 720;
         }
 
-        double x = hypotenuse * trigTableSin[(int)angle]; // in Minecraft, x direction/coordinate is y-axis, but negative
-        double z = hypotenuse * trigTableCos[(int)angle];
+        double x = hypotenuse * trigTableSin[(int) angle]; // in Minecraft, x direction/coordinate is y-axis, but negative
+        double z = hypotenuse * trigTableCos[(int) angle];
 
         if (angle >= 0 && angle < 180.0) { // quadrant 1, towards neg pos
             return new BlockPosition(origin.getX() - x, y, origin.getZ() + z);
@@ -52,8 +52,8 @@ public class CustomMathHelper {
             angle %= 720;
         }
 
-        double x = hypotenuse * trigTableSin[(int)angle];
-        double z = hypotenuse * trigTableCos[(int)angle];
+        double x = hypotenuse * trigTableSin[(int) angle];
+        double z = hypotenuse * trigTableCos[(int) angle];
 
         if (angle >= 0 && angle < 180.0) {
             return new Location(bukkitWorld, origin.getX() - x, y, origin.getZ() + z);
@@ -70,8 +70,8 @@ public class CustomMathHelper {
         double angle = xIntervalNumber / (8.5 + random.nextDouble());
         angle %= 4.0;
         angle *= 180.0;
-        double x = radiusOfSpiral * trigTableSin[(int)angle];
-        double z = radiusOfSpiral * trigTableCos[(int)angle];
+        double x = radiusOfSpiral * trigTableSin[(int) angle];
+        double z = radiusOfSpiral * trigTableCos[(int) angle];
 
         if (angle >= 0 && angle < 180.0) {
             return new Vector(-x, yChangePerInterval, z);

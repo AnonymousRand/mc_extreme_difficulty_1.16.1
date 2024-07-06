@@ -64,7 +64,7 @@ public class ListenerProjectile implements Listener {
 
             if (nmsShooter instanceof CustomEntityDrowned) {
                 if (((CustomEntityDrowned)nmsShooter).getAttacks() >= 30) {
-                    if (random.nextDouble() < (((CustomEntityDrowned)nmsShooter).getAttacks() < 70 ? 0.1 : 0.333333333)) { /* tridents have a 0%, 10% or 33% chance to not lose y level depending on attack count */
+                    if (random.nextDouble() < (((CustomEntityDrowned)nmsShooter).getAttacks() < 70 ? 0.1 : 0.333333333)) { /* tridents have a 0%, 10% or 33% chance to not lose y-level depending on attack count */
                         newTrident.setNoGravity(true);
                     }
                 }
@@ -141,7 +141,7 @@ public class ListenerProjectile implements Listener {
                 }
 
                 if (nmsHitEntity instanceof EntityPlayer && nmsShooter instanceof EntitySkeletonStray && !(nmsProjectile instanceof CustomEntityArrowExploding) && !(nmsProjectile instanceof CustomEntityArrowSpawnMob)) { /* normal arrows shot by strays inflict slowness 2 for 30 seconds */
-                    ((EntityLiving)nmsHitEntity).addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 600, 1));
+                    ((EntityLiving) nmsHitEntity).addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 600, 1));
                 }
             }
         }

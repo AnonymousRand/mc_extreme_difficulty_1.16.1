@@ -36,12 +36,12 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
             entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
-                entityAreaEffectCloud.setSource((EntityLiving)shooter);
+                entityAreaEffectCloud.setSource((EntityLiving) shooter);
             }
 
             entityAreaEffectCloud.setPosition(this.locX(), this.locY() + i, this.locZ());
             entityAreaEffectCloud.setParticle(Particles.DRAGON_BREATH);
-            entityAreaEffectCloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaEffectCloud.getRadius()) / (float)entityAreaEffectCloud.getDuration()); /* area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
+            entityAreaEffectCloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaEffectCloud.getRadius()) / (float) entityAreaEffectCloud.getDuration()); /* area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityLiving entity : entities) {
@@ -87,7 +87,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y level does not matter, e.g. mob follow range, attacking (can hit player no matter the y level) */
+        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y-level does not matter, e.g. mob follow range, attacking (can hit player no matter the y-level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;

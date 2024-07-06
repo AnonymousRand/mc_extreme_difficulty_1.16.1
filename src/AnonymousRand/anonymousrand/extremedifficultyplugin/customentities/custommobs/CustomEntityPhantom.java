@@ -80,13 +80,14 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -94,8 +95,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -163,9 +164,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         double maxHealth = 11.0 + 0.3 * this.getSize();
         double health = this.getHealth() + 0.3 * change;
 
-        this.setHealth((float)health);
+        this.setHealth((float) health);
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(maxHealth);
-        this.setHealth((float)health);
+        this.setHealth((float) health);
     }
 
     @Override
@@ -179,7 +180,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         if (this.getHealth() <= 0.0 && this.getAttacks() >= 15 && !this.deathExplosion) { /* after 15 attacks, phantoms explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
+            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
         }
 
         if (this.ticksLived == 5) {

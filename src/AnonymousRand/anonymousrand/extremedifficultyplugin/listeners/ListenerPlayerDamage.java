@@ -76,7 +76,7 @@ public class ListenerPlayerDamage implements Listener {
                     break;
                 case PIGLIN:
                     CustomEntityPiglin piglin = (CustomEntityPiglin)nmsDamager;
-                    piglin.setHealth((float)(piglin.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
+                    piglin.setHealth((float) (piglin.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
                     break;
                 case RAVAGER:
                     CustomEntityRavager ravager = (CustomEntityRavager)nmsDamager;
@@ -165,7 +165,7 @@ public class ListenerPlayerDamage implements Listener {
     public void playerDamage(EntityDamageEvent event) {
         if (event.getEntityType() == PLAYER) {
             EntityDamageEvent.DamageCause cause = event.getCause();
-            EntityPlayer nmsPlayer = (EntityPlayer)((CraftEntity)event.getEntity()).getHandle();
+            EntityPlayer nmsPlayer = (EntityPlayer) ((CraftEntity)event.getEntity()).getHandle();
             double damage = event.getDamage();
 
             if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) { /* drowning damage has a 50% chance to spawn a pufferfish, and a 15% chance to spawn a guardian */

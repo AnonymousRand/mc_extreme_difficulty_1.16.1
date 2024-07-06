@@ -318,14 +318,14 @@ public class ListenerEggs implements Listener {
                     new SpawnEntity(this.nmsWorld, new CustomEntitySheepAggressive(this.nmsWorld), 1, null, this.eggLoc, true);
                 } else if (rand < 0.9625) {
                     this.nmsWorld.getEntities(this.nmsEgg, this.nmsEgg.getBoundingBox().g(32.0), entity -> ((entity instanceof EntityMonster || entity instanceof EntityGolem) && !(entity instanceof CustomEntityWither))).forEach(entity -> {
-                        EntityInsentient entityInsentient = ((EntityInsentient)entity);
+                        EntityInsentient entityInsentient = ((EntityInsentient) entity);
                         entityInsentient.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6000, 3));
                         entityInsentient.setGoalTarget(this.nmsPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                         entityInsentient.getBukkitEntity().setCustomName("Won't despawn");
                     });
                 } else if (rand < 0.965) {
                     this.nmsWorld.getEntities(this.nmsEgg, this.nmsEgg.getBoundingBox().g(32.0), entity -> ((entity instanceof EntityMonster || entity instanceof EntityGolem) && !(entity instanceof CustomEntityWither))).forEach(entity -> {
-                        EntityInsentient entityInsentient = ((EntityInsentient)entity);
+                        EntityInsentient entityInsentient = ((EntityInsentient) entity);
                         Mob bukkitEntityInsentient = (Mob)entityInsentient.getBukkitEntity();
                         bukkitEntityInsentient.setMaxHealth(bukkitEntityInsentient.getMaxHealth() * 2.0);
                         entityInsentient.setHealth(entityInsentient.getHealth() * 2.0F);
@@ -370,7 +370,7 @@ public class ListenerEggs implements Listener {
                     }
                 } else if (rand < 0.9855) {
                     this.nmsWorld.getEntities(this.nmsEgg, this.nmsEgg.getBoundingBox().g(32.0), entity -> ((entity instanceof EntityMonster || entity instanceof EntityGolem) && !(entity instanceof CustomEntityWither))).forEach(entity -> {
-                        EntityInsentient entityInsentient = ((EntityInsentient)entity);
+                        EntityInsentient entityInsentient = ((EntityInsentient) entity);
                         AttributeModifiable nmsAttribute = entityInsentient.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
 
                         if (nmsAttribute != null) {
@@ -393,7 +393,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.993) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityWither(this.nmsWorld), 1, null, this.eggLoc, false);
                 } else if (rand < 0.994) {
-                    new SpawnEntity(this.nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.nmsWorld, (int)ListenerMobSpawnAndReplaceWithCustom.phantomSize), 30, null, this.eggLoc, false);
+                    new SpawnEntity(this.nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.nmsWorld, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize), 30, null, this.eggLoc, false);
                 } else if (rand < 0.995) {
                     this.bukkitPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 140, 4));
                 } else if (rand < 0.996) {

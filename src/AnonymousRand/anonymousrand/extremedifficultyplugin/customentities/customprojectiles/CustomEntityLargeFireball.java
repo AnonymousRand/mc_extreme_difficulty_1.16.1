@@ -43,7 +43,7 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
         super.a(movingObjectPosition);
         if (!this.world.isClientSide && this.yield > 1) {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
                 new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
@@ -64,11 +64,11 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
             entity.damageEntity(DamageSource.fireball(this, entity1), 1.0F); /* large fireballs only do 1 direct damage */
             if (entity1 instanceof EntityLiving) {
-                this.a((EntityLiving)entity1, entity);
+                this.a((EntityLiving) entity1, entity);
             }
 
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float)this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
                 new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);

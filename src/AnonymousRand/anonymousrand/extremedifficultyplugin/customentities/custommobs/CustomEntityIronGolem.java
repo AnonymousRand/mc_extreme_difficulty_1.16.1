@@ -50,13 +50,13 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
             EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
                 int j = i * i;
 
-                if (distToNearestPlayer > (double)j && this.isTypeNotPersistent(distToNearestPlayer)) {
+                if (distToNearestPlayer > (double) j && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
                 }
 
@@ -64,10 +64,10 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
                 int k = this.getEntityType().e().g() + 8;
                 int l = k * k;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double)l
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distToNearestPlayer > (double) l
                         && this.isTypeNotPersistent(distToNearestPlayer)) {
                     this.die();
-                } else if (distToNearestPlayer < (double)l) {
+                } else if (distToNearestPlayer < (double) l) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -127,14 +127,14 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         }
 
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() + healthIncrease);
-        this.setHealth((float)(this.getHealth() + healthIncrease));
+        this.setHealth((float) (this.getHealth() + healthIncrease));
     }
 
     public void increaseStatsMultiply(double multiplier) {
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() * multiplier);
 
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(((LivingEntity)this.getBukkitEntity()).getMaxHealth() * multiplier);
-        this.setHealth((float)(this.getHealth() * multiplier));
+        this.setHealth((float) (this.getHealth() * multiplier));
 
         this.followRangeMultipler *= multiplier;
         if (this.followRangeMultipler >= 3.0) { // cap to prevent lag with too many blocks being searched
@@ -151,11 +151,11 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     @Override
     protected void initPathfinder() { /* no longer targets monsters or defends villages */
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* custom goal that breaks blocks around the mob periodically except for diamond blocks, emerald blocks, nertherite blocks, and beacons */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y level */
+        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));

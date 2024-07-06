@@ -54,13 +54,14 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -68,8 +69,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -110,11 +111,11 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     protected void initPathfinder() {
         /* Creeper is no longer scared of cats and ocelots */
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats and piglins etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* custom goal that spawns lightning randomly */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportToPlayerAdjustY(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* custom goal that gives mob a chance every tick to teleport to a spot where its y level difference from its target is reduced if its y level difference is too large */
+        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* Occasionally teleports to a spot closer in y-level to its target */
         this.goalSelector.a(1, new NewPathfinderGoalTeleportTowardsPlayer(this, this.getFollowRange(), 300.0, 0.001)); /* custom goal that gives mob a chance every tick to teleport to within initial follow_range-2 to follow_range+13 blocks of nearest player if it has not seen a player target within follow range for 15 seconds */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
@@ -124,7 +125,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         /* Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
     @Override
@@ -139,7 +140,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 36.0 : 25.0)) { // charged creepers only explode within 6 blocks of player and normal creepers only explode within 5
+            if (this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 36.0 : 25.0)) { // charged creepers only explode within 6 blocks of player and normal creepers only explode within 5
                 try {
                     fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
@@ -151,9 +152,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
             if (!this.getWorld().isClientSide) {
                 if (this.isPowered()) {
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(75.0F + Math.max(((Math.sqrt(this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), true, Explosion.Effect.DESTROY); /* charged creepers explode with power 75; creepers explode more powerfully the more th player tried to distance themselves from the creeper */
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (75.0F + Math.max(((Math.sqrt(this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), true, Explosion.Effect.DESTROY); /* charged creepers explode with power 75; creepers explode more powerfully the more th player tried to distance themselves from the creeper */
                 } else {
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float)(this.explosionRadius + Math.max(((Math.sqrt(this.getNormalDistanceSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), false, this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (this.explosionRadius + Math.max(((Math.sqrt(this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), false, this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
                 }
 
                 this.killed = true;
@@ -185,7 +186,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             entityAreaEffectCloud.setRadiusOnUse(-0.5F);
             entityAreaEffectCloud.setWaitTime(10);
             entityAreaEffectCloud.setDuration(entityAreaEffectCloud.getDuration() / 2);
-            entityAreaEffectCloud.setRadiusPerTick(-entityAreaEffectCloud.getRadius() / (float)entityAreaEffectCloud.getDuration());
+            entityAreaEffectCloud.setRadiusPerTick(-entityAreaEffectCloud.getRadius() / (float) entityAreaEffectCloud.getDuration());
 
             for (MobEffect mobeffect : collection) { /* creepers only create area effect clouds of negative effects */
                 MobEffectList effect = mobeffect.getMobEffect();

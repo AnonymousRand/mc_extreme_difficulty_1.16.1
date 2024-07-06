@@ -27,7 +27,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public boolean a() { // copied in because first two attacks are rapid fire otherwise
+    public boolean a() { // copied in because first two attacks are rapid fire otherwise // todo investigate why
         long i = this.entity.world.getTime();
 
         if (i - this.k < 20L) { // this line dictates attack cooldown
@@ -49,7 +49,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
     }
 
     @Override
-    public void c() { // copied in because mobs don't attack regularly otherwise
+    public void c() { // copied in because mobs don't attack regularly otherwise // todo investigate why
         this.entity.getNavigation().a(this.d, this.b);
         this.entity.setAggressive(true);
         this.h = 0;
@@ -64,7 +64,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         }
 
         this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
-        double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
+        double distanceToSquared = this.entity.d(attackTarget.getPositionVector()); // uses overridden d() // todo instead of having every mob provide a copy of this function just find all uses of d() and make custom method in here or soemthing?
 
         this.h = Math.max(this.h - 1, 0);
         if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || attackTarget.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
@@ -92,7 +92,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomHostile) {
-                if (((ICustomHostile)this.entity).getNormalDistanceSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /* mobs can successfully hit you occasionally when they are out of range vertically */
+                if (((ICustomHostile)this.entity).get3DDistSquared(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /* mobs can successfully hit you occasionally when they are out of range vertically */
                     return;
                 }
             }

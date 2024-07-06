@@ -28,7 +28,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         this.dash = false;
         double health = 200.0 + 60.0 * this.getWorld().getServer().getOnlinePlayers().size(); /* withers have 60 more health per player online, and 200 starting health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(health);
-        this.setHealth((float)health);
+        this.setHealth((float) health);
     }
 
     static {
@@ -44,15 +44,15 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
     @Override
     protected void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new PathfinderGoalWitherDoNothingWhileInvulnerable());
         this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /* custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 30 seconds) that breaks blocks around it and does 6 damage to all nearby players */
-        this.goalSelector.a(2, new CustomPathfinderGoalRangedAttack<>(this, 1.0D, 5, 80.0F)); /* main head shoots a skull every 5 ticks and uses the custom goal that attacks regardless of the y level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(2, new CustomPathfinderGoalRangedAttack<>(this, 1.0D, 5, 80.0F)); /* main head shoots a skull every 5 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* custom goal that prevents mobs from retaliating against other mobs in case the mob damage event doesn't register and cancel the damage */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0])); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* only attacks players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
@@ -62,11 +62,11 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     protected void shootSkullToEntity(int i, EntityLiving entityLiving) {
-        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double)entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), false);
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), false);
     }
 
     protected void shootSkullToEntity(int i, EntityLiving entityLiving, boolean alwaysBlue) {
-        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double)entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), alwaysBlue);
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), alwaysBlue);
     }
 
     protected void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
@@ -205,10 +205,10 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         if (i <= 0) {
             return this.locX();
         } else {
-            float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
+            float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.cos(f);
 
-            return this.locX() + (double)f1 * 1.3D;
+            return this.locX() + (double) f1 * 1.3D;
         }
     }
 
@@ -220,10 +220,10 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         if (i <= 0) {
             return this.locZ();
         } else {
-            float f = (this.aH + (float)(180 * (i - 1))) * 0.017453292F;
+            float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.sin(f);
 
-            return this.locZ() + (double)f1 * 1.3D;
+            return this.locZ() + (double) f1 * 1.3D;
         }
     }
 
@@ -291,7 +291,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
                 this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(8.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 10.0F));
             }
 
-            if (this.wither.getNormalDistanceSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
+            if (this.wither.get3DDistSquared(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
                 this.wither.dash = false;
                 this.cancel();
             }
@@ -299,8 +299,8 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     static class RunnableWitherBreakBlocks extends RunnableBreakBlocks {
-        public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int yOffset, boolean removeFluids) {
-            super(entity, radX, radY, radZ, yOffset, removeFluids);
+        public RunnableWitherBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
+            super(entity, radX, radY, radZ, offsetY, removeFluids);
             blockBreakable = (type) /* withers can now break bedrock */
                     -> Predicates.blockBreakableDefault.test(type)
                     && Predicates.notHardBlocks.test(type)

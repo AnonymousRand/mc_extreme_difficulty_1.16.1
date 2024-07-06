@@ -29,21 +29,21 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
     @Override
     public void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalCobwebMoveFaster(this)); /* custom goal that allows non-player mobs to still go fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* custom goal that allows this mob to take certain buffs from bats etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(4, new CustomEntityShulker.PathfinderGoalShulkerBulletAttack());
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, (new CustomPathfinderGoalHurtByTarget(this, new Class[0])).a(CustomEntityShulker.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
         boolean b = super.damageEntity(damagesource, f);
 
-        if ((double)this.getHealth() < (double)this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
+        if ((double) this.getHealth() < (double) this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
@@ -68,13 +68,14 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
             EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even if you are at y=256, mobs will still spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
                 double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
+                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 }
 
@@ -82,8 +83,8 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer > (double)randomDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
+                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
                     this.die();
                 } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
                     this.ticksFarFromPlayer = 0;
@@ -180,7 +181,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
                 CustomEntityShulker.this.getControllerLook().a(entityLiving, 180.0F, 180.0F);
-                double d0 = CustomEntityShulker.this.h((Entity)entityLiving);
+                double d0 = CustomEntityShulker.this.h((Entity) entityLiving);
 
                 if (d0 < 400.0D) {
                     if (this.b <= 0) {

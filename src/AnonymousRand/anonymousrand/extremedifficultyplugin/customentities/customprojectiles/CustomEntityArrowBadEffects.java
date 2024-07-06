@@ -15,7 +15,7 @@ public class CustomEntityArrowBadEffects extends CustomEntityArrow {
         Entity entity = movingObjectPositionEntity.getEntity();
 
         if (entity instanceof EntityPlayer) {
-            EntityPlayer entityPlayer = ((EntityPlayer)entity);
+            EntityPlayer entityPlayer = ((EntityPlayer) entity);
             entityPlayer.addEffect(new MobEffect(MobEffects.HUNGER, 140, 10));
             entityPlayer.addEffect(new MobEffect(MobEffects.WEAKNESS, 120, 0));
             entityPlayer.addEffect(new MobEffect(MobEffects.SLOWER_MOVEMENT, 100, 1));
