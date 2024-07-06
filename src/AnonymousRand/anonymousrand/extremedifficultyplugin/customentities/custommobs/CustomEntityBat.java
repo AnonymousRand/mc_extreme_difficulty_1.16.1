@@ -131,25 +131,25 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     @Override
     public double g(double x, double y, double z) {
-        double dist_x = this.locX() - x;
-        double dist_z = this.locZ() - z;
+        double distX = this.locX() - x;
+        double distZ = this.locZ() - z;
 
         if (random.nextDouble() < 0.1) { // todo what happens if this is removed
-            return dist_x * dist_x + Math.pow(this.locY() - y, 2) + dist_z * dist_z;
+            return distX * distX + Math.pow(this.locY() - y, 2) + distZ * distZ;
         } else {
-            return dist_x * dist_x + dist_z * dist_z;
+            return distX * distX + distZ * distZ;
         }
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double dist_x = this.locX() - vec3d.x;
-        double dist_z = this.locZ() - vec3d.z;
+        double distX = this.locX() - vec3d.x;
+        double distZ = this.locZ() - vec3d.z;
 
         if (random.nextDouble() < 0.1) {
-            return dist_x * dist_x + Math.pow(this.locY() - vec3d.y, 2) + dist_z * dist_z;
+            return distX * distX + Math.pow(this.locY() - vec3d.y, 2) + distZ * distZ;
         } else {
-            return dist_x * dist_x + dist_z * dist_z;
+            return distX * distX + distZ * distZ;
         }
     }
 

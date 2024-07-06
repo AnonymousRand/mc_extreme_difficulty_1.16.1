@@ -81,18 +81,18 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
 
     @Override
     public double g(double x, double y, double z) {
-        double dist_x = this.locX() - x;
-        double dist_z = this.locZ() - z;
+        double distX = this.locX() - x;
+        double distZ = this.locZ() - z;
 
-        return dist_x * dist_x + dist_z * dist_z;
+        return distX * distX + distZ * distZ;
     }
 
     @Override
     public double d(Vec3D vec3d) {
-        double dist_x = this.locX() - vec3d.x;
-        double dist_z = this.locZ() - vec3d.z;
+        double distX = this.locX() - vec3d.x;
+        double distZ = this.locZ() - vec3d.z;
 
-        return dist_x * dist_x + dist_z * dist_z;
+        return distX * distX + distZ * distZ;
     }
 
     @Override

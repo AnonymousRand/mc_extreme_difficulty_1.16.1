@@ -35,7 +35,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
 
     public void updateFollowRange() {
         this.targetCondition.a(this.k());
-        Bukkit.broadcastMessage("3; new range: " + this.k());
+        Bukkit.broadcastMessage("3; new range: " + this.k()); // todo
     }
 
     @Override

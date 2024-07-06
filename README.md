@@ -3,7 +3,7 @@
 **Plugin trailer on Iseburg's channel: https://www.youtube.com/watch?v=7Kl9jtCHIGg**
 
 ### Warnings:
-* Do not run on a server with low RAM allocation
+* Do not use with a server running on a 1998 Intel Celeron 333 or with low RAM allocation
 * I suggest turning off dynamic FOV (foreshadowing…)
 
 # Installation instructions:

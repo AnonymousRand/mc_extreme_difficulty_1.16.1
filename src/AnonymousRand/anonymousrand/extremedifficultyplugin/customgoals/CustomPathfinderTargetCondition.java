@@ -34,7 +34,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
         }
     }
 
-    @Override
+    @Override // todo doc these with description names
     public boolean a(@Nullable EntityLiving attacker, EntityLiving target) { // turn off line of sight requirement for initially finding target player using nearestAttackableTarget goal which uses getClosestEntity/Player in CustomIEntityAccess which uses this function CustomPathfinderTargetCondition.a (canTarget) which no longer requires EntitySenses.a (canSee) to be true
         if (attacker == target) {
             return false;
@@ -62,7 +62,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
                     return false;
                 }
 
-                if (this.followRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */
+                if (this.followRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */ // todo test
                     double entityDistanceSq = attacker.g(target.locX(), target.locY(), target.locZ());
 
                     if (entityDistanceSq > this.followRange * this.followRange) {

@@ -18,7 +18,7 @@ todo:
 
 	reorganize all custommobs to use new attacks thing and whatever (including blaze)
 
-	after that: have initattacklevelingmob function just accept attack thresholds and default in interface
+	change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
 
 	investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
 
@@ -30,9 +30,13 @@ todo:
 
     todo increment attacks in attack method/goal instead of listener?
 
-    test blaze slight inaccuracy and slower attakc speed
+    comment/javadoc custom goals functions. see customentityblaze inner class for example
+
+    attacks comments/docs all into initattack method instead of increase attacks?
 
     all -- and ++ to after if possible
+
+    check if still possible to piston blocks above 128
 
     check that bats never sleep
 
@@ -77,6 +81,8 @@ todo:
 	phantom more linear size increases?
 
 	phantom check that die() override delay doesn't matter
+
+	lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
 
 	check all the goals comments esp ranged to add clarification to y level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
 
@@ -148,6 +154,7 @@ balance changes catalog:
 	striders die faster (find number!)
 	elder guardian random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
 	blaze inaccuracy non rapidfire 0% -> 20% vanilla
-	blaze inaccuracy rapidfire 35% -> 40% vanilla
+	blaze inaccuracy rapidfire 35% -> 250% vanilla
 	blaze normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
 	blaze rapidfire attack cooldown 3 ticks -> 4
+	(this was more of a bug) blaze melee cooldown 0 ticks -> 20
