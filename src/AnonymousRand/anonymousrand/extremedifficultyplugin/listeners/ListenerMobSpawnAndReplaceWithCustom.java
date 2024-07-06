@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -134,7 +134,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                     new SpawnEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case CREEPER:
-                    new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
+                    new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld), 1, null, bukkitEntity, null, true, true);
                     break;
                 case DONKEY:
                 case HORSE:
@@ -395,7 +395,7 @@ public class ListenerMobSpawnAndReplaceWithCustom implements Listener {
                             new SpawnEntity(nmsWorld, new CustomEntityCow(nmsWorld), 1, null, bukkitEntity, null, true, true);
                             break;
                         case CREEPER:
-                            new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld, 15), 1, null, bukkitEntity, null, true, true);
+                            new SpawnEntity(nmsWorld, new CustomEntityCreeper(nmsWorld), 1, null, bukkitEntity, null, true, true);
                             break;
                         case DONKEY:
                         case HORSE:

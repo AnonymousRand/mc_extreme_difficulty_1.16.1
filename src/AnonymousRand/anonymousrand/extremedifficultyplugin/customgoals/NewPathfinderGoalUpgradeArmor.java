@@ -20,7 +20,7 @@ public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
     public NewPathfinderGoalUpgradeArmor(EntityInsentient nmsEntity) {
         this.nmsEntity = nmsEntity;
-        this.bukkitEntity = ((LivingEntity)this.nmsEntity.getBukkitEntity());
+        this.bukkitEntity = ((LivingEntity) this.nmsEntity.getBukkitEntity());
         this.attackBooleans.put(4, false);
         this.attackBooleans.put(8, false);
         this.attackBooleans.put(11, false);

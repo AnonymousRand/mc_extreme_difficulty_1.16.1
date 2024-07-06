@@ -1,8 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityVex;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWitherMini;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPhantom;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityVex;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWitherMini;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -17,7 +17,7 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
     public boolean damageEntity(DamageSource damagesource, float f) {
         if (!(damagesource instanceof EntityDamageSourceIndirect) && damagesource instanceof EntityDamageSource) { /* end crystals can only be blown up by direct damage and not arrows etc.; every time an arrow is shot at the end crystal, it duplicates */
             if (damagesource.getEntity() instanceof EntityPlayer) {
-                this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), 8.0F, true, Explosion.Effect.DESTROY); /* end crystals explode power 8 */
+                this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), 8.0F, true, Explosion.Effect.DESTROY); /* end crystals explode power 8 */
                 return super.damageEntity(damagesource, f);
             }
         } else if (damagesource instanceof EntityDamageSourceIndirect) {
@@ -41,8 +41,8 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
     }
 
     private void onCrystalDestroyed(DamageSource damagesource) {
-        if (this.world instanceof WorldServer) {
-            EnderDragonBattle enderdragonbattle = ((WorldServer) this.world).getDragonBattle();
+        if (this.getWorld() instanceof WorldServer) {
+            EnderDragonBattle enderdragonbattle = ((WorldServer) this.getWorld()).getDragonBattle();
 
             if (enderdragonbattle != null) {
                 enderdragonbattle.a(this, damagesource);

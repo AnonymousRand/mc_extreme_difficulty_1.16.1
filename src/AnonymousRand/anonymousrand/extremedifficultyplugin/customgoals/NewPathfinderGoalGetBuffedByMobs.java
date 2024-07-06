@@ -1,8 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySilverfish;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityArrow;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntitySilverfish;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
@@ -104,7 +104,7 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
     }
 
     public void setGoldEquipment() {
-        LivingEntity livingEntity = ((LivingEntity)this.entity.getBukkitEntity()); // use bukkitEntities instead as nms entities seems to require sending out packets and stuff before it works
+        LivingEntity livingEntity = ((LivingEntity) this.entity.getBukkitEntity()); // use bukkitEntities instead as nms entities seems to require sending out packets and stuff before it works
 
         if (livingEntity.getEquipment().getHelmet().getType() == org.bukkit.Material.AIR) {
             livingEntity.getEquipment().setHelmet(new org.bukkit.inventory.ItemStack(Material.GOLDEN_HELMET));

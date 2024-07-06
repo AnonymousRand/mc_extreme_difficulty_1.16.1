@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityLargeFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityLargeFireball;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;

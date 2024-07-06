@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWitherMini;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWitherMini;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;

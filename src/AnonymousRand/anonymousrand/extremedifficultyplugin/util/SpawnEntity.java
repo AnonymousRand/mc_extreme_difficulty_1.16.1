@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityCreeper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPhantom;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.World;
@@ -157,7 +157,7 @@ public class SpawnEntity extends BukkitRunnable {
                 }
 
                 if (this.equipBoots) {
-                    ((LivingEntity)this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
+                    ((LivingEntity) this.entityToSpawn.getBukkitEntity()).getEquipment().setBoots(boots);
                 }
             }
         }

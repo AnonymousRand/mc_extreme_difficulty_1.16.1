@@ -2,7 +2,7 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped after: customentitychickenaggressiveexploding
+    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs, plural reference to mob changes. stopped after: customentitychickenaggressiveexploding
 
     listeners group by event?
 
@@ -25,6 +25,22 @@ todo:
 	optimize predicates (not bedrock into base? etc)
 
 	standardize customentity.this vs this.customentity in inner goal classes
+
+	optimize fall damage algo further? check what happens in cobweb, sweet bush, scaffold
+
+	make thor lightning storm less constant and annoying
+
+	thor general refactoring (sketchy ListenerLightningStrike.storm?)
+
+	all tickslived == 5 to spawn listener?
+
+	thor lightning persists on death
+
+	trident should not break blocks if thrown by player
+
+	channeling trident not working
+
+	where do playerr projectiles fall faster
 
 	todo comments in like elder guardian
 
@@ -148,9 +164,15 @@ todo:
 
 	mobs still taking magma block damage?
 
+	return guards for isclientside and stuff
+
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
 
 	mobs dont get affected by soul sand or magma blocks in water
+
+	change eggs lottery to json or something/loot table
+
+	find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
 
 	create full documentation of changes from all /* comments and that google doc?
 
@@ -162,3 +184,6 @@ balance changes catalog:
 	blaze normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
 	blaze rapidfire attack cooldown 3 ticks -> 4
 	(this was more of a bug) blaze melee cooldown 0 ticks -> 20
+	creeper default fuse 15 ticks -> 20
+	charged creeper health 200 -> 100
+	creeper explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1

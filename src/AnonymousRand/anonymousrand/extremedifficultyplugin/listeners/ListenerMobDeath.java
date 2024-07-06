@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityWitherSkull;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;

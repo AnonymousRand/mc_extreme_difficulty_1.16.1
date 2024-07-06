@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.BlockPosition;

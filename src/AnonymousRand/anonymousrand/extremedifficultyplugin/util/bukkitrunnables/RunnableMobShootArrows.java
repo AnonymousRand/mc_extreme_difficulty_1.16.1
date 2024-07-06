@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -64,7 +64,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
                     entityArrow = new CustomEntityArrowExploding(this.nmsWorld); // exploding arrows
                     break;
                 case 3:
-                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld, 30) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld)); // stray spawn mob arrows
+                    entityArrow = new CustomEntityArrowSpawnMob(this.nmsWorld, rand < 0.25 ? new CustomEntityCreeper(this.nmsWorld) : rand < 0.5 ? new CustomEntityVex(this.nmsWorld) : rand < 0.75 ? new CustomEntityRabbit(this.nmsWorld) : new CustomEntitySilverfish(this.nmsWorld)); // stray spawn mob arrows
                     break;
                 case 4:
                     entityArrow = new CustomEntityArrowBadEffects(this.nmsWorld); // piglin bad status effects arrow

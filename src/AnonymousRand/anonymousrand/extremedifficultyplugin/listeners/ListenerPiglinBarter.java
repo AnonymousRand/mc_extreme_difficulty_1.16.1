@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPiglin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPiglin;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

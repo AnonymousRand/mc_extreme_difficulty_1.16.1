@@ -26,7 +26,7 @@ public class NewPathfinderGoalBreakBlockLookingAt extends PathfinderGoal {
     @Override
     public void e() {
         if (this.entity.ticksLived % 80 == 0) {
-            new RunnableBreakBlocks(((LivingEntity)this.entity.getBukkitEntity()).getTargetBlock(null, 40).getLocation(), this.entity.getWorld().getWorld(), 0, 0, 0, 0, false).run();
+            new RunnableBreakBlocks(((LivingEntity) this.entity.getBukkitEntity()).getTargetBlock(null, 40).getLocation(), this.entity.getWorld().getWorld(), 0, 0, 0, 0, false).run();
         }
     }
 }

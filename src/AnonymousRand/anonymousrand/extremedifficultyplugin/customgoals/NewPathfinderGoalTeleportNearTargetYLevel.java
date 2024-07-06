@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityCreeper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityCreeper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -57,13 +57,8 @@ public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
                 if (pos2.getY() < 128.0) {
                     if (this.entity instanceof CustomEntityCreeper) {
                         CustomEntityCreeper creeper = ((CustomEntityCreeper)this.entity);
-                        creeper.maxFuseTicks = (((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
-
-                        try {
-                            creeper.fuseTicks.setInt(creeper, 0);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                        creeper.setMaxFuseTicks((((CustomEntityCreeper) this.entity).isPowered() ? 30 : 25)); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
+                        creeper.setFuseTicks(0);
                     }
 
                     this.teleportTo(pos2);
@@ -80,13 +75,8 @@ public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
         } else { // teleport onto player if that's the only available block
             if (this.entity instanceof CustomEntityCreeper) {
                 CustomEntityCreeper creeper = ((CustomEntityCreeper)this.entity);
-                creeper.maxFuseTicks = ((CustomEntityCreeper)this.entity).isPowered() ? 30 : 25; // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
-
-                try {
-                    creeper.fuseTicks.setInt(creeper, 0);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                creeper.setMaxFuseTicks(((CustomEntityCreeper) this.entity).isPowered() ? 30 : 25); // increase fuse length by 67% (0% for charged creepers) if teleporting very close to player
+                creeper.setFuseTicks(0);
             }
 
             this.teleportTo(new BlockPosition(player.locX(), player.locY(), player.locZ()));

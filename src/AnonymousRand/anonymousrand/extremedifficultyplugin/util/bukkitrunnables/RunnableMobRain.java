@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -87,8 +87,8 @@ public class RunnableMobRain extends BukkitRunnable {
                 new CustomEntityBlaze(nmsWorld),
                 new CustomEntityCow(nmsWorld),
                 new CustomEntityCow(nmsWorld),
-                new CustomEntityCreeper(nmsWorld, 20),
-                new CustomEntityCreeper(nmsWorld, 20),
+                new CustomEntityCreeper(nmsWorld),
+                new CustomEntityCreeper(nmsWorld),
                 new CustomEntityDrowned(nmsWorld),
                 new CustomEntityEnderman(nmsWorld),
                 new CustomEntityEnderman(nmsWorld),

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.GenericAttributes;
 import net.minecraft.server.v1_16_R1.PathfinderGoalTarget;

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -48,7 +48,7 @@ public class ListenerEggs implements Listener {
             this.nmsEgg = ((CraftProjectile)bukkitEgg).getHandle();
 
             if (bukkitEgg.getShooter() != null) {
-                this.bukkitPlayer = (LivingEntity)bukkitEgg.getShooter();
+                this.bukkitPlayer = (LivingEntity) bukkitEgg.getShooter();
                 this.nmsPlayer = ((CraftLivingEntity)this.bukkitPlayer).getHandle();
                 this.playerLoc = this.bukkitPlayer.getLocation();
             } else {
@@ -206,7 +206,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.65) {
                     this.bukkitWorld.spawn(this.eggLoc, ExperienceOrb.class).setExperience(random.nextInt(251) + 150);
                 } else if (rand < 0.67) {
-                    new SpawnEntity(this.nmsWorld, new CustomEntityCreeper(this.nmsWorld, 25), 1, null, this.playerLoc, true);
+                    new SpawnEntity(this.nmsWorld, new CustomEntityCreeper(this.nmsWorld), 1, null, this.playerLoc, true);
                 } else if (rand < 0.69) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityZombie(this.nmsWorld), 1, null, this.eggLoc, true);
                 } else if (rand < 0.705) {

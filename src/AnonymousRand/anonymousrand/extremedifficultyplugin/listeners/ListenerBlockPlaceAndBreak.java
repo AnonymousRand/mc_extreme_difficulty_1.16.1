@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;

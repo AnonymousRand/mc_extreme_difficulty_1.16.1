@@ -1,17 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieThor;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
-import net.minecraft.server.v1_16_R1.DamageSource;
-import net.minecraft.server.v1_16_R1.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.event.EventHandler;

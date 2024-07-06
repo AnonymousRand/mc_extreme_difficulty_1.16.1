@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntityDragonFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.customprojectiles.CustomEntitySmallFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityDragonFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntitySmallFireball;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.scheduler.BukkitRunnable;

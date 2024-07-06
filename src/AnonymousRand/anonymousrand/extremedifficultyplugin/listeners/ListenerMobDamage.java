@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityChickenAggressive;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityIronGolem;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieVillager;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityChickenAggressive;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityIronGolem;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieVillager;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityArrow;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
@@ -32,7 +32,7 @@ public class ListenerMobDamage implements Listener {
                 event.setCancelled(true);
                 return;
             } else if (bukkitEntityType == ENDER_DRAGON || bukkitEntityType == WITHER) { /* ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
-                LivingEntity livingEntity = (LivingEntity)event.getEntity();
+                LivingEntity livingEntity = (LivingEntity) event.getEntity();
                 livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.2);
                 livingEntity.setHealth(livingEntity.getHealth() + event.getDamage() * 0.2);
                 event.setDamage(0.0);
@@ -69,7 +69,7 @@ public class ListenerMobDamage implements Listener {
 
         if (nmsEntity instanceof EntityVillagerAbstract && nmsDamager instanceof CustomEntityZombieVillager) { /* up to 60 max health (80 after 12 attacks), zombie villagers gain 3 max health and health when hitting a villager */
             CustomEntityZombieVillager nmsZombieVillager = (CustomEntityZombieVillager)nmsDamager;
-            LivingEntity bukkitDamager = ((LivingEntity)nmsDamager.getBukkitEntity());
+            LivingEntity bukkitDamager = ((LivingEntity) nmsDamager.getBukkitEntity());
 
             nmsZombieVillager.increaseAttacks(1); /* zombie villagers' attack counts increase when attacking villagers as well */
 

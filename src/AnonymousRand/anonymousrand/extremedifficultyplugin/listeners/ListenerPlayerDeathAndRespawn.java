@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityPhantom;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityZombieSuper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPhantom;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.EntityZombie;
@@ -38,7 +38,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
         if (((CraftPlayer)bukkitPlayer).getHandle().getLastDamager() instanceof EntityZombie) { /* when players are killed by a zombie-type mob, a super zombie is spawned at the death location and it will pick up armor, tools etc */
             World nmsWorld = ((CraftWorld)event.getEntity().getWorld()).getHandle();
             CustomEntityZombieSuper nmsNewZombie = new CustomEntityZombieSuper(nmsWorld);
-            LivingEntity bukkitNewZombie = ((LivingEntity)nmsNewZombie.getBukkitEntity());
+            LivingEntity bukkitNewZombie = ((LivingEntity) nmsNewZombie.getBukkitEntity());
             bukkitNewZombie.setMaxHealth(bukkitNewZombie.getMaxHealth() + bukkitPlayer.getTotalExperience() / 50.0); /* super zombies gain health according to the player's XP when they died */
             nmsNewZombie.setHealth(nmsNewZombie.getHealth() + bukkitPlayer.getTotalExperience() / 50.0F);
             nmsNewZombie.getBukkitEntity().setCustomName("Dinnerbone");

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntitySheepAggressive;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntitySheepAggressive;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.EntitySheep;
 import net.minecraft.server.v1_16_R1.World;

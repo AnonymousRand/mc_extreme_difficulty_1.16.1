@@ -11,7 +11,7 @@ import java.util.List;
 public interface CustomIEntityAccess {
 
     default EntityHuman customFindPlayers(CustomPathfinderTargetCondition pathfindertargetcondition, EntityLiving entityLiving, double d0, double d1, double d2) { // passes to customFindEntities()
-        return (EntityHuman)this.customFindEntities(entityLiving.world.getPlayers(), pathfindertargetcondition, entityLiving, d0, d1, d2);
+        return (EntityHuman) this.customFindEntities(entityLiving.world.getPlayers(), pathfindertargetcondition, entityLiving, d0, d1, d2);
     }
 
     default <T extends Entity> EntityLiving customFindEntities(List<? extends T> list, CustomPathfinderTargetCondition pathfindertargetcondition, @Nullable EntityLiving entityLiving, double d0, double d1, double d2) {

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityEnderDragon;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.custommobs.CustomEntityWither;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWither;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
