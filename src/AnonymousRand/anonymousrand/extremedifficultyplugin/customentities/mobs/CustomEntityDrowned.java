@@ -34,7 +34,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* drowned have 40 block detection range */
+    public double getFollowRange() {
+        /* Drowned have 40 block detection range */
         return 40.0;
     }
 
@@ -125,22 +126,19 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void m() { /* drowned no longer target iron golems */
-        /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /* Spawns lightning randomly */
-        this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 6, 40.0F)); /* throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+    public void m() {
+        /* No longer targets iron golems and villagers */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
+        this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 7, 40.0F));               /* Drowned throw tridents every 7 ticks, and continue attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D));               /* Continues attacking regardless of y-level and line of sight */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
-        this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityDrowned.class})).a(EntityPigZombie.class)); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        /* Doesn't take into account y-level or line of sight to aggro a target */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
@@ -149,12 +147,16 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         return true;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Mob-specific goals/classes                                 //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     static class PathfinderGoalDrownedAttack extends CustomPathfinderGoalZombieAttack {
 
         private final CustomEntityDrowned drowned;
 
-        public PathfinderGoalDrownedAttack(CustomEntityDrowned drowned, double d0) {
-            super(drowned, d0);
+        public PathfinderGoalDrownedAttack(CustomEntityDrowned drowned, double speedTowardsTarget) {
+            super(drowned, speedTowardsTarget);
             this.drowned = drowned;
         }
 
@@ -173,26 +175,23 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         private final CustomEntityDrowned drowned;
 
-        public PathfinderGoalDrownedGoToBeach(CustomEntityDrowned entityDrowned, double d0) {
-            super(entityDrowned, d0, 8, 2);
-            this.drowned = entityDrowned;
+        public PathfinderGoalDrownedGoToBeach(CustomEntityDrowned drowned, double speed) {
+            super(drowned, speed, 8, 2);
+            this.drowned = drowned;
         }
 
         @Override
         public boolean a() {
-            return super.a() && !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() >= (double) (this.drowned.world.getSeaLevel() - 3);
+            return super.a() && !this.drowned.world.isDay() && this.drowned.isInWater()
+                    && this.drowned.locY() >= (double) (this.drowned.world.getSeaLevel() - 3);
         }
 
-        @Override
-        public boolean b() {
-            return super.b();
-        }
-
-        @Override
-        protected boolean a(IWorldReader iworldreader, BlockPosition blockPosition) {
+        @Override // shouldMoveTo()
+        protected boolean a(IWorldReader iWorldReader, BlockPosition blockPosition) {
             BlockPosition blockPosition1 = blockPosition.up();
 
-            return iworldreader.isEmpty(blockPosition1) && iworldreader.isEmpty(blockPosition1.up()) ? iworldreader.getType(blockPosition).a(iworldreader, blockPosition, this.drowned) : false;
+            return (iWorldReader.isEmpty(blockPosition1) && iWorldReader.isEmpty(blockPosition1.up()))
+                    ? iWorldReader.getType(blockPosition).a(iWorldReader, blockPosition, this.drowned) : false;
         }
 
         @Override
@@ -201,25 +200,20 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             this.drowned.navigation = this.drowned.navigationLand;
             super.c();
         }
-
-        @Override
-        public void d() {
-            super.d();
-        }
     }
 
     static class PathfinderGoalDrownedGoToWater extends PathfinderGoal {
 
         private final CustomEntityDrowned drowned;
-        private double b;
-        private double c;
-        private double d;
-        private final double e;
+        private double waterX;
+        private double waterY;
+        private double waterZ;
+        private final double speedTowardsTarget;
         private final World world;
 
-        public PathfinderGoalDrownedGoToWater(CustomEntityDrowned drowned, double d0) {
+        public PathfinderGoalDrownedGoToWater(CustomEntityDrowned drowned, double speedTowardsTarget) {
             this.drowned = drowned;
-            this.e = d0;
+            this.speedTowardsTarget = speedTowardsTarget;
             this.world = drowned.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
@@ -231,14 +225,14 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             } else if (this.drowned.isInWater()) {
                 return false;
             } else {
-                Vec3D vec3d = this.g();
+                Vec3D vec3d = this.findWaterNearby();
 
                 if (vec3d == null) {
                     return false;
                 } else {
-                    this.b = vec3d.x;
-                    this.c = vec3d.y;
-                    this.d = vec3d.z;
+                    this.waterX = vec3d.x;
+                    this.waterY = vec3d.y;
+                    this.waterZ = vec3d.z;
                     return true;
                 }
             }
@@ -251,19 +245,19 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         @Override
         public void c() {
-            this.drowned.getNavigation().a(this.b, this.c, this.d, this.e);
+            this.drowned.getNavigation().a(this.waterX, this.waterY, this.waterZ, this.speedTowardsTarget);
         }
 
         @Nullable
-        private Vec3D g() {
+        private Vec3D findWaterNearby() {
             Random random = this.drowned.getRandom();
-            BlockPosition blockPosition = this.drowned.getChunkCoordinates();
+            BlockPosition currentPosition = this.drowned.getChunkCoordinates();
 
             for (int i = 0; i < 10; ++i) {
-                BlockPosition blockPosition1 = blockPosition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
+                BlockPosition blockPosition = currentPosition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
 
-                if (this.world.getType(blockPosition1).a(Blocks.WATER)) {
-                    return Vec3D.c(blockPosition1);
+                if (this.world.getType(blockPosition).a(Blocks.WATER)) {
+                    return Vec3D.c(blockPosition);
                 }
             }
 
@@ -274,45 +268,46 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     static class PathfinderGoalSwimUp extends PathfinderGoal {
 
         private final CustomEntityDrowned drowned;
-        private final double b;
-        private final int c;
-        private boolean d;
+        private final double speedTowardsTarget;
+        private final int targetY;
+        private boolean obstructed;
 
-        public PathfinderGoalSwimUp(CustomEntityDrowned entityDrowned, double d0, int i) {
-            this.drowned = entityDrowned;
-            this.b = d0;
-            this.c = i;
+        public PathfinderGoalSwimUp(CustomEntityDrowned drowned, double speedTowardsTarget, int targetY) {
+            this.drowned = drowned;
+            this.speedTowardsTarget = speedTowardsTarget;
+            this.targetY = targetY;
         }
 
         @Override
         public boolean a() {
-            return !this.drowned.world.isDay() && this.drowned.isInWater() && this.drowned.locY() < (double) (this.c - 2);
+            return !this.drowned.getWorld().isDay() && this.drowned.isInWater()
+                    && this.drowned.locY() < (double) (this.targetY - 2);
         }
 
         @Override
         public boolean b() {
-            return this.a() && !this.d;
+            return this.a() && !this.obstructed;
         }
 
         @Override
         public void e() {
-            if (this.drowned.locY() < (double) (this.c - 1) && (this.drowned.getNavigation().m() || this.drowned.eP())) {
-                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8, new Vec3D(this.drowned.locX(), this.c - 1, this.drowned.locZ()));
+            if (this.drowned.locY() < (double) (this.targetY - 1) && (this.drowned.getNavigation().m() || this.drowned.eP())) {
+                Vec3D vec3d = RandomPositionGenerator.b(this.drowned, 4, 8,
+                        new Vec3D(this.drowned.locX(), this.targetY - 1, this.drowned.locZ()));
 
                 if (vec3d == null) {
-                    this.d = true;
+                    this.obstructed = true;
                     return;
                 }
 
-                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.b);
+                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.speedTowardsTarget);
             }
-
         }
 
         @Override
         public void c() {
             this.drowned.t(true);
-            this.d = false;
+            this.obstructed = false;
         }
 
         @Override
@@ -323,39 +318,27 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     static class PathfinderGoalDrownedTridentBowAttack<T extends CustomEntityDrowned> extends CustomPathfinderGoalRangedAttack<T> {
 
-        private final CustomEntityDrowned drowned;
-
         public PathfinderGoalDrownedTridentBowAttack(T drowned, double d0, int i, float f) {
             super(drowned, d0, i, f);
-            this.drowned = drowned;
         }
 
         @Override
         public boolean a() {
-            return super.a() && this.drowned.getItemInMainHand().getItem() == Items.TRIDENT;
+            return super.a() && this.entity.getItemInMainHand().getItem() == Items.TRIDENT;
         }
 
         @Override
         public void c() {
             super.c();
-            this.drowned.setAggressive(true);
-            this.drowned.c(EnumHand.MAIN_HAND);
+            this.entity.setAggressive(true);
+            this.entity.c(EnumHand.MAIN_HAND);
         }
 
         @Override
         public void d() {
             super.d();
-            this.drowned.clearActiveItem();
-            this.drowned.setAggressive(false);
-        }
-
-        @Override
-        public void e() {
-            for (int i = 0; i < (this.drowned.getAttacks() < 30 ? 1 : this.drowned.getAttacks() < 70 ? 2 : 3); i++) { /* shoots 1, 2 or 3 tridents at a time depending on attack count */
-                super.e();
-            }
-
-            this.drowned.increaseAttacks(1);
+            this.entity.clearActiveItem();
+            this.entity.setAggressive(false);
         }
     }
 }

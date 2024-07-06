@@ -114,7 +114,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     //                                  Other custom functions                                   //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    
     public void setFuseTicks(int fuseTicks) {
         try {
             CustomEntityCreeper.fuseTicks.setInt(this, fuseTicks);

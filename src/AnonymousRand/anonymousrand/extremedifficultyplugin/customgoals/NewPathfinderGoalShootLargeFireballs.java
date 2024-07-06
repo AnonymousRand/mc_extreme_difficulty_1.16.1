@@ -32,7 +32,7 @@ public class NewPathfinderGoalShootLargeFireballs extends PathfinderGoal {
 
     @Override
     public void e() {
-        if (this.entity.ticksLived % this.attackCooldown == 11) {
+        if (this.entity.ticksLived % this.attackCooldown == 11) { // todo what is this 11 about
             EntityLiving entityLiving;
 
             if (this.entity.getGoalTarget() != null) {

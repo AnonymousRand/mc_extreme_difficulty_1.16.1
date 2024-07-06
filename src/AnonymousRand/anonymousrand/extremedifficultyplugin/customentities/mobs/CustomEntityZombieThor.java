@@ -1,12 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningEffectStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -35,7 +34,7 @@ public class CustomEntityZombieThor extends EntityZombie { // todo expend custom
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(55.0);
         this.setHealth(55.0F);
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        new RunnableThorLightningEffectStorm(this, 20, true).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /* thor summons a vanilla lightning storm around it when first spawned for 2 seconds */
+        new RunnableLightningEffectStorm(this, 20, true).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /* thor summons a vanilla lightning storm around it when first spawned for 2 seconds */
     }
 
     @Override
@@ -172,7 +171,7 @@ public class CustomEntityZombieThor extends EntityZombie { // todo expend custom
             }
 
             if (random.nextDouble() < 0.003125 && !this.storm) {
-                new RunnableThorLightningEffectStorm(this, random.nextInt(6) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                new RunnableLightningEffectStorm(this, random.nextInt(6) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
             }
 
             if (random.nextDouble() < 0.002 && !this.storm && !this.tornado) {

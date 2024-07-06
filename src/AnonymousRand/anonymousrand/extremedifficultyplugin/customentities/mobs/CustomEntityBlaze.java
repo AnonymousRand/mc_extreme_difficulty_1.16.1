@@ -178,11 +178,15 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         return false;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Mob-specific goals/classes                                 //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     static class PathfinderGoalBlazeFireballAttack extends PathfinderGoal {
         private final CustomEntityBlaze blaze;
         private final World nmsWorld;
-        private int rangedAttackCooldown;
-        private int meleeAttackCooldown;
+        private int rangedAttackRemainingCooldown;
+        private int meleeAttackRemainingCooldown;
 
         public PathfinderGoalBlazeFireballAttack(CustomEntityBlaze entityBlaze) {
             this.blaze = entityBlaze;
@@ -198,22 +202,22 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
         @Override // startExecuting()
         public void c() {
-            this.rangedAttackCooldown = 0;
-            this.meleeAttackCooldown = 0;
+            this.rangedAttackRemainingCooldown = 0;
+            this.meleeAttackRemainingCooldown = 0;
         }
 
         @Override // tick(); fires if shouldExecute() or shouldContinueExecuting() is true
         public void e() {
-            --this.rangedAttackCooldown;
-            --this.meleeAttackCooldown;
+            --this.rangedAttackRemainingCooldown;
+            --this.meleeAttackRemainingCooldown;
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
                 double distSqToGoalTarget = this.blaze.h((Entity) goalTarget); // todo if eventually changing g() and d() to be global utils, change this too
 
                 if (distSqToGoalTarget < 3.0D) { // melee attack
-                    if (this.meleeAttackCooldown <= 0) {
-                        this.meleeAttackCooldown = 20;
+                    if (this.meleeAttackRemainingCooldown <= 0) {
+                        this.meleeAttackRemainingCooldown = 20;
 
                         this.blaze.attackEntity(goalTarget);
                         /* Blaze melee attack creates a power 0.5 explosion on the player's location */
@@ -227,7 +231,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                     double distToGoalTargetY = goalTarget.e(0.5D) - this.blaze.e(0.5D);
                     double distToGoalTargetZ = goalTarget.locZ() - this.blaze.locZ();
 
-                    if (this.rangedAttackCooldown <= 0) {
+                    if (this.rangedAttackRemainingCooldown <= 0) {
                         this.blaze.increaseAttacks(1);
 
                         if (!this.blaze.isSilent()) {
@@ -238,7 +242,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
                         if (this.blaze.getRapidFire()) {
-                            this.rangedAttackCooldown = 4;
+                            this.rangedAttackRemainingCooldown = 4;
 
                             /* In rapid fire state, blazes shoot 2 fireballs at a time, with 250% of their vanilla inaccuracy */
                             CustomEntitySmallFireball smallFireball;
@@ -251,7 +255,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                                 this.nmsWorld.addEntity(smallFireball);
                             }
                         } else {
-                            this.rangedAttackCooldown = 6;
+                            this.rangedAttackRemainingCooldown = 6;
 
                             /* In normal firing state, blazes have 20% of their vanilla inaccuracy */
                             CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze,

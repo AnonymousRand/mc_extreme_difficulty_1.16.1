@@ -1,24 +1,25 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-// not extending PathfinderGoalArrowAttack as I normally would due to unused private fields like the target (obfuscated as this.c)
-public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity> extends PathfinderGoal {
+// not extending PathfinderGoalArrowAttack as I normally would due to unused private fields like the goal target (obfuscated as this.c)
+public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity & IAttackLevelingMob> extends PathfinderGoal {
 
     protected final T entity;
     protected final double speedTowardsTarget;
-    protected int attackInterval;
-    protected float maxDistance;
+    protected int attackCooldown;
+    protected float maxAttackDistance;
     protected int attackRemainingCooldown;
     protected int seeTime;
 
-    public CustomPathfinderGoalRangedAttack(T entity, double speedTowardsTarget, int attackInterval, float maxDistance) {
+    public CustomPathfinderGoalRangedAttack(T entity, double speedTowardsTarget, int attackCooldown, float maxAttackDistance) {
         this.entity = entity;
         this.speedTowardsTarget = speedTowardsTarget;
-        this.attackInterval = attackInterval;
-        this.maxDistance = maxDistance;
+        this.attackCooldown = attackCooldown;
+        this.maxAttackDistance = maxAttackDistance;
         this.attackRemainingCooldown = -1;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
@@ -41,30 +42,30 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
     @Override
     public void e() {
-        EntityLiving attackTarget = this.entity.getGoalTarget();
-        if (attackTarget == null) {
+        EntityLiving goalTarget = this.entity.getGoalTarget();
+        if (goalTarget == null) {
             return;
         }
 
-        double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
-        /* breaking line of sight does not stop the mob from attacking */
-        ++this.seeTime;
+        this.attackRemainingCooldown--;
+        double distSqToGoalTarget = this.entity.d(goalTarget.getPositionVector());
+        /* Breaking line of sight does not stop the mob from attacking */
+        ++this.seeTime; // todo what this for
 
-        if (distanceToSquared <= (double) (this.maxDistance * this.maxDistance) && this.seeTime >= 5) {
-            this.entity.getNavigation().o();
+        if (distSqToGoalTarget <= (double) (this.maxAttackDistance * this.maxAttackDistance) && this.seeTime >= 5) {
+            this.entity.getNavigation().o(); // todo what function is this
         } else {
-            this.entity.getNavigation().a(attackTarget, this.speedTowardsTarget);
+            this.entity.getNavigation().a(goalTarget, this.speedTowardsTarget);
         }
 
-        this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
+        this.entity.getControllerLook().a(goalTarget, 30.0F, 30.0F);
 
-        if (--this.attackRemainingCooldown == 0) {
-            float f1 = MathHelper.a(MathHelper.sqrt(distanceToSquared) / this.maxDistance, 0.1F, 1.0F);
+        if (this.attackRemainingCooldown <= 0) {
+            this.attackRemainingCooldown = this.attackCooldown;
+            this.entity.increaseAttacks(1);
 
-            this.entity.a(attackTarget, f1); // shoot()
-            this.attackRemainingCooldown = this.attackInterval;
-        } else if (this.attackRemainingCooldown < 0) {
-            this.attackRemainingCooldown = this.attackInterval;
+            float f1 = MathHelper.a(MathHelper.sqrt(distSqToGoalTarget) / this.maxAttackDistance, 0.1F, 1.0F);
+            this.entity.a(goalTarget, f1); // shoot()
         }
     }
 }

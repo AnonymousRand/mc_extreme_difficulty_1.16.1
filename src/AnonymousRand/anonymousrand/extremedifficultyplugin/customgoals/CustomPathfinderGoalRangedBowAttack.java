@@ -9,7 +9,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
     protected final T entity;
     protected final double speedTowardsTarget;
     protected int attackInterval;
-    protected float maxDistanceSqr;
+    protected float maxAttackDistanceSq;
     protected int attackRemainingCooldown = -1;
     protected int seeTime;
     protected boolean strafingClockwise;
@@ -21,7 +21,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
         this.entity = entity;
         this.speedTowardsTarget = speedTowardsTarget;
         this.attackInterval = attackInterval;
-        this.maxDistanceSqr = maxAttackDistance * maxAttackDistance;
+        this.maxAttackDistanceSq = maxAttackDistance * maxAttackDistance;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
@@ -40,7 +40,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
 
-        if (distanceToSquared <= (double) this.maxDistanceSqr && this.seeTime >= 20) {
+        if (distanceToSquared <= (double) this.maxAttackDistanceSq && this.seeTime >= 20) {
             this.entity.getNavigation().o();
             ++this.strafingTime;
         } else {
@@ -61,9 +61,9 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
         }
 
         if (this.strafingTime > -1) {
-            if (distanceToSquared > (double) (this.maxDistanceSqr * 0.75F)) {
+            if (distanceToSquared > (double) (this.maxAttackDistanceSq * 0.75F)) {
                 this.strafingBackwards = false;
-            } else if (distanceToSquared < (double) (this.maxDistanceSqr * 0.25F)) {
+            } else if (distanceToSquared < (double) (this.maxAttackDistanceSq * 0.25F)) {
                 this.strafingBackwards = true;
             }
 

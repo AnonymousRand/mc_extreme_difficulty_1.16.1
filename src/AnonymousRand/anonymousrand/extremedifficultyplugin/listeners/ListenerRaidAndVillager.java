@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projec
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableThorLightningEffectStorm;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningEffectStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
@@ -59,7 +59,7 @@ public class ListenerRaidAndVillager implements Listener {
 
                 nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /* golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds */
                     ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                    new RunnableThorLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                    new RunnableLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
                 });
             }
         }

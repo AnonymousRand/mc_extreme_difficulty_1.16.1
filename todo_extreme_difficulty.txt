@@ -2,7 +2,8 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs, plural reference to mob changes. stopped after: customentitychickenaggressiveexploding
+    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
+    lural reference to mob changes, big comment separator for inner classes. stopped after: customentitychickenaggressiveexploding
 
     listeners group by event?
 
@@ -34,13 +35,23 @@ todo:
 
 	all tickslived == 5 to spawn listener?
 
+	allow only one lightning effect storm and one tornado at a time with static variables or something
+
+	merge lightningeffectstorm and lightningstorm runnable with config for percentage actual lightning
+
+	try to copy spider code for moving fast in cobwebs?
+
+	zombies etc. should not aggro villagers
+
 	thor lightning persists on death
 
 	trident should not break blocks if thrown by player
 
 	channeling trident not working
 
-	where do playerr projectiles fall faster
+	where do playerr projectiles fall faster? seems to be impacting drowned tridents?
+
+	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 
 	todo comments in like elder guardian
 
@@ -50,7 +61,11 @@ todo:
 
     make checkdespawn global too?
 
-    comment/javadoc custom goals functions. see customentityblaze inner class for example
+    comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
+
+    make all variables/parameters starting with entity not start with entity
+
+    no blank linkes after class declaration and before instance variable decalarations?
 
     attacks comments/docs all into initattack method instead of increase attacks?
 
@@ -168,6 +183,10 @@ todo:
 
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
 
+    guardians arent attacking out of water
+
+    tridents break block instead of explode
+
 	mobs dont get affected by soul sand or magma blocks in water
 
 	change eggs lottery to json or something/loot table
@@ -187,3 +206,4 @@ balance changes catalog:
 	creeper default fuse 15 ticks -> 20
 	charged creeper health 200 -> 100
 	creeper explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
+	drowned attack cooldown 6 ticks -> 7
