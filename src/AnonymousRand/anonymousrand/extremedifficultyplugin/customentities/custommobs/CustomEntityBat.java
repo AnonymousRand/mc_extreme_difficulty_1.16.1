@@ -85,7 +85,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() {
-        /* Bats have 16 block detection range (setting attribute doesn't work) (24 after 7 attacks, 32 after 12 attacks) */
+        /* Bats have 16 block detection range (24 after 7 attacks, 32 after 12 attacks) */
         // null check since getFollowRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
         // which is called in initPathfinder() which is called in super constructor I think
@@ -103,24 +103,24 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

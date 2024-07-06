@@ -41,7 +41,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* evokers have 28 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* evokers have 28 block detection range */
         return 28.0;
     }
 
@@ -54,24 +54,24 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -144,7 +144,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));

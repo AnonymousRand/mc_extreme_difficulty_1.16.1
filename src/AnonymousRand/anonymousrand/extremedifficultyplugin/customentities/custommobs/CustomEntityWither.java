@@ -162,7 +162,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         }
     }
 
-    public double getFollowRange() { /* withers have 80 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* withers have 80 block detection range */
         return 80.0;
     }
 
@@ -291,7 +291,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
                 this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(8.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 10.0F));
             }
 
-            if (this.wither.get3DDistSquared(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
+            if (this.wither.get3DDistSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
                 this.wither.dash = false;
                 this.cancel();
             }

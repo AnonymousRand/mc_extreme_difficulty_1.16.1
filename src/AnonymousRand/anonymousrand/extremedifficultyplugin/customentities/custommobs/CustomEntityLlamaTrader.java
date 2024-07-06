@@ -25,6 +25,8 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     private void initCustom() {
+        this.initAttributes();
+
         try {
             this.didSpit = EntityLlama.class.getDeclaredField("bH");
             this.didSpit.setAccessible(true);
@@ -37,8 +39,6 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.setStrength(1); /* makes sure wolves etc. don't run away from llamas; also makes their inventory smaller */
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
@@ -50,7 +50,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* trader llamas have 24 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* trader llamas have 24 block detection range */
         return 24.0;
     }
 
@@ -85,7 +85,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     protected void initPathfinder() { /* llamas won't panic anymore, are always aggro towards players, don't stop attacking after spitting once, and no longer defend wolves */
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));

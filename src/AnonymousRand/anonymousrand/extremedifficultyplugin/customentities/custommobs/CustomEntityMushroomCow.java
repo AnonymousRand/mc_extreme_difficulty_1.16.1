@@ -13,8 +13,9 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
     }
 
     private void initCustom() {
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
         super.initPathfinder();
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
     }
 

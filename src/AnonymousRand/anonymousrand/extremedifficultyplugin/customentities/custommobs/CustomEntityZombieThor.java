@@ -22,8 +22,9 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
     public CustomEntityZombieThor(World world) {
         super(EntityTypes.ZOMBIE, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.getBukkitEntity().setCustomName("Thor");
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE));
@@ -57,7 +58,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         ListenerLightningStrike.numberOfThors = Math.max(0, ListenerLightningStrike.numberOfThors - 1); // to make sure nothing weird happens
     }
 
-    public double getFollowRange() { /* thor zombies have 64 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* thor zombies have 64 block detection range */
         return 64.0;
     }
 
@@ -70,24 +71,24 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 64 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

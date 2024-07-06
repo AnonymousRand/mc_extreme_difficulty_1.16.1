@@ -22,15 +22,15 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     }
 
     private void initCustom() {
+        this.initAttributes();
+
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
-        // pull attributeMap using reflection; code from Spigot forums
+        // pull attributeMap using reflection
         try {
             this.attributeMap = AttributeMapBase.class.getDeclaredField("b");
             this.attributeMap.setAccessible(true);
@@ -52,10 +52,9 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }
 
-    // from Spigot forums again
     private void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)this.attributeMap.get(attributeMapBase);
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>) this.attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
@@ -65,7 +64,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* aggressive chickens have 16 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() {
+        /* Aggressive chickens have 16 block detection range */
         return 16.0;
     }
 
@@ -78,24 +78,24 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

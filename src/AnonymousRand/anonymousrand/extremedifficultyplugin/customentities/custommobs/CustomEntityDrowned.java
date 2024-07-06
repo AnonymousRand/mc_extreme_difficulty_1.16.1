@@ -34,7 +34,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* drowned have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* drowned have 40 block detection range */
         return 40.0;
     }
 
@@ -47,24 +47,24 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -128,7 +128,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     public void m() { /* drowned no longer target iron golems */
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0)); /* custom goal that spawns lightning randomly */
         this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 6, 40.0F)); /* throws a trident every 6 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */

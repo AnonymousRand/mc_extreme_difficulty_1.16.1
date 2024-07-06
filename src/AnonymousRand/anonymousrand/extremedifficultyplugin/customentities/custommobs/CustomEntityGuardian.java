@@ -36,7 +36,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* guardians have 24 block detection range (setting attribute doesn't work) (32 after 8 attacks) */
+    public double getFollowRange() { /* guardians have 24 block detection range (32 after 8 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 
@@ -49,24 +49,24 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -130,7 +130,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);

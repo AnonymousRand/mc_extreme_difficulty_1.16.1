@@ -2,7 +2,7 @@ todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
 
-    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped after: customentitybee
+    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs. stopped after: customentitychickenaggressiveexploding
 
     listeners group by event?
 
@@ -62,7 +62,7 @@ todo:
 
 	iron golem sethelath in increashealthadd change to heal? and make sure works
 
-	registerGenericAttribute() into util with static? pass in this. pulling attributemap too
+	registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 	should all utils be static? id tech has them static
 

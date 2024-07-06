@@ -18,8 +18,9 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
     public CustomEntityPillager(World world) {
         super(EntityTypes.PILLAGER, world);
         this.vanillaTargetSelector = super.targetSelector;
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.CROSSBOW)); // makes sure that it has a crossbow
         Arrays.fill(this.dropChanceArmor, 0.0f); /* pillagers can't drop any armor that it wears */
         this.attacks = 0;
@@ -55,7 +56,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         new RunnableMobShootArrows(this, entityLiving, 1, this.attackNum % 18 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 1.0 : 0.075) ? 1 : 0, false, true).run(); /* shoots a knockback arrow every 18th attack; 7.5% of arrows shot are piercing 1 (100% for knockback arrow); arrows do not lose y-level */
     }
 
-    public double getFollowRange() { /* pillagers have 24 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* pillagers have 24 block detection range */
         return 24.0;
     }
 
@@ -68,24 +69,24 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

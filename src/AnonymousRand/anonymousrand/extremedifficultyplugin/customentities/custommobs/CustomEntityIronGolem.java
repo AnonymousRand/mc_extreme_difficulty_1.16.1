@@ -20,13 +20,13 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     private void initCustom() {
+        this.initAttributes();
+
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.followRangeMultipler = 1.0;
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
@@ -38,7 +38,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* iron golems have 24 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* iron golems have 24 block detection range */
         return 24.0 * this.followRangeMultipler;
     }
 
@@ -152,7 +152,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     protected void initPathfinder() { /* no longer targets monsters or defends villages */
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */

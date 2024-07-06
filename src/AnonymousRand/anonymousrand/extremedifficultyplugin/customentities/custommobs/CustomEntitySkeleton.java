@@ -25,8 +25,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             new SpawnEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
         }
 
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
         this.spawnExplodingArrow = false;
         this.attacks = 0;
@@ -67,7 +68,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
         return ProjectileHelper.a(this, itemstack, f);
     }
 
-    public double getFollowRange() { /* skeletons have 24 block detection range (setting attribute doesn't work) (32 after 20 attacks) */
+    public double getFollowRange() { /* skeletons have 24 block detection range (32 after 20 attacks) */
         return this.attacks < 20 ? 24.0 : 32.0;
     }
 
@@ -80,24 +81,24 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -140,7 +141,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (this.get3DDistSquared(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons
+                if (this.get3DDistSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons
                     this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
             }

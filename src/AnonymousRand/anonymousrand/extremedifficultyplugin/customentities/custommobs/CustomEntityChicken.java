@@ -15,9 +15,9 @@ public class CustomEntityChicken extends EntityChicken {
         this.initCustom();
     }
 
-    private void initCustom() { // questionable design choice but such is the nature of Java
+    private void initCustom() {
         this.initAttributes();
-    }
+ // questionable design choice but such is the nature of Java    }
 
     private void initAttributes() {
         /* Chickens move twice as fast */

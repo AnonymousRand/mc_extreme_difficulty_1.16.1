@@ -22,13 +22,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     private void initCustom() {
+        this.initAttributes();
+
         /* No longer avoids water */
         this.a(PathType.WATER, 0.0F);
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
@@ -40,7 +40,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* endermen have 16 block detection range (setting attribute doesn't work) (24 after 12 attacks, 32 after 25 attacks) */
+    public double getFollowRange() { /* endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 12) ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
 
@@ -54,24 +54,24 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -137,7 +137,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     protected void initPathfinder() { /* no longer targets endermites, avoids water and stops if stared at */
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));  /* Continues attacking regardless of y-level and LoS (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */

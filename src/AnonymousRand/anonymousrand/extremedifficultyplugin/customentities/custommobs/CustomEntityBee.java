@@ -44,7 +44,7 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() {
-        /* Bees have 16 block detection range (setting attribute doesn't work) */
+        /* Bees have 16 block detection range */
         return 16.0;
     }
 
@@ -86,7 +86,7 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         super.initPathfinder();
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         /* Doesn't need line of sight to continue attacking, and occasionally ignores y-level range limitations */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D));

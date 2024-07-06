@@ -20,6 +20,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     private void initCustom() {
+        this.initAttributes();
+
         try {
             this.fuseTicks = EntityCreeper.class.getDeclaredField("fuseTicks");
             this.fuseTicks.setAccessible(true);
@@ -30,8 +32,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
@@ -55,24 +55,24 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -112,7 +112,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         /* Creeper is no longer scared of cats and ocelots */
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* custom goal that spawns lightning randomly */
         this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* Occasionally teleports to a spot closer in y-level to its target */
@@ -140,7 +140,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            if (this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 36.0 : 25.0)) { // charged creepers only explode within 6 blocks of player and normal creepers only explode within 5
+            if (this.get3DDistSq(this.getPositionVector(), this.getGoalTarget().getPositionVector()) > (this.isPowered() ? 36.0 : 25.0)) { // charged creepers only explode within 6 blocks of player and normal creepers only explode within 5
                 try {
                     fuseTicks.setInt(this, 0);
                 } catch (IllegalAccessException e) {
@@ -152,9 +152,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
             if (!this.getWorld().isClientSide) {
                 if (this.isPowered()) {
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (75.0F + Math.max(((Math.sqrt(this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), true, Explosion.Effect.DESTROY); /* charged creepers explode with power 75; creepers explode more powerfully the more th player tried to distance themselves from the creeper */
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (75.0F + Math.max(((Math.sqrt(this.get3DDistSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), true, Explosion.Effect.DESTROY); /* charged creepers explode with power 75; creepers explode more powerfully the more th player tried to distance themselves from the creeper */
                 } else {
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (this.explosionRadius + Math.max(((Math.sqrt(this.get3DDistSquared(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), false, this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (this.explosionRadius + Math.max(((Math.sqrt(this.get3DDistSq(this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 3.0) * 0.225 / 0.39), 0.0)), false, this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
                 }
 
                 this.killed = true;

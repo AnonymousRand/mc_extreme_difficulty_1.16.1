@@ -21,8 +21,9 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     public CustomEntitySheepAggressive(World world) {
         super(EntityTypes.SHEEP, world);
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.setColor(EnumColor.PINK); // always pink
         this.attacks = 0;
         this.a20 = false;
@@ -46,7 +47,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.setHealth(125.0F);
     }
 
-    // registers new attributes via reflection; code from Spigot forums
+    // registers new attributes via reflection
     static {
         try {
             attributeMap = net.minecraft.server.v1_16_R1.AttributeMapBase.class.getDeclaredField("b");
@@ -58,7 +59,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     public void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)attributeMap.get(attributeMapBase);
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>) attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
@@ -88,7 +89,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.launchHigh = launchHigh;
     }
 
-    public double getFollowRange() { /* aggressive sheep have 64 block detection range (setting attribute doesn't work) (128 after 60 attacks) */
+    public double getFollowRange() { /* aggressive sheep have 64 block detection range (128 after 60 attacks) */
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 
@@ -101,24 +102,24 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 64 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }

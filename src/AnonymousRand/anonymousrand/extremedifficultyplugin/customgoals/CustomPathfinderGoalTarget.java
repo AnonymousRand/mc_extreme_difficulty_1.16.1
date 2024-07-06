@@ -14,7 +14,7 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
     }
 
     @Override
-    protected double k() { // getFollowDistance from attribute; change this method instead of changing attribute as this method is called in super() of contructor (?), and takes the value of follow_range from that time only
+    protected double k() { // getFollowDistance from attribute; change this method instead of changing attribute as this method is called in super() of constructor (?), and takes the value of follow_range from that time only
         Entity bukkitEntity = this.e.getBukkitEntity();
         EntityType bukkitEntityType = bukkitEntity.getType();
 

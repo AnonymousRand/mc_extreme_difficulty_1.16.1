@@ -32,7 +32,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* elder guardians have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* elder guardians have 40 block detection range */
         return 40.0;
     }
 
@@ -45,24 +45,24 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 64 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -98,7 +98,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(3, new CustomEntityGuardianElder.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(4, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 40.0F));
@@ -206,7 +206,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                     entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 } else if (this.b + 40 == this.entity.eL()) { /* 2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player */
-                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(this.entity.get3DDistSquared(this.entity.getPositionVector(), entityLiving.getPositionVector()), 0.5) + 1);
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(this.entity.get3DDistSq(this.entity.getPositionVector(), entityLiving.getPositionVector()), 0.5) + 1);
 
                     while (iterator.hasNext()) {
                         new RunnableBreakBlocks(iterator.next().getLocation(), this.entity.getWorld().getWorld(), 1, 1, 1, 0, false).run();

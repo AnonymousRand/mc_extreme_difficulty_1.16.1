@@ -10,8 +10,9 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /* sheep move 2x faster and have 20 health */
         ((LivingEntity)this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);
@@ -24,7 +25,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public double getFollowRange() { /* sheep have 32 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* sheep have 32 block detection range */
         return 32.0;
     }
 

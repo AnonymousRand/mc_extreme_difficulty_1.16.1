@@ -26,8 +26,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     public CustomEntityPiglin(World world) {
         super(EntityTypes.PIGLIN, world);
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
         double rand = random.nextDouble();
         this.setSlot(EnumItemSlot.MAINHAND, rand < 0.45 ? new ItemStack(Items.CROSSBOW) : rand < 0.9 ? new ItemStack(Items.GOLDEN_SWORD) : rand < 0.95 ? new ItemStack(Items.NETHERITE_HOE) : new ItemStack(Items.NETHERITE_SWORD)); /* piglins have a 45% chance to be armed with a crossbow or a sword each, a 5% chance to have a netherite hoe, and a 5% chance to have a netherite sword */
         Arrays.fill(this.dropChanceHand, 0.0f); /* piglins can't drop the items they are holding */
@@ -185,7 +186,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-    public double getFollowRange() { /* piglins have 32 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* piglins have 32 block detection range */
         return 32.0;
     }
 
@@ -360,7 +361,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         public boolean a() {
             if (this.piglin.frenzyTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
                 if (!((EntityPlayer) this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
-                    return this.piglin.get3DDistSquared(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
+                    return this.piglin.get3DDistSq(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
                 }
             }
 

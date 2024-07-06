@@ -21,14 +21,14 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
     // this will be called on super() constructor // todo make sure
     private void initCustom() {
+        this.initAttributes();
+
         /* No longer avoids lava and fire */
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
         this.deathExplosion = false;
-
-        this.initAttributes();
     }
 
     private void initAttributes() {
@@ -79,7 +79,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats and piglins etc. */
+        /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));

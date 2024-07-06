@@ -16,8 +16,9 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
 
     public CustomEntityVillagerAggressive(World world) {
         super(EntityTypes.VILLAGER, world);
-        this.a(PathType.LAVA, 0.0F); /* no longer avoids lava */
-        this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
+        /* No longer avoids lava and fire */
+        this.a(PathType.LAVA, 0.0F);
+        this.a(PathType.DAMAGE_FIRE, 0.0F);
 
         try { // register attack attributes
             registerGenericAttribute(this.getBukkitEntity(), Attribute.GENERIC_ATTACK_DAMAGE);
@@ -39,7 +40,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
 
     public void registerGenericAttribute(org.bukkit.entity.Entity entity, Attribute attribute) throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity)entity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)attributeMap.get(attributeMapBase);
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>) attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
         AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
@@ -55,7 +56,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
-    public double getFollowRange() { /* aggressive villagers have 40 block detection range (setting attribute doesn't work) */
+    public double getFollowRange() { /* aggressive villagers have 40 block detection range */
         return 40.0;
     }
 

@@ -47,7 +47,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getFollowRange() {
-        /* Blazes have 40 block detection range (setting attribute doesn't work) */
+        /* Blazes have 40 block detection range */
         return 40.0;
     }
 
@@ -60,24 +60,24 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
-                double distSquaredToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX()- this.getPositionVector().getX(), 2)
+                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX()- this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
-                int forceDespawnDistSquared = forceDespawnDist * forceDespawnDist;
+                int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
 
-                if (distSquaredToNearestPlayer > (double) forceDespawnDistSquared
-                        && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (distSqToNearestPlayer > (double) forceDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 }
 
                 /* Random despawn distance increased to 40 blocks */
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
-                int randomDespawnDistSquared = randomDespawnDist * randomDespawnDist;
+                int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSquaredToNearestPlayer
-                        > (double) randomDespawnDistSquared && this.isTypeNotPersistent(distSquaredToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
+                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
-                } else if (distSquaredToNearestPlayer < (double) randomDespawnDistSquared) {
+                } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
                 }
             }
@@ -167,7 +167,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     protected void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));    /* Takes buffs from bats and piglins etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
         /* Doesn't need line of sight to find targets and start attacking */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
@@ -210,9 +210,9 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
-                double distSquaredToGoalTarget = this.blaze.h((Entity) goalTarget); // todo if eventually changing g() and d() to be global utils, change this too
+                double distSqToGoalTarget = this.blaze.h((Entity) goalTarget); // todo if eventually changing g() and d() to be global utils, change this too
 
-                if (distSquaredToGoalTarget < 3.0D) { // melee attack
+                if (distSqToGoalTarget < 3.0D) { // melee attack
                     if (this.meleeAttackCooldown <= 0) {
                         this.meleeAttackCooldown = 20;
 
@@ -235,7 +235,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                             this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
                         }
 
-                        float defaultInaccuracy = MathHelper.c(MathHelper.sqrt(distSquaredToGoalTarget)) * 0.5F;
+                        float defaultInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToGoalTarget)) * 0.5F;
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
                         if (this.blaze.getRapidFire()) {
