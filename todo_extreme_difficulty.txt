@@ -28,7 +28,8 @@ todo:
     mobs with follow distance <= 32 do not need increased random despawn distance?
 
     is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
-	    see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
+        customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
+	    old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
         if not, should they still be part of icustomhostile? what about checkdespawn and bL?
 
     registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
@@ -46,8 +47,6 @@ todo:
         wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
     should all utils be static? id tech has them static
-
-    customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
 
 
 
@@ -201,6 +200,8 @@ todo:
 
 	mobs dont get affected by soul sand or magma blocks in water
 
+	make sure spawner mobs all have nametags (end etc.)
+
 	slightly less inaccuracy for player arrows, and add inaccuracy for player tridents/snowballs/eggs/all projectiles honestly including pearls?
 
     surely crystal destruction is mini wither
@@ -241,5 +242,8 @@ balance changes catalog:
 	ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
 	ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
 	end fight vex spawner spawn count 42 -> 36
+	endermen no longer summon endermites on death at >40 attacks
+	endermen endermite summon on tp chance 30% -> 20%
+	endermen look aggro distance 128 -> 64
 	iron golem death silverfish 15 -> 10
 	mooshroom death explosion power 15 -> 10
