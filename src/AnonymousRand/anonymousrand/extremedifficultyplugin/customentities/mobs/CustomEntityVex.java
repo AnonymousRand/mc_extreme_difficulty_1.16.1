@@ -44,12 +44,13 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
             new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 1, null, null, this, false, false);
         }
 
-        return super.damageEntity(damagesource, f);
+        return tookDamage;
     }
 
     public double getFollowRange() { /* vexes have 32 bock detection range */
@@ -96,7 +97,6 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -104,7 +104,6 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -115,6 +114,10 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     public void tick() {

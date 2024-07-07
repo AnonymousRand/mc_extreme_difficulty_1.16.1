@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private double followRangeMultipler;
 
     public CustomEntityIronGolem(World world) {
@@ -80,7 +80,6 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -88,7 +87,6 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -106,13 +104,17 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         this.attackLevelingController.increaseAttacks(increase);
         /* Every attack, iron golems increase their stats by a bit */
         this.increaseStatsAdd(2.0, 0.5, 0.025);
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

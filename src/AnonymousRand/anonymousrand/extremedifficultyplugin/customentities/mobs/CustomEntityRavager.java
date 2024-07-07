@@ -100,7 +100,6 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -108,7 +107,6 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -124,6 +122,10 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     public void tick() {

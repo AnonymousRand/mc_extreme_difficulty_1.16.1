@@ -50,7 +50,7 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) { /* shulker bullets do not do anything when hit */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) { /* shulker bullets do not do anything when hit */
         return false;
     }
 }

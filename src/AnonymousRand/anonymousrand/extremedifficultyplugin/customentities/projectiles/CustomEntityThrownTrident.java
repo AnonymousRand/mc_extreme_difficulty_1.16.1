@@ -47,7 +47,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         }
 
         net.minecraft.server.v1_16_R1.Entity entity1 = this.getShooter();
-        DamageSource damagesource = DamageSource.a(this, entity1 == null ? this : entity1);
+        DamageSource damageSource = DamageSource.a(this, entity1 == null ? this : entity1);
 
         try {
             ap.setBoolean(this, true);
@@ -57,7 +57,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
 
         SoundEffect soundeffect = SoundEffects.ITEM_TRIDENT_HIT;
 
-        if (entity.damageEntity(damagesource, f)) {
+        if (entity.damageEntity(damageSource, f)) {
             if (entity.getEntityType() == EntityTypes.ENDERMAN) {
                 return;
             }

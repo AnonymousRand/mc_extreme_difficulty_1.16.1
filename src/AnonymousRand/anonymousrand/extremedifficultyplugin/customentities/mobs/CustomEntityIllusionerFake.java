@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private final CustomEntityIllusioner parentIllusioner;
     private boolean deathExplosion;
 
@@ -46,12 +46,12 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
@@ -64,6 +64,10 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
                 }
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

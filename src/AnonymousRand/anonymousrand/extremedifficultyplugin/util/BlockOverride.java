@@ -28,7 +28,7 @@ public class BlockOverride {
      *
      * @param  fieldName                name of field
      * @param  value                    new value
-     * @throws IllegalArgumentException if the field name is null or the field doesn't exist
+     * @throws IllegalArgumentException if the field name is <code>null</code> or the field doesn't exist
      * @throws RuntimeException         if we don't have security clearance
      */
     public void set(String fieldName, Object value) {
@@ -43,7 +43,7 @@ public class BlockOverride {
      * Retrieves the current field value.
      *
      * @param  fieldName                name of field
-     * @throws IllegalArgumentException if the field name is null or the field doesn't exist
+     * @throws IllegalArgumentException if the field name is <code>null</code> or the field doesn't exist
      * @throws RuntimeException         if we don't have security clearance
      */
     public Object get(String fieldName) {

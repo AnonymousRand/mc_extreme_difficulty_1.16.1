@@ -64,10 +64,10 @@ public class ListenerMobDeath implements Listener {
                 }
                 break;
             case IRON_GOLEM:
-                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 15, null, null, nmsEntity, false, true); /* iron golems summon 15 silverfish when killed */
+                new SpawnEntity(nmsWorld, new CustomEntitySilverfish(nmsWorld), 10, null, null, nmsEntity, false, true); /* iron golems summon 10 silverfish when killed */
                 break;
             case MUSHROOM_COW:
-                bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 15.0F, false); /* mooshrooms explode with power 15 when killed */
+                bukkitWorld.createExplosion(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ(), 10.0F, false); /* mooshrooms explode with power 10 when killed */
                 break;
             case PIG:
                 if (random.nextDouble() < 0.14) {
@@ -122,7 +122,7 @@ public class ListenerMobDeath implements Listener {
                     }
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {
                     ListenerPlayerDeathAndRespawn.superZombies.remove(nmsEntity);
-                } else { /* zombies summon an area effect cloud when killed */
+                } else { /* zombies summon an area effect cloud when killed */ // todo of what?
                     CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(nmsWorld, 2.0F, 80, 40);
                     newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
 

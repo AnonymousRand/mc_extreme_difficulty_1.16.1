@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
@@ -85,7 +85,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -93,7 +92,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -111,12 +109,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
@@ -131,6 +129,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     @Override
@@ -213,15 +215,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (this.isInvulnerable(damagesource)) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (this.isInvulnerable(damageSource)) {
             return false;
-        } else if (damagesource instanceof EntityDamageSourceIndirect) { /* no longer teleports away from projectiles */
+        } else if (damageSource instanceof EntityDamageSourceIndirect) { /* no longer teleports away from projectiles */
             return false;
         } else {
-            boolean flag = super.damageEntity(damagesource, f);
+            boolean tookDamage = super.damageEntity(damageSource, damageAmount);
 
-            if (flag && damagesource.getEntity() instanceof EntityPlayer) {
+            if (tookDamage && damageSource.getEntity() instanceof EntityPlayer) {
                 if (this.getAttacks() >= 40) { /* after 40 attacks, endermen summon an endermite when hit and not killed */
                     new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
                 }
@@ -231,7 +233,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 this.eM();
             }
 
-            return flag;
+            return tookDamage;
         }
     }
 

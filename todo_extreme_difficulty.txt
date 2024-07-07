@@ -4,6 +4,19 @@ todo:
 
     comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
     lural reference to mob changes, big comment separator for inner classes. stopped after: customentitychickenaggressiveexploding
+	reorganize all custommobs to use new attacks thing and whatever (including blaze)
+
+    increment attacks in attack method/goal instead of listener?
+
+    make all variables/parameters starting with entity not start with entity
+
+    no blank lines after class declaration and before instance variable decalarations?
+
+    all -- and ++ to after if possible
+
+	make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
+
+    things in terms of getattackthresholds instead of hardcoded
 
     listeners group by event?
 
@@ -11,13 +24,13 @@ todo:
 
     check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
 
-    check if bat customtargetcondition thingy needs follow range > 4.0
+    mobs with follow distance <= 32 do not need increased random despawn distance?
 
     catalog and test super zombie health nerf + xp health gain
 
     custom class for large fireball summon lightning and separate newpathfindergoalshootlargefireballs too; also test todo in lightning storm runnable
 
-	reorganize all custommobs to use new attacks thing and whatever (including blaze)
+	uncomment things in custompathfindergoalrangedattack after that
 
 	change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
 
@@ -41,21 +54,21 @@ todo:
 
 	try to copy spider code for moving fast in cobwebs?
 
-	zombies etc. should not aggro villagers
+	husk instead of using anvil storms and sand storms create actual sandstorm runnable similar to tornado but without suction?  so just a lot of sand everywhere
 
-	thor lightning persists on death
+	zombie harming aec on death repurpose for death of witch?
+
+	bug: thor lightning persists on death
 
 	trident should not break blocks if thrown by player
 
 	channeling trident not working
 
-	where do playerr projectiles fall faster? seems to be impacting drowned tridents?
+	where do player projectiles fall faster? seems to be impacting drowned tridents?
 
 	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 
 	todo comments in like elder guardian
-
-    todo increment attacks in attack method/goal instead of listener?
 
     in the todos, there is a possibiliity of making g() and d() global. if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions
 
@@ -63,17 +76,7 @@ todo:
 
     comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
 
-    make all variables/parameters starting with entity not start with entity
-
-    no blank linkes after class declaration and before instance variable decalarations?
-
     attacks comments/docs all into initattack method instead of increase attacks?
-
-    all -- and ++ to after if possible
-
-    check if still possible to piston blocks above 128
-
-    check that bats never sleep
 
     remove unnecessary casts???
 
@@ -96,8 +99,6 @@ todo:
 	registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 	should all utils be static? id tech has them static
-
-	capitalize all after /* and try to move all to new lines
 
 	balancing and small nerfs like ghast or something, more consistent but less endermites on enderman death etc, no magma cube spawns from blaze
 
@@ -175,11 +176,17 @@ todo:
 
 	players still lose bubbles slower when fully submerged than when feet submerged
 
+    followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
+
+	all mob expliosions and stuff make sure mobgriefing gamerule is respected. make util function for this?
+
 	players dont lose bubbles when feet submerged and not moving due to playermovelistener being used
 
 	mobs still taking magma block damage?
 
 	return guards for isclientside and stuff
+
+	remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
 
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
 
@@ -191,19 +198,30 @@ todo:
 
 	change eggs lottery to json or something/loot table
 
+    spawn entity nametag option
+
 	find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
 
 	create full documentation of changes from all /* comments and that google doc?
 
 balance changes catalog:
+    bats on first hit sumnmon 8-10 vanilla bats -> 6-8
+    bats vertical flight speed 0.7 -> 1
+    bats no longer can duplicate into a swarm of vanilla bats at a certain threshold
+    bats attack thresholds 3, 7, 12, 24, 32 -> 4, 8, 15, 28, 40
+    bats buff max strength 2 -> strength 1
+    bats buff arrow shoot cooldown 20/14/8 ticks -> 40/30/20
+    bats buff silverfish spawn cooldown 12 seconds -> 15
 	striders die faster (find number!)
-	elder guardian random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
-	blaze inaccuracy non rapidfire 0% -> 20% vanilla
-	blaze inaccuracy rapidfire 35% -> 250% vanilla
-	blaze normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
-	blaze rapidfire attack cooldown 3 ticks -> 4
+	elder guardians random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
+	blazes inaccuracy non rapidfire 0% -> 20% vanilla
+	blazes inaccuracy rapidfire 35% -> 250% vanilla
+	blazes normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
+	blazes rapidfire attack cooldown 3 ticks -> 4
 	(this was more of a bug) blaze melee cooldown 0 ticks -> 20
-	creeper default fuse 15 ticks -> 20
-	charged creeper health 200 -> 100
-	creeper explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
+	creepers default fuse 15 ticks -> 20
+	creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
+	charged creepers health 200 -> 100
 	drowned attack cooldown 6 ticks -> 7
+	iron golem death silverfish 15 -> 10
+	mooshroom death explosion power 15 -> 10

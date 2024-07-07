@@ -38,12 +38,12 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (super.damageEntity(damagesource, f)) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (super.damageEntity(damageSource, damageAmount)) {
             EntityLiving entityLiving = this.getGoalTarget();
 
             if (entityLiving == null) {
-                entityLiving = (EntityLiving) damagesource.getEntity();
+                entityLiving = (EntityLiving) damageSource.getEntity();
             }
 
             if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
@@ -138,7 +138,6 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -146,7 +145,6 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 

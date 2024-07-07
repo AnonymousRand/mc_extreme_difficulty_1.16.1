@@ -14,13 +14,13 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (!(damagesource instanceof EntityDamageSourceIndirect) && damagesource instanceof EntityDamageSource) { /* end crystals can only be blown up by direct damage and not arrows etc.; every time an arrow is shot at the end crystal, it duplicates */
-            if (damagesource.getEntity() instanceof EntityPlayer) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (!(damageSource instanceof EntityDamageSourceIndirect) && damageSource instanceof EntityDamageSource) { /* end crystals can only be blown up by direct damage and not arrows etc.; every time an arrow is shot at the end crystal, it duplicates */
+            if (damageSource.getEntity() instanceof EntityPlayer) {
                 this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), 8.0F, true, Explosion.Effect.DESTROY); /* end crystals explode power 8 */
-                return super.damageEntity(damagesource, f);
+                return super.damageEntity(damageSource, damageAmount);
             }
-        } else if (damagesource instanceof EntityDamageSourceIndirect) {
+        } else if (damageSource instanceof EntityDamageSourceIndirect) {
             CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(this.getWorld());
             newCrystal.setPosition(this.locX(), this.locY() + 3.0, this.locZ());
             this.getWorld().addEntity(newCrystal);
@@ -40,12 +40,12 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
         new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
     }
 
-    private void onCrystalDestroyed(DamageSource damagesource) {
+    private void onCrystalDestroyed(DamageSource damageSource) {
         if (this.getWorld() instanceof WorldServer) {
             EnderDragonBattle enderdragonbattle = ((WorldServer) this.getWorld()).getDragonBattle();
 
             if (enderdragonbattle != null) {
-                enderdragonbattle.a(this, damagesource);
+                enderdragonbattle.a(this, damageSource);
             }
         }
     }

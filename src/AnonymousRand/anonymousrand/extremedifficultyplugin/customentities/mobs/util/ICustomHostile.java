@@ -8,6 +8,7 @@ public interface ICustomHostile {
     /* For determining distance to entities, y-level does not matter, e.g. mob follow range, attacking (can hit player no matter the y-level) */
     double g(double x, double y, double z); // vanilla override (get dist from a coord); not default since inherited > interface methods
     double d(Vec3D vec3d);                  // vanilla override (get dist from a Vec3d coord)
+    // we don't need to override the g(Entity entity) method since it's not used for finding targets etc.
     /* Mobs are willing to take any fall to reach the player as they don't take fall damage */
     int bL();                               // vanilla override (getMaxFallHeight()) (gets max height mobs are willing to drop from)
 

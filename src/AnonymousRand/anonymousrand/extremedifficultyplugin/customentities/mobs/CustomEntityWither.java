@@ -98,8 +98,8 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (super.damageEntity(damagesource, f)) { /* wither now breaks all usual blocks including bedrock when damaged */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (super.damageEntity(damageSource, damageAmount)) { /* wither now breaks all usual blocks including bedrock when damaged */
             new RunnableWitherBreakBlocks(this, 1, 2, 1, 2, true).run();
             return true;
         }
@@ -170,7 +170,6 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -178,7 +177,6 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 

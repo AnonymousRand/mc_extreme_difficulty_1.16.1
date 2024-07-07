@@ -11,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.Field;
 
 public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IAttackLevelingMob {
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private Field didSpit;
 
     public CustomEntityLlama(World world) {
@@ -59,18 +59,22 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 15 attacks, llamas get 50 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

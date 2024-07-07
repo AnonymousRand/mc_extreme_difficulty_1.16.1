@@ -93,7 +93,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -101,7 +100,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -153,15 +151,16 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2 if charged) */
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed
                 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) {
             new SpawnEntity(this.getWorld(), this.getMaxFuseTicks(), new CustomEntityCreeper(this.getWorld()),
                     this.isPowered() ? 2 : 1, null, null, this, false, true);
         }
 
-        return super.damageEntity(damagesource, f);
+        return tookDamage;
     }
 
     @Override

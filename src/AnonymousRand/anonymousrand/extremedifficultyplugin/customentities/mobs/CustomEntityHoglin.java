@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 
 public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     public PathfinderGoalSelector vanillaTargetSelector;
 
     public CustomEntityHoglin(World world) {
@@ -81,7 +81,6 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -89,7 +88,6 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -107,12 +105,12 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
@@ -132,6 +130,10 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
                 new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

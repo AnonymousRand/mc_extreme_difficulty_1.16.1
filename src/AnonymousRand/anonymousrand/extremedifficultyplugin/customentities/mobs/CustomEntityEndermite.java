@@ -8,7 +8,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityEndermite extends EntityEndermite implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     public PathfinderGoalSelector vanillaTargetSelector;
 
     public CustomEntityEndermite(World world) {
@@ -84,7 +84,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -92,7 +91,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -110,12 +108,12 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 35 attacks, endermites get more knockback */
                 this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
@@ -126,6 +124,10 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,11 +161,12 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0) { /* duplicates when hit by player and not killed */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed) { /* duplicates when hit by player and not killed */
             new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
         }
 
-        return super.damageEntity(damagesource, f);
+        return tookDamage;
     }
 }

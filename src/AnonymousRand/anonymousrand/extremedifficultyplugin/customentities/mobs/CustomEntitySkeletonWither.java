@@ -121,6 +121,10 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.attacks += increase;
     }
 
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
+
     @Override
     public void tick() {
         super.tick();

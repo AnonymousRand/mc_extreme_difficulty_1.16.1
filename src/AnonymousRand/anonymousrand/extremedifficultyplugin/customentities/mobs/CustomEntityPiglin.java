@@ -127,8 +127,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
             if (random.nextDouble() < 0.075) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
                 newPiglin.a(true);
@@ -136,7 +137,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             }
         }
 
-        return super.damageEntity(damagesource, f);
+        return tookDamage;
     }
 
     @Override
@@ -228,7 +229,6 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -236,7 +236,6 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -252,6 +251,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     public void tick() {

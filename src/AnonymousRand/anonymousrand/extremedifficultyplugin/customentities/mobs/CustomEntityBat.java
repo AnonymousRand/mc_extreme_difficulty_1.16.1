@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.u
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
@@ -19,12 +20,10 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private NewPathfinderGoalBuffMobs buffMobs;
-    private boolean firstDuplicate;
-
-    private static final CustomPathfinderTargetCondition customPathfinderTargetCondition = (new CustomPathfinderTargetCondition()).a(4.0D).b();
     private BlockPosition targetPosition;
+    private boolean firstDuplicate;
     private Field attributeMap;
 
     public CustomEntityBat(World world) {
@@ -44,7 +43,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         this.firstDuplicate = true;
         // custom goal that provides the buffing mechanism
         this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
-                32, 3, 200, 101);
+                32, 4, 200, 101);
     }
 
     private void initAttributes() {
@@ -88,10 +87,10 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         /* Bats have 16 block detection range (24 after 7 attacks, 32 after 12 attacks) */
         // null check since getFollowRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
-        // which is called in initPathfinder() which is called in super constructor I think
-        // which is called obviously before initAttackLevelingMob()/before this.attackController can be initialized in any other way
-        return (this.attackLevelingController == null || this.attackLevelingController.getAttacks() < this.attackLevelingController.getAttacksThresholds()[1])
-                ? 16.0 : this.attackLevelingController.getAttacks() < this.attackLevelingController.getAttacksThresholds()[2] ? 24 : 32;
+        // which is called in initPathfinder() which is called in some EntityInsentient's constructor
+        // which is before this.attackController can be initialized
+        return (this.attackLevelingController == null || this.getAttacks() < this.getAttacksThresholds()[1]) ? 16.0
+                : this.getAttacks() < this.getAttacksThresholds()[2] ? 24 : 32;
     }
 
     @Override
@@ -134,24 +133,14 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
-        if (random.nextDouble() < 0.1) { // todo what happens if this is removed
-            return distX * distX + Math.pow(this.locY() - y, 2) + distZ * distZ;
-        } else {
-            return distX * distX + distZ * distZ;
-        }
+        return distX * distX + distZ * distZ;
     }
 
     @Override
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
-        if (random.nextDouble() < 0.1) {
-            return distX * distX + Math.pow(this.locY() - vec3d.y, 2) + distZ * distZ;
-        } else {
-            return distX * distX + distZ * distZ;
-        }
+        return distX * distX + distZ * distZ;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,45 +148,45 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
-        this.attackLevelingController = new AttackLevelingController(3, 7, 12, 24, 32);
+        this.attackLevelingController = new AttackLevelingController(4, 8, 15, 28, 40);
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3]) {
-                /* After 3 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
-                /* After 24 attacks, all mobs within 64 block sphere shoot an arrow every 14 ticks and spawn a silverfish every 12 seconds */
+            int[] attackThresholds = this.getAttacksThresholds();
+            if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3] || metThreshold == attackThresholds[4]) {
+                /* After 4 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
+                /* After 28 attacks, all mobs within 64 block sphere shoot an arrow every 30 ticks and spawn a silverfish every 15 seconds */
+                /* After 40 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 20 ticks */
                 buffMobs.e(); // immediately apply buffs
             } else if (metThreshold == attackThresholds[1]) {
-                /* After 7 attacks, bats gain regen 2, speed 1, and 12 max health and health */
+                /* After 8 attacks, bats gain regen 2, speed 1, and 12 max health and health */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.0);
                 this.setHealth(12.0F);
             } else if (metThreshold == attackThresholds[2]) {
-                /* After 12 attacks, bats gain speed 2 and 15 max health and health */
-                /* After 12 attacks, all mobs within 64 block sphere get strength 2 and shoot an arrow every 20 ticks */
+                /* After 15 attacks, bats gain speed 2 and 15 max health and health */
+                /* After 15 attacks, all mobs within 64 block sphere shoot an arrow every 40 ticks */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(15.0);
                 this.setHealth(15.0F);
 
-                this.goalSelector.a(this.buffMobs); // remove goal and replace
-                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityLiving.class, this.buildBuffsHashmap(),
-                        64, 20, 200, 101);
+                this.goalSelector.a(this.buffMobs); // remove goal and replace // todo if not un-jankified: why? whats the diff between these and the first threshold's buff? why no replace after this?
+                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
+                        64, attackThresholds[2], 200, 101);
                 this.goalSelector.a(0, this.buffMobs);
-                this.buffMobs.e();
-            } else if (metThreshold == attackThresholds[4]) {
-                /* After 32 attacks, bats can duplicate again when hit by player and not killed */
-                /* After 32 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 8 ticks */
-                this.firstDuplicate = true;
                 this.buffMobs.e();
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,15 +205,14 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         attacks_1.add(new MobEffect(MobEffects.FASTER_MOVEMENT, 4800, 0));
         attacks_1.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 0));
         attacks_2.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 252));
-        attacks_2.add(new MobEffect(MobEffects.INCREASE_DAMAGE, 4800, 1));
         attacks_2.add(new MobEffect(MobEffects.REGENERATION, 4800, 2));
         attacks_3.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 253));
         attacks_4.add(new MobEffect(MobEffects.HUNGER, Integer.MAX_VALUE, 254));
 
-        buffs.put(3, attacks_1);
-        buffs.put(12, attacks_2);
-        buffs.put(24, attacks_3);
-        buffs.put(32, attacks_4);
+        buffs.put(4, attacks_1);
+        buffs.put(15, attacks_2);
+        buffs.put(28, attacks_3);
+        buffs.put(40, attacks_4);
 
         return buffs;
     }
@@ -235,62 +223,48 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     @Override
     public void initPathfinder() {
-        //this.goalSelector.a(0, this.buffMobs); // todo should this be uncommented?
+        //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                           /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        /* Summons 8-10 vanilla bats when hit by player and not killed for the first time */
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.firstDuplicate) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        Bukkit.broadcastMessage(tookDamage + "");
+        /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && this.firstDuplicate) {
             this.firstDuplicate = false;
-            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 8,
+            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 6,
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
-            if (this.getAttacks() >= this.attackLevelingController.getAttacksThresholds()[4]) {
+            if (this.getAttacks() >= this.getAttacksThresholds()[4]) {
                 new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null,
                         null, this, false, false);
             }
         }
 
-        return super.damageEntity(damagesource, f);
+        return tookDamage;
     }
 
     // Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out)
     @Override
     protected void mobTick() {
-        BlockPosition blockPosition = this.getChunkCoordinates();
-        BlockPosition blockPositionAbove = blockPosition.up();
-
         if (this.isAsleep()) {
-            boolean isSilent = this.isSilent();
-
-            if (this.getWorld().getType(blockPositionAbove).isOccluding(this.getWorld(), blockPosition)) {
-                if (random.nextInt(200) == 0) {
-                    this.aJ = (float) random.nextInt(360);
-                }
-
-                if (this.getWorld().a(customPathfinderTargetCondition, (EntityLiving) this) != null) {
-                    this.setAsleep(false);
-                    if (!isSilent) {
-                        this.getWorld().a((EntityHuman) null, 1025, blockPosition, 0);
-                    }
-                }
-            } else {
-                this.setAsleep(false);
-                if (!isSilent) {
-                    this.getWorld().a((EntityHuman) null, 1025, blockPosition, 0);
-                }
+            /* Bats don't sleep */
+            this.setAsleep(false);
+            if (!this.isSilent()) {
+                this.world.a((EntityHuman) null, 1025, this.getChunkCoordinates(), 0);
             }
         } else {
             if (this.targetPosition != null && (!this.getWorld().isEmpty(this.targetPosition) || this.targetPosition.getY() < 1)) {
                 this.targetPosition = null;
             }
 
-            if (this.ticksLived % 3 == 0) { // updates path every 3 ticks
+            // updates path every 3 ticks
+            if (this.ticksLived % 3 == 0) {
                 this.targetPosition = null;
             }
 
@@ -309,8 +283,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             double d1 = (double) this.targetPosition.getY() + 0.1D - this.locY();
             double d2 = (double) this.targetPosition.getZ() + 0.5D - this.locZ();
             Vec3D currentMotion = this.getMot();
-            Vec3D newMotion = currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D, (Math.signum(d1)
-                    * 0.7D - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
+            Vec3D newMotion = currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D,
+                    (Math.signum(d1) * 1.0D - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
 
             this.setMot(newMotion);
             float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;
@@ -318,7 +292,6 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
             this.ba = 0.5F;
             this.yaw += yawIncrease;
-            /* Bats don't sleep */ // todo test
         }
     }
 }

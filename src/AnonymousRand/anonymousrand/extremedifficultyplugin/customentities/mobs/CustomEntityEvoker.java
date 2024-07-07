@@ -23,7 +23,7 @@ import java.util.*;
 public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, IAttackLevelingMob {
 
     private EntitySheep wololoTarget;
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
@@ -85,7 +85,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -93,7 +92,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -111,12 +109,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
@@ -129,6 +127,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardian extends EntityGuardian implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityGuardian(World world) {
         super(EntityTypes.GUARDIAN, world);
@@ -80,7 +80,6 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -88,7 +87,6 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -101,12 +99,12 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
@@ -118,6 +116,10 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,13 +146,13 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving) damagesource.j();
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (!this.eO() && !damageSource.isMagic() && damageSource.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) damageSource.getEntity();
 
-            if (!damagesource.isExplosion()) {
-                entityLiving.damageEntity(DamageSource.a(this), f * 0.5F); /* thorns damage increased from 2 to 50% of the damage dealt */
-                entityLiving.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /* guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
+            if (!damageSource.isExplosion()) {
+                player.damageEntity(DamageSource.a(this), f * 0.5F); /* thorns damage increased from 2 to 50% of the damage dealt */
+                player.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 400, this.getAttacks() < 55 ? 0 : 1)); /* guardians give players that hit them mining fatigue 1 (2 after 55 attacks) for 20 seconds */
             }
         }
 
@@ -158,7 +160,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             this.goalRandomStroll.h();
         }
 
-        return super.damageEntity(damagesource, f);
+        return super.damageEntity(damageSource, damageAmount);
     }
 
     static class PathfinderGoalGuardianAttack extends PathfinderGoal { /* guardian no longer stops attacking if player is too close */

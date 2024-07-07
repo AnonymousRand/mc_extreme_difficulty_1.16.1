@@ -54,12 +54,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof EntityPlayer && this.getHealth() - f > 0.0 && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
             new SpawnEntity(this.getWorld(), new CustomEntityRabbit(this.getWorld()), 1, null, null, this, false, true);
         }
 
-        return super.damageEntity(damagesource, f);
+        return super.damageEntity(damageSource, damageAmount);
     }
 
     public double getFollowRange() { /* killer bunnies have 16 block detection range (28 after 5 attacks, 40 after 15 attacks) */
@@ -106,7 +107,6 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -114,7 +114,6 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -130,6 +129,10 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     public void tick() {

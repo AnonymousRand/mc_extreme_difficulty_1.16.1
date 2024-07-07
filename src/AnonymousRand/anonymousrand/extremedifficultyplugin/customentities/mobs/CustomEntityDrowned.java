@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
@@ -79,7 +79,6 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -87,7 +86,6 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -105,12 +103,12 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 1, null, null, this, false, true);
@@ -119,6 +117,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                 new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

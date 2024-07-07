@@ -51,7 +51,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -59,7 +58,6 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -74,15 +72,15 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     @Override
-    public void a(EntityEnderCrystal entityEnderCrystal, BlockPosition blockPosition, DamageSource damagesource) { // oncrystaldestroyed
-        super.a(entityEnderCrystal, blockPosition, damagesource);
+    public void a(EntityEnderCrystal entityEnderCrystal, BlockPosition blockPosition, DamageSource damageSource) { // oncrystaldestroyed
+        super.a(entityEnderCrystal, blockPosition, damageSource);
 
         if (entityEnderCrystal == this.currentEnderCrystal) { /* blowing up the end crystal that the dragon is currently healing from does not damage the dragon */
             this.heal(10.0F);
         }
 
-        if (damagesource.getEntity() != null) { /* dragon shoots a super fireball when crystal destroyed and rapid fires 10 normal custom fireballs, then shoots another super fireball */
-            Entity entity = damagesource.getEntity();
+        if (damageSource.getEntity() != null) { /* dragon shoots a super fireball when crystal destroyed and rapid fires 10 normal custom fireballs, then shoots another super fireball */
+            Entity entity = damageSource.getEntity();
             new RunnableDragonRapidShootFireballs(this, entity, 12).runTaskTimer(StaticPlugin.plugin, 0L, 4L);
         }
     }

@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private boolean deathFireballs;
 
     public CustomEntityGhast(World world) {
@@ -79,7 +79,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -87,7 +86,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -100,18 +98,22 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, ghasts get 16 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(16.0);
                 this.setHealth(16.0F);
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,13 +134,13 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (this.isInvulnerable(damagesource)) {
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (this.isInvulnerable(damageSource)) {
             return false;
-        } else if (damagesource.j() instanceof EntityLargeFireball && damagesource.getEntity() instanceof EntityHuman) { /* rebounded fireballs do not do damage */
+        } else if (damageSource.j() instanceof EntityLargeFireball && damageSource.getEntity() instanceof EntityHuman) { /* rebounded fireballs do not do damage */
             return false;
         } else {
-            return super.damageEntity(damagesource, f);
+            return super.damageEntity(damageSource, damageAmount);
         }
     }
 

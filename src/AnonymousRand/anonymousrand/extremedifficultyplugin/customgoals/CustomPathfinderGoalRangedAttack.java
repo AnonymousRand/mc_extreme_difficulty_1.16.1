@@ -6,7 +6,8 @@ import net.minecraft.server.v1_16_R1.*;
 import java.util.EnumSet;
 
 // not extending PathfinderGoalArrowAttack as I normally would due to unused private fields like the goal target (obfuscated as this.c)
-public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity & IAttackLevelingMob> extends PathfinderGoal {
+// todo uncomment once all have been converted
+public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity/* & IAttackLevelingMob*/> extends PathfinderGoal {
 
     protected final T entity;
     protected final double speedTowardsTarget;
@@ -62,7 +63,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
         if (this.attackRemainingCooldown <= 0) {
             this.attackRemainingCooldown = this.attackCooldown;
-            this.entity.increaseAttacks(1);
+            // this.entity.increaseAttacks(1); // todo uncomment once all have been converted
 
             float f1 = MathHelper.a(MathHelper.sqrt(distSqToGoalTarget) / this.maxAttackDistance, 0.1F, 1.0F);
             this.entity.a(goalTarget, f1); // shoot()

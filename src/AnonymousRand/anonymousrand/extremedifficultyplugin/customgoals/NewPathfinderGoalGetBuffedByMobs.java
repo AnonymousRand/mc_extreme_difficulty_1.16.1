@@ -55,12 +55,12 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
         if (this.hunger) { // bat buff
             int amplifier = this.entity.getEffect(MobEffects.HUNGER).getAmplifier();
 
-            if (this.entity.ticksLived % (amplifier == 252 ? 20 : amplifier == 253 ? 14 : 8) == 0) {
+            if (this.entity.ticksLived % (amplifier == 252 ? 40 : amplifier == 253 ? 30 : 20) == 0) {
                 this.shootArrows();
             }
 
-            if (amplifier > 252 && this.entity.ticksLived % 240 == 0) {
-                new SpawnEntity(this.nmsWorld, new CustomEntitySilverfish(this.nmsWorld), 1, null, null, this.entity, false, true);
+            if (amplifier > 252 && this.entity.ticksLived % 300 == 0) {
+                new SpawnEntity(this.nmsWorld, new CustomEntitySilverfish(this.nmsWorld), 1, null, null, this.entity, false, true); // todo nametag
             }
         }
 

@@ -40,14 +40,14 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        boolean b = super.damageEntity(damagesource, f);
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
 
-        if ((double) this.getHealth() < (double) this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
+        if (tookDamage && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
-        return b;
+        return tookDamage;
     }
 
     @Override
@@ -100,7 +100,6 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -108,7 +107,6 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -119,6 +117,10 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     public void tick() {

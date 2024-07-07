@@ -17,7 +17,7 @@ import java.util.EnumSet;
 
 public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
     private boolean deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
     private Field orbitPosition, orbitOffset;
@@ -112,7 +112,6 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -120,7 +119,6 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -133,17 +131,21 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 30 attacks, phantoms get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

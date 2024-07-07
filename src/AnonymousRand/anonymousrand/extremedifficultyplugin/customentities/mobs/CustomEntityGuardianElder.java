@@ -76,7 +76,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -84,7 +83,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -110,12 +108,12 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        if (!this.eO() && !damagesource.isMagic() && damagesource.j() instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving) damagesource.j();
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (!this.eO() && !damageSource.isMagic() && damageSource.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) damageSource.getEntity();
 
-            if (!damagesource.isExplosion()) {
-                entityLiving.damageEntity(DamageSource.a(this), f); /* thorns damage increased from 2 to 100% of the damage dealt */
+            if (!damageSource.isExplosion()) {
+                player.damageEntity(DamageSource.a(this), f); /* thorns damage increased from 2 to 100% of the damage dealt */
             }
         }
 
@@ -123,7 +121,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
             this.goalRandomStroll.h();
         }
 
-        return super.damageEntity(damagesource, f);
+        return super.damageEntity(damageSource, damageAmount);
     }
 
     @Override

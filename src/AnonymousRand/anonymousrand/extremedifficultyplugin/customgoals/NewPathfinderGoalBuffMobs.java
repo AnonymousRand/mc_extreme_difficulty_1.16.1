@@ -1,46 +1,34 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import net.minecraft.server.v1_16_R1.*;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
-public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
+public class NewPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevelingMob> extends PathfinderGoal {
 
-    public EntityInsentient entity;
+    public T entity;
     private final Class<? extends EntityLiving> targetClass;
     private final HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects;
     private final double rangeRadius;
-    private final int attackMin, ticksDelayMin, ticksDelayRandBound;
+    private final int attacksThreshold, ticksDelayMin, ticksDelayRandBound;
     private static final Random random = new Random();
-    private Field attacks;
 
-    public NewPathfinderGoalBuffMobs(EntityInsentient entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksMin, int ticksDelayMin, int ticksDelayRandBound) {
+    public NewPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThreshold, int ticksDelayMin, int ticksDelayRandBound) {
         this.entity = entity;
         this.targetClass = targetClass;
         this.attacksAndEffects = attacksAndEffects;
         this.rangeRadius = rangeRadius;
-        this.attackMin = attacksMin;
+        this.attacksThreshold = attacksThreshold;
         this.ticksDelayMin = ticksDelayMin;
         this.ticksDelayRandBound = ticksDelayRandBound;
-
-        try {
-            this.attacks = this.entity.getClass().getDeclaredField("attacks");
-            this.attacks.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public boolean a() {
         if (this.entity.ticksLived % (random.nextInt(this.ticksDelayRandBound) + this.ticksDelayMin) == 0) {
-            try {
-                if (this.attacks.getInt(this.entity) >= this.attackMin) {
-                    return true;
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            if (this.entity.getAttacks() >= this.attacksThreshold) {
+                return true;
             }
         }
 
@@ -54,27 +42,23 @@ public class NewPathfinderGoalBuffMobs extends PathfinderGoal {
 
     @Override
     public void e() {
-        try {
-            int attacksLocal = this.attacks.getInt(this.entity);
-            this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
-                if (entity instanceof EntityPlayer || this.normalGetDistanceSq(this.entity.getPositionVector(), entity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
-                    return;
-                }
+        int attacksLocal = this.entity.getAttacks();
+        this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
+            if (entity instanceof EntityPlayer || this.normalGetDistanceSq(this.entity.getPositionVector(), entity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
+                return;
+            }
 
-                for (Map.Entry<Integer, ArrayList<MobEffect>> entry : this.attacksAndEffects.entrySet()) {
-                    if (attacksLocal >= entry.getKey()) { // entry.getKey is the integer in the hashmap entry
-                        for (MobEffect effect : entry.getValue()) { // entry.getValue is the arraylist of mobeffects in the hashmap entry
-                            ((EntityLiving) entity).addEffect(effect);
-                        }
+            for (Map.Entry<Integer, ArrayList<MobEffect>> entry : this.attacksAndEffects.entrySet()) {
+                if (attacksLocal >= entry.getKey()) { // entry.getKey is the integer in the hashmap entry
+                    for (MobEffect effect : entry.getValue()) { // entry.getValue is the arraylist of mobeffects in the hashmap entry
+                        ((EntityLiving) entity).addEffect(effect);
                     }
                 }
-            });
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+            }
+        });
     }
 
-    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3d2) {
+    public double normalGetDistanceSq(Vec3D vec3d1, Vec3D vec3d2) { // todo why here? use mobs/util if eventually converted?
         double d0 = vec3d2.getX() - vec3d1.getX();
         double d1 = vec3d2.getY() - vec3d1.getY();
         double d2 = vec3d2.getZ() - vec3d1.getZ();

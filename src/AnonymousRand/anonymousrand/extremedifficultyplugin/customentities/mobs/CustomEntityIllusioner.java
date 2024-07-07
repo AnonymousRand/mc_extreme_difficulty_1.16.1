@@ -14,7 +14,7 @@ import java.util.*;
 public class CustomEntityIllusioner extends EntityIllagerIllusioner implements ICustomHostile, IAttackLevelingMob {
 
     public ArrayList<CustomEntityIllusionerFake> fakeIllusioners = new ArrayList<>();
-    private AttackLevelingController attackLevelingController;
+    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityIllusioner(World world) {
         super(EntityTypes.ILLUSIONER, world);
@@ -86,7 +86,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -94,7 +93,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -112,12 +110,12 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     public int getAttacks() {
-        return this.attackLevelingController.getAttacks();
+        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
-            int[] attackThresholds = this.attackLevelingController.getAttacksThresholds();
+            int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 40 attacks, illusioners get 50 max health and health, and regen 4 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
@@ -125,6 +123,10 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
             }
         }
+    }
+
+    public int[] getAttacksThresholds() {
+        return this.attackLevelingController.getAttacksThresholds();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -48,21 +48,21 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     }
 
     @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        boolean flag = super.damageEntity(damagesource, f);
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
 
         if (this.getWorld().isClientSide) {
             return false;
-        } else if (flag && damagesource.getEntity() instanceof EntityLiving) {
-            EntityLiving entityLiving = (EntityLiving) damagesource.getEntity();
+        } else if (tookDamage && damageSource.getEntity() instanceof EntityLiving) {
+            EntityLiving entityLiving = (EntityLiving) damageSource.getEntity();
 
             if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0D)) { /* only retaliate against players */
                 this.k(entityLiving);
             }
 
-            return flag;
+            return tookDamage;
         } else {
-            return flag;
+            return tookDamage;
         }
     }
 
@@ -110,7 +110,6 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     public double g(double x, double y, double z) {
         double distX = this.locX() - x;
         double distZ = this.locZ() - z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -118,7 +117,6 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     public double d(Vec3D vec3d) {
         double distX = this.locX() - vec3d.x;
         double distZ = this.locZ() - vec3d.z;
-
         return distX * distX + distZ * distZ;
     }
 
@@ -134,6 +132,10 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
     }
+
+//    public int[] getAttacksThresholds() {
+//        return this.attackLevelingController.getAttacksThresholds();
+//    }
 
     @Override
     protected BehaviorController<?> a(Dynamic<?> dynamic) { // removes all the weird behavior-controlled attack goals and instead use the standard pathfinder goals
