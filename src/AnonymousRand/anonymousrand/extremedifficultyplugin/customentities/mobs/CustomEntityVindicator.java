@@ -46,7 +46,7 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomH
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
-    public double getFollowRange() { /* vindicators have 24 block detection range (32 after 10 attacks) */
+    public double getDetectionRange() { /* vindicators have 24 block detection range (32 after 10 attacks) */
         return this.attacks < 10 ? 24.0 : 32.0;
     }
 

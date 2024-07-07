@@ -35,7 +35,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* ghasts have 80 block detection range */
+    public double getDetectionRange() { /* ghasts have 80 block detection range */
         return 80.0;
     }
 

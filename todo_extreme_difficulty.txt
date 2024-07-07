@@ -6,7 +6,7 @@ todo:
     plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 	reorganize all custommobs to use new attacks thing and whatever (including blaze).
 	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
-	stopped after: customentitydrowned
+	stopped after: customentityenderdragon
 
 
     followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
@@ -42,11 +42,16 @@ todo:
     some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
 
     wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
+        does spawnentity even need to be a runnable?
+        wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
     should all utils be static? id tech has them static
 
+    customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
 
 
+
+    personalize all doc comments with mob name?
 
     listeners group by event?
 
@@ -77,6 +82,7 @@ todo:
 	thor general refactoring (sketchy ListenerLightningStrike.storm?)
 
 	all tickslived == 5 to spawn listener?
+	    but also try to move stuff from listeners like listenermobdeath to the mobs themselves. or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
 
 	allow only one lightning effect storm and one tornado at a time with static variables or something
 
@@ -139,6 +145,7 @@ todo:
 	check all the goals comments esp ranged to add clarification to y-level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
 
 	make dragon fight logic cleaner, as well as ending messages? find exploits
+	    check out enderdragonbattle.class (in mcp: world/end/dragonfightmanager)
 
 	move some broadcast messages like the end of the dragon fight to disaply full screen? search google for how
 
@@ -155,8 +162,6 @@ todo:
 	see if possible to create utils for shooting large and small fireballs etc?
 
 	getbuffedbymobs goal: increase attacks by a percentage
-
-	try to move stuff from listeners like listenermobdeath to the mobs themselves
 
 	those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
 
@@ -192,9 +197,19 @@ todo:
 
     tridents break block instead of explode
 
+    dragon does more when all crystals down? random spam blaze + exploding + aec harming + aec poison fireballs or more interesting? set phase charge player more?
+
 	mobs dont get affected by soul sand or magma blocks in water
 
-	change eggs lottery to json or something/loot table
+	slightly less inaccuracy for player arrows, and add inaccuracy for player tridents/snowballs/eggs/all projectiles honestly including pearls?
+
+    surely crystal destruction is mini wither
+
+    speed up dragon fireball projectile speeds
+
+    bug: exiting rejoining causes withers to still aggro other mobs
+
+    change eggs lottery to json or something/loot table
 
     spawn entity nametag option. make sure mobs spawning other mobs should have nametag
 
@@ -223,5 +238,8 @@ balance changes catalog:
 	creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
 	charged creepers health 200 -> 100
 	drowned attack cooldown 6 ticks -> 7
+	ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
+	ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
+	end fight vex spawner spawn count 42 -> 36
 	iron golem death silverfish 15 -> 10
 	mooshroom death explosion power 15 -> 10

@@ -11,13 +11,13 @@ import java.util.Random;
 public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
 
     public EntityInsentient entity;
-    private final double followRange, delayBeforeStarting, chancePerTick;
+    private final double detectionRange, delayBeforeStarting, chancePerTick;
     private int teleportToPlayer;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalTeleportNearTarget(EntityInsentient entity, double initialFollowRange, double delayBeforeStarting, double chancePerTick) {
+    public NewPathfinderGoalTeleportNearTarget(EntityInsentient entity, double initialDetectionRange, double delayBeforeStarting, double chancePerTick) {
         this.entity = entity;
-        this.followRange = initialFollowRange;
+        this.detectionRange = initialDetectionRange;
         this.delayBeforeStarting = delayBeforeStarting;
         this.chancePerTick = chancePerTick;
         this.teleportToPlayer = 0;
@@ -42,7 +42,7 @@ public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     public void e() {
         if (++this.teleportToPlayer >= this.delayBeforeStarting) {
             if (random.nextDouble() < this.chancePerTick) {
-                this.initiateTeleport(random.nextDouble() * 13.0 + this.followRange - 2.0); // todo customizable distance?
+                this.initiateTeleport(random.nextDouble() * 13.0 + this.detectionRange - 2.0); // todo customizable distance?
             }
         }
     }

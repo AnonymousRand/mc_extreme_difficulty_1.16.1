@@ -124,7 +124,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
         }
     }
 
-    public double getFollowRange() { /* witches have 24 blocks detection range */
+    public double getDetectionRange() { /* witches have 24 blocks detection range */
         return 24.0;
     }
 

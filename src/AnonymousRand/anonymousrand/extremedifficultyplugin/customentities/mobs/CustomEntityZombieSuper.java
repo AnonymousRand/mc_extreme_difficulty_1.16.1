@@ -85,7 +85,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
         }
     }
 
-    public double getFollowRange() { /* super zombies have 128 block detection range */
+    public double getDetectionRange() { /* super zombies have 128 block detection range */
         return 128.0;
     }
 

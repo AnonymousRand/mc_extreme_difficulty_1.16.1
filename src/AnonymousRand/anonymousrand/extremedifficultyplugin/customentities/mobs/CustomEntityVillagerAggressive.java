@@ -52,11 +52,11 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getFollowRange())); /* Moves towards target, menacingly */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); /* Moves towards target, menacingly */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
-    public double getFollowRange() { /* aggressive villagers have 40 block detection range */
+    public double getDetectionRange() { /* aggressive villagers have 40 block detection range */
         return 40.0;
     }
 

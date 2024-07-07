@@ -11,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHostile, IAttackLevelingMob {
 
     private AttackLevelingController attackLevelingController = null;
-    private double followRangeMultipler;
+    private double detectionRangeMultipler;
 
     public CustomEntityIronGolem(World world) {
         super(EntityTypes.IRON_GOLEM, world);
@@ -26,7 +26,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
 
-        this.followRangeMultipler = 1.0;
+        this.detectionRangeMultipler = 1.0;
     }
 
     private void initAttributes() {
@@ -38,8 +38,8 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* iron golems have 24 block detection range */
-        return 24.0 * this.followRangeMultipler;
+    public double getDetectionRange() { /* iron golems have 24 block detection range */
+        return 24.0 * this.detectionRangeMultipler;
     }
 
     @Override
@@ -138,12 +138,12 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(((LivingEntity) this.getBukkitEntity()).getMaxHealth() * multiplier);
         this.setHealth((float) (this.getHealth() * multiplier));
 
-        this.followRangeMultipler *= multiplier;
-        if (this.followRangeMultipler >= 3.0) { // cap to prevent lag with too many blocks being searched
-            this.followRangeMultipler = 3.0;
+        this.detectionRangeMultipler *= multiplier;
+        if (this.detectionRangeMultipler >= 3.0) { // cap to prevent lag with too many blocks being searched
+            this.detectionRangeMultipler = 3.0;
         }
 
-        VanillaPathfinderGoalsAccess.updateMobFollowRange(this);
+        VanillaPathfinderGoalsAccess.updateMobDetectionRange(this);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

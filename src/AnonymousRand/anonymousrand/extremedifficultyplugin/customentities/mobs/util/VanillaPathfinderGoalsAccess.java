@@ -158,10 +158,10 @@ public class VanillaPathfinderGoalsAccess {
         }
     }
 
-    public static void updateMobFollowRange(EntityInsentient entityInsentient) {
+    public static void updateMobDetectionRange(EntityInsentient entityInsentient) {
         try {
             for (PathfinderGoal goal : getPathfinderGoals((Set<?>) goalSet.get(entityInsentient.targetSelector), CustomPathfinderGoalNearestAttackableTarget.class)) {
-                ((CustomPathfinderGoalNearestAttackableTarget<?>) goal).updateFollowRange();
+                ((CustomPathfinderGoalNearestAttackableTarget<?>) goal).updateDetectionRange();
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

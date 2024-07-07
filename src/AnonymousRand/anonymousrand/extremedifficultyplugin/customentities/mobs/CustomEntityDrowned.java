@@ -32,8 +32,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() {
-        /* Drowned have 40 block detection range */
+    /* Drowned have 40 block detection range */
+    public double getDetectionRange() {
         return 40.0;
     }
 

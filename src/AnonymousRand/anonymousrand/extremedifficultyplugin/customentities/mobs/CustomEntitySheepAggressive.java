@@ -72,7 +72,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getFollowRange())); /* Moves towards target, menacingly */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); /* Moves towards target, menacingly */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
@@ -89,7 +89,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.launchHigh = launchHigh;
     }
 
-    public double getFollowRange() { /* aggressive sheep have 64 block detection range (128 after 60 attacks) */
+    public double getDetectionRange() { /* aggressive sheep have 64 block detection range (128 after 60 attacks) */
         return this.attacks < 20 ? 64.0 : 128.0;
     }
 
@@ -167,7 +167,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         if (this.attacks == 20 && !this.a20) { /* after 20 attacks, aggressive sheep gain speed 1 */
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getFollowRange())); // update follow range
+            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); // update follow range
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 

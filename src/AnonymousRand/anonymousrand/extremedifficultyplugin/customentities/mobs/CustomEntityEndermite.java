@@ -40,7 +40,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* endmites have 20 block detection range */
+    public double getDetectionRange() { /* endmites have 20 block detection range */
         return 20.0;
     }
 

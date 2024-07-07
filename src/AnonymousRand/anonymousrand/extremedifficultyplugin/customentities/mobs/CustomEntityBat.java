@@ -82,9 +82,9 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() {
-        /* Bats have 16 block detection range (24 after 7 attacks, 32 after 12 attacks) */
-        // null check since getFollowRange() is called in CustomPathfinderGoalTarget
+    /* Bats have 16 block detection range (24 after 7 attacks, 32 after 12 attacks) */
+    public double getDetectionRange() {
+        // null check since getDetectionRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
         // which is called in initPathfinder() which is called in some EntityInsentient's constructor
         // which is before this.attackController can be initialized

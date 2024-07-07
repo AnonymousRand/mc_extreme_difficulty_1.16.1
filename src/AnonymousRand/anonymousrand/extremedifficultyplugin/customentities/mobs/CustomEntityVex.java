@@ -53,7 +53,7 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         return tookDamage;
     }
 
-    public double getFollowRange() { /* vexes have 32 bock detection range */
+    public double getDetectionRange() { /* vexes have 32 bock detection range */
         return 32.0;
     }
 

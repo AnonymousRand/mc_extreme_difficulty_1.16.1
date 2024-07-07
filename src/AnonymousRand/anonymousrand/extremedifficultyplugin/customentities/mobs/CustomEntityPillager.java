@@ -56,7 +56,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         new RunnableMobShootArrows(this, entityLiving, 1, this.attackNum % 18 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 1.0 : 0.075) ? 1 : 0, false, true).run(); /* shoots a knockback arrow every 18th attack; 7.5% of arrows shot are piercing 1 (100% for knockback arrow); arrows do not lose y-level */
     }
 
-    public double getFollowRange() { /* pillagers have 24 block detection range */
+    public double getDetectionRange() { /* pillagers have 24 block detection range */
         return 24.0;
     }
 

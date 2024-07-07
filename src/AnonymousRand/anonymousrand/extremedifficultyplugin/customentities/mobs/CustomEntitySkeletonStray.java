@@ -35,7 +35,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* Spawns lightning randomly */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getFollowRange(), 300.0, 0.001)); /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(4, new CustomPathfinderGoalRangedBowAttack<>(this, 1.0D, 25, 32.0F)); /* strays shoot 25% slower; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
@@ -60,7 +60,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         }
     }
 
-    public double getFollowRange() { /* strays have 24 block detection range (32 after 20 attacks) */
+    public double getDetectionRange() { /* strays have 24 block detection range (32 after 20 attacks) */
         return this.attacks < 20 ? 24.0 : 32.0;
     }
 
@@ -160,7 +160,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (this.get3DDistSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons
+                if (this.get3DDistSq(this.getPositionVector(), target.getPositionVector()) > Math.pow(this.getDetectionRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons
                     this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
             }

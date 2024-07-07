@@ -57,7 +57,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         return random.nextInt(3) + 6;
     }
 
-    public double getFollowRange() { /* magma cubes have 40 block detection range */
+    public double getDetectionRange() { /* magma cubes have 40 block detection range */
         return 40.0;
     }
 

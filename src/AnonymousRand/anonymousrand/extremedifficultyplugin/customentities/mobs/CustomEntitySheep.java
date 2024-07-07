@@ -16,7 +16,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /* sheep move 2x faster and have 20 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getFollowRange())); /* uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
+        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); /* uses the custom goal that makes this mob actually move towards the player within 32 blocks; lower priority than panicking goal */
     }
 
     @Override
@@ -25,7 +25,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public double getFollowRange() { /* sheep have 32 block detection range */
+    public double getDetectionRange() { /* sheep have 32 block detection range */
         return 32.0;
     }
 

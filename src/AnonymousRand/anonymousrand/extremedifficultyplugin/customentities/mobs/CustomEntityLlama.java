@@ -46,7 +46,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* llamas have 24 block detection range */
+    public double getDetectionRange() { /* llamas have 24 block detection range */
         return 24.0;
     }
 

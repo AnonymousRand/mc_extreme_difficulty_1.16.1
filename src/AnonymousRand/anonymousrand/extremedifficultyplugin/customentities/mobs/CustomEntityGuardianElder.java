@@ -32,7 +32,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* elder guardians have 40 block detection range */
+    public double getDetectionRange() { /* elder guardians have 40 block detection range */
         return 40.0;
     }
 

@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { // used to be called EntityPredicate in Bukkit/non-Spigot source code 1.16.1
     public static final CustomPathfinderTargetCondition a = new CustomPathfinderTargetCondition();
-    private double followRange = -1.0D;
+    private double detectionRange = -1.0D;
     private boolean c;
     private boolean d;
     private boolean f;
@@ -62,10 +62,10 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
                     return false;
                 }
 
-                if (this.followRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */ // todo test
+                if (this.detectionRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */ // todo test
                     double entityDistanceSq = attacker.g(target.locX(), target.locY(), target.locZ());
 
-                    if (entityDistanceSq > this.followRange * this.followRange) {
+                    if (entityDistanceSq > this.detectionRange * this.detectionRange) {
                         return false;
                     }
                 }
@@ -77,8 +77,8 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
 
     @Override
-    public CustomPathfinderTargetCondition a(double followRange) {
-        this.followRange = followRange;
+    public CustomPathfinderTargetCondition a(double detectionRange) {
+        this.detectionRange = detectionRange;
         return this;
     }
 

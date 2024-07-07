@@ -54,7 +54,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         entityHuman.addEffect(new MobEffect(MobEffects.WITHER, 80 * i, 2)); /* poison from direct contact changed from poison 1 to wither 3, and duration increased from 50 ticks per puff state to 80 */
     }
 
-    public double getFollowRange() { /* pufferfish have 32 block detection range */
+    public double getDetectionRange() { /* pufferfish have 32 block detection range */
         return 32.0;
     }
 

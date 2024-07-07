@@ -51,7 +51,7 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
         return tookDamage;
     }
 
-    public double getFollowRange() { /* silverfish have 20 block detection range */
+    public double getDetectionRange() { /* silverfish have 20 block detection range */
         return 20.0;
     }
 

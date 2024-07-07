@@ -44,7 +44,7 @@ public class CustomEntityZombieThor extends EntityZombie { // todo expend custom
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* Spawns lightning randomly */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getFollowRange(), 300.0, 0.004)); /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.004)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(0, new CustomEntityZombieThor.PathfinderGoalThorSummonLightning(this)); /* custom goal that spawns lightning randomly within 20 blocks of thor on average every a second (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 16 seconds and a tornado once on average after 20 seconds */
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this, 80, 0, true)); /* custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning */
@@ -57,7 +57,7 @@ public class CustomEntityZombieThor extends EntityZombie { // todo expend custom
         ListenerLightningStrike.numberOfThors = Math.max(0, ListenerLightningStrike.numberOfThors - 1); // to make sure nothing weird happens
     }
 
-    public double getFollowRange() { /* thor zombies have 64 block detection range */
+    public double getDetectionRange() { /* thor zombies have 64 block detection range */
         return 64.0;
     }
 

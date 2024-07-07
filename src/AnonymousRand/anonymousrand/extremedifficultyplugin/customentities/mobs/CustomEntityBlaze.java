@@ -44,8 +44,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() {
-        /* Blazes have 40 block detection range */
+    /* Blazes have 40 block detection range */
+    public double getDetectionRange() {
         return 40.0;
     }
 

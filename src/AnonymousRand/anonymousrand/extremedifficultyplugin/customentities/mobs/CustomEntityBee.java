@@ -42,8 +42,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() {
-        /* Bees have 16 block detection range */
+    /* Bees have 16 block detection range */
+    public double getDetectionRange() {
         return 16.0;
     }
 

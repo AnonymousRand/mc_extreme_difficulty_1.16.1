@@ -162,7 +162,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         }
     }
 
-    public double getFollowRange() { /* withers have 80 block detection range */
+    public double getDetectionRange() { /* withers have 80 block detection range */
         return 80.0;
     }
 

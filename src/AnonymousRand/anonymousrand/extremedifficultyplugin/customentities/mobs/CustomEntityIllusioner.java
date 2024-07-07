@@ -42,7 +42,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* illusioners have 32 block detection range */
+    public double getDetectionRange() { /* illusioners have 32 block detection range */
         return 32.0;
     }
 

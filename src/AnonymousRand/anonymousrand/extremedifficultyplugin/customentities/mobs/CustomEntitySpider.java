@@ -45,7 +45,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 
-    public double getFollowRange() { /* spiders have 16 block detection range */
+    public double getDetectionRange() { /* spiders have 16 block detection range */
         return 16.0;
     }
 

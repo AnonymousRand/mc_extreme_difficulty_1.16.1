@@ -52,7 +52,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         }
     }
 
-    public double getFollowRange() { /* wither skeletons have 40 blocks detection range */
+    public double getDetectionRange() { /* wither skeletons have 40 blocks detection range */
         return 40.0;
     }
 

@@ -50,7 +50,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* trader llamas have 24 block detection range */
+    public double getDetectionRange() { /* trader llamas have 24 block detection range */
         return 24.0;
     }
 

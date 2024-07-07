@@ -40,7 +40,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
+    public double getDetectionRange() { /* endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 12) ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
 
@@ -251,7 +251,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getFollowRange(), 2)) { // deaggros if out of range
+            if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getDetectionRange(), 2)) { // deaggros if out of range
                 this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
             }
 

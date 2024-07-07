@@ -187,7 +187,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-    public double getFollowRange() { /* piglins have 32 block detection range */
+    public double getDetectionRange() { /* piglins have 32 block detection range */
         return 32.0;
     }
 

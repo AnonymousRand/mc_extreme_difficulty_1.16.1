@@ -56,7 +56,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         new RunnableShulkerDeathBullets(this).run(); /* shulkers explode into 9 shulker bullets that seek out the player when killed */
     }
 
-    public double getFollowRange() { /* shulkers have 40 block detection range */
+    public double getDetectionRange() { /* shulkers have 40 block detection range */
         return 40.0;
     }
 

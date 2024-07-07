@@ -36,7 +36,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* guardians have 24 block detection range (32 after 8 attacks) */
+    public double getDetectionRange() { /* guardians have 24 block detection range (32 after 8 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 

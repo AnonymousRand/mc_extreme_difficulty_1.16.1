@@ -37,7 +37,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* hoglins have 40 block detection range (64 after 10 attacks) */
+    public double getDetectionRange() { /* hoglins have 40 block detection range (64 after 10 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
     }
 

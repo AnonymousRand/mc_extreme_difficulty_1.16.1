@@ -56,7 +56,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
         this.launchHigh = launchHigh;
     }
 
-    public double getFollowRange() { /* ravagers have 40 block detection range (80 after 20 attacks) */
+    public double getDetectionRange() { /* ravagers have 40 block detection range (80 after 20 attacks) */
         return this.attacks < 20 ? 40.0 : 80.0;
     }
 

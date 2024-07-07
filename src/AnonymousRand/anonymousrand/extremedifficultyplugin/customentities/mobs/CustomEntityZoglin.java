@@ -66,7 +66,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         }
     }
 
-    public double getFollowRange() { /* zoglins have 64 block detection range */
+    public double getDetectionRange() { /* zoglins have 64 block detection range */
         return 64.0;
     }
 

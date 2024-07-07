@@ -35,13 +35,13 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTargetYLevel(this, 5.0, random.nextDouble() * 5 + 10.0, 0.0005));  /* Occasionally teleports to a spot closer in y-level to its target */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getFollowRange(), 300.0, 0.0005)); /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0005)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /* custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
         this.goalSelector.a(1, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* always aggro; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
-    public double getFollowRange() { /* zombie piglins have 20 block detection range */
+    public double getDetectionRange() { /* zombie piglins have 20 block detection range */
         return 20.0;
     }
 

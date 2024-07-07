@@ -63,7 +63,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         return super.damageEntity(damageSource, damageAmount);
     }
 
-    public double getFollowRange() { /* killer bunnies have 16 block detection range (28 after 5 attacks, 40 after 15 attacks) */
+    public double getDetectionRange() { /* killer bunnies have 16 block detection range (28 after 5 attacks, 40 after 15 attacks) */
         return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 28.0 : 40.0;
     }
 

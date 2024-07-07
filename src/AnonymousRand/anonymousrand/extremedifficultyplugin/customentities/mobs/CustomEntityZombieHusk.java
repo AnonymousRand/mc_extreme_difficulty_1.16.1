@@ -39,7 +39,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* Spawns lightning randomly */
-        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getFollowRange(), 300.0, 0.0015)); /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0015)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(1, new CustomEntityZombieHusk.NewPathfinderGoalHuskSandStorm(this)); /* custom goal that does the sandstorm mechanism */
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
@@ -54,7 +54,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
         return this.attacks < 5 ? Integer.MAX_VALUE : this.attacks < 12 ? 185 : this.attacks < 20 ? 130 : 6;
     }
 
-    public double getFollowRange() { /* husks have 40 block detection range */
+    public double getDetectionRange() { /* husks have 40 block detection range */
         return 40.0;
     }
 

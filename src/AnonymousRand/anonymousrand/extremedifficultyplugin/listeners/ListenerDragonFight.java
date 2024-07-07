@@ -49,8 +49,10 @@ public class ListenerDragonFight implements Listener {
             new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /* obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on */
-                for (int i = 1; i < 11; i++) {
+                for (int i = 0; i < 10; i++) {
                     new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
+                }
+                for (int i = 0; i < 8; i++) {
                     new RunnableGenerateCenterSpawners(bukkitWorld, i).run();
                 }
             }, 100);
@@ -102,61 +104,61 @@ public class ListenerDragonFight implements Listener {
         @Override
         public void run() {
             switch (this.spawnerNum) {
-                case 1:
+                case 0:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 42.0, 0.0, 0.0));
                     this.bukkitEntityType = EntityType.ILLUSIONER;
                     this.spawnCount = 9;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 2:
+                case 1:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 33.0, 0.0, 24.0));
                     this.bukkitEntityType = EntityType.CREEPER;
                     this.spawnCount = 28;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 3:
+                case 2:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 12.0, 0.0, 39.0));
                     this.bukkitEntityType = EntityType.ENDERMITE;
                     this.spawnCount = 60;
                     this.yRadiusForBreakingBlocks = 1;
                     break;
-                case 4:
+                case 3:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -13.0, 0.0, 39.0));
                     this.bukkitEntityType = EntityType.STRAY;
                     this.spawnCount = 28;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 5:
+                case 4:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -34.0, 0.0, 24.0));
                     this.bukkitEntityType = EntityType.SHULKER;
                     this.spawnCount = 18;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 6:
+                case 5:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -42.0, 0.0, -1.0));
                     this.bukkitEntityType = EntityType.WITHER_SKELETON;
                     this.spawnCount = 21;
                     this.yRadiusForBreakingBlocks = 3;
                     break;
-                case 7:
+                case 6:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -34.0, 0.0, -25.0));
                     this.bukkitEntityType = EntityType.PIGLIN;
                     this.spawnCount = 28;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 8:
+                case 7:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -13.0, 0.0, -40.0));
                     this.bukkitEntityType = EntityType.VEX;
-                    this.spawnCount = 42;
+                    this.spawnCount = 36;
                     this.yRadiusForBreakingBlocks = 1;
                     break;
-                case 9:
+                case 8:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 12.0, 0.0, -40.0));
                     this.bukkitEntityType = EntityType.BLAZE;
                     this.spawnCount = 28;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 10:
+                case 9:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 33.0, 0.0, -25.0));
                     this.bukkitEntityType = EntityType.WITCH;
                     this.spawnCount = 11;
@@ -195,56 +197,56 @@ public class ListenerDragonFight implements Listener {
             int minSpawnDelay = 100;
             int maxSpawnDelay = 200;
             switch (this.spawnerNum) {
-                case 1:
+                case 0:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 12.0, 0.0, 0.0));
                     this.bukkitEntityType = EntityType.ZOGLIN;
                     minSpawnDelay = 130;
                     maxSpawnDelay = 190;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 2:
+                case 1:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -12.0, 0.0, 0.0));
                     this.bukkitEntityType = EntityType.SPIDER;
                     minSpawnDelay = 80;
                     maxSpawnDelay = 170;
                     this.yRadiusForBreakingBlocks = 1;
                     break;
-                case 3:
+                case 2:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -8.0, 0.0, -8.0));
                     this.bukkitEntityType = EntityType.GHAST;
                     minSpawnDelay = 180;
                     maxSpawnDelay = 230;
                     this.yRadiusForBreakingBlocks = 5;
                     break;
-                case 4:
+                case 3:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 0.0, 0.0, -12.0));
                     this.bukkitEntityType = EntityType.ILLUSIONER;
                     minSpawnDelay = 180;
                     maxSpawnDelay = 240;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 5:
+                case 4:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 8.0, 0.0, 8.0));
                     this.bukkitEntityType = EntityType.PHANTOM;
                     minSpawnDelay = 100;
                     maxSpawnDelay = 160;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 6:
+                case 5:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, -8.0, 0.0, 8.0));
                     this.bukkitEntityType = EntityType.SHULKER;
                     minSpawnDelay = 155;
                     maxSpawnDelay = 220;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 7:
+                case 6:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 0.0, 0.0, 12.0));
                     this.bukkitEntityType = EntityType.BLAZE;
                     minSpawnDelay = 105;
                     maxSpawnDelay = 170;
                     this.yRadiusForBreakingBlocks = 2;
                     break;
-                case 8:
+                case 7:
                     this.highestBlock = this.bukkitWorld.getHighestBlockAt(new Location(bukkitWorld, 8.0, 0.0, -8.0));
                     this.bukkitEntityType = EntityType.WITCH;
                     minSpawnDelay = 176;

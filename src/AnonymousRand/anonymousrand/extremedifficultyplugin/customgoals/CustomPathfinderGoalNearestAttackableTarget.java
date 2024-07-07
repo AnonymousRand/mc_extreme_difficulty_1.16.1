@@ -33,7 +33,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         this.targetCondition = (new CustomPathfinderTargetCondition()).a(this.k()).a(predicate);
     }
 
-    public void updateFollowRange() {
+    public void updateDetectionRange() {
         this.targetCondition.a(this.k());
         Bukkit.broadcastMessage("3; new range: " + this.k()); // todo
     }

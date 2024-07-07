@@ -41,7 +41,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* evokers have 28 block detection range */
+    public double getDetectionRange() { /* evokers have 28 block detection range */
         return 28.0;
     }
 
@@ -276,7 +276,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 2.5D, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 2.5D, d0, d1, f1, 3);
                 }
             } else {
-                for (i = 0; i < CustomEntityEvoker.this.getFollowRange(); ++i) { // fang range increased to the same as follow range
+                for (i = 0; i < CustomEntityEvoker.this.getDetectionRange(); ++i) { // fang range increased to the same as follow range
                     double d2 = 1.25D * (double) (i + 1);
                     int j = 1 * i;
 
@@ -320,7 +320,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
 
-                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getFollowRange()));
+                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
                 while (iterator.hasNext()) { /* every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
                     bukkitLocBase = iterator.next().getLocation();
                     Random random = new Random();

@@ -68,7 +68,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getFollowRange() { /* phantoms have 64 block detection range */
+    public double getDetectionRange() { /* phantoms have 64 block detection range */
         return 64.0;
     }
 

@@ -92,7 +92,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         return random.nextInt(3) + 6;
     }
 
-    public double getFollowRange() { /* slimes have 40 block detection range */
+    public double getDetectionRange() { /* slimes have 40 block detection range */
         return 40.0;
     }
 
