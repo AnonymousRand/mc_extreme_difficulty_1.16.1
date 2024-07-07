@@ -6,9 +6,5 @@ public interface IAttackLevelingMob {
     // sucks that the fundamental function of an interface neq multiple inheritance (interfacing vs. code sharing)
     int getAttacks();
     void increaseAttacks(int increment);
-
-    /**
-     * Precondition: <code>attackLevelingController</code> is not <code>null</code>.
-     */
 //    int[] getAttacksThresholds(); // todo uncomment
 }

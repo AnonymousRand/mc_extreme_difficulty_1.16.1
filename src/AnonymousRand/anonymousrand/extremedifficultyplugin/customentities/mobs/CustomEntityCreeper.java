@@ -21,8 +21,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     
     public CustomEntityCreeper(World world, int maxFuseTicks) {
         super(EntityTypes.CREEPER, world);
-        this.initCustom();
         this.maxFuseTicks = maxFuseTicks;
+        this.initCustom();
     }
 
     private void initCustom() {
@@ -35,9 +35,9 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             e.printStackTrace();
         }
 
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
     }
 
     private void initAttributes() {

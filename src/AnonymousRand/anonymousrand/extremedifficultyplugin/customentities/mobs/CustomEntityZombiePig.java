@@ -17,9 +17,9 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
     public CustomEntityZombiePig(World world) {
         super(EntityTypes.ZOMBIFIED_PIGLIN, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD)); // makes sure that it has a sword
         this.attacks = 0;
         this.a5 = false;

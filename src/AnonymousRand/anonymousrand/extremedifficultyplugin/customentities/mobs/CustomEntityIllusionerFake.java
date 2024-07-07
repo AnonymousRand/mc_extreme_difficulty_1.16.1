@@ -23,9 +23,9 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     private void initCustom() {
         this.initAttributes();
 
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
         this.deathExplosion = false;
@@ -46,7 +46,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {

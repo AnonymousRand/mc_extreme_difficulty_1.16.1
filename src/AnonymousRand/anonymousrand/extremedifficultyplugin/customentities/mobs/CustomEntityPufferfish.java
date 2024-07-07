@@ -15,9 +15,9 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
 
     public CustomEntityPufferfish(World world) {
         super(EntityTypes.PUFFERFISH, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.lastStingTicks = 0;
     }
 

@@ -21,9 +21,9 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     public CustomEntityWitch(World world) {
         super(EntityTypes.WITCH, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.attackNum = 0;
         this.a12 = false;

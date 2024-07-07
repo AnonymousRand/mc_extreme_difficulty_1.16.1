@@ -3,8 +3,15 @@ todo:
     overriden functions like checkdespawn try to use descriptive variable names
 
     comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
-    lural reference to mob changes, big comment separator for inner classes. stopped after: customentitychickenaggressiveexploding
-	reorganize all custommobs to use new attacks thing and whatever (including blaze)
+    plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
+	reorganize all custommobs to use new attacks thing and whatever (including blaze).
+	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
+	stopped after: customentitydrowned
+
+
+    followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
+
+	change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
 
     increment attacks in attack method/goal instead of listener?
 
@@ -18,21 +25,44 @@ todo:
 
     things in terms of getattackthresholds instead of hardcoded
 
+    mobs with follow distance <= 32 do not need increased random despawn distance?
+
+    is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
+	    see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
+        if not, should they still be part of icustomhostile? what about checkdespawn and bL?
+
+    registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
+
+	should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
+
+    custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
+
+    try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
+
+    some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
+
+    wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
+
+    should all utils be static? id tech has them static
+
+
+
+
     listeners group by event?
 
     nms, bukkit etc labels use underscore?
 
-    check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
+    investigate why we need to remove goals
 
-    mobs with follow distance <= 32 do not need increased random despawn distance?
+    remove D for nunmber literals doubles, and fix floating point rounding errors
+
+    check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
 
     catalog and test super zombie health nerf + xp health gain
 
     custom class for large fireball summon lightning and separate newpathfindergoalshootlargefireballs too; also test todo in lightning storm runnable
 
 	uncomment things in custompathfindergoalrangedattack after that
-
-	change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
 
 	investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
 
@@ -66,14 +96,6 @@ todo:
 
 	where do player projectiles fall faster? seems to be impacting drowned tridents?
 
-	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
-
-	todo comments in like elder guardian
-
-    in the todos, there is a possibiliity of making g() and d() global. if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions
-
-    make checkdespawn global too?
-
     comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
 
     attacks comments/docs all into initattack method instead of increase attacks?
@@ -96,10 +118,6 @@ todo:
 
 	iron golem sethelath in increashealthadd change to heal? and make sure works
 
-	registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
-
-	should all utils be static? id tech has them static
-
 	balancing and small nerfs like ghast or something, more consistent but less endermites on enderman death etc, no magma cube spawns from blaze
 
 	make lava spread fast in overworld if possible?
@@ -108,11 +126,9 @@ todo:
 
 	remove blank line before cobnstrcutors/fields
 
-	dont add customhurtbytarget in vanillapthfindergoalsaccess? and do it individually
+	why are we adding customhurtbytarget in vanillapthfindergoalsaccess? should we do it individually?
 
 	hoglin fire trails to custom goal?
-
-	should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
 
 	phantom more linear size increases?
 
@@ -121,8 +137,6 @@ todo:
 	lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
 
 	check all the goals comments esp ranged to add clarification to y-level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
-
-	see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
 
 	make dragon fight logic cleaner, as well as ending messages? find exploits
 
@@ -136,11 +150,7 @@ todo:
 
 	fake illusioner little damage but big tankiness
 
-	copy all a() b() etc documentation from passivemeleeattack goal to all goals
-
-	custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
-
-	try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
+	creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
 
 	see if possible to create utils for shooting large and small fireballs etc?
 
@@ -148,19 +158,11 @@ todo:
 
 	try to move stuff from listeners like listenermobdeath to the mobs themselves
 
-	some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
-
-	creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
-
-    wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
-
 	those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
 
 	check weather changes works
 
 	try to debofuscate goals using idtech thing, experiment with changing seetime requirement etc
-
-	change back all casts to have space
 
 	util functions to set (decrease or increase) max health and health?
 
@@ -170,13 +172,11 @@ todo:
 
 	break blocks ruunnable instead of booleans to remove dluuids etc just pass in a static predicate to the constrcutor
 
-	slimes and magma blocks sometimes just run away?
+	bug: slimes and magma blocks sometimes just run away?
 
-	check balance for slime/magma cube damage and melee attack radius
+	check balancing for slime/magma cube damage and melee attack radius
 
-	players still lose bubbles slower when fully submerged than when feet submerged
-
-    followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
+	bug?: players still lose bubbles slower when fully submerged than when feet submerged
 
 	all mob expliosions and stuff make sure mobgriefing gamerule is respected. make util function for this?
 
@@ -184,9 +184,7 @@ todo:
 
 	mobs still taking magma block damage?
 
-	return guards for isclientside and stuff
-
-	remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
+	early return guards for isclientside and stuff
 
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
 
@@ -198,9 +196,11 @@ todo:
 
 	change eggs lottery to json or something/loot table
 
-    spawn entity nametag option
+    spawn entity nametag option. make sure mobs spawning other mobs should have nametag
 
 	find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
+
+	remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
 
 	create full documentation of changes from all /* comments and that google doc?
 

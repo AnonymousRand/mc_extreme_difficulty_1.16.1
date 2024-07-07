@@ -10,9 +10,9 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.46); /* sheep move 2x faster and have 20 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);

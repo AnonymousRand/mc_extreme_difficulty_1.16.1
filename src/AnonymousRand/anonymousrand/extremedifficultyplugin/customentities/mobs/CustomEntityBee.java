@@ -13,7 +13,6 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalRemovingMob {
 
-    public PathfinderGoalSelector vanillaTargetSelector;
     private boolean firstSting;
 
     public CustomEntityBee(World world) {
@@ -25,9 +24,9 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     private void initCustom() {
         this.initAttributes();
 
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         this.firstSting = true;
     }
@@ -66,6 +65,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    public PathfinderGoalSelector vanillaTargetSelector;
+
     private void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
@@ -84,7 +85,7 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.399999976158142D));                 /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.4));                                /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
     }
 

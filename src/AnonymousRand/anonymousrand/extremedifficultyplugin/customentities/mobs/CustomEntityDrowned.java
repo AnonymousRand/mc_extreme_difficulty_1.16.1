@@ -13,8 +13,6 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController = null;
-
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
         this.initCustom();
@@ -22,9 +20,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     private void initCustom() {
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         /* Drowned always spawn with tridents */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.TRIDENT));
@@ -98,12 +96,14 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     //                                    IAttackLevelingMob                                     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    private AttackLevelingController attackLevelingController = null;
+
     private void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(150, 350);
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
@@ -135,7 +135,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
         this.goalSelector.a(1, new PathfinderGoalDrownedTridentBowAttack(this, 1.0D, 7, 40.0F));               /* Drowned throw tridents every 7 ticks, and continue attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new PathfinderGoalDrownedGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalDrownedAttack(this, 1.0D));               /* Continues attacking regardless of y-level and line of sight */
+        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D));                              /* Also attacks in the day, and continues attacking regardless of y-level and line of sight */
         this.goalSelector.a(5, new PathfinderGoalDrownedGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
@@ -144,34 +144,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
-    @Override
-    public boolean j(@Nullable EntityLiving entityLiving) { /* always attacks even in the day */
-        return true;
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                Mob-specific goals/classes                                 //
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    static class PathfinderGoalDrownedAttack extends CustomPathfinderGoalZombieAttack {
-
-        private final CustomEntityDrowned drowned;
-
-        public PathfinderGoalDrownedAttack(CustomEntityDrowned drowned, double speedTowardsTarget) {
-            super(drowned, speedTowardsTarget);
-            this.drowned = drowned;
-        }
-
-        @Override
-        public boolean a() {
-            return super.a() && this.drowned.j(this.drowned.getGoalTarget());
-        }
-
-        @Override
-        public boolean b() {
-            return super.b() && this.drowned.j(this.drowned.getGoalTarget());
-        }
-    }
 
     static class PathfinderGoalDrownedGoToBeach extends PathfinderGoalGotoTarget {
 

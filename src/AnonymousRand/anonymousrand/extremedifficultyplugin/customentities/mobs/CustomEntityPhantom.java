@@ -49,9 +49,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             e.printStackTrace();
         }
 
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         ListenerMobSpawnAndReplaceWithCustom.phantomSize += 0.07 / Math.max(Bukkit.getServer().getOnlinePlayers().size(), 1.0); /* every custom phantom spawned per player increases the server-wide size of future phantom spawns by 0.07 */
         this.setSize(0);
@@ -131,7 +131,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {

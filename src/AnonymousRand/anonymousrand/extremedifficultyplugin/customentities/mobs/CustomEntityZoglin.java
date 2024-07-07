@@ -24,9 +24,9 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     public CustomEntityZoglin(World world) {
         super(EntityTypes.ZOGLIN, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.a8 = false;
         this.a30 = false;

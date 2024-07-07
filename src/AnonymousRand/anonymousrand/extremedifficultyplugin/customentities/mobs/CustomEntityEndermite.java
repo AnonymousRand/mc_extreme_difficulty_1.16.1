@@ -21,9 +21,9 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     private void initCustom() {
         this.initAttributes();
 
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         /* No longer despawns or takes up the mob cab */
         this.getBukkitEntity().setCustomName("Insert name here");
@@ -108,7 +108,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {

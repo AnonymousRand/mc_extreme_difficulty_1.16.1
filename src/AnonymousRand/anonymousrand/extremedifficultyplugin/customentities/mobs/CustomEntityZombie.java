@@ -24,9 +24,9 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
     public CustomEntityZombie(World world) {
         super(EntityTypes.ZOMBIE, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.a7 = false;
         this.a15 = false;

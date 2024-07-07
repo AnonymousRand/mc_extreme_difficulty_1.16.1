@@ -21,9 +21,9 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     public CustomEntitySheepAggressive(World world) {
         super(EntityTypes.SHEEP, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.setColor(EnumColor.PINK); // always pink
         this.attacks = 0;
         this.a20 = false;

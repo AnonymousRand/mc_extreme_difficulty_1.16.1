@@ -98,7 +98,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {

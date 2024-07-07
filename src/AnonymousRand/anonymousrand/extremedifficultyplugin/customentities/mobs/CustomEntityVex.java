@@ -20,9 +20,9 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         super(EntityTypes.VEX, world);
         this.vanillaTargetSelector = super.targetSelector;
         this.moveController = new CustomEntityVex.ControllerMoveVex(this);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.a20 = false;
         this.a30 = false;

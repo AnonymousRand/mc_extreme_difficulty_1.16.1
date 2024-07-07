@@ -18,9 +18,9 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
     public CustomEntityPillager(World world) {
         super(EntityTypes.PILLAGER, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.CROSSBOW)); // makes sure that it has a crossbow
         Arrays.fill(this.dropChanceArmor, 0.0f); /* pillagers can't drop any armor that it wears */
         this.attacks = 0;

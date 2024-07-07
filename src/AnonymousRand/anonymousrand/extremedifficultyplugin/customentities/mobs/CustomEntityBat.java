@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
-    private AttackLevelingController attackLevelingController = null;
     private NewPathfinderGoalBuffMobs buffMobs;
     private BlockPosition targetPosition;
     private boolean firstDuplicate;
@@ -36,9 +35,9 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     private void initCustom() {
         this.initAttributes();
 
-        /* No longer avoids lava and fire (as if bats did in the first place) */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava (as if bats did in the first place) */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
 
         this.firstDuplicate = true;
         // custom goal that provides the buffing mechanism
@@ -147,12 +146,14 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     //                                    IAttackLevelingMob                                     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    private AttackLevelingController attackLevelingController = null;
+
     private void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(4, 8, 15, 28, 40);
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {

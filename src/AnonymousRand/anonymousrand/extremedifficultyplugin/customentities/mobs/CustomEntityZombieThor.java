@@ -21,9 +21,9 @@ public class CustomEntityZombieThor extends EntityZombie { // todo expend custom
     public CustomEntityZombieThor(World world) {
         super(EntityTypes.ZOMBIE, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.getBukkitEntity().setCustomName("Thor");
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE));

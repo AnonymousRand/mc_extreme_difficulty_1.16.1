@@ -20,9 +20,9 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomH
     public CustomEntityVindicator(World world) {
         super(EntityTypes.VINDICATOR, world);
         this.vanillaTargetSelector = super.targetSelector;
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.IRON_AXE)); // makes sure that it has an axe
         this.setSlot(EnumItemSlot.OFFHAND, new ItemStack(Items.IRON_AXE)); /* vindicators have axes everywhere visible */
         this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.IRON_AXE));

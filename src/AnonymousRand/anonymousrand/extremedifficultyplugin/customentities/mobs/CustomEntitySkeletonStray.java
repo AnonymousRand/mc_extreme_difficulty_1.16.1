@@ -18,9 +18,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
 
     public CustomEntitySkeletonStray(World world) {
         super(EntityTypes.STRAY, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
         this.spawnMob = false;
         this.spawnExplodingArrow = false;

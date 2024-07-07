@@ -16,9 +16,9 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
 
     public CustomEntitySpider(World world) {
         super(EntityTypes.SPIDER, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.a20 = false;
         this.a25 = false;

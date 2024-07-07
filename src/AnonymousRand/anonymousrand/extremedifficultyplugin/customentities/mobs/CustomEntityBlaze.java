@@ -14,8 +14,6 @@ import java.util.EnumSet;
 
 public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    private AttackLevelingController attackLevelingController = null;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private boolean rapidFire;
 
     public CustomEntityBlaze(World world) {
@@ -28,9 +26,9 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     private void initCustom() {
         this.initAttributes();
 
-        /* No longer avoids lava, fire, and water */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire, lava, and water */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.a(PathType.WATER, 0.0F);
 
         this.rapidFire = false;
@@ -105,12 +103,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                    IAttackLevelingMob                                     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    private AttackLevelingController attackLevelingController = null;
+
     private void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(50, 125, 250);
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
@@ -142,6 +142,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    public PathfinderGoalSelector vanillaTargetSelector;
 
     private void initGoalRemovingMob() {
         this.vanillaTargetSelector = super.targetSelector;

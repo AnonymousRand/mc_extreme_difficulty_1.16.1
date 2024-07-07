@@ -16,9 +16,9 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
 
     public CustomEntitySpiderCave(World world) {
         super(EntityTypes.CAVE_SPIDER, world);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
         this.attacks = 0;
         this.a25 = false;
         this.a60 = false;

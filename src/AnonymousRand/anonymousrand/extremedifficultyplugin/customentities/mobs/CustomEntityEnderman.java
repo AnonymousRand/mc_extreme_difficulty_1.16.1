@@ -26,9 +26,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         /* No longer avoids water */
         this.a(PathType.WATER, 0.0F);
-        /* No longer avoids lava and fire */
-        this.a(PathType.LAVA, 0.0F);
+        /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
+        this.a(PathType.LAVA, 0.0F);
     }
 
     private void initAttributes() {
@@ -109,7 +109,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     public int getAttacks() {
-        return this.attackLevelingController == null ? 0 : this.attackLevelingController.getAttacks();
+        return this.attackLevelingController.getAttacks();
     }
 
     public void increaseAttacks(int increase) {
