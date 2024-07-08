@@ -2,7 +2,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomIEntityAccess;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -12,7 +11,7 @@ import java.util.function.Predicate;
 public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalTarget implements CustomIEntityAccess {
     protected final Class<T> targetClass;
     protected final int targetChance;
-    protected EntityLiving potentialTarget;
+    protected T potentialTarget;
     protected CustomPathfinderTargetCondition targetCondition;
 
     public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient goalOwner, Class<T> targetClass) {
@@ -65,19 +64,19 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
     }
 
     // overrides a(); name change because not used elsewhere
-    protected void setPotentialTarget(@Nullable EntityLiving entityLiving) {
+    protected void setPotentialTarget(@Nullable T entityLiving) {
         this.potentialTarget = entityLiving;
     }
 
     // overrides g() (findNearestTarget()); name change because not used meaningfully elsewhere
-    protected void findPotentialTarget() {
-        if (this.targetClass == EntityHuman.class || this.targetClass == EntityPlayer.class) {
+    protected void findPotentialTarget() { // todo returns goal target instead of sets it?
+        if (this.targetClass == EntityPlayer.class) {
             // passes to CustomPathfinderGoalNearestAttackableTarget.g()
             // which passes to CustomIEntityAccess.customFindPlayer()
             // which passes to CustomIEntityAccess.customFindEntity()
             // which passes to CustomPathfinderTargetConditions.a()
             // which removes line of sight requirement for initially finding targets
-            this.potentialTarget = this.customFindPlayers(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ());
+            this.potentialTarget = (T) this.customFindPlayer(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ());
         } else {
             this.potentialTarget = this.e.getWorld().b(this.targetClass, this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ(), this.getTargetableArea(this.k()));
         }

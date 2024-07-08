@@ -233,7 +233,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && this.firstDuplicate) {
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.firstDuplicate) { // todo change all !this.killed to this.isAlive()
             this.firstDuplicate = false;
             new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 6,
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);

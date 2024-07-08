@@ -1,17 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
-import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityLiving;
+import net.minecraft.server.v1_16_R1.EntityPlayer;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public interface CustomIEntityAccess {
 
-    default EntityHuman customFindPlayers(CustomPathfinderTargetCondition pathfindertargetcondition, EntityLiving entityLiving, double d0, double d1, double d2) { // passes to customFindEntities()
-        return (EntityHuman) this.customFindEntities(entityLiving.getWorld().getPlayers(), pathfindertargetcondition, entityLiving, d0, d1, d2);
+    default EntityPlayer customFindPlayer(CustomPathfinderTargetCondition pathfindertargetcondition, EntityLiving entityLiving, double d0, double d1, double d2) { // passes to customFindEntities()
+        return (EntityPlayer) this.customFindEntities(entityLiving.getWorld().getPlayers(), pathfindertargetcondition, entityLiving, d0, d1, d2);
     }
 
     default <T extends EntityLiving> T customFindEntities(List<? extends T> entities, CustomPathfinderTargetCondition pathfinderTargetCondition, EntityLiving theOneWhoSeeks, double fromX, double fromY, double fromZ) {

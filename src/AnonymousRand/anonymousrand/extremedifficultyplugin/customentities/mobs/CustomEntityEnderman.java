@@ -8,10 +8,13 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
+
+    private boolean lookedAt;
 
     public CustomEntityEnderman(World world) {
         super(EntityTypes.ENDERMAN, world);
@@ -26,6 +29,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
         this.a(PathType.WATER, 0.0F);
+
+        this.lookedAt = false;
     }
 
     private void initAttributes() {
@@ -38,7 +43,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */ // todo less? change line 262 12 block horizontally too
+    /* Endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
     public double getDetectionRange() {
         return (this.attackLevelingController == null || this.getAttacks() < 12)
                 ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
@@ -135,20 +140,36 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         return this.attackLevelingController.getAttacksThresholds();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                  Other custom functions                                   //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    public boolean hasBeenLookedAt() {
+        return this.lookedAt;
+    }
+
+    public void setLookedAt(boolean lookedAt) {
+        this.lookedAt = lookedAt;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                               Overridden vanilla functions                                //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     protected void initPathfinder() {
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                               /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                                              /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to aggro a target or maintain it as the target */
+        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to aggro a target or maintain it as the target */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 
@@ -180,15 +201,16 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         return dotProd > 1.0D - 0.025D / directionToPlayerMagnitude;
     }
 
-    // based off teleportRandomly()
-    private boolean teleportRandomlyOnHit() {
-        if (!this.getWorld().s_() && this.isAlive()) {
-            /* Random teleportation range decreased to 10 blocks so that if it somehow teleports away it is likely still in range of the player */ // todo doesnt seem right, print out distance
+    @Override // teleportRandomly()
+    protected boolean eM() {
+        if (!this.getWorld().isClientSide && this.isAlive()) {
+            /* Random teleportation range decreased to 10 blocks in each direction so that if it somehow teleports away it is likely still in range of the player */
             double x = this.locX() + (random.nextDouble() - 0.5D) * 20.0D;
-            double y = this.locY() + (double) (random.nextInt(20) - 10);
+            double y = this.locY() + random.nextInt(10);
             double z = this.locZ() + (random.nextDouble() - 0.5D) * 20.0D;
 
-            return this.teleportTo(x, y, z);
+            boolean success = this.teleportTo(x, y, z);
+            return success;
         } else {
             return false;
         }
@@ -196,77 +218,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     // overrides private o() (teleportTo())
     private boolean teleportTo(double x, double y, double z) {
-        BlockPosition.MutableBlockPosition mutableblockPosition = new BlockPosition.MutableBlockPosition(x, y, z);
-        while (mutableblockPosition.getY() > 0 && !this.getWorld().getType(mutableblockPosition).getMaterial().isSolid()) { // todo dont need this since already in attemptteleport? or move attemptteleport logic in here
-            mutableblockPosition.c(EnumDirection.DOWN);
-        }
-
-        /* Endermen can now teleport onto fluids and non-solid blocks */
-        boolean isTeleportSuccessful = this.attemptTeleport(x, y, z);
-        if (isTeleportSuccessful) {
-            if (!this.isSilent()) {
-                this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
-                        this.getSoundCategory(), 1.0F, 1.0F);
-                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
-
-            /* Endermen have a 20% chance to summon an endermite where it teleports to */
-            if (random.nextDouble() < 0.2) {
-                new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
-            }
-        }
-
-        return isTeleportSuccessful;
-    }
-
-    @Override
-    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        if (this.isInvulnerable(damageSource)) {
-            return false;
-        } else if (damageSource instanceof EntityDamageSourceIndirect) {
-            /* Endermen no longer teleport away from projectiles */
-            return false;
-        } else {
-            boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-
-            /* After 40 attacks, endermen summon an endermite when hit and not killed */
-            if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed) {
-                if (this.getAttacks() >= 40) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
-                }
-            }
-
-            if (!this.getWorld().isClientSide && random.nextInt(10) != 0) { // todo test do they really tp away 9 out of 10 times on damage? even in vanilla
-                this.teleportRandomlyOnHit();
-            }
-
-            return tookDamage;
-        }
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        // todo test if not deaggroing out of range is bad
-
-        if (this.getGoalTarget() != null) {
-            EntityLiving target = this.getGoalTarget();
-
-            /* Endermen teleport to player if player is more than 12 blocks away horizontally */ // todo test
-            if (this.d(target.getPositionVector()) > 144.0) {
-                this.teleportTo(target.locX(), target.locY(), target.locZ());
-            }
-
-            /* Endermen teleport to player if player can't be seen (includes when the player is towering up) */ // todo test failed
-            if (!this.getEntitySenses().a(target)) {
-                Bukkit.broadcastMessage("tp");
-                this.teleportTo(target.locX(), target.locY(), target.locZ());
-            }
-        }
-    }
-
-    // originally a(); can change name because not used anywhere else
-    private boolean attemptTeleport(double x, double y, double z) {
+        // code merged from a() (attemptTeleport())
         BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
         double currX = this.locX();
         double currY = this.locY();
@@ -275,23 +227,30 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         if (world.isLoaded(targetBlockPosition)) {
             IBlockData targetBlockData = world.getType(targetBlockPosition);
-            boolean isTargetBlockSolid = targetBlockData.getMaterial().isSolid();
 
-            while (!isTargetBlockSolid && targetBlockPosition.getY() > 0) {
+            /* Endermen can teleport onto fluids, waterlogged blocks, and non-solid blocks */
+            while (targetBlockData.getMaterial() == Material.AIR && targetBlockPosition.getY() > 0) {
                 targetBlockPosition = targetBlockPosition.down();
                 targetBlockData = world.getType(targetBlockPosition);
-
-                if (targetBlockData.getMaterial().isSolid()) { // todo test if this check affects teleporting onto slabs etc
-                    isTargetBlockSolid = true;
-                }
             }
 
-            if (isTargetBlockSolid) {
-                this.enderTeleportTo(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ());
-                /* Endermen can teleport onto fluids */
-                if (world.getCubes(this)) { // getCubes() is hasNoCollisions(); this checks success of the teleport
+            if (targetBlockData.getMaterial() != Material.AIR) {
+                this.enderTeleportTo(targetBlockPosition.getX(), targetBlockPosition.getY() + 1.0, targetBlockPosition.getZ());
+                if (world.getCubes(this)) { // check for collisions; if passed, then teleport is successful
                     world.broadcastEntityEffect(this, (byte) 46);
                     this.getNavigation().o();
+
+                    if (!this.isSilent()) {
+                        this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
+                                this.getSoundCategory(), 1.0F, 1.0F);
+                        this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+                    }
+
+                    /* Endermen have a 15% chance to summon an endermite where it teleports to */
+                    if (random.nextDouble() < 0.15) {
+                        new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                    }
+
                     return true;
                 }
             }
@@ -302,39 +261,125 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         return false;
     }
 
+    @Override
+    public boolean damageEntity(DamageSource damageSource, float damageAmount) {
+        if (this.isInvulnerable(damageSource)) {
+            return false;
+        } else if (damageSource instanceof EntityDamageSourceIndirect) {
+            /* Endermen no longer teleport away from projectiles */
+            return false;
+        } else {
+            // only call super.damageEntity() on player damage, otherwise endermen might still teleport away from explosions etc. whose damage was canceled by listener
+            if (!(damageSource.getEntity() instanceof EntityPlayer)) {
+                return false;
+            }
+
+            boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+            if (tookDamage && !this.killed) {
+                /* After 40 attacks, endermen summon an endermite when hit and not killed */
+                if (this.getAttacks() >= 40) {
+                    new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                }
+            }
+
+            return tookDamage;
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.getGoalTarget() != null) {
+            EntityLiving target = this.getGoalTarget();
+
+            /* Endermen teleport to player if player can't be seen (includes when the player is towering up) */ // todo not working also change to pick up block under player?
+//            if (!this.getEntitySenses().a(target)) {
+//                this.teleportTo(target.locX(), target.locY(), target.locZ());
+//            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Mob-specific goals/classes                                 //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     // e() (tick()) logic has been made more straightfoward
     static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer> {
 
-        private EntityPlayer playerWhoLooked;
+        private final CustomEntityEnderman enderman;
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
             super(enderman, EntityPlayer.class, new CustomPathfinderTargetCondition().a(64.0).a((entityLiving)
                     -> enderman.validPlayerIsLooking((EntityPlayer) entityLiving))); // endermen can still be aggroed from up to 64 blocks away
+            this.enderman = enderman;
         }
 
         @Override
+        // Note that this function is somehow not run if enderman already has a target, i.e. look-aggro does not take precendence over other aggro. This is a feature, not a bug.
         public boolean a() {
             /* Endermen can be aggroed regardless of y-level and line of sight */
             this.findPotentialTarget();
-            if (this.potentialTarget != null && this.potentialTarget instanceof EntityPlayer) {
-                this.playerWhoLooked = (EntityPlayer) this.potentialTarget;
-                return true;
-            }
-
-            return false;
+            return this.potentialTarget != null;
         }
 
         @Override
-        // modified so that endermen will not deaggro a player who looked at it ever (unless they die or go out of survival)
         public boolean b() {
-            return this.playerWhoLooked != null && !this.playerWhoLooked.isSpectator()
-                    && !this.playerWhoLooked.abilities.isInvulnerable;
+            return this.potentialTarget != null && !this.potentialTarget.isSpectator()
+                    && !this.potentialTarget.abilities.isInvulnerable;
+        }
+
+        @Override
+        public void c() {
+            this.enderman.setLookedAt(true);
+            super.c();
         }
 
         @Override
         public void d() {
-            this.playerWhoLooked = null;
+            this.enderman.setLookedAt(false);
+            this.potentialTarget = null;
             super.d();
+        }
+    }
+
+    static class PathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalNearestAttackableTarget<T> {
+
+        private final CustomEntityEnderman enderman;
+
+        public PathfinderGoalNearestAttackableTarget(CustomEntityEnderman enderman, Class<T> targetClass) {
+            super(enderman, targetClass);
+            this.enderman = enderman;
+        }
+
+        @Override
+        public void d() {
+            /* Endermen will not deaggro a player who looked at them if they go out of range */
+            if (!this.enderman.hasBeenLookedAt()) {
+                this.e.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+            }
+
+            this.g = null;
+        }
+    }
+
+    static class PathfinderGoalHurtByTarget extends CustomPathfinderGoalHurtByTarget {
+
+        private final CustomEntityEnderman enderman;
+
+        public PathfinderGoalHurtByTarget(CustomEntityEnderman enderman, Class<?>... aclass) {
+            super(enderman, aclass);
+            this.enderman = enderman;
+        }
+
+        @Override
+        public void d() {
+            /* Endermen will not deaggro a player who looked at them if they hit the enderman but then went out of range */
+            if (!this.enderman.hasBeenLookedAt()) {
+                this.e.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+            }
+
+            this.g = null;
         }
     }
 

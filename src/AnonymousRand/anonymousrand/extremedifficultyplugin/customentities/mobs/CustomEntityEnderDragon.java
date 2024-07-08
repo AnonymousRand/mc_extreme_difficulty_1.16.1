@@ -54,8 +54,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or maintain it as the target (for the custom fireball goal) */
+        this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or maintain it as the target (for the custom fireball goal) */
     }
 
     @Override // onCrystalDestroyed()
@@ -115,11 +115,15 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         }
     }
 
-    static class PathfinderGoalDragonFireball extends PathfinderGoal {
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                Mob-specific goals/classes                                 //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    static class PathfinderGoalFireball extends PathfinderGoal {
 
         private final CustomEntityEnderDragon enderDragon;
 
-        public PathfinderGoalDragonFireball(CustomEntityEnderDragon enderDragon) {
+        public PathfinderGoalFireball(CustomEntityEnderDragon enderDragon) {
             this.enderDragon = enderDragon;
         }
 
@@ -146,12 +150,12 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         }
     }
 
-    static class PathfinderGoalDragonNearestAttackableTarget extends PathfinderGoal {
+    static class PathfinderGoalNearestAttackableTarget extends PathfinderGoal {
 
         private final CustomEntityEnderDragon enderDragon;
         protected final Class targetClass;
 
-        public PathfinderGoalDragonNearestAttackableTarget(CustomEntityEnderDragon enderDragon, Class targetClass) {
+        public PathfinderGoalNearestAttackableTarget(CustomEntityEnderDragon enderDragon, Class targetClass) {
             this.enderDragon = enderDragon;
             this.targetClass = targetClass;
         }

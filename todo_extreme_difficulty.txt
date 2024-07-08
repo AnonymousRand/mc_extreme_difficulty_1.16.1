@@ -198,6 +198,10 @@ todo:
 
 	mobs still taking magma block damage?
 
+	test teleportnear player goals like creeper, refine if needed
+
+	somehow nerf endermen drops. for example, drop ender shards (custom item?) which is crafted in 4 to make ender pearl. or just nerf the drop rates lol
+
 	early return guards for isclientside and stuff
 
 	slimes and mamga cubes still get trapped in cobwebs; just break them?
@@ -219,6 +223,8 @@ todo:
     speed up dragon fireball projectile speeds
 
     bug: exiting rejoining causes withers to still aggro other mobs
+
+    standardize super in functions start/end
 
     change eggs lottery to json or something/loot table
 
@@ -253,9 +259,10 @@ balance changes catalog:
 	ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
 	end fight vex spawner spawn count 42 -> 36
 	endermen no longer summon endermites on death at >40 attacks
-	endermen endermite summon on tp chance 30% -> 20%
+	endermen endermite summon on tp chance 30% -> 15%
+	endermen no longer deaggro out of range
 	endermen look aggro distance 128 -> 64
-	endermen randomteleportonhit vertical range -32 to 32 -> -10 to 10
+	endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10
 	endermen pick up blocks chance per check 1/20 -> 1/5 (four times as frequent)
 	endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequent)
 	iron golem death silverfish 15 -> 10

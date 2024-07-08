@@ -158,7 +158,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                  Other custom functions                                   //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean getRapidFire() {
+    public boolean isRapidFire() {
         return this.rapidFire;
     }
 
@@ -171,7 +171,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
+        this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalFireballAttack(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
@@ -185,13 +185,13 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                Mob-specific goals/classes                                 //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    static class PathfinderGoalBlazeFireballAttack extends PathfinderGoal {
+    static class PathfinderGoalFireballAttack extends PathfinderGoal {
         private final CustomEntityBlaze blaze;
         private final World nmsWorld;
         private int rangedAttackRemainingCooldown;
         private int meleeAttackRemainingCooldown;
 
-        public PathfinderGoalBlazeFireballAttack(CustomEntityBlaze entityBlaze) {
+        public PathfinderGoalFireballAttack(CustomEntityBlaze entityBlaze) {
             this.blaze = entityBlaze;
             this.nmsWorld = entityBlaze.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
@@ -244,7 +244,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                         float defaultInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToGoalTarget)) * 0.5F;
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
-                        if (this.blaze.getRapidFire()) {
+                        if (this.blaze.isRapidFire()) {
                             this.rangedAttackRemainingCooldown = 4;
 
                             /* In rapid fire state, blazes shoot 2 fireballs at a time, with 250% of their vanilla inaccuracy */
