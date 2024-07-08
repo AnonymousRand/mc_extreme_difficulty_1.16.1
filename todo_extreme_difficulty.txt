@@ -1,270 +1,286 @@
 todo:
 
-    overriden functions like checkdespawn try to use descriptive variable names
-    comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
-    plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
-	reorganize all custommobs to use new attacks thing and whatever (including blaze).
-	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
-	private instead of protected where possible
-	stopped after: customentityenderman
+overriden functions like checkdespawn try to use descriptive variable names
+comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
+plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
+reorganize all custommobs to use new attacks thing and whatever (including blaze).
+custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
+private instead of protected where possible, dont target villagers
+stopped after: customentityenderman
 
-    change get3DDistSq to only require one param
+change get3DDistSq to only require one param
 
-    change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
+change custompathfindergoaltarget k() to just use icustomhostile.getdetectionrange() instead of massive switch?
 
-    custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
+custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
 
-    followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
+followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
-    cleaning up customnearestattackabletarget mess: is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
-        customfindentities in icustomentityaccess is a good place to start
-        customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
-    	old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
-        if not, should they still be part of icustomhostile? what about checkdespawn and bL?
+cleaning up customnearestattackabletarget mess: is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
+    customfindentities in icustomentityaccess is a good place to start
+    customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
+    old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
+    if not, should they still be part of icustomhostile? what about checkdespawn and bL?
 
 
-    try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
+try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
 
-    increment attacks in attack method/goal instead of listener?
+increment attacks in attack method/goal instead of listener?
 
-	make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
+make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
-    things in terms of getattackthresholds instead of hardcoded
+things in terms of getattackthresholds instead of hardcoded
 
-    mobs with follow distance <= 32 do not need increased random despawn distance?
+mobs with follow distance <= 32 do not need increased random despawn distance?
 
 
-    registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
+registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
-	should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
+should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
 
-    some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
+some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
 
-    wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
-        does spawnentity even need to be a runnable?
-        wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
+wrap spawnentity in util function that creates runnable instance so we dont need awkward new every time?
+    does spawnentity even need to be a runnable?
+    wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
-    should all utils be static?
+should all utils be static?
 
 
 
 
-    better documentation for removing y-level/los requirements for finding targets
+better documentation for removing y-level/los requirements for finding targets
 
-    personalize all doc comments with mob name?
+personalize all doc comments with mob name?
 
-    no blank lines after class declaration and before instance variable decalarations?
+no blank lines after class declaration and before instance variable decalarations?
 
-    all -- and ++ to after if possible
+all -- and ++ to after if possible
 
-    listeners group by event?
+listeners group by event?
 
-    make all variables/parameters starting with entity not start with entity
+util function/wrapper for find entity with default predicate (nmsworld.a(), and getentities() too? difference?)
+    also find entity with predicate? to give meaning to the obfuscated function names
 
-    overridden functions and stuff organize alphabetiocal?
+make all variables/parameters starting with entity not start with entity
 
-    nms, bukkit etc labels use underscore?
+overridden functions and stuff organize alphabetiocal?
 
-    investigate why we need to remove goals
+nms, bukkit etc labels use underscore?
 
-    remove D for nunmber literals doubles, and fix floating point rounding errors
+add polar bear?
 
-    check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
+better nametag names? like wtf is "insert name here"
 
-    catalog and test super zombie health nerf + xp health gain
+multi0pole ternary operators: align vertically
 
-    custom class for large fireball summon lightning and separate newpathfindergoalshootlargefireballs too; also test todo in lightning storm runnable
+line breaking complicated stuff with master level and and nested ors etc: indent accordingly like in custompathfindergoalhurtbytarget's callforhelp()
 
-	uncomment things in custompathfindergoalrangedattack after that
+line breaks parameters (only function delcarations): break on new item, indent up to start of first parameter (re: custompathfindergoalnearestattackabetarget)
 
-	investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
+investigate why we need to remove goals
 
-	optimize predicates (not bedrock into base? etc)
+all function comments + @override: comments on top?
 
-	standardize customentity.this vs this.customentity in inner goal classes
+remove D for nunmber literals doubles, and fix floating point rounding errors
 
-	optimize fall damage algo further? check what happens in cobweb, sweet bush, scaffold
+check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
 
-	make thor lightning storm less constant and annoying
+catalog and test super zombie health nerf + xp health gain
 
-	thor general refactoring (sketchy ListenerLightningStrike.storm?)
+custom class for large fireball summon lightning and separate newpathfindergoalshootlargefireballs too; also test todo in lightning storm runnable
 
-	all tickslived == 5 to spawn listener?
-	    but also try to move stuff from listeners like listenermobdeath to the mobs themselves. or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
+uncomment things in custompathfindergoalrangedattack after that
 
-	allow only one lightning effect storm and one tornado at a time with static variables or something
+investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
 
-	merge lightningeffectstorm and lightningstorm runnable with config for percentage actual lightning
+optimize predicates (not bedrock into base? etc)
 
-	try to copy spider code for moving fast in cobwebs?
+standardize customentity.this vs this.customentity in inner goal classes
 
-	husk instead of using anvil storms and sand storms create actual sandstorm runnable similar to tornado but without suction?  so just a lot of sand everywhere
+optimize fall damage algo further? check what happens in cobweb, sweet bush, scaffold
 
-	zombie harming aec on death repurpose for death of witch?
+make thor lightning storm less constant and annoying
 
-	bug: thor lightning persists on death
+thor general refactoring (sketchy ListenerLightningStrike.storm?)
 
-	trident should not break blocks if thrown by player
+all tickslived == 5 to spawn listener?
+    but also try to move stuff from listeners like listenermobdeath to the mobs themselves. or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
 
-	channeling trident not working
+allow only one lightning effect storm and one tornado at a time with static variables or something
 
-	where do player projectiles fall faster? seems to be impacting drowned tridents?
+merge lightningeffectstorm and lightningstorm runnable with config for percentage actual lightning
 
-	change TagsBlock.ENDERMAN_HOLDABLE blocks??? like end stone for example
+try to copy spider code for moving fast in cobwebs?
 
-    comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
+husk instead of using anvil storms and sand storms create actual sandstorm runnable similar to tornado but without suction?  so just a lot of sand everywhere
 
-    attacks comments/docs all into initattack method instead of increase attacks?
+zombie harming aec on death repurpose for death of witch?
 
-    remove unnecessary casts???
+bug: thor lightning persists on death
 
-    util function for Bukkit.getServer().getOnlinePlayers().size()?
+trident should not break blocks if thrown by player
 
-	breakblocksaround goals make sure never remove blocks underneath unless intentional?
+channeling trident not working
 
-	pay with targetchance in nearestattackabletarget; seems to try and stagger execution of goals?
+where do player projectiles fall faster? seems to be impacting drowned tridents?
 
-	iron golem bug s till tries to attack other entities after plaayer goes into creative (and also calls statmultiply from listener?)
+change TagsBlock.ENDERMAN_HOLDABLE blocks??? like end stone for example
 
-	fix iron golem spawning with iron blocks not removing iron blocks
+comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
 
-	villagerdamage and death listeners from raidandvillager to just mob damage? and rename raidandvillager to just raid
+attacks comments/docs all into initattack method instead of increase attacks?
 
-	less hacky way for bukkitplayer set velocity runnable in playerdamagelistener? setDeltaMovement() from forge; check spigot equiv (for lauunching player)
+remove unnecessary casts???
 
-	iron golem sethelath in increashealthadd change to heal? and make sure works
+util function for Bukkit.getServer().getOnlinePlayers().size()?
 
-	balancing and small nerfs like ghast or something, more consistent but less endermites on enderman death etc, no magma cube spawns from blaze
+breakblocksaround goals make sure never remove blocks underneath unless intentional?
 
-	make lava spread fast in overworld if possible?
+pay with targetchance in nearestattackabletarget; seems to try and stagger execution of goals?
 
-	swap grass and tall grass effects
+iron golem bug s till tries to attack other entities after plaayer goes into creative (and also calls statmultiply from listener?)
 
-	remove blank line before cobnstrcutors/fields
+fix iron golem spawning with iron blocks not removing iron blocks
 
-	why are we adding customhurtbytarget in vanillapthfindergoalsaccess? should we do it individually?
+villagerdamage and death listeners from raidandvillager to just mob damage? and rename raidandvillager to just raid
 
-	hoglin fire trails to custom goal?
+less hacky way for bukkitplayer set velocity runnable in playerdamagelistener? setDeltaMovement() from forge; check spigot equiv (for lauunching player)
 
-	phantom more linear size increases?
+iron golem sethelath in increashealthadd change to heal? and make sure works
 
-	phantom check that die() override delay doesn't matter
+balancing and small nerfs like ghast or something, more consistent but less endermites on enderman death etc, no magma cube spawns from blaze
 
-	lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
+make lava spread fast in overworld if possible?
 
-	check all the goals comments esp ranged to add clarification to y-level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
+swap grass and tall grass effects
 
-	make dragon fight logic cleaner, as well as ending messages? find exploits
-	    check out enderdragonbattle.class (in mcp: world/end/dragonfightmanager)
+remove blank line before cobnstrcutors/fields
 
-	move some broadcast messages like the end of the dragon fight to disaply full screen? search google for how
+why are we adding customhurtbytarget in vanillapthfindergoalsaccess? should we do it individually?
 
-	piglin frenzy etc use proper getters and setters
+hoglin fire trails to custom goal?
 
-	piglin still attacks in creative (isinvulnerable check somewhere?)
+phantom more linear size increases?
 
-	bug: piglins seem to still drop item theyre holding; check other mobs too
+phantom check that die() override delay doesn't matter
 
-	fake illusioner little damage but big tankiness
+lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
 
-	creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
+check all the goals comments esp ranged to add clarification to y-level (all from the entities' overridden .g() or whatever), and make sure also specified regardless of LOS
 
-	see if possible to create utils for shooting large and small fireballs etc?
+make dragon fight logic cleaner, as well as ending messages? find exploits
+    check out enderdragonbattle.class (in mcp: world/end/dragonfightmanager)
 
-	getbuffedbymobs goal: increase attacks by a percentage
+move some broadcast messages like the end of the dragon fight to disaply full screen? search google for how
 
-	those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
+piglin frenzy etc use proper getters and setters
 
-	check weather changes works
+piglin still attacks in creative (isinvulnerable check somewhere?)
 
-	try to debofuscate goals using idtech thing, experiment with changing seetime requirement etc
+bug: piglins seem to still drop item theyre holding; check other mobs too
 
-	util functions to set (decrease or increase) max health and health?
+fake illusioner little damage but big tankiness
 
-	more creative effects for mooshroom milking (maybe random sus stew with most chance for bad effects instead)
+creeper, phantom etc try having custom init for initFuse() or whatever instead of constructor and doing hacky reflection stuff in spawnentity. and pass entity instance to spawnentity instead of all this forced compatability with constructors? also dragon uuid? also fake illuisioner parent? or have like a second constrcutor without out the extra init calling this() with a default value for spawnentity or something
 
-	reduce magma cube jump distance so they dont overshoot following range
+see if possible to create utils for shooting large and small fireballs etc?
 
-	break blocks ruunnable instead of booleans to remove dluuids etc just pass in a static predicate to the constrcutor
+getbuffedbymobs goal: increase attacks by a percentage
 
-	bug: slimes and magma blocks sometimes just run away?
+those thbat do something upon death, like ghasts abnd evokers that do it in tick(), check if there is a function that is called before death so don't have to do it in tick()
 
-	check balancing for slime/magma cube damage and melee attack radius
+check weather changes works
 
-	bug?: players still lose bubbles slower when fully submerged than when feet submerged
+try to debofuscate goals using idtech thing, experiment with changing seetime requirement etc
 
-	all mob expliosions and stuff make sure mobgriefing gamerule is respected. make util function for this?
+util functions to set (decrease or increase) max health and health?
 
-	players dont lose bubbles when feet submerged and not moving due to playermovelistener being used
+more creative effects for mooshroom milking (maybe random sus stew with most chance for bad effects instead)
 
-	mobs still taking magma block damage?
+reduce magma cube jump distance so they dont overshoot following range
 
-	test teleportnear player goals like creeper, refine if needed
+break blocks ruunnable instead of booleans to remove dluuids etc just pass in a static predicate to the constrcutor
 
-	somehow nerf endermen drops. for example, drop ender shards (custom item?) which is crafted in 4 to make ender pearl. or just nerf the drop rates lol
+bug: slimes and magma blocks sometimes just run away?
 
-	early return guards for isclientside and stuff
+check balancing for slime/magma cube damage and melee attack radius
 
-	slimes and mamga cubes still get trapped in cobwebs; just break them?
+bug?: players still lose bubbles slower when fully submerged than when feet submerged
 
-    guardians arent attacking out of water
+all mob expliosions and stuff make sure mobgriefing gamerule is respected. make util function for this?
 
-    tridents break block instead of explode
+players dont lose bubbles when feet submerged and not moving due to playermovelistener being used
 
-    dragon does more when all crystals down? random spam blaze + exploding + aec harming + aec poison fireballs or more interesting? set phase charge player more?
+mobs still taking magma block damage?
 
-	mobs dont get affected by soul sand or magma blocks in water
+test teleportnear player goals like creeper, refine if needed
 
-	make sure spawner mobs all have nametags (end etc.)
+somehow nerf endermen drops. for example, drop ender shards (custom item?) which is crafted in 4 to make ender pearl. or just nerf the drop rates lol
 
-	slightly less inaccuracy for player arrows, and add inaccuracy for player tridents/snowballs/eggs/all projectiles honestly including pearls?
+early return guards for isclientside and stuff
 
-    surely crystal destruction is mini wither
+slimes and mamga cubes still get trapped in cobwebs; just break them?
 
-    speed up dragon fireball projectile speeds
+guardians arent attacking out of water
 
-    bug: exiting rejoining causes withers to still aggro other mobs
+tridents break block instead of explode
 
-    standardize super in functions start/end
+dragon does more when all crystals down? random spam blaze + exploding + aec harming + aec poison fireballs or more interesting? set phase charge player more?
 
-    change eggs lottery to json or something/loot table
+mobs dont get affected by soul sand or magma blocks in water
 
-    spawn entity nametag option. make sure mobs spawning other mobs should have nametag
+make sure spawner mobs all have nametags (end etc.)
 
-	find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
+slightly less inaccuracy for player arrows, and add inaccuracy for player tridents/snowballs/eggs/all projectiles honestly including pearls?
 
-	remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
+surely crystal destruction is mini wither
 
-	create full documentation of changes from all /* comments and that google doc?
+speed up dragon fireball projectile speeds
+
+bug: exiting rejoining causes withers to still aggro other mobs
+
+standardize super in functions start/end
+
+change eggs lottery to json or something/loot table
+
+spawn entity nametag option. make sure mobs spawning other mobs should have nametag
+
+find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
+
+remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
+
+create full documentation of changes from all /* comments and that google doc?
 
 balance changes catalog:
-    bats on first hit sumnmon 8-10 vanilla bats -> 6-8
-    bats vertical flight speed 0.7 -> 1
-    bats no longer can duplicate into a swarm of vanilla bats at a certain threshold
-    bats attack thresholds 3, 7, 12, 24, 32 -> 4, 8, 15, 28, 40
-    bats buff max strength 2 -> strength 1
-    bats buff arrow shoot cooldown 20/14/8 ticks -> 40/30/20
-    bats buff silverfish spawn cooldown 12 seconds -> 15
-	striders die faster (find number!)
-	elder guardians random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
-	blazes inaccuracy non rapidfire 0% -> 20% vanilla
-	blazes inaccuracy rapidfire 35% -> 250% vanilla
-	blazes normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
-	blazes rapidfire attack cooldown 3 ticks -> 4
-	(this was more of a bug) blaze melee cooldown 0 ticks -> 20
-	creepers default fuse 15 ticks -> 20
-	creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
-	charged creepers health 200 -> 100
-	drowned attack cooldown 6 ticks -> 7
-	ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
-	ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
-	end fight vex spawner spawn count 42 -> 36
-	endermen no longer summon endermites on death at >40 attacks
-	endermen endermite summon on tp chance 30% -> 10%
-	endermen no longer deaggro out of range
-	endermen look aggro distance 128 -> 64
-	endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10
-	endermen pick up blocks chance per check 1/20 -> 1/5 (four times as frequent)
-	endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequent)
-	iron golem death silverfish 15 -> 10
-	mooshroom death explosion power 15 -> 10
+bats on first hit sumnmon 8-10 vanilla bats -> 6-8
+bats vertical flight speed 0.7 -> 1
+bats no longer can duplicate into a swarm of vanilla bats at a certain threshold
+bats attack thresholds 3, 7, 12, 24, 32 -> 4, 8, 15, 28, 40
+bats buff max strength 2 -> strength 1
+bats buff arrow shoot cooldown 20/14/8 ticks -> 40/30/20
+bats buff silverfish spawn cooldown 12 seconds -> 15
+striders die faster (find number!)
+elder guardians random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
+blazes inaccuracy non rapidfire 0% -> 20% vanilla
+blazes inaccuracy rapidfire 35% -> 250% vanilla
+blazes normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
+blazes rapidfire attack cooldown 3 ticks -> 4
+(this was more of a bug) blaze melee cooldown 0 ticks -> 20
+creepers default fuse 15 ticks -> 20
+creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
+charged creepers health 200 -> 100
+drowned attack cooldown 6 ticks -> 7
+ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
+ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
+end fight vex spawner spawn count 42 -> 36
+endermen no longer summon endermites on death at >40 attacks
+endermen endermite summon on tp chance 30% -> 10%
+endermen no longer deaggro out of range
+endermen look aggro distance 128 -> 64
+endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10
+endermen pick up blocks chance per check 1/20 -> 1/5 (four times as frequent)
+endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequent)
+evokers, illusioners forget players after 60 ticks instead of 300
+iron golem death silverfish 15 -> 10
+mooshroom death explosion power 15 -> 10

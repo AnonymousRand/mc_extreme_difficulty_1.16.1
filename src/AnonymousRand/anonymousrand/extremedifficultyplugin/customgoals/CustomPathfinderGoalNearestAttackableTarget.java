@@ -1,42 +1,37 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomIEntityAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderGoalTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Predicate;
 
-public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalTarget implements CustomIEntityAccess {
+public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsentient & ICustomHostile, T extends EntityLiving>
+        extends CustomPathfinderGoalTarget {
+
     protected final Class<T> targetClass;
     protected final int targetChance;
     protected T potentialTarget;
     protected CustomPathfinderTargetCondition targetCondition;
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient goalOwner, Class<T> targetClass) {
+    public CustomPathfinderGoalNearestAttackableTarget(S goalOwner, Class<T> targetClass) {
         this(goalOwner, targetClass, 10, null);
     }
 
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient goalOwner, Class<T> targetClass, Predicate<EntityLiving> targetPredicate) {
-        this(goalOwner, targetClass, 10, targetPredicate);
-    }
-
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient goalOwner, Class<T> targetClass, CustomPathfinderTargetCondition targetCondition) {
-        this(goalOwner, targetClass, 10, null);
-        this.targetCondition = targetCondition;
-    }
-
-    public CustomPathfinderGoalNearestAttackableTarget(EntityInsentient goalOwner, Class<T> targetClass, int targetChance, @Nullable Predicate<EntityLiving> targetPredicate) {
-        super(goalOwner, false, false); // checkSight/needSightToMaintainTarget is always false, meaning we never need sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
+    public CustomPathfinderGoalNearestAttackableTarget(S goalOwner, Class<T> targetClass, int targetChance,
+                                                       @Nullable Predicate<EntityLiving> targetPredicate) {
+        // needSightToMaintainTarget (checkSight) is always false, meaning we never need sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
+        super(goalOwner, false, false);
         this.targetClass = targetClass;
         this.targetChance = targetChance;
-        this.targetCondition = (new CustomPathfinderTargetCondition()).a(this.k()).a(targetPredicate); // todo replace this.k() with just this.entityinsenitnet.getfollowrange() after mandating entityinsentient be an icustomhosile.
+        // CustomPathfinderTargetCondition no longer requires line of sight to initially find a target, and skulls and invis potions no longer do anything against detection range // todo test skuills and invis
+        this.targetCondition = new CustomPathfinderTargetCondition(this.k(), targetPredicate); // we use getDetectionRange() as changing FOLLOW_RANGE attribute doesn't work: this k() call happens in initPathfinder() in the super() constructor, before we are able to change FOLLOW_RANGE
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
-}
-
-    public void updateDetectionRange() {
-        this.targetCondition.a(this.k());
     }
 
     @Override
@@ -44,7 +39,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
         if (this.targetChance > 0 && this.e.getRandom().nextInt(this.targetChance) != 0) {
             return false;
         } else {
-            this.findPotentialTarget();
+            this.potentialTarget = this.findPotentialValidTarget();
             return this.potentialTarget != null;
         }
     }
@@ -55,30 +50,41 @@ public class CustomPathfinderGoalNearestAttackableTarget<T extends EntityLiving>
             this.e.setGoalTarget(this.potentialTarget, this.potentialTarget instanceof EntityPlayer
                     ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
         }
+
+        this.targetCondition.a(this.k()); // setDetectionRange(); automatically make sure target range is updated for predicate for those mobs that change their detection range
         super.c();
     }
 
-    // overrides a() (getTargetableArea()); name change because not used elsewhere
+    protected T findPotentialValidTarget() {
+        if (this.targetClass == EntityPlayer.class) {
+            return (T) this.findPlayerIgnoreLosAndY(this.e.getWorld().getPlayers(), this.e,
+                    this.e.locX(), this.e.getHeadY(), this.e.locZ());
+        } else {
+            return this.e.getWorld().b(this.targetClass, this.targetCondition, this.e, this.e.locX(),
+                    this.e.getHeadY(), this.e.locZ(), this.getTargetableArea(this.k()));
+        }
+    }
+
+    protected EntityHuman findPlayerIgnoreLosAndY(List<? extends EntityHuman> entities, EntityLiving theOneWhoSeeks,
+                                                  double fromX, double fromY, double fromZ) {
+        double minDistSq = Double.MAX_VALUE;
+        EntityHuman target = null;
+
+        for (EntityHuman entity : entities) {
+            if (this.targetCondition.a(theOneWhoSeeks, entity)) {
+                double distSq = entity.g(fromX, fromY, fromZ); // uses overridden g() which ignores y-level // todo instead of having every mob provide a copy of this function just find all uses of g() and make custom method in here or soemthing?
+
+                if (distSq < minDistSq) {
+                    minDistSq = distSq;
+                    target = entity;
+                }
+            }
+        }
+
+        return target;
+    }
+
     protected AxisAlignedBB getTargetableArea(double detectionRange) {
         return this.e.getBoundingBox().grow(detectionRange, 4.0D, detectionRange);
-    }
-
-    // overrides a(); name change because not used elsewhere
-    protected void setPotentialTarget(@Nullable T entityLiving) {
-        this.potentialTarget = entityLiving;
-    }
-
-    // overrides g() (findNearestTarget()); name change because not used meaningfully elsewhere
-    protected void findPotentialTarget() { // todo returns goal target instead of sets it?
-        if (this.targetClass == EntityPlayer.class) {
-            // passes to CustomPathfinderGoalNearestAttackableTarget.g()
-            // which passes to CustomIEntityAccess.customFindPlayer()
-            // which passes to CustomIEntityAccess.customFindEntity()
-            // which passes to CustomPathfinderTargetConditions.a()
-            // which removes line of sight requirement for initially finding targets
-            this.potentialTarget = (T) this.customFindPlayer(this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ());
-        } else {
-            this.potentialTarget = this.e.getWorld().b(this.targetClass, this.targetCondition, this.e, this.e.locX(), this.e.getHeadY(), this.e.locZ(), this.getTargetableArea(this.k()));
-        }
     }
 }

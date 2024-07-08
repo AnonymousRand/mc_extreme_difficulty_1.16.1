@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import net.minecraft.server.v1_16_R1.*;
@@ -36,7 +36,7 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
         ItemStack itemstack = entityHuman.b(enumhand);
 
         if ((itemstack.getItem() == Items.BOWL && !this.isBaby()) || (itemstack.getItem() == Items.SHEARS && this.canShear())) {
-            EntityPlayer player = this.world.a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box
+            EntityPlayer player = this.world.a(EntityPlayer.class, CustomPathfinderTargetCondition.DEFAULT, this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box, default predicate (no extra conditions)
 
             if (player != null) { /* mooshrooms inflict these effects when they are milked/sheared */
                 player.addEffect(new MobEffect(MobEffects.WEAKNESS, 1200, 255));

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPufferfish;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -39,8 +39,8 @@ public class ListenerSleep implements Listener {
             return;
         }
 
-        EntityLiving closestMonster = nmsWorld.a(EntityMonster.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest monster within 50 blocks horizontally of player
-        CustomEntityPufferfish closestPufferfish = nmsWorld.a(CustomEntityPufferfish.class, new CustomPathfinderTargetCondition(), nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest pufferfish within 50 blocks horizontally of player
+        EntityLiving closestMonster = nmsWorld.a(EntityMonster.class, CustomPathfinderTargetCondition.DEFAULT, nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest monster within 50 blocks horizontally of player
+        CustomEntityPufferfish closestPufferfish = nmsWorld.a(CustomEntityPufferfish.class, CustomPathfinderTargetCondition.DEFAULT, nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest pufferfish within 50 blocks horizontally of player
         double monsterDistanceNoY;
         double pufferfishDistanceNoY;
 

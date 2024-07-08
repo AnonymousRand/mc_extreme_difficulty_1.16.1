@@ -4,9 +4,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.u
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -167,9 +167,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to aggro a target or maintain it as the target */
+        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to initially find a target or maintain it as the target */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                  /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 
@@ -183,7 +183,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     /* Endermen no longer burn and teleport away from lava */
     protected void burnFromLava() {}
 
-    // overrides private g() (shouldAttackPlayer()); name change because not used elsewhere
+    // Overrides private g() (shouldAttackPlayer()); name change because not used elsewhere
     private boolean validPlayerIsLooking(EntityPlayer player) {
         if (player.isSpectator() || player.abilities.isInvulnerable) {
             return false;
@@ -216,7 +216,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
     }
 
-    // overrides private o() (teleportTo())
+    // Overrides private o() (teleportTo())
     private boolean teleportTo(double x, double y, double z) {
         // code merged from a() (attemptTeleport())
         BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
@@ -308,13 +308,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     // e() (tick()) logic has been made more straightfoward
-    static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer> {
+    static class PathfinderGoalPlayerWhoLookedAtTarget
+            extends CustomPathfinderGoalNearestAttackableTarget<CustomEntityEnderman, EntityPlayer> {
 
         private final CustomEntityEnderman enderman;
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
-            super(enderman, EntityPlayer.class, new CustomPathfinderTargetCondition().a(64.0).a((entityLiving)
-                    -> enderman.validPlayerIsLooking((EntityPlayer) entityLiving))); // endermen can still be aggroed from up to 64 blocks away
+            super(enderman, EntityPlayer.class);
+            this.targetCondition = new CustomPathfinderTargetCondition(64.0, (entityLiving) ->
+                    enderman.validPlayerIsLooking((EntityPlayer) entityLiving)); // endermen can still be aggroed from up to 64 blocks away
             this.enderman = enderman;
         }
 
@@ -322,7 +324,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         // Note that this function is somehow not run if enderman already has a target, i.e. look-aggro does not take precendence over other aggro. This is a feature, not a bug.
         public boolean a() {
             /* Endermen can be aggroed regardless of y-level and line of sight */
-            this.findPotentialTarget();
+            this.potentialTarget = this.findPotentialValidTarget();
             return this.potentialTarget != null;
         }
 
@@ -346,11 +348,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
     }
 
-    static class PathfinderGoalNearestAttackableTarget<T extends EntityLiving> extends CustomPathfinderGoalNearestAttackableTarget<T> {
+    static class PathfinderGoalNearestAttackableTarget<S extends CustomEntityEnderman & ICustomHostile, T extends EntityLiving>
+            extends CustomPathfinderGoalNearestAttackableTarget<S, T> {
 
         private final CustomEntityEnderman enderman;
 
-        public PathfinderGoalNearestAttackableTarget(CustomEntityEnderman enderman, Class<T> targetClass) {
+        public PathfinderGoalNearestAttackableTarget(S enderman, Class<T> targetClass) {
             super(enderman, targetClass);
             this.enderman = enderman;
         }

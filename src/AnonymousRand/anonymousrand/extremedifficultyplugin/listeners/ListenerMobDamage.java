@@ -25,12 +25,15 @@ public class ListenerMobDamage implements Listener {
         EntityType bukkitEntityType = event.getEntityType();
         EntityDamageEvent.DamageCause cause = event.getCause();
         Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
+        // todo easier to negate this?
         boolean checkCause = cause.equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || cause.equals(EntityDamageEvent.DamageCause.LAVA) || cause.equals(EntityDamageEvent.DamageCause.FALL) || cause.equals(EntityDamageEvent.DamageCause.LIGHTNING) || cause.equals(EntityDamageEvent.DamageCause.SUFFOCATION) || cause.equals(EntityDamageEvent.DamageCause.CONTACT) || cause.equals(EntityDamageEvent.DamageCause.DROWNING) || cause.equals(EntityDamageEvent.DamageCause.DRAGON_BREATH) || cause.equals(EntityDamageEvent.DamageCause.FALLING_BLOCK) || cause.equals(EntityDamageEvent.DamageCause.FIRE) || cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK) || cause.equals(EntityDamageEvent.DamageCause.MAGIC) || cause.equals(EntityDamageEvent.DamageCause.POISON) || cause.equals(EntityDamageEvent.DamageCause.CRAMMING);
 
+        /* all non-player mobs take no damage from these sources */
         if (checkCause) {
-            if (bukkitEntityType != PLAYER && bukkitEntityType != ENDER_DRAGON && bukkitEntityType != WITHER) { /* all non-player mobs take no damage from these sources */
+            if (bukkitEntityType != PLAYER && bukkitEntityType != ENDER_DRAGON && bukkitEntityType != WITHER) {
                 event.setCancelled(true);
                 return;
+            // todo comment on how not canceling event might be for comedic red flash with heal?
             } else if (bukkitEntityType == ENDER_DRAGON || bukkitEntityType == WITHER) { /* ender dragon and wither gain max health and health equal to 20% of the damage dealt by these causes */
                 LivingEntity livingEntity = (LivingEntity) event.getEntity();
                 livingEntity.setMaxHealth(livingEntity.getMaxHealth() + event.getDamage() * 0.2);
@@ -56,6 +59,7 @@ public class ListenerMobDamage implements Listener {
             }
         }
 
+        // todo exclude villager too?
         if (!(nmsEntity instanceof EntityPlayer) && !(nmsEntity instanceof CustomEntityChickenAggressive) && !(nmsEntity instanceof EntityVillagerAbstract) && !(nmsDamager instanceof EntityPlayer) && !(nmsDamager instanceof CustomEntityChickenAggressive)) { /* hostile mobs can't damage each other except aggressive chickens and villagers/traders */ // gettype doesn't seem to work so I'm using instanceof
             event.setCancelled(true);
         }

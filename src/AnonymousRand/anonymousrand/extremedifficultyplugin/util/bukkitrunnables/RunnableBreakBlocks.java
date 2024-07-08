@@ -24,8 +24,8 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected int baseX, baseY, baseZ;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
-    protected Predicate<Material> blockBreakable = (type)
-            -> Predicates.blockBreakableDefault.test(type)
+    protected Predicate<Material> blockBreakable = (type) ->
+            Predicates.blockBreakableDefault.test(type)
             && Predicates.notBedrock.test(type)
             && Predicates.notHardBlocks.test(type)
             && Predicates.notFireOrWitherRose.test(type);
