@@ -275,7 +275,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             }
 
             boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-            if (tookDamage && !this.killed) {
+            if (tookDamage && this.isAlive()) {
                 /* After 40 attacks, endermen summon an endermite when hit and not killed */
                 if (this.getAttacks() >= 40) {
                     new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);

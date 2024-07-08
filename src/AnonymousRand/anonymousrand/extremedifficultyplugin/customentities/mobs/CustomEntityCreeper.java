@@ -154,7 +154,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2 if charged) */
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()
                 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) {
             new SpawnEntity(this.getWorld(), this.getMaxFuseTicks(), new CustomEntityCreeper(this.getWorld()),
                     this.isPowered() ? 2 : 1, null, null, this, false, true);

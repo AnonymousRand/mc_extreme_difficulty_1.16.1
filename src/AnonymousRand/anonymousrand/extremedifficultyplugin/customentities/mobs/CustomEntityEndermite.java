@@ -162,7 +162,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed) { /* duplicates when hit by player and not killed */
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()) { /* duplicates when hit by player and not killed */
             new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
         }
 

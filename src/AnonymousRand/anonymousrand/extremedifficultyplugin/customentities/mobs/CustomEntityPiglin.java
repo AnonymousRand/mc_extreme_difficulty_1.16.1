@@ -129,7 +129,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
             if (random.nextDouble() < 0.075) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
                 newPiglin.a(true);

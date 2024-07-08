@@ -56,7 +56,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
+        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
             new SpawnEntity(this.getWorld(), new CustomEntityRabbit(this.getWorld()), 1, null, null, this, false, true);
         }
 
