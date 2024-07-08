@@ -9,8 +9,8 @@ import org.bukkit.entity.EntityType;
 
 public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
 
-    public CustomPathfinderGoalTarget(EntityInsentient entityInsentient, boolean checkSight, boolean nearbyOnly) {
-        super(entityInsentient, checkSight, nearbyOnly);
+    public CustomPathfinderGoalTarget(EntityInsentient entityInsentient, boolean needSightToMaintainTarget, boolean nearbyOnly) {
+        super(entityInsentient, needSightToMaintainTarget, nearbyOnly);
     }
 
     @Override

@@ -82,7 +82,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     //                                      ICustomHostile                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Bats have 16 block detection range (24 after 7 attacks, 32 after 12 attacks) */
+    /* Bats have 16 block detection range (24 after 8 attacks, 32 after 15 attacks) */
     public double getDetectionRange() {
         // null check since getDetectionRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
@@ -122,7 +122,6 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -226,14 +225,13 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                           /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                           /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        Bukkit.broadcastMessage(tookDamage + "");
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && !this.killed && this.firstDuplicate) {
             this.firstDuplicate = false;

@@ -84,7 +84,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -147,7 +146,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                                        /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 

@@ -79,7 +79,6 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -173,7 +172,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, new PathfinderGoalBlazeFireballAttack(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
     @Override

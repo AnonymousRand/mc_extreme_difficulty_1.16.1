@@ -1,25 +1,30 @@
 todo:
 
     overriden functions like checkdespawn try to use descriptive variable names
-
     comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
     plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 	reorganize all custommobs to use new attacks thing and whatever (including blaze).
 	custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
-	stopped after: customentityenderdragon
+	private instead of protected where possible
+	stopped after: customentityenderman
 
+
+    change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
+
+    custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
 
     followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
-	change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
+    cleaning up customnearestattackabletarget mess: is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
+        customfindentities in icustomentityaccess is a good place to start
+        customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
+    	old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
+        if not, should they still be part of icustomhostile? what about checkdespawn and bL?
+
+
+    try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
 
     increment attacks in attack method/goal instead of listener?
-
-    make all variables/parameters starting with entity not start with entity
-
-    no blank lines after class declaration and before instance variable decalarations?
-
-    all -- and ++ to after if possible
 
 	make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
@@ -27,18 +32,10 @@ todo:
 
     mobs with follow distance <= 32 do not need increased random despawn distance?
 
-    is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
-        customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
-	    old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
-        if not, should they still be part of icustomhostile? what about checkdespawn and bL?
 
     registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 	should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
-
-    custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
-
-    try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
 
     some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
 
@@ -46,13 +43,24 @@ todo:
         does spawnentity even need to be a runnable?
         wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
-    should all utils be static? id tech has them static
+    should all utils be static?
 
 
+
+
+    better documentation for removing y-level/los requirements for finding targets
 
     personalize all doc comments with mob name?
 
+    no blank lines after class declaration and before instance variable decalarations?
+
+    all -- and ++ to after if possible
+
     listeners group by event?
+
+    make all variables/parameters starting with entity not start with entity
+
+    overridden functions and stuff organize alphabetiocal?
 
     nms, bukkit etc labels use underscore?
 
@@ -100,6 +108,8 @@ todo:
 	channeling trident not working
 
 	where do player projectiles fall faster? seems to be impacting drowned tridents?
+
+	change TagsBlock.ENDERMAN_HOLDABLE blocks??? like end stone for example
 
     comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
 
@@ -245,5 +255,8 @@ balance changes catalog:
 	endermen no longer summon endermites on death at >40 attacks
 	endermen endermite summon on tp chance 30% -> 20%
 	endermen look aggro distance 128 -> 64
+	endermen randomteleportonhit vertical range -32 to 32 -> -10 to 10
+	endermen pick up blocks chance per check 1/20 -> 1/5 (four times as frequent)
+	endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequent)
 	iron golem death silverfish 15 -> 10
 	mooshroom death explosion power 15 -> 10

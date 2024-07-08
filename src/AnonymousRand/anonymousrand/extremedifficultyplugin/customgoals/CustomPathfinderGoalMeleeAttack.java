@@ -28,7 +28,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
     @Override
     public boolean a() { // copied in because first two attacks are rapid fire otherwise // todo investigate why
-        long i = this.entity.world.getTime();
+        long i = this.entity.getWorld().getTime();
 
         if (i - this.k < 20L) { // this line dictates attack cooldown // todo check
             return false;

@@ -7,13 +7,13 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
-public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { // used to be called EntityPredicate in Bukkit/non-Spigot source code 1.16.1
+public class CustomPathfinderTargetCondition extends PathfinderTargetCondition { // used to be called targetPredicate in Bukkit/non-Spigot source code 1.16.1
     public static final CustomPathfinderTargetCondition a = new CustomPathfinderTargetCondition();
     private double detectionRange = -1.0D;
     private boolean c;
     private boolean d;
     private boolean f;
-    private Predicate<EntityLiving> h;
+    private Predicate<EntityLiving> targetPredicate;
     private static Field c1, d1, f1;
 
     public CustomPathfinderTargetCondition() {
@@ -34,7 +34,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
         }
     }
 
-    @Override // todo doc these with description names
+    @Override
     public boolean a(@Nullable EntityLiving attacker, EntityLiving target) { // turn off line of sight requirement for initially finding target player using nearestAttackableTarget goal which uses getClosestEntity/Player in CustomIEntityAccess which uses this function CustomPathfinderTargetCondition.a (canTarget) which no longer requires EntitySenses.a (canSee) to be true
         if (attacker == target) {
             return false;
@@ -44,7 +44,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
             return false;
         } else if (!this.c && target.isInvulnerable()) {
             return false;
-        } else if (this.h != null && !this.h.test(target)) {
+        } else if (this.targetPredicate != null && !this.targetPredicate.test(target)) { // test passing targetPredicate
             return false;
         } else {
             if (attacker != null) {
@@ -62,10 +62,11 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
                     return false;
                 }
 
+                // test within range
                 if (this.detectionRange > 0.0D) { /* skulls and invis potions no longer do anything against detection range */ // todo test
-                    double entityDistanceSq = attacker.g(target.locX(), target.locY(), target.locZ());
+                    double entityDistSq = attacker.g(target.locX(), target.locY(), target.locZ());
 
-                    if (entityDistanceSq > this.detectionRange * this.detectionRange) {
+                    if (entityDistSq > this.detectionRange * this.detectionRange) {
                         return false;
                     }
                 }
@@ -84,7 +85,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
     @Override
     public CustomPathfinderTargetCondition a(@Nullable Predicate<EntityLiving> predicate) {
-        this.h = predicate;
+        this.targetPredicate = predicate;
         return this;
     }
 

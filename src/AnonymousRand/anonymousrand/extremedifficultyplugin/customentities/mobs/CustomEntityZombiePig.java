@@ -75,7 +75,6 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

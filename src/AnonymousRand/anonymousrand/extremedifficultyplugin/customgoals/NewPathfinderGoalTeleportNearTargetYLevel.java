@@ -86,15 +86,15 @@ public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
     protected void teleportTo(BlockPosition pos) {
         BlockPosition.MutableBlockPosition blockPosition_mutableblockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockPosition_mutableblockPosition.getY() > 0 && !this.entity.world.getType(blockPosition_mutableblockPosition).getMaterial().isSolid()) {
+        while (blockPosition_mutableblockPosition.getY() > 0 && !this.entity.getWorld().getType(blockPosition_mutableblockPosition).getMaterial().isSolid()) {
             blockPosition_mutableblockPosition.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.world.getType(blockPosition_mutableblockPosition);
+        IBlockData iblockdata = this.entity.getWorld().getType(blockPosition_mutableblockPosition);
 
         if (iblockdata.getMaterial().isSolid()) {
             if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
-                this.entity.world.playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
+                this.entity.getWorld().playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
                 this.entity.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
         }
@@ -107,7 +107,7 @@ public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
         double d6 = d1;
         boolean flag1 = false;
         BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
-        World world = this.entity.world;
+        World world = this.entity.getWorld();
 
         if (world.isLoaded(blockPosition)) {
             boolean flag2 = false;

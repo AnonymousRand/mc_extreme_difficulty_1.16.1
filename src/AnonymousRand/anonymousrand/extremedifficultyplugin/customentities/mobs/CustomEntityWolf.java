@@ -60,7 +60,6 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

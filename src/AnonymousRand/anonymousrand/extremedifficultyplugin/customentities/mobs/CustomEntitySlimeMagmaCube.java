@@ -91,7 +91,6 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

@@ -69,7 +69,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -129,8 +128,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
     @Override
@@ -187,7 +186,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
             if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
-                World world = this.ghast.world;
+                World world = this.ghast.getWorld();
 
                 ++this.chargeTime;
                 if (this.chargeTime == 10 && !this.ghast.isSilent()) { // this doesn't seem to affect anything
@@ -275,7 +274,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                     this.a.aH = this.a.yaw;
                 }
             }
-
         }
     }
 

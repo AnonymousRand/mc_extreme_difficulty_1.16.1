@@ -76,7 +76,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -154,7 +153,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(1, (new CustomPathfinderGoalHurtByTarget(this, new Class[0])));
-        this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
         this.targetSelector.a(3, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
     }
 
@@ -343,7 +342,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
 
         private boolean h() {
-            WorldServer worldserver = (WorldServer) this.entity.world;
+            WorldServer worldserver = (WorldServer) this.entity.getWorld();
             BlockPosition blockPosition = this.entity.getChunkCoordinates();
             Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.entity.getRandom());
 
@@ -365,7 +364,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             if (this.c.a(this.entity.getPositionVector(), this.e)) {
                 this.d.add(this.c);
             }
-
         }
 
         @Override
@@ -393,7 +391,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
                 this.entity.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
             }
-
         }
 
         private boolean a(BlockPosition blockPosition) {
@@ -416,7 +413,6 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             if (this.d.size() > 2) {
                 this.d.remove(0);
             }
-
         }
     }
 }

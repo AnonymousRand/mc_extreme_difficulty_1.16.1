@@ -25,7 +25,7 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        if (this.entity.world.isRainingAt(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ())) && random.nextDouble() < 0.0001 * (this.chanceMultiplier)) {
+        if (this.entity.getWorld().isRainingAt(new BlockPosition(this.entity.locX(), this.entity.locY(), this.entity.locZ())) && random.nextDouble() < 0.0001 * (this.chanceMultiplier)) {
             return true;
         } else {
             return random.nextDouble() < 0.000025 * (this.chanceMultiplier);

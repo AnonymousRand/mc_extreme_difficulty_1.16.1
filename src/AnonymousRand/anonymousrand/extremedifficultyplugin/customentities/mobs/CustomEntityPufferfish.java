@@ -88,7 +88,6 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

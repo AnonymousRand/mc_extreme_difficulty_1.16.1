@@ -10,7 +10,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & 
     protected CustomPathfinderGoalRangedCrossbowAttack.State crossbowState;
     protected final double speedTowardsTarget;
     protected int attackInterval;
-    protected float maxAttackDistanceSq;
+    protected float maxAttackDistSq;
     protected int seeTime;
     protected int updatePathDelay;
 
@@ -20,7 +20,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & 
         this.entity = t0;
         this.speedTowardsTarget = speedTowardsTarget;
         this.attackInterval = attackInterval;
-        this.maxAttackDistanceSq = maxDistance * maxDistance;
+        this.maxAttackDistSq = maxDistance * maxDistance;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
@@ -38,7 +38,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & 
         double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
-        boolean flag2 = (distanceToSquared > (double) this.maxAttackDistanceSq || this.seeTime < 5) && this.crossbowState == State.UNCHARGED;
+        boolean flag2 = (distanceToSquared > (double) this.maxAttackDistSq || this.seeTime < 5) && this.crossbowState == State.UNCHARGED;
 
         if (flag2) {
             --this.updatePathDelay;

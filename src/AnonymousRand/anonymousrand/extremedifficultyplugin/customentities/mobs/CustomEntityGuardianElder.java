@@ -66,7 +66,6 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -104,7 +103,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         this.goalSelector.a(7, this.goalRandomStroll);
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
     @Override
@@ -187,12 +186,12 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                 if (this.b == 0) {
                     this.entity.a(this.entity.getGoalTarget().getId());
                     if (!this.entity.isSilent()) {
-                        this.entity.world.broadcastEntityEffect(this.entity, (byte) 21);
+                        this.entity.getWorld().broadcastEntityEffect(this.entity, (byte) 21);
                     }
                 } else if (this.b >= this.entity.eL()) {
                     float f = 1.0F;
 
-                    if (this.entity.world.getDifficulty() == EnumDifficulty.HARD) {
+                    if (this.entity.getWorld().getDifficulty() == EnumDifficulty.HARD) {
                         f += 2.0F;
                     }
 

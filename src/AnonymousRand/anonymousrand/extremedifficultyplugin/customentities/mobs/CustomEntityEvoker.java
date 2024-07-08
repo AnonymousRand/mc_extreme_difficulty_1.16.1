@@ -75,7 +75,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -159,7 +158,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, (new CustomPathfinderGoalHurtByTarget(this, new Class[]{EntityRaider.class})).a(EntityRaider.class)); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)).a(300)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
         this.targetSelector.a(2, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class)).a(300));
     }
 
@@ -523,7 +522,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         }
 
         private boolean h() {
-            WorldServer worldserver = (WorldServer) this.raider.world;
+            WorldServer worldserver = (WorldServer) this.raider.getWorld();
             BlockPosition blockPosition = this.raider.getChunkCoordinates();
             Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.raider.getRandom());
 
@@ -545,7 +544,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             if (this.c.a(this.raider.getPositionVector(), this.e)) {
                 this.d.add(this.c);
             }
-
         }
 
         @Override
@@ -573,7 +571,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
                 this.raider.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
             }
-
         }
 
         private boolean a(BlockPosition blockPosition) {
@@ -596,7 +593,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             if (this.d.size() > 2) {
                 this.d.remove(0);
             }
-
         }
     }
 

@@ -67,7 +67,6 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -140,7 +139,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(6, new PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
@@ -159,8 +158,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         @Override
         public boolean a() {
-            return super.a() && !this.drowned.world.isDay() && this.drowned.isInWater()
-                    && this.drowned.locY() >= (double) (this.drowned.world.getSeaLevel() - 3);
+            return super.a() && !this.drowned.getWorld().isDay() && this.drowned.isInWater()
+                    && this.drowned.locY() >= (double) (this.drowned.getWorld().getSeaLevel() - 3);
         }
 
         @Override // shouldMoveTo()

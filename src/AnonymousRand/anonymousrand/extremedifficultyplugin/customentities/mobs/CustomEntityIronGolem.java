@@ -143,7 +143,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
             this.detectionRangeMultipler = 3.0;
         }
 
-        VanillaPathfinderGoalsAccess.updateMobDetectionRange(this);
+        VanillaPathfinderGoalsAccess.updateMobDetectionRange(this); // todo can eventually be just change variable if refactoring detectionrange to variable?
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

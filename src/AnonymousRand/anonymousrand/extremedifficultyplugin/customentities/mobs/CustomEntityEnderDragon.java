@@ -55,7 +55,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target (for the custom fireball goal) */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalDragonNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or maintain it as the target (for the custom fireball goal) */
     }
 
     @Override // onCrystalDestroyed()

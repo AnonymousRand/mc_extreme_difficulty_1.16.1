@@ -70,7 +70,6 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -142,7 +141,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level or line of sight to aggro a target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */
     }
 
     @Override
@@ -210,12 +209,12 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
                 if (this.b == 0) {
                     this.guardian.a(this.guardian.getGoalTarget().getId());
                     if (!this.guardian.isSilent()) {
-                        this.guardian.world.broadcastEntityEffect(this.guardian, (byte) 21);
+                        this.guardian.getWorld().broadcastEntityEffect(this.guardian, (byte) 21);
                     }
                 } else if (this.b >= this.guardian.eL()) {
                     float f = 1.0F;
 
-                    if (this.guardian.world.getDifficulty() == EnumDifficulty.HARD) {
+                    if (this.guardian.getWorld().getDifficulty() == EnumDifficulty.HARD) {
                         f += 2.0F;
                     }
 

@@ -8,7 +8,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Random;
 
@@ -75,7 +74,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
@@ -139,16 +137,16 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     @Override
     protected void initPathfinder() {
-        /* Endermen no longer target endermites, avoid water, or stop if stared at */ // todo test no staring stop
+        /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                               /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                               /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-        this.goalSelector.a(10, new CustomEntityEnderman.PathfinderGoalEndermanPlaceBlock(this));
-        this.goalSelector.a(11, new CustomEntityEnderman.PathfinderGoalEndermanPickupBlock(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target, and always aggros instead of only when angry */
+        this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
+        this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to aggro a target or maintain it as the target */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
@@ -161,61 +159,56 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     @Override
-    /* Endermen no longer burn and teleport away from lava */ // todo test
+    /* Endermen no longer burn and teleport away from lava */
     protected void burnFromLava() {}
 
-    protected boolean shouldAttackPlayer(EntityHuman human) {
+    // overrides private g() (shouldAttackPlayer()); name change because not used elsewhere
+    private boolean validPlayerIsLooking(EntityPlayer player) {
+        if (player.isSpectator() || player.abilities.isInvulnerable) {
+            return false;
+        }
+
         /* Carved pumpkins no longer work */
-        Vec3D vec3d = human.f(1.0F).d();
-        Vec3D vec3d1 = new Vec3D(this.locX() - human.locX(), this.getHeadY() - human.getHeadY(), this.locZ() - human.locZ());
-        double d0 = vec3d1.f();
+        Vec3D playerLookDirection = player.f(1.0F).d();
+        Vec3D directionToPlayer = new Vec3D(this.locX() - player.locX(), this.getHeadY() - player.getHeadY(),
+                this.locZ() - player.locZ());
+        double directionToPlayerMagnitude = directionToPlayer.f();
+        directionToPlayer = directionToPlayer.d(); // normalize
 
-        vec3d1 = vec3d1.d();
-        double d1 = vec3d.b(vec3d1);
-
-        /* Endermen no longer need line of sight to aggro by sight (i.e. can be aggroed through blocks) */ // todo test
-        return d1 > 1.0D - 0.025D / d0;
+        double dotProd = playerLookDirection.b(directionToPlayer);
+        /* Endermen no longer need line of sight to aggro by sight (i.e. can be aggroed through blocks) */
+        return dotProd > 1.0D - 0.025D / directionToPlayerMagnitude;
     }
 
-    @Override // teleportRandomly()
-    protected boolean eM() {
+    // based off teleportRandomly()
+    private boolean teleportRandomlyOnHit() {
         if (!this.getWorld().s_() && this.isAlive()) {
-            /* Random teleportation range decreased to 10 blocks so that if it somehow teleports away it is likely still in range of the player */
-            double d0 = this.locX() + (random.nextDouble() - 0.5D) * 20.0D;
-            double d1 = this.locY() + (double) (random.nextInt(64) - 32);
-            double d2 = this.locZ() + (random.nextDouble() - 0.5D) * 24.0D;
+            /* Random teleportation range decreased to 10 blocks so that if it somehow teleports away it is likely still in range of the player */ // todo doesnt seem right, print out distance
+            double x = this.locX() + (random.nextDouble() - 0.5D) * 20.0D;
+            double y = this.locY() + (double) (random.nextInt(20) - 10);
+            double z = this.locZ() + (random.nextDouble() - 0.5D) * 20.0D;
 
-            return this.o(d0, d1, d2);
+            return this.teleportTo(x, y, z);
         } else {
             return false;
         }
     }
 
-    // override private teleportToEntity()
-    protected boolean a(Entity entity) {
-        Vec3D vec3d = new Vec3D(this.locX() - entity.locX(), this.e(0.5D) - entity.getHeadY(), this.locZ() - entity.locZ());
-
-        vec3d = vec3d.d();
-        double d1 = this.locX() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
-        double d2 = this.locY() + (double) (random.nextInt(16) - 8) - vec3d.y * 16.0D;
-        double d3 = this.locZ() + (random.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
-
-        return this.o(d1, d2, d3);
-    }
-
-    // override private teleportTo()
-    protected boolean o(double d0, double d1, double d2) {
-        BlockPosition.MutableBlockPosition mutableblockPosition = new BlockPosition.MutableBlockPosition(d0, d1, d2);
-        while (mutableblockPosition.getY() > 0 && !this.getWorld().getType(mutableblockPosition).getMaterial().isSolid()) {
+    // overrides private o() (teleportTo())
+    private boolean teleportTo(double x, double y, double z) {
+        BlockPosition.MutableBlockPosition mutableblockPosition = new BlockPosition.MutableBlockPosition(x, y, z);
+        while (mutableblockPosition.getY() > 0 && !this.getWorld().getType(mutableblockPosition).getMaterial().isSolid()) { // todo dont need this since already in attemptteleport? or move attemptteleport logic in here
             mutableblockPosition.c(EnumDirection.DOWN);
         }
 
-        /* Endermen can now teleport onto fluids and non-solid blocks */ // todo test, difference between this check and in a()?
-        boolean flag2 = this.a(d0, d1, d2, true);
-        if (flag2 && !this.isSilent()) {
-            this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
-                    this.getSoundCategory(), 1.0F, 1.0F);
-            this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        /* Endermen can now teleport onto fluids and non-solid blocks */
+        boolean isTeleportSuccessful = this.attemptTeleport(x, y, z);
+        if (isTeleportSuccessful) {
+            if (!this.isSilent()) {
+                this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
+                        this.getSoundCategory(), 1.0F, 1.0F);
+                this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
 
             /* Endermen have a 20% chance to summon an endermite where it teleports to */
             if (random.nextDouble() < 0.2) {
@@ -223,7 +216,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             }
         }
 
-        return flag2;
+        return isTeleportSuccessful;
     }
 
     @Override
@@ -243,8 +236,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 }
             }
 
-            if (!this.getWorld().s_() && random.nextInt(10) != 0) {
-                this.eM();
+            if (!this.getWorld().isClientSide && random.nextInt(10) != 0) { // todo test do they really tp away 9 out of 10 times on damage? even in vanilla
+                this.teleportRandomlyOnHit();
             }
 
             return tookDamage;
@@ -254,203 +247,179 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     @Override
     public void tick() {
         super.tick();
+        // todo test if not deaggroing out of range is bad
 
         if (this.getGoalTarget() != null) {
-            // deaggros if out of range
-            if (this.d(this.getGoalTarget().getPositionVector()) > Math.pow(this.getDetectionRange(), 2)) {
-                this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
+            EntityLiving target = this.getGoalTarget();
+
+            /* Endermen teleport to player if player is more than 12 blocks away horizontally */ // todo test
+            if (this.d(target.getPositionVector()) > 144.0) {
+                this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
 
-            if (this.getGoalTarget() != null) {
-                EntityLiving target = this.getGoalTarget();
-
-                /* Endermen teleport to player if player is more than 12 blocks away horizontally */
-                if (this.d(target.getPositionVector()) > 144.0) {
-                    this.o(target.locX(), target.locY(), target.locZ());
-                }
-
-                /* Endermen teleport to player if player can't be seen (includes when the player is towering up) */ // todo test
-                if (!this.getEntitySenses().a(target)) {
-                    Bukkit.broadcastMessage("tp");
-                    this.o(target.locX(), target.locY(), target.locZ());
-                }
+            /* Endermen teleport to player if player can't be seen (includes when the player is towering up) */ // todo test failed
+            if (!this.getEntitySenses().a(target)) {
+                Bukkit.broadcastMessage("tp");
+                this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
         }
     }
 
-    @Override
-    public boolean a(double d0, double d1, double d2, boolean flag) {
-        double d3 = this.locX();
-        double d4 = this.locY();
-        double d5 = this.locZ();
-        double d6 = d1;
-        boolean flag1 = false;
-        BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
+    // originally a(); can change name because not used anywhere else
+    private boolean attemptTeleport(double x, double y, double z) {
+        BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
+        double currX = this.locX();
+        double currY = this.locY();
+        double currZ = this.locZ();
         World world = this.getWorld();
 
-        if (world.isLoaded(blockPosition)) {
-            boolean flag2 = false;
+        if (world.isLoaded(targetBlockPosition)) {
+            IBlockData targetBlockData = world.getType(targetBlockPosition);
+            boolean isTargetBlockSolid = targetBlockData.getMaterial().isSolid();
 
-            while (!flag2 && blockPosition.getY() > 0) {
-                BlockPosition blockPosition1 = blockPosition.down();
-                IBlockData iblockdata = world.getType(blockPosition1);
+            while (!isTargetBlockSolid && targetBlockPosition.getY() > 0) {
+                targetBlockPosition = targetBlockPosition.down();
+                targetBlockData = world.getType(targetBlockPosition);
 
-                if (iblockdata.getMaterial().isSolid()) {
-                    flag2 = true;
-                } else {
-                    --d6;
-                    blockPosition = blockPosition1;
+                if (targetBlockData.getMaterial().isSolid()) { // todo test if this check affects teleporting onto slabs etc
+                    isTargetBlockSolid = true;
                 }
             }
 
-            if (flag2) {
-                this.enderTeleportTo(d0, d6, d2);
+            if (isTargetBlockSolid) {
+                this.enderTeleportTo(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ());
                 /* Endermen can teleport onto fluids */
-                if (world.getCubes(this)) {
-                    flag1 = true;
+                if (world.getCubes(this)) { // getCubes() is hasNoCollisions(); this checks success of the teleport
+                    world.broadcastEntityEffect(this, (byte) 46);
+                    this.getNavigation().o();
+                    return true;
                 }
             }
         }
 
-        if (!flag1) {
-            this.enderTeleportTo(d3, d4, d5);
-            return false;
-        } else {
-            if (flag) {
-                world.broadcastEntityEffect(this, (byte) 46);
-            }
-
-            this.getNavigation().o();
-            return true;
-        }
+        // if teleport attempt failed
+        this.enderTeleportTo(currX, currY, currZ);
+        return false;
     }
 
+    // e() (tick()) logic has been made more straightfoward
     static class PathfinderGoalPlayerWhoLookedAtTarget extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer> {
 
-        private final CustomEntityEnderman entity;
-        private EntityHuman target;
-        private final CustomPathfinderTargetCondition m;
-        private final CustomPathfinderTargetCondition n = (CustomPathfinderTargetCondition)
-                (new CustomPathfinderTargetCondition()).c();
+        private EntityPlayer playerWhoLooked;
 
-        public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman entityEnderman) {
-            super(entityEnderman, EntityPlayer.class);
-            this.entity = entityEnderman;
-            this.m = (new CustomPathfinderTargetCondition()).a(this.k()).a((entityLiving)-> {
-                return entityEnderman.shouldAttackPlayer((EntityHuman) entityLiving);
-            });
+        public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
+            super(enderman, EntityPlayer.class, new CustomPathfinderTargetCondition().a(64.0).a((entityLiving)
+                    -> enderman.validPlayerIsLooking((EntityPlayer) entityLiving))); // endermen can still be aggroed from up to 64 blocks away
         }
 
         @Override
         public boolean a() {
-            this.target = this.entity.world.a(this.m, this.entity);
-            return this.target != null;
+            /* Endermen can be aggroed regardless of y-level and line of sight */
+            this.findPotentialTarget();
+            if (this.potentialTarget != null && this.potentialTarget instanceof EntityPlayer) {
+                this.playerWhoLooked = (EntityPlayer) this.potentialTarget;
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        // modified so that endermen will not deaggro a player who looked at it ever (unless they die or go out of survival)
+        public boolean b() {
+            return this.playerWhoLooked != null && !this.playerWhoLooked.isSpectator()
+                    && !this.playerWhoLooked.abilities.isInvulnerable;
         }
 
         @Override
         public void d() {
-            this.target = null;
+            this.playerWhoLooked = null;
             super.d();
         }
+    }
+
+    static class PathfinderGoalPickUpBlock extends PathfinderGoal {
+
+        private final CustomEntityEnderman enderman;
+
+        public PathfinderGoalPickUpBlock(CustomEntityEnderman enderman) {
+            this.enderman = enderman;
+        }
 
         @Override
-        public boolean b() {
-            if (this.target != null) {
-                if (!this.entity.shouldAttackPlayer(this.target)) {
-                    return false;
-                } else {
-                    this.entity.a(this.target, 10.0F, 10.0F);
-                    return true;
-                }
-            } else {
-                return this.nearestTarget != null && this.n.a(this.entity, this.nearestTarget) ? true : super.b();
-            }
+        /* Endermen pick up blocks four times as frequently */
+        public boolean a() {
+            return this.enderman.getCarried() == null && this.enderman.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
+                    && this.enderman.getRandom().nextInt(5) == 0;
         }
 
         @Override
         public void e() {
-            this.entity.setGoalTarget(this.target, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false); // simplified to deal with some bugs
-            super.e();
+            Random random = this.enderman.getRandom();
+            World world = this.enderman.getWorld();
+
+            int x = MathHelper.floor(this.enderman.locX() - 2.0D + random.nextDouble() * 4.0D);
+            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 3.0D);
+            int z = MathHelper.floor(this.enderman.locZ() - 2.0D + random.nextDouble() * 4.0D);
+            BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
+            IBlockData targetBlockData = world.getType(targetBlockPosition);
+            Block targetBlock = targetBlockData.getBlock();
+
+            Vec3D idk1 = new Vec3D((double) MathHelper.floor(this.enderman.locX()) + 0.5D, (double) y + 0.5D,
+                    (double) MathHelper.floor(this.enderman.locZ()) + 0.5D);
+            Vec3D idk2 = new Vec3D((double) x + 0.5D, (double) y + 0.5D, (double) z + 0.5D);
+            MovingObjectPositionBlock movingObjectPositionBlock = world.rayTrace(new RayTrace(idk1, idk2,
+                    RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.enderman));
+
+            if (movingObjectPositionBlock.getBlockPosition().equals(targetBlockPosition)
+                    && targetBlock.a(TagsBlock.ENDERMAN_HOLDABLE)) {
+                this.enderman.setCarried(targetBlockData);
+                world.a(targetBlockPosition, false);
+            }
         }
     }
 
-    static class PathfinderGoalEndermanPickupBlock extends PathfinderGoal {
+    static class PathfinderGoalPlaceBlock extends PathfinderGoal {
 
-        private final CustomEntityEnderman entity;
+        private final CustomEntityEnderman enderman;
 
-        public PathfinderGoalEndermanPickupBlock(CustomEntityEnderman entityEnderman) {
-            this.entity = entityEnderman;
+        public PathfinderGoalPlaceBlock(CustomEntityEnderman enderman) {
+            this.enderman = enderman;
         }
 
         @Override
+        /* Endermen place down blocks four times as frequently */
         public boolean a() {
-            return this.entity.getCarried() != null ? false : (!this.entity.world.getGameRules().getBoolean(
-                    GameRules.MOB_GRIEFING)? false : this.entity.getRandom().nextInt(20) == 0);
+            return this.enderman.getCarried() != null && this.enderman.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
+                    && this.enderman.getRandom().nextInt(500) == 0;
         }
 
         @Override
         public void e() {
-            Random random = this.entity.getRandom();
-            World world = this.entity.world;
-            int i = MathHelper.floor(this.entity.locX() - 2.0D + random.nextDouble() * 4.0D);
-            int j = MathHelper.floor(this.entity.locY() + random.nextDouble() * 3.0D);
-            int k = MathHelper.floor(this.entity.locZ() - 2.0D + random.nextDouble() * 4.0D);
-            BlockPosition blockPosition = new BlockPosition(i, j, k);
-            IBlockData iblockdata = world.getType(blockPosition);
-            Block block = iblockdata.getBlock();
-            Vec3D vec3d = new Vec3D((double) MathHelper.floor(this.entity.locX()) + 0.5D, (double) j + 0.5D,
-                    (double) MathHelper.floor(this.entity.locZ()) + 0.5D);
-            Vec3D vec3d1 = new Vec3D((double) i + 0.5D, (double) j + 0.5D, (double) k + 0.5D);
-            MovingObjectPositionBlock movingObjectPositionBlock = world.rayTrace(new RayTrace(vec3d, vec3d1,
-                    RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.entity));
-            boolean flag = movingObjectPositionBlock.getBlockPosition().equals(blockPosition);
+            Random random = this.enderman.getRandom();
+            World world = this.enderman.getWorld();
 
-            if (block.a(TagsBlock.ENDERMAN_HOLDABLE) && flag) {
-                this.entity.setCarried(iblockdata);
-                world.a(blockPosition, false);
+            int x = MathHelper.floor(this.enderman.locX() - 1.0D + random.nextDouble() * 2.0D);
+            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 2.0D);
+            int z = MathHelper.floor(this.enderman.locZ() - 1.0D + random.nextDouble() * 2.0D);
+            BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
+            IBlockData targetBlockData = world.getType(targetBlockPosition);
+            BlockPosition targetBlockPositionBelow = targetBlockPosition.down();
+            IBlockData targetBlockDataBelow = world.getType(targetBlockPositionBelow);
+            IBlockData carriedBlockData = this.enderman.getCarried();
+
+            if (carriedBlockData != null && this.canPlace(world, targetBlockPosition, targetBlockData,
+                    targetBlockDataBelow, targetBlockPositionBelow, carriedBlockData)) {
+                world.setTypeAndData(targetBlockPosition, carriedBlockData, 3);
+                this.enderman.setCarried(null);
             }
-
-        }
-    }
-
-    static class PathfinderGoalEndermanPlaceBlock extends PathfinderGoal {
-
-        private final CustomEntityEnderman entity;
-
-        public PathfinderGoalEndermanPlaceBlock(CustomEntityEnderman entityEnderman) {
-            this.entity = entityEnderman;
         }
 
-        @Override
-        public boolean a() {
-            return this.entity.getCarried() == null ? false : (!this.entity.world.getGameRules().getBoolean(
-                    GameRules.MOB_GRIEFING) ? false : this.entity.getRandom().nextInt(2000) == 0);
-        }
-
-        @Override
-        public void e() {
-            Random random = this.entity.getRandom();
-            World world = this.entity.world;
-            int i = MathHelper.floor(this.entity.locX() - 1.0D + random.nextDouble() * 2.0D);
-            int j = MathHelper.floor(this.entity.locY() + random.nextDouble() * 2.0D);
-            int k = MathHelper.floor(this.entity.locZ() - 1.0D + random.nextDouble() * 2.0D);
-            BlockPosition blockPosition = new BlockPosition(i, j, k);
-            IBlockData iblockdata = world.getType(blockPosition);
-            BlockPosition blockPosition1 = blockPosition.down();
-            IBlockData iblockdata1 = world.getType(blockPosition1);
-            IBlockData iblockdata2 = this.entity.getCarried();
-
-            if (iblockdata2 != null && this.a(world, blockPosition, iblockdata2, iblockdata, iblockdata1, blockPosition1)) {
-                world.setTypeAndData(blockPosition, iblockdata2, 3);
-                this.entity.setCarried(null);
-            }
-
-        }
-
-        private boolean a(IWorldReader iworldreader, BlockPosition blockPosition, IBlockData iblockdata,
-                          IBlockData iblockdata1, IBlockData iblockdata2, BlockPosition blockPosition1) {
-            return iblockdata1.isAir() && !iblockdata2.isAir() && iblockdata2.r(iworldreader, blockPosition1)
-                    && iblockdata.canPlace(iworldreader, blockPosition);
+        private boolean canPlace(IWorldReader iWorldReader, BlockPosition targetBlockPosition, IBlockData targetBlockData,
+                IBlockData targetBlockDataBelow, BlockPosition targetBlockPositionBelow, IBlockData carriedBlockData) {
+            return targetBlockData.isAir() && !targetBlockDataBelow.isAir()
+                    && targetBlockDataBelow.r(iWorldReader, targetBlockPositionBelow)
+                    && carriedBlockData.canPlace(iWorldReader, targetBlockPosition);
         }
     }
 }

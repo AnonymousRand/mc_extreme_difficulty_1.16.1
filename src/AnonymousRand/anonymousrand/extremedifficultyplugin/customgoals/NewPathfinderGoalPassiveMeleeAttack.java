@@ -30,7 +30,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
     @Override
     public boolean a() { // canUse()/shouldExecute(); fires constantly
-        long i = this.entity.world.getTime();
+        long i = this.entity.getWorld().getTime();
 
         if (i - this.k < 20L) {
             return false;

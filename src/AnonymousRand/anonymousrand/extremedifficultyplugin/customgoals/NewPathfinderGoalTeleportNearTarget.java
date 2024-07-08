@@ -92,18 +92,18 @@ public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
         this.teleportTo(pos);
     }
 
-    protected void teleportTo(BlockPosition pos) {
+    protected void teleportTo(BlockPosition pos) { // todo copy from enderman instead?
         BlockPosition.MutableBlockPosition blockPosition_MutableBlockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockPosition_MutableBlockPosition.getY() > 0 && !this.entity.world.getType(blockPosition_MutableBlockPosition).getMaterial().isSolid()) {
+        while (blockPosition_MutableBlockPosition.getY() > 0 && !this.entity.getWorld().getType(blockPosition_MutableBlockPosition).getMaterial().isSolid()) {
             blockPosition_MutableBlockPosition.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.world.getType(blockPosition_MutableBlockPosition);
+        IBlockData iblockdata = this.entity.getWorld().getType(blockPosition_MutableBlockPosition);
 
         if (iblockdata.getMaterial().isSolid()) {
             if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
-                this.entity.world.playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
+                this.entity.getWorld().playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
                 this.entity.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
         }
@@ -116,7 +116,7 @@ public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
         double d6 = d1;
         boolean flag1 = false;
         BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
-        World world = this.entity.world;
+        World world = this.entity.getWorld();
 
         if (world.isLoaded(blockPosition)) {
             boolean flag2 = false;

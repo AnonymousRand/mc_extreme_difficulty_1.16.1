@@ -102,7 +102,6 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }

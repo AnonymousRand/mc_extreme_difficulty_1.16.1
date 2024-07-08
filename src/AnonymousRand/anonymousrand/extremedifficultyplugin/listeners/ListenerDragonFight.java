@@ -39,7 +39,7 @@ public class ListenerDragonFight implements Listener {
     public static int ticksAfterDragonDeath;
 
     @EventHandler
-    public void dragonSpawn(CreatureSpawnEvent event) {
+    public void dragonSpawn(CreatureSpawnEvent event) { // todo check end and not player spawned?
         if (event.getEntity() instanceof EnderDragon && (!(((CraftEntity)event.getEntity()).getHandle() instanceof CustomEntityEnderDragon))) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "forceload add -47 -47 48 48"); // to make sure all the mob spawners can generate
             Bukkit.broadcastMessage("You've made it this far. I hope you're ready.");

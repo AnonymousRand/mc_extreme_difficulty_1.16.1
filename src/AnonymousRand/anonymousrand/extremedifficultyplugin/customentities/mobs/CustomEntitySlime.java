@@ -126,7 +126,6 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                     this.ticksFarFromPlayer = 0;
                 }
             }
-
         } else {
             this.ticksFarFromPlayer = 0;
         }
