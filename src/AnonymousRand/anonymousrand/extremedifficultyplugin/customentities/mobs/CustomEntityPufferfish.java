@@ -60,10 +60,10 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -112,7 +112,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         super.tick();
 
         if (this.ticksLived % 3 == 0) {
-            this.getWorld().getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> this.pickup((EntityHuman) entity)); /* pufferfish have a poison/wither range of 5 blocks horizontally */
+            this.world.getEntities(this, this.getBoundingBox().grow(5.0, 128.0, 5.0), entity -> entity instanceof EntityPlayer).forEach(entity -> this.pickup((EntityHuman) entity)); /* pufferfish have a poison/wither range of 5 blocks horizontally */
         }
     }
 
@@ -174,19 +174,19 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         }
 
         this.setMot(d4, d5, d6);
-        this.getWorld().getMethodProfiler().enter("ai");
+        this.world.getMethodProfiler().enter("ai");
         if (this.isFrozen()) {
             this.jumping = false;
             this.aY = 0.0F;
             this.ba = 0.0F;
         } else if (this.doAITick()) {
-            this.getWorld().getMethodProfiler().enter("newAi");
+            this.world.getMethodProfiler().enter("newAi");
             this.doTick();
-            this.getWorld().getMethodProfiler().exit();
+            this.world.getMethodProfiler().exit();
         }
 
-        this.getWorld().getMethodProfiler().exit();
-        this.getWorld().getMethodProfiler().enter("jump");
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("jump");
         if (this.jumping && this.cS()) {
             double d7;
 
@@ -211,16 +211,16 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             jumpTicksTemp = 0;
         }
 
-        this.getWorld().getMethodProfiler().exit();
-        this.getWorld().getMethodProfiler().enter("travel");
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("travel");
         this.aY *= 0.98F;
         this.ba *= 0.98F;
         this.t();
         AxisAlignedBB axisalignedbb = this.getBoundingBox();
 
         this.f(new Vec3D(this.aY, this.aZ, this.ba));
-        this.getWorld().getMethodProfiler().exit();
-        this.getWorld().getMethodProfiler().enter("push");
+        this.world.getMethodProfiler().exit();
+        this.world.getMethodProfiler().enter("push");
         if (this.bm > 0) {
             --this.bm;
             this.a(axisalignedbb, this.getBoundingBox());
@@ -234,7 +234,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             e.printStackTrace();
         }
 
-        this.getWorld().getMethodProfiler().exit();
+        this.world.getMethodProfiler().exit();
     }
 
     private void t() { // util method from entityLiving class
@@ -244,7 +244,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             ItemStack itemstack = this.getEquipment(EnumItemSlot.CHEST);
 
             if (itemstack.getItem() == Items.ELYTRA && ItemElytra.d(itemstack)) {
-                if (!this.getWorld().isClientSide && (this.bl + 1) % 20 == 0) {
+                if (!this.world.isClientSide && (this.bl + 1) % 20 == 0) {
                     itemstack.damage(1, this, (entityLiving)-> entityLiving.broadcastItemBreak(EnumItemSlot.CHEST));
                 }
             } else {
@@ -254,7 +254,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             flag = false;
         }
 
-        if (!this.getWorld().isClientSide) {
+        if (!this.world.isClientSide) {
             this.setFlag(7, flag);
         }
     }

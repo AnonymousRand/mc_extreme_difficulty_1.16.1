@@ -10,7 +10,7 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
 
     @Override
     protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
-        if (!this.getWorld().isClientSide) {
+        if (!this.world.isClientSide) {
             Entity entity = movingObjectPositionEntity.getEntity();
 
             if (!(entity instanceof EntityPlayer)) { /* wither skulls can only impact players */
@@ -38,9 +38,9 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
             if (flag) {
                 byte b0;
 
-                if (this.getWorld().getDifficulty() == EnumDifficulty.NORMAL) { /* wither skulls also inflict 25 seconds of wither 2 in easy difficulty, 45 in normal and 60 in hard */
+                if (this.world.getDifficulty() == EnumDifficulty.NORMAL) { /* wither skulls also inflict 25 seconds of wither 2 in easy difficulty, 45 in normal and 60 in hard */
                     b0 = 45;
-                } else if (this.getWorld().getDifficulty() == EnumDifficulty.HARD) {
+                } else if (this.world.getDifficulty() == EnumDifficulty.HARD) {
                     b0 = 60;
                 } else {
                     b0 = 25;
@@ -48,8 +48,8 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
 
                 ((EntityLiving) entity).addEffect(new MobEffect(MobEffects.WITHER, 20 * b0, 1));
 
-                Explosion.Effect explosion_effect = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /* blue skulls explode power 2 */
+                Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
+                this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), this.isCharged() ? 2.0F : 1.0F, false, explosion_effect); /* blue skulls explode power 2 */
 
             }
         }
@@ -67,9 +67,9 @@ public class CustomEntityWitherSkull extends EntityWitherSkull {
 
         // otherwise if hit block
         super.a(movingObjectPosition);
-        if (!this.getWorld().isClientSide && this.isCharged()) {
-            Explosion.Effect explosion_effect = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /* blue skulls explode power 2 */
+        if (!this.world.isClientSide && this.isCharged()) {
+            Explosion.Effect explosion_effect = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) ? Explosion.Effect.DESTROY : Explosion.Effect.NONE;
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, explosion_effect); /* blue skulls explode power 2 */
         }
     }
 

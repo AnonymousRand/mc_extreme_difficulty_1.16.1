@@ -44,10 +44,10 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */

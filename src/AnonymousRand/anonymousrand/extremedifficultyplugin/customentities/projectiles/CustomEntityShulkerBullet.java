@@ -46,7 +46,7 @@ public class CustomEntityShulkerBullet extends EntityShulkerBullet {
     @Override
     protected void a(MovingObjectPositionBlock movingObjectPositionBlock) { /* shulker bullets explode when hitting a block */
         super.a(movingObjectPositionBlock);
-        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.5F, false, Explosion.Effect.DESTROY);
+        this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.5F, false, Explosion.Effect.DESTROY);
     }
 
     @Override

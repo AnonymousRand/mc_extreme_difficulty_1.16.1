@@ -66,10 +66,10 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -152,7 +152,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         if (this.attacks == 60 && !this.a60) { /* after 60 attacks, strays summon 5 vanilla skeletons */
             this.a60 = true;
 
-            new SpawnEntity(this.getWorld(), new EntitySkeleton(EntityTypes.SKELETON, this.getWorld()), 5, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
+            new SpawnEntity(this.world, new EntitySkeleton(EntityTypes.SKELETON, this.world), 5, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
         if (this.ticksLived % 2 == 0) {

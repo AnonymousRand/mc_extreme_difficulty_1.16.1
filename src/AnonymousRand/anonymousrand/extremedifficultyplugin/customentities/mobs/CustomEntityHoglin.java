@@ -43,10 +43,10 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -119,14 +119,14 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             } else if (metThreshold == attackThresholds[2]) {
                 /* After 40 attacks, hoglins summon a baby hoglin */
-                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
+                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.world);
                 newHoglin.a(true);
-                new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
+                new SpawnEntity(this.world, newHoglin, 1, null, null, this, false, true);
             } else if (metThreshold == attackThresholds[3]) {
                 /* After 75 attacks, hoglins summon another baby hoglin */
-                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.getWorld());
+                CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.world);
                 newHoglin.a(true);
-                new SpawnEntity(this.getWorld(), newHoglin, 1, null, null, this, false, true);
+                new SpawnEntity(this.world, newHoglin, 1, null, null, this, false, true);
             }
         }
     }
@@ -171,7 +171,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         super.die();
 
         if (this.attackLevelingController != null && random.nextDouble() < (this.getAttacks() < 40 ? 0.3 : 1.0)) { /* hoglins have a 30% chance to spawn a zoglin after death (100% chance after 40 attacks) */
-            new SpawnEntity(this.getWorld(), new CustomEntityZoglin(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityZoglin(this.world), 1, null, null, this, false, true);
         }
     }
 
@@ -180,7 +180,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+            Location bukkitLoc = new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ());
             Block bukkitBlock = bukkitLoc.getBlock();
 
             if (bukkitBlock.getType() == org.bukkit.Material.AIR) { /* hoglins lay down fire trails on itself as long as it is inside an air block */

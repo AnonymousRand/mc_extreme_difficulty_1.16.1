@@ -42,7 +42,7 @@ public class CustomEntityChicken extends EntityChicken {
         /* 25% chance to spawn as an aggressive chicken instead */ // todo why not by listener?
         if (this.ticksLived == 5) {
             if (random.nextDouble() < 0.25) {
-                new SpawnEntity(this.getWorld(), new CustomEntityChickenAggressive(this.getWorld()), 1,
+                new SpawnEntity(this.world, new CustomEntityChickenAggressive(this.world), 1,
                         null, null, this, true, true);
             }
         }

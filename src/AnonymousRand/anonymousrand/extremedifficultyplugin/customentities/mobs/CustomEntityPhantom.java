@@ -74,10 +74,10 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -181,7 +181,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         if (this.getHealth() <= 0.0 && this.getAttacks() >= 15 && !this.deathExplosion) { /* after 15 attacks, phantoms explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) Math.ceil(this.getSize() / 32.0), false, Explosion.Effect.DESTROY);
         }
 
         if (this.ticksLived == 5) {
@@ -196,7 +196,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         if (this.getAttacks() >= 40 || this.duplicate) {
             /* after 40 attacks, phantoms split into 2 phantoms each with half its size when killed, all the way down to size 4 */
             if (this.getSize() > 7) {
-                new SpawnEntity(this.getWorld(), (int) this.getSize() / 2, true, new CustomEntityPhantom(this.getWorld(), this.getSize() / 2, true), 2, null, null, this, false, false);
+                new SpawnEntity(this.world, (int) this.getSize() / 2, true, new CustomEntityPhantom(this.world, this.getSize() / 2, true), 2, null, null, this, false, false);
             }
         }
     }
@@ -247,7 +247,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         @Override
         public void d() {
             try {
-                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
+                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -272,8 +272,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                     CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.this.random.nextInt(20)));
                     BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this));
 
-                    if (orbitPos.getY() < CustomEntityPhantom.this.getWorld().getSeaLevel()) {
-                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.getWorld().getSeaLevel() + 1, orbitPos.getZ()));
+                    if (orbitPos.getY() < CustomEntityPhantom.this.world.getSeaLevel()) {
+                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -333,7 +333,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                 CustomEntityPhantom.this.attackEntity(entityLiving);
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
                 if (!CustomEntityPhantom.this.isSilent()) {
-                    CustomEntityPhantom.this.getWorld().triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);
+                    CustomEntityPhantom.this.world.triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);
                 }
             } else if (CustomEntityPhantom.this.positionChanged || CustomEntityPhantom.this.hurtTicks > 0) {
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
@@ -391,12 +391,12 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             try {
                 Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this));
 
-                if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.getWorld().isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
+                if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
                     this.e = Math.max(1.0F, this.e);
                     this.h();
                 }
 
-                if (orbitOff.y > CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.getWorld().isEmpty(CustomEntityPhantom.this.getChunkCoordinates().up(1))) {
+                if (orbitOff.y > CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().up(1))) {
                     this.e = Math.min(-1.0F, this.e);
                     this.h();
                 }

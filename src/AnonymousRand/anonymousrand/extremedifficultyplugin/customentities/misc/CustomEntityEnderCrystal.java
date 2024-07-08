@@ -17,13 +17,13 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         if (!(damageSource instanceof EntityDamageSourceIndirect) && damageSource instanceof EntityDamageSource) { /* end crystals can only be blown up by direct damage and not arrows etc.; every time an arrow is shot at the end crystal, it duplicates */
             if (damageSource.getEntity() instanceof EntityPlayer) {
-                this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), 8.0F, true, Explosion.Effect.DESTROY); /* end crystals explode power 8 */
+                this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), 8.0F, true, Explosion.Effect.DESTROY); /* end crystals explode power 8 */
                 return super.damageEntity(damageSource, damageAmount);
             }
         } else if (damageSource instanceof EntityDamageSourceIndirect) {
-            CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(this.getWorld());
+            CustomEntityEnderCrystal newCrystal = new CustomEntityEnderCrystal(this.world);
             newCrystal.setPosition(this.locX(), this.locY() + 3.0, this.locZ());
-            this.getWorld().addEntity(newCrystal);
+            this.world.addEntity(newCrystal);
         }
 
         return false;
@@ -35,14 +35,14 @@ public class CustomEntityEnderCrystal extends EntityEnderCrystal {
         this.onCrystalDestroyed(DamageSource.GENERIC); // make sure to update dragon fight
 
         /* end crystals summon a mini wither, 3 phantoms and 3 vexes when destroyed */
-        new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
-        new SpawnEntity(this.getWorld(), (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.getWorld(), (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize), 3, null, null, this, false, false);
-        new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), 3, null, null, this, false, false);
+        new SpawnEntity(this.world, new CustomEntityWitherMini(this.world), 1, null, null, this, false, false);
+        new SpawnEntity(this.world, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize, new CustomEntityPhantom(this.world, (int) ListenerMobSpawnAndReplaceWithCustom.phantomSize), 3, null, null, this, false, false);
+        new SpawnEntity(this.world, new CustomEntityVex(this.world), 3, null, null, this, false, false);
     }
 
     private void onCrystalDestroyed(DamageSource damageSource) {
-        if (this.getWorld() instanceof WorldServer) {
-            EnderDragonBattle enderdragonbattle = ((WorldServer) this.getWorld()).getDragonBattle();
+        if (this.world instanceof WorldServer) {
+            EnderDragonBattle enderdragonbattle = ((WorldServer) this.world).getDragonBattle();
 
             if (enderdragonbattle != null) {
                 enderdragonbattle.a(this, damageSource);

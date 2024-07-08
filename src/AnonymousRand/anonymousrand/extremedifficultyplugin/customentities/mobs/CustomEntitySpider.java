@@ -51,10 +51,10 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -135,12 +135,12 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
 
         if (this.attacks == 50 && !this.a50) { /* after 50 attacks, spiders summon 2 vanilla cave spiders */
             this.a50 = true;
-            new SpawnEntity(this.getWorld(), new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
+            new SpawnEntity(this.world, new EntityCaveSpider(EntityTypes.CAVE_SPIDER, this.world), 2, CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, true);
         }
 
         if (this.attacks == 80 && !this.a80) { /* after 80 attacks, spiders summon 2 cave spiders */
             this.a80 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 2, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntitySpiderCave(this.world), 2, null, null, this, false, true);
         }
 
         if (this.isClimbing()) { /* spiders move vertically 2 times as fast (for some reason this still applies to jumping) */

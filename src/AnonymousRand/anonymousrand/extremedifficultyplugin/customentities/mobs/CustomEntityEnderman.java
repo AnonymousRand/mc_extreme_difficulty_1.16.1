@@ -51,10 +51,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -131,7 +131,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[2]) {
                 /* After 40 attacks, endermen summon 5 endermites */
-                new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 5, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 5, null, null, this, false, true);
             }
         }
     }
@@ -203,7 +203,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     @Override // teleportRandomly()
     protected boolean eM() {
-        if (!this.getWorld().isClientSide && this.isAlive()) {
+        if (!this.world.isClientSide && this.isAlive()) {
             /* Random teleportation range decreased to 10 blocks in each direction so that if it somehow teleports away it is likely still in range of the player */
             double x = this.locX() + (random.nextDouble() - 0.5D) * 20.0D;
             double y = this.locY() + random.nextInt(10);
@@ -223,7 +223,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         double currX = this.locX();
         double currY = this.locY();
         double currZ = this.locZ();
-        World world = this.getWorld();
+        World world = this.world;
 
         if (world.isLoaded(targetBlockPosition)) {
             IBlockData targetBlockData = world.getType(targetBlockPosition);
@@ -241,14 +241,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                     this.getNavigation().o();
 
                     if (!this.isSilent()) {
-                        this.getWorld().playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
+                        this.world.playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
                                 this.getSoundCategory(), 1.0F, 1.0F);
                         this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
                     }
 
-                    /* Endermen have a 15% chance to summon an endermite where it teleports to */
-                    if (random.nextDouble() < 0.15) {
-                        new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                    /* Endermen have a 10% chance to summon an endermite where it teleports to */
+                    if (random.nextDouble() < 0.1) {
+                        new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
                     }
 
                     return true;
@@ -278,7 +278,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if (tookDamage && this.isAlive()) {
                 /* After 40 attacks, endermen summon an endermite when hit and not killed */
                 if (this.getAttacks() >= 40) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
                 }
             }
 
@@ -293,10 +293,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         if (this.getGoalTarget() != null) {
             EntityLiving target = this.getGoalTarget();
 
-            /* Endermen teleport to player if player can't be seen (includes when the player is towering up) */ // todo not working also change to pick up block under player?
-//            if (!this.getEntitySenses().a(target)) {
-//                this.teleportTo(target.locX(), target.locY(), target.locZ());
-//            }
+            /* Endermen have a chance to teleport to target if target can't be seen or is on a different y-level
+               In the latter case, there is a higher chance the closer the player is (and thus the more likely they are towering) */
+            if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
+                    || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
+                    < 0.05 / this.d(target.getPositionVector()))) {
+                this.teleportTo(target.locX(), target.locY(), target.locZ());
+            }
         }
     }
 

@@ -98,7 +98,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         /* Dragon has +50% horizontal range for finding end crystals */
         if (this.random.nextInt(10) == 0) {
-            List<EntityEnderCrystal> enderCrystals = this.getWorld().a(EntityEnderCrystal.class, this.getBoundingBox().g(48.0));
+            List<EntityEnderCrystal> enderCrystals = this.world.a(EntityEnderCrystal.class, this.getBoundingBox().g(48.0));
             EntityEnderCrystal nearestEnderCrystal = null;
             double distToNearestCrystal = Double.MAX_VALUE;
 

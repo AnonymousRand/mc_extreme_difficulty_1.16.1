@@ -8,6 +8,7 @@ todo:
 	private instead of protected where possible
 	stopped after: customentityenderman
 
+    change get3DDistSq to only require one param
 
     change custompathfindergoaltarget k() to just use icustomhostile.getfollowrange() instead of massive switch?
 
@@ -259,7 +260,7 @@ balance changes catalog:
 	ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
 	end fight vex spawner spawn count 42 -> 36
 	endermen no longer summon endermites on death at >40 attacks
-	endermen endermite summon on tp chance 30% -> 15%
+	endermen endermite summon on tp chance 30% -> 10%
 	endermen no longer deaggro out of range
 	endermen look aggro distance 128 -> 64
 	endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10

@@ -24,11 +24,11 @@ public class CustomEntityLlamaSpit extends EntityLlamaSpit {
 
         if (this.getShooter() instanceof CustomEntityLlama) {
             if (((CustomEntityLlama)this.getShooter()).getAttacks() >= 25) { /* after 25 attacks, llama spit explodes on hit */
-                this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), 3.0F, true, Explosion.Effect.DESTROY);
+                this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), 3.0F, true, Explosion.Effect.DESTROY);
             }
         } else if (this.getShooter() instanceof CustomEntityLlamaTrader) {
             if (((CustomEntityLlamaTrader)this.getShooter()).getAttacks() >= 25) { /* after 25 attacks, trader llama spit summons a wandering trader on hit */
-                new SpawnEntity(this.getWorld(), new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new EntityVillagerTrader(EntityTypes.WANDERING_TRADER, this.world), 1, null, null, this, false, true);
             }
         }
     }

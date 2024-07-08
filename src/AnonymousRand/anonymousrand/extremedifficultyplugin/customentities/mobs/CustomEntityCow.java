@@ -18,7 +18,7 @@ public class CustomEntityCow extends EntityCow {
 
         /* Cows have a 5% chance to spawn as a mooshroom instead */ // todo why not listener?
         if (random.nextDouble() < 0.05) {
-            new SpawnEntity(this.getWorld(), new CustomEntityMushroomCow(this.getWorld()), 1, null,
+            new SpawnEntity(this.world, new CustomEntityMushroomCow(this.world), 1, null,
                     null, this, true, true);
         }
 

@@ -48,8 +48,8 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     @Override
     public void startConversion(@Nullable UUID uuid, int i) { /* zombie villagers can't be converted and instead summon 10 more zombie villagers when fed a golden apple */
-        new SpawnEntity(this.getWorld(), new CustomEntityZombieVillager(this.getWorld()), 10, null, null, this, false, true);
-        this.getWorld().broadcastEntityEffect(this, (byte) 16);
+        new SpawnEntity(this.world, new CustomEntityZombieVillager(this.world), 10, null, null, this, false, true);
+        this.world.broadcastEntityEffect(this, (byte) 16);
     }
 
     public double getDetectionRange() { /* zombies have 40 block detection range */
@@ -58,10 +58,10 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -134,7 +134,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { // do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
             this.deathLightningStorm = true;
             ListenerLightningStrike.storm = true;
-            new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /* after 40 attacks, zombie villagers summon a lightning storm when killed */
+            new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /* after 40 attacks, zombie villagers summon a lightning storm when killed */
         }
     }
 }

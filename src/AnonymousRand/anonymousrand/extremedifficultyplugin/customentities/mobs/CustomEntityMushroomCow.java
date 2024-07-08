@@ -36,14 +36,14 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
         ItemStack itemstack = entityHuman.b(enumhand);
 
         if ((itemstack.getItem() == Items.BOWL && !this.isBaby()) || (itemstack.getItem() == Items.SHEARS && this.canShear())) {
-            EntityPlayer player = this.getWorld().a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box
+            EntityPlayer player = this.world.a(EntityPlayer.class, new CustomPathfinderTargetCondition(), this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box
 
             if (player != null) { /* mooshrooms inflict these effects when they are milked/sheared */
                 player.addEffect(new MobEffect(MobEffects.WEAKNESS, 1200, 255));
                 player.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 1200, 255));
             }
 
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY); /* mooshrooms explode massively and die when they are milked/sheared */
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY); /* mooshrooms explode massively and die when they are milked/sheared */
             this.die();
         }
 

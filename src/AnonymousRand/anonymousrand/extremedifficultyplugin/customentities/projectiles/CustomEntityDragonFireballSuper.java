@@ -35,8 +35,8 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
         CustomEntityAreaEffectCloud entityAreaEffectCloud;
 
         for (int i = -3; i < 3; i++) { /* area effect clouds are 6 blocks high, 9 blocks wide and take 5 ticks less to start doing damage, but only last 10 seconds */
-            entities = this.getWorld().a(EntityPlayer.class, this.getBoundingBox().grow(17.0, 128.0, 17.0));
-            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 4.0F, 200, 15);
+            entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(17.0, 128.0, 17.0));
+            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 4.0F, 200, 15);
 
             if (shooter instanceof EntityLiving) {
                 entityAreaEffectCloud.setSource((EntityLiving) shooter);
@@ -53,11 +53,11 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
                 }
             }
 
-            this.getWorld().triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 3);
-            this.getWorld().addEntity(entityAreaEffectCloud);
+            this.world.triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 3);
+            this.world.addEntity(entityAreaEffectCloud);
         }
 
-        this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 3.0F, false, Explosion.Effect.DESTROY); /* super fireballs explode on hit */
+        this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 3.0F, false, Explosion.Effect.DESTROY); /* super fireballs explode on hit */
         this.die();
     }
 
@@ -69,33 +69,33 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             double rand = random.nextDouble();
 
             if (rand < 0.125) {
-                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
             } else if (rand < 0.225) {
                 new RunnableMeteorRain(this, 1, 40.0, 10).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
                 new RunnableMeteorRain(this, 2, 40.0, 7).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
                 new RunnableMeteorRain(this, 3, 40.0, 6).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
             } else if (rand < 0.325) {
-                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false, true);
             } else if (rand < 0.425) {
-                new SpawnEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityZombieThor(this.world), 1, null, null, this, false, true);
             } else if (rand < 0.525) {
-                new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 6, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityBee(this.world), 6, null, null, this, false, true);
             } else if (rand < 0.625) {
-                new SpawnEntity(this.getWorld(), new CustomEntitySlimeMagmaCube(this.getWorld(), 16), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntitySlimeMagmaCube(this.world, 16), 1, null, null, this, false, true);
             } else if (rand < 0.725) {
-                new SpawnEntity(this.getWorld(), new CustomEntityBlaze(this.getWorld()), 4, null, null, this, false, false);
+                new SpawnEntity(this.world, new CustomEntityBlaze(this.world), 4, null, null, this, false, false);
             } else if (rand < 0.8) {
-                new SpawnEntity(this.getWorld(), new CustomEntityIllusioner(this.getWorld()), 2, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityIllusioner(this.world), 2, null, null, this, false, true);
             } else if (rand < 0.85) {
-                new SpawnEntity(this.getWorld(), new CustomEntityDrowned(this.getWorld()), 1, null, null, this, false, true);
-                new SpawnEntity(this.getWorld(), new CustomEntityWitch(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityDrowned(this.world), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityWitch(this.world), 1, null, null, this, false, true);
             } else if (rand < 0.9) {
-                new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
-                new SpawnEntity(this.getWorld(), new CustomEntityRavager(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityEvoker(this.world), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityRavager(this.world), 1, null, null, this, false, true);
             } else if (rand < 0.95) {
-                new SpawnEntity(this.getWorld(), new CustomEntitySheepAggressive(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntitySheepAggressive(this.world), 1, null, null, this, false, true);
             } else {
-                new SpawnEntity(this.getWorld(), new EntityEnderCrystal(EntityTypes.END_CRYSTAL, this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new EntityEnderCrystal(EntityTypes.END_CRYSTAL, this.world), 1, null, null, this, false, true);
             }
         }
     }

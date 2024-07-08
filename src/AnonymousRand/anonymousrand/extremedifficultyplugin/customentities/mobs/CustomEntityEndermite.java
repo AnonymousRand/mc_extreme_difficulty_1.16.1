@@ -46,10 +46,10 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -163,7 +163,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()) { /* duplicates when hit by player and not killed */
-            new SpawnEntity(this.getWorld(), new CustomEntityEndermite(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
         }
 
         return tookDamage;

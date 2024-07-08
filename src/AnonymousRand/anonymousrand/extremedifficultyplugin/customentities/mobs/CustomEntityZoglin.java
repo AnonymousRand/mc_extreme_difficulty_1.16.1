@@ -51,7 +51,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
 
-        if (this.getWorld().isClientSide) {
+        if (this.world.isClientSide) {
             return false;
         } else if (tookDamage && damageSource.getEntity() instanceof EntityLiving) {
             EntityLiving entityLiving = (EntityLiving) damageSource.getEntity();
@@ -72,10 +72,10 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -157,12 +157,12 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         }
 
         if (this.ticksLived % 10 == 0 && this.getGoalTarget() != null) {
-            Location bukkitLoc = new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ());
+            Location bukkitLoc = new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ());
 
             if (bukkitLoc.getBlock().getType() == org.bukkit.Material.AIR) { /* zoglins create a path of power 1 tnt on itself as long as it is inside an air block */
-                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.getWorld(), 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /* after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds */
+                CustomEntityTNTPrimed newTNT = new CustomEntityTNTPrimed(this.world, 35, (this.attacks >= 15 && this.ticksLived % 100 == 0) ? 2.0F : 1.0F); /* after 15 attacks, zoglins spawn a power 2 tnt instead every 5 seconds */
                 newTNT.setPosition(this.locX(), this.locY(), this.locZ());
-                this.getWorld().addEntity(newTNT);
+                this.world.addEntity(newTNT);
             }
         }
     }

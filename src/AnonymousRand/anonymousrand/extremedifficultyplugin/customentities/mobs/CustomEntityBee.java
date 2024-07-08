@@ -102,7 +102,7 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
 
                 /* Bees have a 50% chance to duplicate after the first sting */
                 if (random.nextDouble() < 0.5) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityBee(this.getWorld()), 1, null,
+                    new SpawnEntity(this.world, new CustomEntityBee(this.world), 1, null,
                             null, this, false, true);
                 }
             }

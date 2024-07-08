@@ -51,10 +51,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -120,10 +120,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
                 double d3 = this.getGoalTarget().locZ() - this.locZ();
-                CustomEntityLargeFireball largeFireball = new CustomEntityLargeFireball(this.getWorld(),
+                CustomEntityLargeFireball largeFireball = new CustomEntityLargeFireball(this.world,
                         this, d1, d2, d3, 1);
                 largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
-                this.getWorld().addEntity(largeFireball);
+                this.world.addEntity(largeFireball);
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 125 attacks, blazes shoot out a ring of fireballs */
                 new RunnableRingOfFireballs(this, 0.5, 1).run();

@@ -58,10 +58,10 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -136,7 +136,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
         if (this.attacks == 50 && !this.a50) { /* after 50 attacks, wither skeletons summon a mini wither */
             this.a50 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityWitherMini(this.getWorld()), 1, null, null, this, false, false);
+            new SpawnEntity(this.world, new CustomEntityWitherMini(this.world), 1, null, null, this, false, false);
         }
     }
 }

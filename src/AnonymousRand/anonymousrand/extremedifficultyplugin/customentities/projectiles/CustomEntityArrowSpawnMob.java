@@ -19,7 +19,7 @@ public class CustomEntityArrowSpawnMob extends CustomEntityArrow {
         super.die();
 
         if (this.entityToSpawn != null) {
-            new SpawnEntity(this.getWorld(), this.entityToSpawn, 1, null, new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), true);
+            new SpawnEntity(this.world, this.entityToSpawn, 1, null, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), true);
             this.entityToSpawn = null;
         }
     }

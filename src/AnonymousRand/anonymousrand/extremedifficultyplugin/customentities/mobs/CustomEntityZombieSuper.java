@@ -55,7 +55,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
                     int i = MathHelper.floor(this.locX());
                     int j = MathHelper.floor(this.locY());
                     int k = MathHelper.floor(this.locZ());
-                    CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
+                    CustomEntityZombie newZombie = new CustomEntityZombie(this.world);
 
                     for (int l = 0; l < 50; ++l) {
                         int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
@@ -65,11 +65,11 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
                         EntityTypes<?> entityTypes = newZombie.getEntityType();
                         EntityPositionTypes.Surface entityPositiontypes_surface = EntityPositionTypes.a(entityTypes);
 
-                        if (SpawnerCreature.a(entityPositiontypes_surface, this.getWorld(), blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockPosition, this.getWorld().random)) {
+                        if (SpawnerCreature.a(entityPositiontypes_surface, this.world, blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPosition, this.world.random)) {
                             newZombie.setPosition(i1, j1, k1);
-                            if (!this.getWorld().isPlayerNearby(i1, j1, k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
-                                this.getWorld().addEntity(newZombie);
-                                newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
+                            if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
+                                this.world.addEntity(newZombie);
+                                newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                                 this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement (15% after 7 attacks) */
                                 newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.125, AttributeModifier.Operation.ADDITION));
                                 break;
@@ -93,17 +93,17 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
     public void tick() {
         super.tick();
 
-        if (!this.getWorld().isClientSide && this.isAlive() && !this.isNoAI()) { /* doesn't convert to drowned in water */
+        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /* doesn't convert to drowned in water */
             this.drownedConversionTime = Integer.MAX_VALUE;
         }
     }
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */

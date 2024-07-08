@@ -28,19 +28,19 @@ public class CustomEntityTNTPrimed extends EntityTNTPrimed {
         this.setFuseTicks(this.getFuseTicks() - 1);
         if (this.getFuseTicks() <= 0) {
             this.die();
-            if (!this.getWorld().isClientSide) {
+            if (!this.world.isClientSide) {
                 this.explode();
             }
         } else {
             this.aG();
-            if (this.getWorld().isClientSide) {
-                this.getWorld().addParticle(Particles.SMOKE, this.locX(), this.locY() + 0.5D, this.locZ(), 0.0D, 0.0D, 0.0D);
+            if (this.world.isClientSide) {
+                this.world.addParticle(Particles.SMOKE, this.locX(), this.locY() + 0.5D, this.locZ(), 0.0D, 0.0D, 0.0D);
             }
         }
 
     }
 
     private void explode() {
-        this.getWorld().explode(this, this.locX(), this.e(0.0625D), this.locZ(), this.explosionPower, Explosion.Effect.BREAK);
+        this.world.explode(this, this.locX(), this.e(0.0625D), this.locZ(), this.explosionPower, Explosion.Effect.BREAK);
     }
 }

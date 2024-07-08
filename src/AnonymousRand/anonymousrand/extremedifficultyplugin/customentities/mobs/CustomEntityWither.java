@@ -26,7 +26,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         super(EntityTypes.WITHER, world);
         this.setInvul(100); /* withers only take 5 seconds to explode when spawned */
         this.dash = false;
-        double health = 200.0 + 60.0 * this.getWorld().getServer().getOnlinePlayers().size(); /* withers have 60 more health per player online, and 200 starting health */
+        double health = 200.0 + 60.0 * this.world.getServer().getOnlinePlayers().size(); /* withers have 60 more health per player online, and 200 starting health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float) health);
     }
@@ -75,18 +75,18 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         }
 
         if (!this.isSilent() && random.nextDouble() < 0.05) { /* withers only play the skull shooting sound 5% of the time */
-            this.getWorld().a(null, 1024, this.getChunkCoordinates(), 0);
+            this.world.a(null, 1024, this.getChunkCoordinates(), 0);
         }
 
         /* withers have higher chances to shoot blue skulls the more players are online */
-        boolean flag = this.random.nextFloat() < ((-0.3 + (Math.log10(this.getWorld().getServer().getOnlinePlayers().size() + 3.0) / (Math.log10(3.0) - 0.15))) / 150.0);
+        boolean flag = this.random.nextFloat() < ((-0.3 + (Math.log10(this.world.getServer().getOnlinePlayers().size() + 3.0) / (Math.log10(3.0) - 0.15))) / 150.0);
         double d3 = this.getHeadX(i);
         double d4 = this.getHeadY(i);
         double d5 = this.getHeadZ(i);
         double d6 = d0 - d3;
         double d7 = d1 - d4;
         double d8 = d2 - d5;
-        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.getWorld(), this, d6, d7, d8);
+        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
         entityWitherSkull.setShooter(this);
 
         if (flag || alwaysBlue) {
@@ -94,7 +94,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         }
 
         entityWitherSkull.setPositionRaw(d3, d4, d5);
-        this.getWorld().addEntity(entityWitherSkull);
+        this.world.addEntity(entityWitherSkull);
     }
 
     @Override
@@ -131,11 +131,11 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
             i = this.getInvul() - 1;
 
             if (i <= 0) {
-                this.getWorld().createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /* withers explode with power 12 instead of 7 when spawned and sets blocks on fire */
-                new RunnableTornado(this.getWorld(), new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 160).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /* withers summon a tornado after the spawn explosion */
+                this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /* withers explode with power 12 instead of 7 when spawned and sets blocks on fire */
+                new RunnableTornado(this.world, new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 160).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /* withers summon a tornado after the spawn explosion */
 
                 if (!this.isSilent()) {
-                    this.getWorld().b(1023, this.getChunkCoordinates(), 0);
+                    this.world.b(1023, this.getChunkCoordinates(), 0);
                 }
             }
 
@@ -184,8 +184,8 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     public void tick() {
         super.tick();
 
-        if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.getWorld().getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /* every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton */
-            new SpawnEntity(this.getWorld(), new CustomEntitySkeletonWither(this.getWorld()), 1, null, null, this, false, true);
+        if (this.ticksLived % (1500 / Math.max(Math.floor(Math.log10(this.world.getServer().getOnlinePlayers().size()) / Math.log10(2.0)), 1)) == 0) { /* every 75 / floor(log2(numofplayers)) seconds, withers summon a wither skeleton */
+            new SpawnEntity(this.world, new CustomEntitySkeletonWither(this.world), 1, null, null, this, false, true);
         }
 
         if (this.getGoalTarget() != null) {

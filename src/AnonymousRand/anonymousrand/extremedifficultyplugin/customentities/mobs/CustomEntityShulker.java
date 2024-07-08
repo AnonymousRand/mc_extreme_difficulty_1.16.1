@@ -62,10 +62,10 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -133,7 +133,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
         if (this.attacks == 21 && !this.a21) { /* after 21 attacks, shulkers summon area effect clouds wherever it is that give levitation 1 for 8 seconds */
             this.a21 = true;
-            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 2.0F, 20, 0);
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 2.0F, 20, 0);
             areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
             this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
         }
@@ -141,7 +141,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         if (this.attacks == 40 && !this.a40) { /* after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
             this.a40 = true;
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
-            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), 3.0F,20, 0);
+            CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 3.0F,20, 0);
             areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
             for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
                 ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
@@ -161,7 +161,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         public boolean a() {
             EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
-            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
+            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL : false;
         }
 
         @Override
@@ -177,7 +177,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
         @Override
         public void e() {
-            if (CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL) {
+            if (CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL) {
                 --this.b;
                 EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
@@ -191,7 +191,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                         this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /* shulker takes on average 10 less ticks to shoot */
 
                         for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /* after 35 attacks, shulkers have a 50% to 2 bullets at a time */
-                            CustomEntityShulker.this.getWorld().addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.getWorld(), CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
+                            CustomEntityShulker.this.world.addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.world, CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
                         }
 
                         CustomEntityShulker.this.playSound(SoundEffects.ENTITY_SHULKER_SHOOT, 2.0F, (CustomEntityShulker.this.random.nextFloat() - CustomEntityShulker.this.random.nextFloat()) * 0.2F + 1.0F);

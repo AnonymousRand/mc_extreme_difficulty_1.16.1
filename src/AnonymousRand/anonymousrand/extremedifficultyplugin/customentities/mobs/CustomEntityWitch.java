@@ -28,7 +28,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
         this.attackNum = 0;
         this.a12 = false;
         this.a30 = false;
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 1.0F,5, 0);
+        this.newAEC = new CustomEntityAreaEffectCloud(this.world, 1.0F,5, 0);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
@@ -81,16 +81,16 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
                 potionregistry = Potions.STRONG_POISON;
             }
 
-            EntityPotion entityPotion = new EntityPotion(this.getWorld(), this);
+            EntityPotion entityPotion = new EntityPotion(this.world, this);
 
             entityPotion.setItem(PotionUtil.a(new ItemStack(Items.SPLASH_POTION), potionregistry));
             entityPotion.pitch -= -20.0F;
             entityPotion.shoot(d0, d1 + (double) (f1 * 0.2F), d2, 0.75F, 8.0F);
             if (!this.isSilent()) {
-                this.getWorld().playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
+                this.world.playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
             }
 
-            this.getWorld().addEntity(entityPotion);
+            this.world.addEntity(entityPotion);
         }
     }
 
@@ -98,7 +98,7 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
     public void movementTick() {
         super.movementTick();
 
-        if (!this.getWorld().isClientSide && this.isAlive()) {
+        if (!this.world.isClientSide && this.isAlive()) {
             if (!this.m()) {
                 PotionRegistry potionregistry = null;
 
@@ -130,10 +130,10 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile {
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */

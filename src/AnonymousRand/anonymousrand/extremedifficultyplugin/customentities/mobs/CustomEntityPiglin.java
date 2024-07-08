@@ -131,9 +131,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
             if (random.nextDouble() < 0.075) {
-                CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.getWorld());
+                CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.world);
                 newPiglin.a(true);
-                new SpawnEntity(this.getWorld(), newPiglin, 1, null, null, this, false, true);
+                new SpawnEntity(this.world, newPiglin, 1, null, null, this, false, true);
             }
         }
 
@@ -180,9 +180,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
         if (this.attacks >= 20) {
             if (this.attacks >= 55) { /* after 55 attacks, piglins spawn a zombie piglin when killed */
-                new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityZombiePig(this.world), 1, null, null, this, false, true);
             } else if (random.nextDouble() < 0.5) { /* after 20 attacks, piglins have a 20% chance to spawn a zombie piglin when killed */
-                new SpawnEntity(this.getWorld(), new CustomEntityZombiePig(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityZombiePig(this.world), 1, null, null, this, false, true);
             }
         }
     }
@@ -193,10 +193,10 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0D);
 
             if (entityHuman != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */

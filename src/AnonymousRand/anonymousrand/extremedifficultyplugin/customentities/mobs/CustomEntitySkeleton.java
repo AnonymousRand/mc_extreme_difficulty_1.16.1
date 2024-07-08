@@ -20,9 +20,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
         super(EntityTypes.SKELETON, world);
 
         if (random.nextDouble() < 0.05) { /* skeletons have a 5% chance to spawn as a stray instead and a 5% chance to spawn as a pillager instead */
-            new SpawnEntity(this.getWorld(), new CustomEntitySkeletonStray(this.getWorld()), 1, null, null, this, true, true);
+            new SpawnEntity(this.world, new CustomEntitySkeletonStray(this.world), 1, null, null, this, true, true);
         } else if (random.nextDouble() < 0.05) {
-            new SpawnEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, true, true);
+            new SpawnEntity(this.world, new CustomEntityPillager(this.world), 1, null, null, this, true, true);
         }
 
         /* No longer avoids fire and lava */
@@ -74,10 +74,10 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -137,7 +137,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
 
         if (this.attacks == 90 && !this.a90) { /* after 90 attacks, skeletons summon an iron golem */
             this.a90 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityIronGolem(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityIronGolem(this.world), 1, null, null, this, false, true);
         }
 
         if (this.ticksLived % (random.nextInt(2) + 2) == 0) {

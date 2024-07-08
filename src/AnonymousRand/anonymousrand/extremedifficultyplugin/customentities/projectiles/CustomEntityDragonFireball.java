@@ -32,8 +32,8 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
         boolean largerRadius = random.nextDouble() < 0.05;
 
         for (int i = -3; i < 3; i++) { /* area effect clouds are 6 blocks high and take 5 ticks less to start doing damage, but only last 5 seconds; 5% chance to create a wider area effect cloud with radius 7 */
-            entities = this.getWorld().a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
-            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.getWorld(), largerRadius ? 7.0F : 3.0F, 100, 15);
+            entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
+            entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
                 entityAreaEffectCloud.setSource((EntityLiving) shooter);
@@ -51,8 +51,8 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
                 }
             }
 
-            this.getWorld().triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 1);
-            this.getWorld().addEntity(entityAreaEffectCloud);
+            this.world.triggerEffect(2006, this.getChunkCoordinates(), this.isSilent() ? -1 : 1);
+            this.world.addEntity(entityAreaEffectCloud);
         }
 
         this.die();
@@ -67,19 +67,19 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
 
             if (rand >= 0.55) {
                 if (rand < 0.65) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityEnderman(this.getWorld()), random.nextInt(2) + 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityEnderman(this.world), random.nextInt(2) + 1, null, null, this, false, true);
                 } else if (rand < 0.75) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityCreeper(this.getWorld()), random.nextInt(2) + 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityCreeper(this.world), random.nextInt(2) + 1, null, null, this, false, true);
                 } else if (rand < 0.8) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityShulker(this.getWorld()), 1, null, null, this, false, false);
+                    new SpawnEntity(this.world, new CustomEntityShulker(this.world), 1, null, null, this, false, false);
                 } else if (rand < 0.85) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityRabbit(this.getWorld()), random.nextInt(2) + 4, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityRabbit(this.world), random.nextInt(2) + 4, null, null, this, false, true);
                 } else if (rand < 0.9) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityVex(this.getWorld()), random.nextInt(2) + 3, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityVex(this.world), random.nextInt(2) + 3, null, null, this, false, true);
                 } else if (rand < 0.95) {
-                    new SpawnEntity(this.getWorld(), new CustomEntityLlama(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityLlama(this.world), 1, null, null, this, false, true);
                 } else {
-                    new SpawnEntity(this.getWorld(), new CustomEntityPiglin(this.getWorld(), true), random.nextInt(2) + 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityPiglin(this.world, true), random.nextInt(2) + 1, null, null, this, false, true);
                 }
             }
         }

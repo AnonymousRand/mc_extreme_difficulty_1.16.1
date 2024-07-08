@@ -95,10 +95,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -185,10 +185,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
             this.die = true;
 
             if (this.attacks >= 20) { /* after 20 attacks, aggressive sheep create a power 2 explosion on their location when killed */
-                this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
+                this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.DESTROY);
 
                 if (this.attacks >= 65) { /* after 65 attacks, aggressive sheep summon an evoker when killed */
-                    new SpawnEntity(this.getWorld(), new CustomEntityEvoker(this.getWorld()), 1, null, null, this, false, true);
+                    new SpawnEntity(this.world, new CustomEntityEvoker(this.world), 1, null, null, this, false, true);
                 }
             }
         }

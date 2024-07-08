@@ -48,10 +48,10 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -169,8 +169,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 
         entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /* arrows have no inaccuracy */
-        this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-        this.getWorld().addEntity(entityArrow);
+        this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
+        this.world.addEntity(entityArrow);
     }
 
     class PathfinderGoalIllusionerBlindnessSpell extends EntityIllagerWizard.c {
@@ -254,9 +254,9 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             CustomEntityIllusionerFake fakeIllusioner;
 
             for (int i = 0; i < (CustomEntityIllusioner.this.getAttacks() < 12 ? 4 : 5); i++) { /* summons 4 additional fake illusioners that actually shoot arrows as well with varying speeds (5 after 12 attacks) */
-                fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.getWorld(), CustomEntityIllusioner.this);
+                fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.world, CustomEntityIllusioner.this);
                 fakeIllusioner.setPosition(CustomEntityIllusioner.this.locX(), CustomEntityIllusioner.this.locY(), CustomEntityIllusioner.this.locZ());
-                CustomEntityIllusioner.this.getWorld().addEntity(fakeIllusioner);
+                CustomEntityIllusioner.this.world.addEntity(fakeIllusioner);
                 CustomEntityIllusioner.this.fakeIllusioners.add(fakeIllusioner);
             }
         }

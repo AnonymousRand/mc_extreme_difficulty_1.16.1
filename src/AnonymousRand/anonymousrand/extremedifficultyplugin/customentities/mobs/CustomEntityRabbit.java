@@ -57,7 +57,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean tookDamage = super.damageEntity(damageSource, damageAmount);
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
-            new SpawnEntity(this.getWorld(), new CustomEntityRabbit(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityRabbit(this.world), 1, null, null, this, false, true);
         }
 
         return super.damageEntity(damageSource, damageAmount);
@@ -69,10 +69,10 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -161,7 +161,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
                 this.die = true;
 
                 if (this.attacks >= 25) { /* after 25 attacks, killer bunnies explode when killed */
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
+                    this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.DESTROY);
                 }
             }
         }

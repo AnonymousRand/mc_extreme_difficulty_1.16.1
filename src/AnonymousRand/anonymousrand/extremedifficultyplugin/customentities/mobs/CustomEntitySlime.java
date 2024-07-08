@@ -62,7 +62,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         if (this.attacks >= 35) { /* after 35 attacks, slimes summon 6-8 mini-slimes when killed instead of 2-4 */
             int i = this.getSize();
 
-            if (!this.getWorld().isClientSide && i > 1 && this.dk()) {
+            if (!this.world.isClientSide && i > 1 && this.dk()) {
                 IChatBaseComponent ichatbasecomponent = this.getCustomName();
                 boolean flag = this.isNoAI();
                 float f = (float) i / 4.0F;
@@ -71,7 +71,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                 for (int l = 0; l < 4; ++l) {
                     float f1 = ((float) (l % 2) - 0.5F) * f;
                     float f2 = ((float) (l / 2) - 0.5F) * f;
-                    EntitySlime entitySlime = this.getEntityType().a(this.getWorld());
+                    EntitySlime entitySlime = this.getEntityType().a(this.world);
 
                     if (this.isPersistent()) {
                         entitySlime.setPersistent();
@@ -82,7 +82,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                     entitySlime.setInvulnerable(this.isInvulnerable());
                     entitySlime.setSize(j, true);
                     entitySlime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5D, this.locZ() + (double) f2, random.nextFloat() * 360.0F, 0.0F);
-                    this.getWorld().addEntity(entitySlime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
+                    this.world.addEntity(entitySlime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
                 }
             }
         }
@@ -98,10 +98,10 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -168,7 +168,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
 
         if (this.getHealth() <= 0.0 && this.attacks >= 22 && !this.deathExplosion) { /* after 22 attacks, slimes explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), (float) (Math.log10(this.getSize()) / Math.log10(2.0)), false, Explosion.Effect.DESTROY);
         }
 
         if (this.attacks == 12 && !this.a12) { /* after 12 attacks, slimes increase in size by 1 unless it is already at the largest possible size or is going to exceed it */

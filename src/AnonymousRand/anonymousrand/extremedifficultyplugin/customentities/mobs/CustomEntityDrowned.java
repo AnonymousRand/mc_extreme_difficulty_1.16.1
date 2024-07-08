@@ -39,10 +39,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -110,10 +110,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 150 attacks, drowned summon a guardian */
-                new SpawnEntity(this.getWorld(), new CustomEntityGuardian(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityGuardian(this.world), 1, null, null, this, false, true);
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 350 attacks, drowned summon an elder guardian */
-                new SpawnEntity(this.getWorld(), new CustomEntityGuardianElder(this.getWorld()), 1, null, null, this, false, true);
+                new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false, true);
             }
         }
     }
@@ -136,7 +136,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0D));
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D));                              /* Also attacks in the day, and continues attacking regardless of y-level and line of sight */
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0D));
-        this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0D, this.getWorld().getSeaLevel()));
+        this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0D, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, new Class[0]));                    /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to aggro a target or and maintain it as the target */

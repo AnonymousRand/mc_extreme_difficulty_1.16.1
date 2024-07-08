@@ -41,19 +41,19 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
 
         // otherwise if hit block
         super.a(movingObjectPosition);
-        if (!this.getWorld().isClientSide && this.yield > 1) {
-            boolean flag = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-            this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+        if (!this.world.isClientSide && this.yield > 1) {
+            boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
-                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
         }
     }
 
     @Override
     protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
-        if (!this.getWorld().isClientSide) {
+        if (!this.world.isClientSide) {
             Entity entity = movingObjectPositionEntity.getEntity();
 
             if (!(entity instanceof EntityPlayer)) { /* large fireballs can only impact players */
@@ -67,11 +67,11 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
                 this.a((EntityLiving) entity1, entity);
             }
 
-            boolean flag = this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-            this.getWorld().createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
+            boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+            this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
             if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
-                new RunnableLightningStorm(this.getWorld(), new Location(this.getWorld().getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
         }
     }

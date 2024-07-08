@@ -102,7 +102,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     public void a(EntityLiving entityLiving, float f) { // shoot()
         this.increaseAttacks(1);
 
-        CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.getWorld(), this, this.getAttacks() < 6 ? 12.0 : 18.0); /* after 6 attacks, trader llamas do 18 damage */
+        CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.world, this, this.getAttacks() < 6 ? 12.0 : 18.0); /* after 6 attacks, trader llamas do 18 damage */
         double d0 = entityLiving.locX() - this.locX();
         double d1 = entityLiving.e(0.3333333333333333D) - entityLlamaspit.locY();
         double d2 = entityLiving.locZ() - this.locZ();
@@ -110,10 +110,10 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
 
         entityLlamaspit.shoot(d0, d1 + (double) f, d2, 1.5F, 10.0F);
         if (!this.isSilent()) {
-            this.getWorld().playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
+            this.world.playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         }
 
-        this.getWorld().addEntity(entityLlamaspit);
+        this.world.addEntity(entityLlamaspit);
 
         try {
             this.didSpit.setBoolean(this, true);

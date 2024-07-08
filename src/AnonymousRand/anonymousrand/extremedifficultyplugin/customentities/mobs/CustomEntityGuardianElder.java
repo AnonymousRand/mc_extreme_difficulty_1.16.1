@@ -38,10 +38,10 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -129,7 +129,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         if ((this.ticksLived  + this.getId()) % 40 == 0) { /* applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute */
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
-            List<EntityPlayer> list = ((WorldServer)this.getWorld()).a((entityPlayer) -> this.h((Entity) entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
+            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> this.h((Entity) entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
 
             for (EntityPlayer entityPlayer : list) {
                 // plays the animation every time mining fatigue happens (every second)

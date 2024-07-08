@@ -22,7 +22,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
         this.attacks = 0;
         this.a25 = false;
         this.a60 = false;
-        this.newAEC = new CustomEntityAreaEffectCloud(this.getWorld(), 0.0F,40, 39);
+        this.newAEC = new CustomEntityAreaEffectCloud(this.world, 0.0F,40, 39);
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /* cave spiders move 70% faster but only do 1 damage and have 8 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
@@ -51,10 +51,10 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -120,10 +120,10 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
         super.tick();
 
         if (this.ticksLived == 500) { /* duplicates if it has been alive for 25 seconds */
-            new SpawnEntity(this.getWorld(), new CustomEntitySpiderCave(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntitySpiderCave(this.world), 1, null, null, this, false, true);
             this.getBukkitEntity().setCustomName("Good luck making me despawn"); // doesn't despawn and doesn't count towards mob cap
         } else if (this.ticksLived == 4800) { /* explodes and dies after 4 minutes to reduce lag */
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, false, Explosion.Effect.NONE);
             this.die();
         }
 

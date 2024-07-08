@@ -30,9 +30,9 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         if (random.nextDouble() < 0.25) { /* pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead */
-            new SpawnEntity(this.getWorld(), new CustomEntityPillager(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityPillager(this.world), 1, null, null, this, false, true);
         } else if (random.nextDouble() < 0.5) {
-            new SpawnEntity(this.getWorld(), new CustomEntityIllusioner(this.getWorld()), 1, null, null, this, true, true);
+            new SpawnEntity(this.world, new CustomEntityIllusioner(this.world), 1, null, null, this, true, true);
         }
     }
 
@@ -62,10 +62,10 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */

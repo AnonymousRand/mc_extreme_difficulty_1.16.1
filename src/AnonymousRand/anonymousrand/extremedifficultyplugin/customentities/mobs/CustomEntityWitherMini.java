@@ -11,7 +11,7 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         super(world);
         this.setInvul(0); /* no birth animation/explosion */
         this.dash = false;
-        double health = 50.0 + 5.0 * this.getWorld().getServer().getOnlinePlayers().size(); /* mini withers have 5 more health per player online, and 50 starting health */
+        double health = 50.0 + 5.0 * this.world.getServer().getOnlinePlayers().size(); /* mini withers have 5 more health per player online, and 50 starting health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth((float) health);
     }
@@ -46,7 +46,7 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         }
 
         if (!this.isSilent() && random.nextDouble() < 0.05) { /* mini withers only play the skull shooting sound 5% of the time */
-            this.getWorld().a(null, 1024, this.getChunkCoordinates(), 0);
+            this.world.a(null, 1024, this.getChunkCoordinates(), 0);
         }
 
         double d3 = this.getHeadX(i);
@@ -55,7 +55,7 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         double d6 = d0 - d3;
         double d7 = d1 - d4;
         double d8 = d2 - d5;
-        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.getWorld(), this, d6, d7, d8);
+        CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
         entityWitherSkull.setShooter(this);
 
         if (this.random.nextFloat() < 0.05 || alwaysBlue) { /* mini withers shoot blue skulls 5% of the time */
@@ -63,6 +63,6 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         }
 
         entityWitherSkull.setPositionRaw(d3, d4, d5);
-        this.getWorld().addEntity(entityWitherSkull);
+        this.world.addEntity(entityWitherSkull);
     }
 }

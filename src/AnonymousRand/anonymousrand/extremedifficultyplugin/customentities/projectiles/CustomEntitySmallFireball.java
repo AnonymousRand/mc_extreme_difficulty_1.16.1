@@ -12,7 +12,7 @@ public class CustomEntitySmallFireball extends EntitySmallFireball {
 
     @Override
     protected void a(MovingObjectPositionEntity movingObjectPositionEntity) {
-        if (!this.getWorld().isClientSide) {
+        if (!this.world.isClientSide) {
             Entity entity = movingObjectPositionEntity.getEntity();
 
             if (!(entity instanceof EntityPlayer)) { /* small fireballs can only impact players */

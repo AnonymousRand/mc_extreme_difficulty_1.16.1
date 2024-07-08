@@ -76,14 +76,14 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             }
 
             if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
-                this.getWorld().getWorld().strikeLightning(new Location(this.getWorld().getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
+                this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
             }
 
             if ((double) random.nextFloat() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */
                 int i = MathHelper.floor(this.locX());
                 int j = MathHelper.floor(this.locY());
                 int k = MathHelper.floor(this.locZ());
-                CustomEntityZombie newZombie = new CustomEntityZombie(this.getWorld());
+                CustomEntityZombie newZombie = new CustomEntityZombie(this.world);
 
                 for (int l = 0; l < 50; ++l) {
                     int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
@@ -93,11 +93,11 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
                     EntityTypes<?> entityTypes = newZombie.getEntityType();
                     EntityPositionTypes.Surface entityPositionTypes_Surface = EntityPositionTypes.a(entityTypes);
 
-                    if (SpawnerCreature.a(entityPositionTypes_Surface, this.getWorld(), blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.getWorld(), EnumMobSpawn.REINFORCEMENT, blockPosition, this.getWorld().random)) {
+                    if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPosition, this.world.random)) {
                         newZombie.setPosition(i1, j1, k1);
-                        if (!this.getWorld().isPlayerNearby(i1, j1, k1, 7.0D) && this.getWorld().i(newZombie) && this.getWorld().getCubes(newZombie) && !this.getWorld().containsLiquid(newZombie.getBoundingBox())) {
-                            this.getWorld().addEntity(newZombie);
-                            newZombie.prepare(this.getWorld(), this.getWorld().getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
+                        if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
+                            this.world.addEntity(newZombie);
+                            newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
                             newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.2, AttributeModifier.Operation.ADDITION));
                             break;
@@ -118,10 +118,10 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -186,7 +186,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
     public void tick() {
         super.tick();
 
-        if (!this.getWorld().isClientSide && this.isAlive() && !this.isNoAI()) { /* converts to drowned 4 times faster */
+        if (!this.world.isClientSide && this.isAlive() && !this.isNoAI()) { /* converts to drowned 4 times faster */
             if (this.isDrownConverting()) {
                 this.drownedConversionTime -= 3;
                 if (this.drownedConversionTime < 0) {
@@ -215,19 +215,19 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
             ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0F);
-            new SpawnEntity(this.getWorld(), new EntityZombie(EntityTypes.ZOMBIE, this.getWorld()), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
+            new SpawnEntity(this.world, new EntityZombie(EntityTypes.ZOMBIE, this.world), 2, CreatureSpawnEvent.SpawnReason.BEEHIVE, null, this, false, true);
         }
 
         if (this.attacks == 25 && !this.a25) { /* after 25 attacks, zombies get 40 max health and health and summon another baby zombie */
             this.a25 = true;
             ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
             this.setHealth(40.0F);
-            new SpawnEntity(this.getWorld(), new CustomEntityZombie(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityZombie(this.world), 1, null, null, this, false, true);
         }
 
         if (this.attacks == 50 && !this.a50) { /* after 50 attacks, zombies summon thor */
             this.a50 = true;
-            new SpawnEntity(this.getWorld(), new CustomEntityZombieThor(this.getWorld()), 1, null, null, this, false, true);
+            new SpawnEntity(this.world, new CustomEntityZombieThor(this.world), 1, null, null, this, false, true);
         }
 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /* after 40 attacks, zombies summon a small meteor rain when it dies */

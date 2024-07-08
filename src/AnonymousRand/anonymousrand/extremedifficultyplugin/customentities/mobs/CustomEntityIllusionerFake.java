@@ -102,7 +102,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
         if (this.getHealth() <= 0.0 && this.parentIllusioner.getAttacks() >= 12 && !this.deathExplosion) { /* after 12 attacks, summoned fake illusioners explode when killed */
             this.deathExplosion = true;
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.NONE);
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, false, Explosion.Effect.NONE);
         }
 
         if (this.ticksLived >= 1500) { /* fake illusioners die after 75 seconds */

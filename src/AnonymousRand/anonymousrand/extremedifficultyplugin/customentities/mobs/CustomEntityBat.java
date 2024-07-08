@@ -94,10 +94,10 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -235,12 +235,12 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.firstDuplicate) {
             this.firstDuplicate = false;
-            new SpawnEntity(this.getWorld(), new EntityBat(EntityTypes.BAT, this.getWorld()), random.nextInt(3) + 6,
+            new SpawnEntity(this.world, new EntityBat(EntityTypes.BAT, this.world), random.nextInt(3) + 6,
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
             /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
             if (this.getAttacks() >= this.getAttacksThresholds()[4]) {
-                new SpawnEntity(this.getWorld(), new CustomEntityBat(this.getWorld()), 1, null,
+                new SpawnEntity(this.world, new CustomEntityBat(this.world), 1, null,
                         null, this, false, false);
             }
         }
@@ -258,7 +258,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 this.world.a((EntityHuman) null, 1025, this.getChunkCoordinates(), 0);
             }
         } else {
-            if (this.targetPosition != null && (!this.getWorld().isEmpty(this.targetPosition) || this.targetPosition.getY() < 1)) {
+            if (this.targetPosition != null && (!this.world.isEmpty(this.targetPosition) || this.targetPosition.getY() < 1)) {
                 this.targetPosition = null;
             }
 

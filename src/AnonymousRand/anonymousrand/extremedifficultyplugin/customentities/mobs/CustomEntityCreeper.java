@@ -56,10 +56,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
+        if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.getWorld().findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
@@ -156,7 +156,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2 if charged) */
         if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()
                 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) {
-            new SpawnEntity(this.getWorld(), this.getMaxFuseTicks(), new CustomEntityCreeper(this.getWorld()),
+            new SpawnEntity(this.world, this.getMaxFuseTicks(), new CustomEntityCreeper(this.world),
                     this.isPowered() ? 2 : 1, null, null, this, false, true);
         }
 
@@ -168,16 +168,16 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         if (this.getGoalTarget() != null) {
             /* Charged creepers explode with power 50, and all creepers explode more powerfully the further the player is */
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
-            if (!this.getWorld().isClientSide) {
+            if (!this.world.isClientSide) {
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), (float) ((this.isPowered()
                         ? 75.0F : this.explosionRadius) + Math.max(Math.pow(1.5, Math.sqrt(this.get3DDistSq(
                         this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 2.0) - 1.0, 0.0)), false);
-                this.getWorld().getServer().getPluginManager().callEvent(event);
+                this.world.getServer().getPluginManager().callEvent(event);
 
                 if (!event.isCancelled()) {
                     this.killed = true;
-                    this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), event.getRadius(),
-                            event.getFire(), this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
+                    this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), event.getRadius(),
+                            event.getFire(), this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)
                             ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
                     this.die();
                     this.createEffectCloud();
@@ -203,7 +203,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             return;
         }
 
-        EntityAreaEffectCloud areaEffectCloud = new EntityAreaEffectCloud(this.getWorld(), this.locX(), this.locY(), this.locZ());
+        EntityAreaEffectCloud areaEffectCloud = new EntityAreaEffectCloud(this.world, this.locX(), this.locY(), this.locZ());
 
         areaEffectCloud.setInvisible(true);
         areaEffectCloud.setRadius(2.5F);
@@ -228,6 +228,6 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             }
         }
 
-        this.getWorld().addEntity(areaEffectCloud);
+        this.world.addEntity(areaEffectCloud);
     }
 }

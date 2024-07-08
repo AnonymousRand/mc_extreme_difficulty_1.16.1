@@ -77,15 +77,15 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         this.setMot(this.getMot().d(-0.01D, -0.1D, -0.01D));
         float f1 = 1.0F;
 
-        if (this.getWorld() instanceof WorldServer && this.getWorld().T() && EnchantmentManager.h(this.trident)) {
+        if (this.world instanceof WorldServer && this.world.T() && EnchantmentManager.h(this.trident)) {
             BlockPosition blockPosition = entity.getChunkCoordinates();
 
-            if (this.getWorld().f(blockPosition)) {
-                EntityLightning entityLightning = EntityTypes.LIGHTNING_BOLT.a(this.getWorld());
+            if (this.world.f(blockPosition)) {
+                EntityLightning entityLightning = EntityTypes.LIGHTNING_BOLT.a(this.world);
 
                 entityLightning.c(Vec3D.c(blockPosition));
                 entityLightning.d(entity1 instanceof EntityPlayer ? (EntityPlayer) entity1 : null);
-                this.getWorld().addEntity(entityLightning);
+                this.world.addEntity(entityLightning);
                 soundeffect = SoundEffects.ITEM_TRIDENT_THUNDER;
                 f1 = 5.0F;
             }
@@ -108,7 +108,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         super.die();
 
         if (random.nextDouble() < 0.2) {
-            this.getWorld().createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.5F, false, Explosion.Effect.DESTROY); /* tridents have a 20% chance to explode when they die */
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 0.5F, false, Explosion.Effect.DESTROY); /* tridents have a 20% chance to explode when they die */
         }
     }
 }
