@@ -91,6 +91,8 @@ custom class for large fireball summon lightning and separate newpathfindergoals
 
 uncomment things in custompathfindergoalrangedattack after that
 
+bL() doesnt seem to work
+
 investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdespawn()
 
 do checkdespawn and bL need to be in icustomhostile? is it possible to globalize them like g() and d()?
@@ -228,6 +230,8 @@ early return guards for isclientside and stuff
 funnier if sheep didnt seek players and just exploded?
 
 standarize goaltarget attacktarget
+
+would be funny to have some good mob have avoidentity goal like villager avoiding player or something
 
 slimes and mamga cubes still get trapped in cobwebs; just break them?
 

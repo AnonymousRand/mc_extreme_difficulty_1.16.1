@@ -50,7 +50,7 @@ public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleport(double hypo) {
-        EntityHuman human = NMSUtil.getClosestEntityFromList(this.entity.getWorld().getPlayers(), EntityFilter.BASE, this.entity);
+        EntityHuman human = NMSUtil.getClosestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
 
         if (human != null) {
             BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(human.locX(), human.locY(), human.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)

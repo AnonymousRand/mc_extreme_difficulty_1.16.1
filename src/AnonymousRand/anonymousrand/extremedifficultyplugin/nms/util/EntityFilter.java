@@ -10,14 +10,9 @@ import java.util.function.Predicate;
 // without being too hacky or needing too much reflection (everything's private :sob:)
 public class EntityFilter {
 
-    public static final EntityFilter BASE = new EntityFilter(-1.0); // negative detectionRange means don't check distance
     private double detectionRange;
     private final boolean ignoreY;
     private Predicate<EntityLiving> additionalPredicate;
-
-    public EntityFilter(double detectionRange) {
-        this(detectionRange, true, null);
-    }
 
     public EntityFilter(double detectionRange, @Nullable Predicate<EntityLiving> additionalPredicate) {
         this(detectionRange, true, additionalPredicate);
@@ -53,7 +48,7 @@ public class EntityFilter {
 
                 if (this.detectionRange > 0.0) {
                     if (this.ignoreY) {
-                        if (NMSUtil.distSqIgnoreY(from, target) > this.detectionRange * this.detectionRange) {
+                        if (NMSUtil.distSqExcludeY(from, target) > this.detectionRange * this.detectionRange) {
                             return false;
                         }
                     } else {

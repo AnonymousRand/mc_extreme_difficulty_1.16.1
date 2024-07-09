@@ -23,7 +23,7 @@ public class BlockOverride {
         this.block = block;
     }
 
-    /** 
+    /**
      * Update the given field with a new value.
      *
      * @param  fieldName                name of field
@@ -39,7 +39,7 @@ public class BlockOverride {
         }
     }
 
-    /** 
+    /**
      * Retrieves the current field value.
      *
      * @param  fieldName                name of field

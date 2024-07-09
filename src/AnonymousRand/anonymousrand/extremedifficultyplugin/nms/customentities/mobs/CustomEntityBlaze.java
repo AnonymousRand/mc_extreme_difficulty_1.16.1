@@ -203,7 +203,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
-                double distSqToGoalTarget = NMSUtil.distSqIgnoreY(this.blaze, goalTarget);
+                double distSqToGoalTarget = NMSUtil.distSqExcludeY(this.blaze, goalTarget);
 
                 if (distSqToGoalTarget < 3.0D) { // melee attack
                     if (this.meleeAttackRemainingCooldown <= 0) {

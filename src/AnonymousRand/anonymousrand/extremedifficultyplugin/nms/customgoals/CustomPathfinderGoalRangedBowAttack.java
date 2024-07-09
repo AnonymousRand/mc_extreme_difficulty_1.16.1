@@ -37,7 +37,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
         if (attackTarget == null) {
             return;
         }
-        double distanceToSquared = NMSUtil.distSqIgnoreY(this.entity, attackTarget);
+        double distanceToSquared = NMSUtil.distSqExcludeY(this.entity, attackTarget);
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
 

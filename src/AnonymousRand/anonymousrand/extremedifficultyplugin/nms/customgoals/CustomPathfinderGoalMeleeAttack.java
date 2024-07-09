@@ -44,7 +44,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
                 return false;
             } else {
                 this.d = this.entity.getNavigation().a(entityLiving, 0);
-                return this.d != null ? true : this.a(entityLiving) >= NMSUtil.distSqIgnoreY(this.entity, entityLiving);
+                return this.d != null ? true : this.a(entityLiving) >= NMSUtil.distSqExcludeY(this.entity, entityLiving);
             }
         }
     }
@@ -65,10 +65,10 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
         }
 
         this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
-        double distanceToSquared = NMSUtil.distSqIgnoreY(this.entity, attackTarget);
+        double distanceToSquared = NMSUtil.distSqExcludeY(this.entity, attackTarget);
 
         this.h = Math.max(this.h - 1, 0);
-        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSqIgnoreY(attackTarget.locX(), attackTarget.locZ(), this.e, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
+        if ((this.c || true) && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSqExcludeY(attackTarget.locX(), attackTarget.locZ(), this.e, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
             this.e = attackTarget.locX();
             this.f = attackTarget.locY();
             this.g = attackTarget.locZ();

@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
@@ -133,6 +134,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     @Override
     public void tick() {
         super.tick();
+        Bukkit.broadcastMessage("aggressive chicken tick");
 
         /* Aggressive chickens die after 30 seconds */
         if (this.ticksLived == 600) {

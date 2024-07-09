@@ -284,7 +284,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                In the latter case, there is a higher chance the closer horizontally the player is (and thus the more likely they are towering). */
             if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
                     || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
-                    < 0.05 / NMSUtil.distSqIgnoreY(this, target))) {
+                    < 0.05 / NMSUtil.distSqExcludeY(this, target))) {
                 this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
         }

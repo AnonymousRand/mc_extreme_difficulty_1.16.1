@@ -219,7 +219,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         @Override
         public boolean a() {
             EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
-            return entityLiving != null && EntityFilter.BASE.test(CustomEntityPhantom.this, entityLiving);
+            return entityLiving != null;
         }
 
         @Override

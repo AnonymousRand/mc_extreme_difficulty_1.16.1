@@ -48,7 +48,7 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /* super fireball area effect clouds do twice as much damage */
 
             for (EntityLiving entity : entities) {
-                if (NMSUtil.distSqIgnoreY(this, entity) < 144.0D) { /* super fireball area effect clouds snap on to location of closest player within 12 blocks horizontally */
+                if (NMSUtil.distSqExcludeY(this, entity) < 144.0D) { /* super fireball area effect clouds snap on to location of closest player within 12 blocks horizontally */
                     entityAreaEffectCloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
                     break;
                 }

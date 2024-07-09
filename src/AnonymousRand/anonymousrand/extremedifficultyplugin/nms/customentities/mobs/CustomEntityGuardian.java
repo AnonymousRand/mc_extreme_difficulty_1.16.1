@@ -243,7 +243,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqIgnoreY(this.a, entityLiving) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqExcludeY(this.a, entityLiving) > 9.0D;
         }
     }
 }

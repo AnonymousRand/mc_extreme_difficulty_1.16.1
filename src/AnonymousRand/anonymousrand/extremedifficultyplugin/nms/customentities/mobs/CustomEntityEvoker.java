@@ -5,7 +5,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -247,7 +246,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             float f = (float) MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
             int i;
 
-            if (NMSUtil.distSqIgnoreY(CustomEntityEvoker.this, entityLiving) < 9.0) {
+            if (NMSUtil.distSqExcludeY(CustomEntityEvoker.this, entityLiving) < 9.0) {
                 float f1;
 
                 for (i = 0; i < 5; ++i) {

@@ -7,6 +7,7 @@ import net.minecraft.server.v1_16_R1.EntityChicken;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.GenericAttributes;
 import net.minecraft.server.v1_16_R1.World;
+import org.bukkit.Bukkit;
 
 public class CustomEntityChicken extends EntityChicken {
     
@@ -39,12 +40,12 @@ public class CustomEntityChicken extends EntityChicken {
     public void tick() {
         super.tick();
 
-        /* 25% chance to spawn as an aggressive chicken instead */ // todo why not by listener?
+        /* 25% chance to spawn as an aggressive chicken instead */ // todo why not by listener? also todo doesnt always work?
         if (this.ticksLived == 5) {
-            if (random.nextDouble() < 0.25) {
+            //if (random.nextDouble() < 0.25) {
                 new SpawnEntity(this.world, new CustomEntityChickenAggressive(this.world), 1,
                         null, null, this, true, true);
-            }
+            //}
         }
     }
 }

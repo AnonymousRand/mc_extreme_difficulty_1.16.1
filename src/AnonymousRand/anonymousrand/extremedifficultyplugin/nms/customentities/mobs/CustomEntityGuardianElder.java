@@ -116,7 +116,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         if ((this.ticksLived  + this.getId()) % 40 == 0) { /* applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute */
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
-            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> NMSUtil.distSqIgnoreY(this, entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
+            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> NMSUtil.distSqExcludeY(this, entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
 
             for (EntityPlayer entityPlayer : list) {
                 // plays the animation every time mining fatigue happens (every second)
@@ -216,7 +216,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqIgnoreY(this.a, entityLiving) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqExcludeY(this.a, entityLiving) > 9.0D;
         }
     }
 }

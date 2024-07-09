@@ -40,8 +40,8 @@ public class ListenerSleep implements Listener {
             return;
         }
 
-        EntityLiving closestMonster = NMSUtil.getClosestEntityWithinRange(EntityMonster.class, EntityFilter.BASE, nmsPlayer, 50.0, 128.0, 50.0);
-        CustomEntityPufferfish closestPufferfish = NMSUtil.getClosestEntityWithinRange(CustomEntityPufferfish.class, EntityFilter.BASE, nmsPlayer, 50.0, 128.0, 50.0);
+        EntityLiving closestMonster = NMSUtil.getClosestEntityWithinRange(EntityMonster.class, null, nmsPlayer, 50.0, 128.0, 50.0);
+        CustomEntityPufferfish closestPufferfish = NMSUtil.getClosestEntityWithinRange(CustomEntityPufferfish.class, null, nmsPlayer, 50.0, 128.0, 50.0);
         double monsterDistanceIgnoreY;
         double pufferfishDistanceIgnoreY;
 

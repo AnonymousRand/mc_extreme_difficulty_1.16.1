@@ -398,7 +398,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
                 }
 
                 this.d = this.piglin.getNavigation().a(entityLiving, 0);
-                return this.d != null || this.a(entityLiving) >= NMSUtil.distSqIgnoreY(this.piglin, entityLiving);
+                return this.d != null || this.a(entityLiving) >= NMSUtil.distSqExcludeY(this.piglin, entityLiving);
             }
 
             return false;

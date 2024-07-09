@@ -169,7 +169,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 EntityLiving goalTarget = CustomEntityShulker.this.getGoalTarget();
 
                 CustomEntityShulker.this.getControllerLook().a(goalTarget, 180.0F, 180.0F);
-                double distSqToGoalTarget = NMSUtil.distSqIgnoreY(CustomEntityShulker.this, goalTarget);
+                double distSqToGoalTarget = NMSUtil.distSqExcludeY(CustomEntityShulker.this, goalTarget);
 
                 if (distSqToGoalTarget < 400.0D) { // todo getfollowrange?
                     if (this.b <= 0) {

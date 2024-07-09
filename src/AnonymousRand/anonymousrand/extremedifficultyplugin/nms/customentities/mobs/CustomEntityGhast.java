@@ -172,7 +172,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (NMSUtil.distSqIgnoreY(this.ghast, entityLiving) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (NMSUtil.distSqExcludeY(this.ghast, entityLiving) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.getWorld();
 
                 ++this.chargeTime;
@@ -253,7 +253,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             } else {
                 EntityLiving entityLiving = this.a.getGoalTarget();
 
-                if (NMSUtil.distSqIgnoreY(this.a, entityLiving) < 4096.0D) {
+                if (NMSUtil.distSqExcludeY(this.a, entityLiving) < 4096.0D) {
                     double d1 = entityLiving.locX() - this.a.locX();
                     double d2 = entityLiving.locZ() - this.a.locZ();
 
