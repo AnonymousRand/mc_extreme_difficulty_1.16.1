@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -45,8 +45,8 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
             this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
-            if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
-                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+            if (this.summonLightning && ExtremeDifficultyPlugin.plugin != null) { // summon thor lightning
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
         }
     }
@@ -70,8 +70,8 @@ public class CustomEntityLargeFireball extends EntityLargeFireball {
             boolean flag = this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
             this.world.createExplosion(null, this.locX(), this.locY(), this.locZ(), (float) this.yield, flag, flag ? Explosion.Effect.DESTROY : Explosion.Effect.NONE);
 
-            if (this.summonLightning && StaticPlugin.plugin != null) { // summon thor lightning
-                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+            if (this.summonLightning && ExtremeDifficultyPlugin.plugin != null) { // summon thor lightning
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), 10.0, random.nextInt(3) + 8, false).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
         }
     }

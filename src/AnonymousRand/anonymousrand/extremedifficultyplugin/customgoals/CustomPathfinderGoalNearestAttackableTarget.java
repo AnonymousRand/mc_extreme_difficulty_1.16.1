@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderGoalTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityUtils;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -29,7 +30,6 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsenti
         super(goalOwner, false, false);
         this.targetClass = targetClass;
         this.targetChance = targetChance;
-        // CustomPathfinderTargetCondition no longer requires line of sight to initially find a target, and skulls and invis potions no longer do anything against detection range // todo test skuills and invis
         this.targetCondition = new CustomPathfinderTargetCondition(this.k(), targetPredicate); // we use getDetectionRange() as changing FOLLOW_RANGE attribute doesn't work: this k() call happens in initPathfinder() in the super() constructor, before we are able to change FOLLOW_RANGE
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
     }
@@ -57,22 +57,20 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsenti
 
     protected T findPotentialValidTarget() {
         if (this.targetClass == EntityPlayer.class) {
-            return (T) this.findPlayerIgnoreLosAndY(this.e.getWorld().getPlayers(), this.e,
-                    this.e.locX(), this.e.getHeadY(), this.e.locZ());
+            return (T) this.findNearestPlayerIgnoreLosAndY(this.e.getWorld().getPlayers(), this.e);
         } else {
             return this.e.getWorld().b(this.targetClass, this.targetCondition, this.e, this.e.locX(),
                     this.e.getHeadY(), this.e.locZ(), this.getTargetableArea(this.k()));
         }
     }
 
-    protected EntityHuman findPlayerIgnoreLosAndY(List<? extends EntityHuman> entities, EntityLiving theOneWhoSeeks,
-                                                  double fromX, double fromY, double fromZ) {
+    protected EntityHuman findNearestPlayerIgnoreLosAndY(List<? extends EntityHuman> entities, EntityLiving theOneWhoSeeks) {
         double minDistSq = Double.MAX_VALUE;
         EntityHuman target = null;
 
         for (EntityHuman entity : entities) {
-            if (this.targetCondition.a(theOneWhoSeeks, entity)) {
-                double distSq = entity.g(fromX, fromY, fromZ); // uses overridden g() which ignores y-level // todo instead of having every mob provide a copy of this function just find all uses of g() and make custom method in here or soemthing?
+            if (this.targetCondition.a(theOneWhoSeeks, entity)) {                 // ignores line of sight, invis, and skulls to initially find a target (because CustomPathfinderTargetCondition) // todo test invis/skulls
+                double distSq = EntityUtils.getDistSqNoY(theOneWhoSeeks, entity); // ignores y-level
 
                 if (distSq < minDistSq) {
                     minDistSq = distSq;

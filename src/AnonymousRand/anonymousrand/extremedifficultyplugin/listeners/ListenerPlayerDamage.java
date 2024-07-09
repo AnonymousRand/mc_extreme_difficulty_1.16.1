@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
@@ -38,7 +38,7 @@ public class ListenerPlayerDamage implements Listener {
 
             switch (event.getDamager().getType()) {
                 case ENDER_DRAGON:
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /* ender dragon flings players much further */
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(bukkitPlayer.getVelocity().multiply(10.0)), 2L); /* ender dragon flings players much further */
                     break;
                 case HOGLIN:
                     CustomEntityHoglin hoglin = (CustomEntityHoglin)nmsDamager;
@@ -53,7 +53,7 @@ public class ListenerPlayerDamage implements Listener {
                         hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(hoglin.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).getValue() + 1.2);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0)), 2L); /* hoglins launch players into air, doubled if baby */ // delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75 * (hoglin.isBaby() ? 2.0 : 1.0), 0.0)), 2L); /* hoglins launch players into air, doubled if baby */ // delay by 2 ticks or else the mob's damage knockback is immediately applied after this setvelocity, canceling it out
                     break;
                 case HUSK:
                     CustomEntityZombieHusk husk = (CustomEntityZombieHusk) nmsDamager;
@@ -70,7 +70,7 @@ public class ListenerPlayerDamage implements Listener {
                     ironGolem.increaseStatsAdd(2.0, 0.5, 0.025);
 
                     if (ironGolem.getAttacks() == 10 || ironGolem.getAttacks() == 20 || ironGolem.getAttacks() == 25 || ironGolem.getAttacks() == 30 || ironGolem.getAttacks() == 35 || ironGolem.getAttacks() == 40 || ironGolem.getAttacks() == 43 || ironGolem.getAttacks() == 46 || ironGolem.getAttacks() == 49 || ironGolem.getAttacks() >= 50) { /* on these getAttacks(), iron golems knock players high into the air */
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
                     }
 
                     break;
@@ -84,10 +84,10 @@ public class ListenerPlayerDamage implements Listener {
                     if (ravager.getLaunchHigh()) {
                         ravager.setLaunchHigh(false);
                         event.setDamage(6.0);
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 2.0, 0.0)), 2L);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                         if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /* if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6 */
                             ravager.setLaunchHigh(true);
                         }
@@ -104,10 +104,10 @@ public class ListenerPlayerDamage implements Listener {
                     if (sheep.getLaunchHigh()) {
                         sheep.setLaunchHigh(false);
                         event.setDamage(9.0);
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0)), 2L);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 1.5, 0.0)), 2L);
                     }
 
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                         if (Math.abs(bukkitPlayer.getVelocity().getX()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getY()) < 0.14 && Math.abs(bukkitPlayer.getVelocity().getZ()) < 0.14) { /* if the player has not moved much after 5 ticks (meaning it did not get knockbacked enough), the next attack the player will be flung high into the air if they are jumping and damage will be increased to 6 */
                             sheep.setLaunchHigh(true);
                         }
@@ -135,7 +135,7 @@ public class ListenerPlayerDamage implements Listener {
                     CustomEntityZoglin zoglin = (CustomEntityZoglin)nmsDamager;
 
                     if (zoglin.getAttacks() >= 40) {
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)), 2L); /* after 40 attacks, zoglins throw players into the air when it hits the player */
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.setVelocity(new Vector(0.0, 0.75, 0.0)), 2L); /* after 40 attacks, zoglins throw players into the air when it hits the player */
                     }
 
                     break;

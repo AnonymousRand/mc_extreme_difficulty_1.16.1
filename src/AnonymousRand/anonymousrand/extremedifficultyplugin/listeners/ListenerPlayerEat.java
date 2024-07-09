@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ public class ListenerPlayerEat implements Listener {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitPlayer.getName() + " \"You thought...\"");
                         }
 
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitPlayer.addPotionEffect(new PotionEffect(effect.getType(), effect.getDuration() * 2, effect.getAmplifier() + 1)), 1);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitPlayer.addPotionEffect(new PotionEffect(effect.getType(), effect.getDuration() * 2, effect.getAmplifier() + 1)), 1);
                     }
                 }
 

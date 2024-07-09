@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningEffectStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
@@ -35,7 +35,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(55.0);
         this.setHealth(55.0F);
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
-        new RunnableLightningEffectStorm(this, 20, true).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /* thor summons a vanilla lightning storm around it when first spawned for 2 seconds */
+        new RunnableLightningEffectStorm(this, 20, true).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L); /* thor summons a vanilla lightning storm around it when first spawned for 2 seconds */
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         this.goalSelector.a(0, new CustomEntityZombieThor.PathfinderGoalThorSummonLightning(this)); /* custom goal that spawns lightning randomly within 20 blocks of thor on average every a second (75% chance to do no damage, 25% chance to be vanilla lightning) and also sometimes creates a vortex of harmless lightning around itself on average every 16 seconds and a tornado once on average after 20 seconds */
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(2, new NewPathfinderGoalShootLargeFireballs(this, 80, 0, true)); /* custom goal that allows thor to shoot a power 1 ghast fireball every 4 seconds that summons vanilla lightning */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
     }
 
     @Override
@@ -169,12 +169,12 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
             }
 
             if (random.nextDouble() < 0.003125 && !this.storm) {
-                new RunnableLightningEffectStorm(this, random.nextInt(6) + 25).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                new RunnableLightningEffectStorm(this, random.nextInt(6) + 25).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
             }
 
             if (random.nextDouble() < 0.002 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 120).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 120).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
             }
         }
     }

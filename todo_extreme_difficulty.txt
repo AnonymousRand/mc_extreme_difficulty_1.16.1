@@ -1,7 +1,7 @@
 todo:
 
 overriden functions like checkdespawn try to use descriptive variable names
-comment syntax update, line lengths, remove last newline, space after cast, standard multiline comment for changes docs,
+comment syntax update, line lengths, have last newline, space after cast, standard multiline comment for changes docs,
 plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 reorganize all custommobs to use new attacks thing and whatever (including blaze).
 custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
@@ -10,17 +10,11 @@ stopped after: customentityenderman
 
 change get3DDistSq to only require one param
 
-change custompathfindergoaltarget k() to just use icustomhostile.getdetectionrange() instead of massive switch?
-
-custompathfindergoaltarget: instead of switch cases, just check if instanceof iattacklevelingmob?
-
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
 cleaning up customnearestattackabletarget mess: is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
-    customfindentities in icustomentityaccess is a good place to start
-    customnearestattackabletarget g() be simpler? move all the logic from customientityaccess and custompathfindertargetcondition if possible into there. custompathfindertargetcondition might still be needed, make sense of what it does and all its variables. then, make inner classes like PathfinderGoalDragonNearestAttackableTarget use the same logic. possibly
     old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
-    if not, should they still be part of icustomhostile? what about checkdespawn and bL?
+    if not, should they still be part of icustomhostile? what about
 
 
 try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
@@ -92,7 +86,13 @@ custom class for large fireball summon lightning and separate newpathfindergoals
 
 uncomment things in custompathfindergoalrangedattack after that
 
-investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdesapwn()
+investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdespawn()
+
+do checkdespawn and bL need to be in icustomhostile? is it possible to globalize them like g() and d()?
+
+all util classes not abstract, but include private constryuctor
+
+all static references even internal use class name to differentiate from local variable?
 
 optimize predicates (not bedrock into base? etc)
 

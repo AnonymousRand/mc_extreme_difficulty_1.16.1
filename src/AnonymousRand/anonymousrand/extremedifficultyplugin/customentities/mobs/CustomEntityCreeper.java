@@ -146,7 +146,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this));                                                      /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
@@ -170,7 +170,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
             if (!this.world.isClientSide) {
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), (float) ((this.isPowered()
-                        ? 75.0F : this.explosionRadius) + Math.max(Math.pow(1.5, Math.sqrt(this.get3DDistSq(
+                        ? 75.0F : this.explosionRadius) + Math.max(Math.pow(1.5, Math.sqrt(this.getDistSq(
                         this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 2.0) - 1.0, 0.0)), false);
                 this.world.getServer().getPluginManager().callEvent(event);
 

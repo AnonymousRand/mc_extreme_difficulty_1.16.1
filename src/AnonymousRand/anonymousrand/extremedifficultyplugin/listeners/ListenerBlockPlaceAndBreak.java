@@ -1,8 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -72,7 +72,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
 
                     break;
                 case CONDUIT:
-                    new RunnableConduitSummonMobs(((CraftWorld)event.getBlock().getWorld()).getHandle(), bukkitBlock.getLocation(), 20).runTaskTimer(StaticPlugin.plugin, 0L, 100L); /* conduits spawn pufferfish and drowned every 5 seconds for 100 seconds */
+                    new RunnableConduitSummonMobs(((CraftWorld)event.getBlock().getWorld()).getHandle(), bukkitBlock.getLocation(), 20).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 100L); /* conduits spawn pufferfish and drowned every 5 seconds for 100 seconds */
                     break;
                 case PISTON:
                 case STICKY_PISTON:
@@ -82,7 +82,7 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         } else {
             Material bukkitMaterial = bukkitBlock.getType();
             if (bukkitMaterial == Material.COBWEB || bukkitMaterial == Material.SOUL_SOIL) { /* spider-placed cobwebs and wither skeleton-placed soul soil are deleted after 2.5 seconds */
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> bukkitBlock.setType(Material.AIR), 50); // async thread is used so that the game doesn't pause completely for 2.5 seconds
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> bukkitBlock.setType(Material.AIR), 50); // async thread is used so that the game doesn't pause completely for 2.5 seconds
             }
         }
     }

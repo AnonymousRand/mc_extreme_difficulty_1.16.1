@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.BlockOverride;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.Blocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,6 +13,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExtremeDifficultyPlugin extends JavaPlugin {
+
+    public static JavaPlugin plugin; // used by all classes that need a plugin for runnables etc.
 
     @Override
     public void onLoad() {}
@@ -34,7 +35,7 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     // Initialize static plugin field
     private void initializeStaticPlugin() {
-        StaticPlugin.plugin = this;
+        plugin = this;
     }
 
     // Register listeners

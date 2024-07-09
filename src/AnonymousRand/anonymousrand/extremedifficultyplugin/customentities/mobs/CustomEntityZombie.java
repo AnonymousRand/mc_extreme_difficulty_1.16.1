@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -58,7 +58,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* Spawns lightning randomly */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0015)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
     }
 
@@ -233,9 +233,9 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.a40) { /* after 40 attacks, zombies summon a small meteor rain when it dies */
             this.a40 = true; // do this here instead of in die() so that the meteor rain doesn't have to wait until the death animation finishes playing to start
 
-            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
-            new RunnableMeteorRain(this, 3, 40.0, 7).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 1, 40.0, 12).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
+            new RunnableMeteorRain(this, 3, 40.0, 7).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
         }
     }
 }

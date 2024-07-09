@@ -167,7 +167,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level or line of sight to initially find a target or maintain it as the target */
+        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                  /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));

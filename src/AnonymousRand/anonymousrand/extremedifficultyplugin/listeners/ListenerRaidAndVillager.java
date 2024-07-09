@@ -1,10 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityIronGolem;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityVillagerAggressive;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityArrow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningEffectStorm;
 import net.minecraft.server.v1_16_R1.*;
@@ -59,7 +59,7 @@ public class ListenerRaidAndVillager implements Listener {
 
                 nmsEntity.getWorld().getEntities(nmsEntity, nmsEntity.getBoundingBox().grow(64.0, 128.0, 64.0), entity -> entity instanceof CustomEntityIronGolem).forEach(entity -> { /* golems within 64 blocks horizontally of killed villager get a 25% stat boost and summon a lightning effect storm like thor around it for 5 seconds */
                     ((CustomEntityIronGolem)entity).increaseStatsMultiply(1.25);
-                    new RunnableLightningEffectStorm(entity, 50 , true).runTaskTimer(StaticPlugin.plugin, 0L, 2L);
+                    new RunnableLightningEffectStorm(entity, 50 , true).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
                 });
             }
         }
@@ -69,9 +69,9 @@ public class ListenerRaidAndVillager implements Listener {
     public void raidFinish(RaidFinishEvent event) { /* summon meteor rain when raid ends on random player */
         Player bukkitPlayer = event.getWinners().get(random.nextInt(event.getWinners().size()));
 
-        new RunnableMeteorRain(bukkitPlayer, 1, 70.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-        new RunnableMeteorRain(bukkitPlayer, 2, 70.0, 80).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-        new RunnableMeteorRain(bukkitPlayer, 3, 70.0, 100).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 1, 70.0, 80).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 2, 70.0, 80).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+        new RunnableMeteorRain(bukkitPlayer, 3, 70.0, 100).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
     }
 
     @EventHandler

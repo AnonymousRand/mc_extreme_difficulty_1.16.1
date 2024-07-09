@@ -134,7 +134,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
         /* Aggressive chickens attack these in decreasing priority: silverfish, endermites, other monsters, players, chickens, aggressive chickens, exploding aggressive chickens */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class));  /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class));  /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class));
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class));
         this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));

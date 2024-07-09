@@ -38,7 +38,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         super.initPathfinder();
 
         this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* small slimes also do damage; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to find a target; for some reason the slimes run away after a while without the extra parameters */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to find a target; for some reason the slimes run away after a while without the extra parameters */
     }
 
     @Override

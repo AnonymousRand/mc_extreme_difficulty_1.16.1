@@ -4,7 +4,7 @@ import org.bukkit.Material;
 
 import java.util.function.Predicate;
 
-public abstract class Predicates {
+public class Predicates {
     public static Predicate<Material> blockBreakableDefault = (type) ->
             type != Material.AIR
             && type != Material.BARRIER

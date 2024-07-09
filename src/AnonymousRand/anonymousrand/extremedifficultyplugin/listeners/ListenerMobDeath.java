@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableSpawnBlocksAround;
@@ -93,12 +93,12 @@ public class ListenerMobDeath implements Listener {
                 break;
             case WITHER:
                 if (nmsEntity instanceof CustomEntityWitherMini) { /* mini withers shoot less blue skulls in all directions and summon 3 wither skeletons when killed */
-                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,15).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
+                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,15).runTaskTimer(ExtremeDifficultyPlugin.plugin, 30L, 1L);
                     new SpawnEntity(nmsWorld, new CustomEntitySkeletonWither(nmsWorld), 3, null, null, nmsEntity, false, true);
                 } else { /* withers also drop 3 eyes of ender when killed and shoot blue skulls in all directions and summon a mob rain */
                     bukkitWorld.dropItem(bukkitLoc, new ItemStack(Material.ENDER_EYE, 3));
-                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(StaticPlugin.plugin, 30L, 1L);
-                    new RunnableMobRain(nmsEntity, ((CustomEntityWither)nmsEntity).getGoalTarget(), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 110L, 2L);
+                    new RunnableWitherDeathSkulls((CustomEntityWither)nmsEntity,60).runTaskTimer(ExtremeDifficultyPlugin.plugin, 30L, 1L);
+                    new RunnableMobRain(nmsEntity, ((CustomEntityWither)nmsEntity).getGoalTarget(), 45.0, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 110L, 2L);
                 }
                 break;
             case WITHER_SKELETON:  /* wither skeletons now have a +8% chance to drop a skull when killed */
@@ -108,7 +108,7 @@ public class ListenerMobDeath implements Listener {
                 break;
             case ZOMBIE:
                 if (nmsEntity instanceof CustomEntityZombieThor) { /* thors create a massive lightning storm and 2 rings of vanilla and custom lightning around itself when killed */
-                    new RunnableLightningStorm(nmsWorld, bukkitLoc, random.nextInt(16) + 55).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                    new RunnableLightningStorm(nmsWorld, bukkitLoc, random.nextInt(16) + 55).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(3) + 2);
                     Location bukkitLoc2;
 
                     for (int i = 0; i < 8; i++) {

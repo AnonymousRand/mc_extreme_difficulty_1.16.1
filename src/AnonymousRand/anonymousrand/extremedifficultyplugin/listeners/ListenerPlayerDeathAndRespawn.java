@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPhantom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.EntityZombie;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
@@ -51,7 +51,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { // delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> { // delay by 1 tick or else the server does not re-apply the status effects, thinking that the player doesn't exist yet
             for (PotionEffect effect : collections.getOrDefault(bukkitPlayer, Collections.emptyList())) { // only re-applies negative status effects
                 PotionEffectType bukkitPotionEffectType = effect.getType();
 
@@ -81,7 +81,7 @@ public class ListenerPlayerDeathAndRespawn implements Listener {
     @EventHandler
     public void totemUse(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player) {
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                 for (PotionEffect effect : event.getEntity().getActivePotionEffects()) { /* totems leave the player at 1 heart without any status effects */
                     event.getEntity().removePotionEffect(effect.getType());
                 }

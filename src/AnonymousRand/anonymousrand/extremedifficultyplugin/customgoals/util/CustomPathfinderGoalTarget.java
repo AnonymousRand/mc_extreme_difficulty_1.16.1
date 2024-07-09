@@ -10,7 +10,7 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
         super(goalOwner, needSightToMaintainTarget, nearbyOnly);
     }
 
-    @Override // getDetectionRange(); overriden here for both subclasses CustomPathfinderGoalNearestAttackableTarget and CustomPathfinderGoalHurtByTarget to use
+    @Override // getDetectionRange(); overridden here for both subclasses CustomPathfinderGoalNearestAttackableTarget and CustomPathfinderGoalHurtByTarget to use
     protected double k() {
         return ((ICustomHostile) this.e).getDetectionRange();
     }

@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWither;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -74,7 +74,7 @@ public class RunnableTornado extends BukkitRunnable {
 
                 if (nmsEntity instanceof EntityPlayer && (!this.playerBreakBlocks.containsKey(nmsEntity) || !this.playerBreakBlocks.get(nmsEntity))) {
                     this.playerBreakBlocks.put(nmsEntity, true);
-                    new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, false, this.maxCycles - this.cycles).runTaskTimer(StaticPlugin.plugin, 0L, 1L); // because a player's noclip is instantly turned off if not in spectator
+                    new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, false, this.maxCycles - this.cycles).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L); // because a player's noclip is instantly turned off if not in spectator
                 }
 
                 nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 15.0, (this.pos.getY() - nmsEntity.locY()) / 15.0, (this.pos.getZ() - nmsEntity.locZ()) / 15.0));

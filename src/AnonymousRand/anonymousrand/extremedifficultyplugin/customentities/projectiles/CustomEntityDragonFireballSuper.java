@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import net.minecraft.server.v1_16_R1.*;
@@ -69,11 +69,11 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             double rand = random.nextDouble();
 
             if (rand < 0.125) {
-                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
+                new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(11) + 35).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(4) + 2);
             } else if (rand < 0.225) {
-                new RunnableMeteorRain(this, 1, 40.0, 10).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-                new RunnableMeteorRain(this, 2, 40.0, 7).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-                new RunnableMeteorRain(this, 3, 40.0, 6).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                new RunnableMeteorRain(this, 1, 40.0, 10).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+                new RunnableMeteorRain(this, 2, 40.0, 7).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+                new RunnableMeteorRain(this, 3, 40.0, 6).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
             } else if (rand < 0.325) {
                 new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false, true);
             } else if (rand < 0.425) {

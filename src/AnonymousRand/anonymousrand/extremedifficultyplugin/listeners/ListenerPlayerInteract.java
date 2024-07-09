@@ -1,8 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPiglin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -53,7 +53,7 @@ public class ListenerPlayerInteract implements Listener {
                     }
 
                     if (bukkitMaterial == Material.ANVIL || bukkitMaterial == Material.CHIPPED_ANVIL || bukkitMaterial == Material.DAMAGED_ANVIL || bukkitMaterial == Material.SMITHING_TABLE) { /* right-clicking an anvil or smithing table causes it to explode 10 seconds later */
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                             nmsWorld.createExplosion(null, bukkitBlock.getLocation().getX(), bukkitBlock.getLocation().getY(), bukkitBlock.getLocation().getZ(), 4.0F, true, Explosion.Effect.NONE);
                             bukkitBlock.setType(Material.AIR);
                         }, 200L);

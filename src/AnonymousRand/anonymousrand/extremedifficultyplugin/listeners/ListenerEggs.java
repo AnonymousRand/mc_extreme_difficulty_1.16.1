@@ -1,10 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -271,7 +271,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.888) {
                     new SpawnEntity(this.nmsWorld, new CustomEntitySlimeMagmaCube(this.nmsWorld, 16), 1, null, this.eggLoc, true);
                 } else if (rand < 0.893) {
-                    new RunnableLightningStorm(this.nmsWorld, this.eggLoc, random.nextInt(11) + 35).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(4) + 2);
+                    new RunnableLightningStorm(this.nmsWorld, this.eggLoc, random.nextInt(11) + 35).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(4) + 2);
                 } else if (rand < 0.898) {
                     ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
                     ItemMeta itemMeta = itemStack.getItemMeta();
@@ -281,7 +281,7 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.903) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityPig(this.nmsWorld), 20, null, this.eggLoc, true);
                 } else if (rand < 0.908) {
-                    new RunnableMeteorRain(this.nmsEgg, 4, 40.0, 30).runTaskTimer(StaticPlugin.plugin, 0L, 3L);
+                    new RunnableMeteorRain(this.nmsEgg, 4, 40.0, 30).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L);
                 } else if (rand < 0.912) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityRavager(this.nmsWorld), 1, null, this.eggLoc, true);
                 } else if (rand < 0.916) {
@@ -341,11 +341,11 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.975) {
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.EMERALD, 32));
                 } else if (rand < 0.9775) {
-                    new RunnableTornado(this.nmsWorld, new BlockPosition(this.eggLoc.getX(), this.eggLoc.getY(), this.eggLoc.getZ()), 50, 140).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                    new RunnableTornado(this.nmsWorld, new BlockPosition(this.eggLoc.getX(), this.eggLoc.getY(), this.eggLoc.getZ()), 50, 140).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
                 } else if (rand < 0.9795) {
-                    new RunnableMeteorRain(this.nmsPlayer, 1, 70.0, 90).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-                    new RunnableMeteorRain(this.nmsPlayer, 2, 70.0, 90).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
-                    new RunnableMeteorRain(this.nmsPlayer, 3, 70.0, 110).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                    new RunnableMeteorRain(this.nmsPlayer, 1, 70.0, 90).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+                    new RunnableMeteorRain(this.nmsPlayer, 2, 70.0, 90).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+                    new RunnableMeteorRain(this.nmsPlayer, 3, 70.0, 110).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
                 } else if (rand < 0.9815) {
                     new SpawnEntity(this.nmsWorld, new CustomEntityGhast(this.nmsWorld), 5, null, this.eggLoc, false);
                 } else if (rand < 0.9835) {
@@ -405,13 +405,13 @@ public class ListenerEggs implements Listener {
                 } else if (rand < 0.9982) {
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.ENDER_EYE, 4));
                 } else if (rand < 0.9986) {
-                    new RunnableConstantlySpawnBlocksEntities(this.nmsPlayer, null, new EntityTNTPrimed(EntityTypes.TNT, this.nmsWorld), 0, 0, 0, 0.0, false, 50).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+                    new RunnableConstantlySpawnBlocksEntities(this.nmsPlayer, null, new EntityTNTPrimed(EntityTypes.TNT, this.nmsWorld), 0, 0, 0, 0.0, false, 50).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
                     Bukkit.broadcastMessage("5");
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("4"), 20);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("3"), 40);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("2"), 60);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> Bukkit.broadcastMessage("1"), 80);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> this.nmsWorld.createExplosion(this.nmsEgg, this.playerLoc.getX(), this.playerLoc.getY(), this.playerLoc.getZ(), 150.0F, true, Explosion.Effect.DESTROY), 100);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> Bukkit.broadcastMessage("4"), 20);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> Bukkit.broadcastMessage("3"), 40);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> Bukkit.broadcastMessage("2"), 60);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> Bukkit.broadcastMessage("1"), 80);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> this.nmsWorld.createExplosion(this.nmsEgg, this.playerLoc.getX(), this.playerLoc.getY(), this.playerLoc.getZ(), 150.0F, true, Explosion.Effect.DESTROY), 100);
                 } else if (rand < 0.999) {
                     ItemStack itemStack = new ItemStack(Material.CROSSBOW);
                     itemStack.addUnsafeEnchantment(Enchantment.QUICK_CHARGE, 5);
@@ -419,8 +419,8 @@ public class ListenerEggs implements Listener {
                     this.bukkitWorld.dropItem(this.eggLoc, itemStack);
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.ARROW, 256));
                 } else if (rand < 0.9994) {
-                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 55.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 3L);
-                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 50.0, 2).runTaskTimer(StaticPlugin.plugin, 400L, 10L);
+                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 55.0, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L);
+                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 50.0, 2).runTaskTimer(ExtremeDifficultyPlugin.plugin, 400L, 10L);
                 } else if (rand < 0.9997) {
                     this.bukkitWorld.dropItem(this.eggLoc, new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 64));
                 } else {

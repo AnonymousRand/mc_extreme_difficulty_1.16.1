@@ -1,8 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ public class ListenerLightningStrike implements Listener {
             Location bukkitLoc = bukkitLightning.getLocation();
 
             if (!storm && random.nextDouble() < 0.025) { /* non-storm lightning has a 2.5% chance to summon a lightning storm in a 100 block radius area centered on the initial lightning strike */
-                new RunnableLightningStorm(nmsWorld, bukkitLoc, random.nextInt(11) + 45).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 2);
+                new RunnableLightningStorm(nmsWorld, bukkitLoc, random.nextInt(11) + 45).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(3) + 2);
             }
 
             if (!storm && random.nextDouble() < 0.02 && numberOfThors < Bukkit.getOnlinePlayers().size()) { /* non-storm lightning has a 2% chance to summon thor, up to 1 thor per player */

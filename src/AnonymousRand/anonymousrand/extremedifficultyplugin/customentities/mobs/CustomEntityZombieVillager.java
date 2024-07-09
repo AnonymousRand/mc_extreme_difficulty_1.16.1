@@ -1,12 +1,12 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -43,7 +43,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0015)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
     }
 
     @Override
@@ -134,7 +134,7 @@ public class CustomEntityZombieVillager extends EntityZombieVillager implements 
         if (this.getHealth() <= 0.0 && this.attacks >= 40 && !this.deathLightningStorm) { // do this here instead of in die() so that the storm doesn't have to wait until the death animation finishes playing to start
             this.deathLightningStorm = true;
             ListenerLightningStrike.storm = true;
-            new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(StaticPlugin.plugin, 0L, random.nextInt(3) + 3); /* after 40 attacks, zombie villagers summon a lightning storm when killed */
+            new RunnableLightningStorm(this.world, new Location(this.world.getWorld(), this.locX(), this.locY(), this.locZ()), random.nextInt(10) + 50).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, random.nextInt(3) + 3); /* after 40 attacks, zombie villagers summon a lightning storm when killed */
         }
     }
 }

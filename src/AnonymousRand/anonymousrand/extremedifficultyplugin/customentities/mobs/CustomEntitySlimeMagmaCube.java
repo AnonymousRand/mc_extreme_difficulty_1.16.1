@@ -35,7 +35,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /* custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count */
         this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* uses the custom goal that atstacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to find a target; for some reason the magma cubes run away after a while without the extra parameters */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to find a target; for some reason the magma cubes run away after a while without the extra parameters */
     }
 
     @Override

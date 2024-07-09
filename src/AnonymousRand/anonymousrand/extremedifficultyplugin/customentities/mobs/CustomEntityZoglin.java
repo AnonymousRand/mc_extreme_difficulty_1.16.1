@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -44,7 +44,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
     }
 
     @Override
@@ -191,7 +191,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
             if (this.zoglin.attacks >= 8) {
                 if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /* after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking */
                     this.moveEverywhere = true;
-                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityLiving, 12).runTaskTimer(StaticPlugin.plugin, 0L, 5L);
+                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityLiving, 12).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 5L);
                 }
             }
         }

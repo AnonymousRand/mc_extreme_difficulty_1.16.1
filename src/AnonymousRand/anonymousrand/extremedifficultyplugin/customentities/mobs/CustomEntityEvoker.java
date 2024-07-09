@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
@@ -7,7 +8,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -159,7 +159,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, EntityRaider.class)); /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
         // todo test removing forget after 300 ticks
     }
 
@@ -284,7 +284,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(StaticPlugin.plugin, 0L, 3L); /* every time the fangs attack, the player is slowed for 1.2 seconds */
+            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L); /* every time the fangs attack, the player is slowed for 1.2 seconds */
         }
 
         public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {

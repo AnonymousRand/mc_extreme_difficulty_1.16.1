@@ -19,7 +19,7 @@ public class CustomPathfinderTargetCondition extends PathfinderTargetCondition {
 
         // a() is setDetectionRange()
         // c() sets noLineOfSightRequired() to true (MCP-Reborn has it backwards, it seems)
-        // e() sets useVisibilityModifier (skulls/invis) to false (default true)
+        // e() sets useVisibilityModifier (invis/skulls) to false (default true)
         // a() is setCustomPredicate()
         // the other booleans are false by default
         this.a(detectionRange).c().e().a(targetPredicate);

@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityWitherSkull;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableTornado;
 import net.minecraft.server.v1_16_R1.*;
@@ -132,7 +132,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
             if (i <= 0) {
                 this.world.createExplosion(this, this.locX(), this.getHeadY(), this.locZ(), 12.0F, true, Explosion.Effect.DESTROY); /* withers explode with power 12 instead of 7 when spawned and sets blocks on fire */
-                new RunnableTornado(this.world, new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 160).runTaskTimer(StaticPlugin.plugin, 0L, 1L); /* withers summon a tornado after the spawn explosion */
+                new RunnableTornado(this.world, new BlockPosition(this.locX(), this.locY(), this.locZ()), 60, 160).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L); /* withers summon a tornado after the spawn explosion */
 
                 if (!this.isSilent()) {
                     this.world.b(1023, this.getChunkCoordinates(), 0);
@@ -262,7 +262,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
             }
 
             this.wither.dash = true;
-            new RunnableWitherDashAttack(this.wither).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+            new RunnableWitherDashAttack(this.wither).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
         }
     }
 
@@ -289,7 +289,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
                 this.wither.getWorld().getEntities(this.wither, this.wither.getBoundingBox().g(8.0), entity -> entity instanceof EntityPlayer).forEach(entity -> entity.damageEntity(DamageSource.GENERIC, 10.0F));
             }
 
-            if (this.wither.get3DDistSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
+            if (this.wither.getDistSq(this.wither.getPositionVector(), this.wither.getGoalTarget().getPositionVector()) <= 4.0) {
                 this.wither.dash = false;
                 this.cancel();
             }

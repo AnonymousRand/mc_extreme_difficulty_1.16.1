@@ -1,11 +1,11 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWitherMini;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import net.minecraft.server.v1_16_R1.BlockPosition;
 import net.minecraft.server.v1_16_R1.Vec3D;
@@ -48,7 +48,7 @@ public class ListenerDragonFight implements Listener {
 
             new SpawnEntity(nmsWorld, new CustomEntityEnderDragon(nmsWorld, event.getEntity().getUniqueId()), 1, null, event.getEntity(), null, true, false);
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> { /* obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on */
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> { /* obsidian pillars now have mob spawners on top of them, and each mob spawner generates with a 3 by 3 area of barrier blocks below it so that the mobs always have something to spawn on */
                 for (int i = 0; i < 10; i++) {
                     new RunnableGenerateEndCrystalSpawners(bukkitWorld, i).run();
                 }
@@ -81,8 +81,8 @@ public class ListenerDragonFight implements Listener {
             Bukkit.broadcastMessage("Impressive...most impressive.");
             Bukkit.broadcastMessage("But you must survive for at least 30 more seconds before you can enter the end portal");
             CustomEntityEnderDragon nmsEntity = (CustomEntityEnderDragon)((CraftEnderDragon)event.getEntity()).getHandle();
-            new RunnablePreventExitPortalGeneration(nmsEntity).runTaskTimer(StaticPlugin.plugin, 80L, 1L);
-            new RunnableOnDragonDeath(nmsEntity).runTaskTimer(StaticPlugin.plugin, 0L, 1L);
+            new RunnablePreventExitPortalGeneration(nmsEntity).runTaskTimer(ExtremeDifficultyPlugin.plugin, 80L, 1L);
+            new RunnableOnDragonDeath(nmsEntity).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
         }
     }
 
@@ -176,7 +176,7 @@ public class ListenerDragonFight implements Listener {
             this.spawner.setMaxSpawnDelay(550); /* max spawn delay reduced to 37.5 seconds */
             this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
-            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /* every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
+            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 20L); /* every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
             spawnerBlocks.add(this.spawnerBlock);
 
             for (int x = -1; x <= 1; x++) {
@@ -268,7 +268,7 @@ public class ListenerDragonFight implements Listener {
             this.spawner.setMaxSpawnDelay(maxSpawnDelay);
             this.spawner.setMaxNearbyEntities(40);
             this.spawner.update();
-            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(StaticPlugin.plugin, 0L, 20L); /* every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
+            new RunnableSpawnerBreakBlocksAbove(this.spawnerBlock, 1, this.yRadiusForBreakingBlocks).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 20L); /* every second, mob spawners break blocks above them that could be used to prevent the spawning of mobs */
             spawnerBlocks.add(this.spawnerBlock);
 
             for (int x = -4; x <= 4; x++) {
@@ -396,19 +396,19 @@ public class ListenerDragonFight implements Listener {
 
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage("");
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("Through pain, through death, through the endless challenges that I have thrown at you......you've come through.");
                 Bukkit.broadcastMessage("");
             }, 100);
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("This is it. It's over.");
                 Bukkit.broadcastMessage("");
             }, 170);
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("And...");
                 Bukkit.broadcastMessage("");
             }, 255);
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                 Bukkit.broadcastMessage("I'm sorry.");
                 Bukkit.broadcastMessage("");
             }, 335);
@@ -446,11 +446,11 @@ public class ListenerDragonFight implements Listener {
                 }
 
                 new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld, 10.0F), 1, null, new Location(this.nmsWorld.getWorld(), this.dragonPos.getX(), this.dragonPos.getY(), this.dragonPos.getZ()), false); /* summon a power 10 custom lightning strike on dragon's location */
-                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(StaticPlugin.plugin, 0L, 2L); /* summon mob rain */
-                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 300L, 10L);
+                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 45.0, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L); /* summon mob rain */
+                new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(ExtremeDifficultyPlugin.plugin, 300L, 10L);
 
                 if (Bukkit.getServer().getOnlinePlayers().size() > 5) { /* repeat second wave after 20 seconds if more than 5 players online */
-                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(StaticPlugin.plugin, 700L, 10L);
+                    new RunnableMobRain(nmsWorld, 130.0, new BlockPosition(0.0, 0.0, 0.0), 35.0, 2).runTaskTimer(ExtremeDifficultyPlugin.plugin, 700L, 10L);
                 }
             }
         }

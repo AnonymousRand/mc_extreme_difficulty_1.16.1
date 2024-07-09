@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
@@ -8,7 +9,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.CustomPat
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -129,7 +129,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
     }
 
     @Override
@@ -149,7 +149,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
         if (this.getHealth() <= 0.0 && !this.deathFireballs) { // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes playing to start firing
             this.deathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(StaticPlugin.plugin, 0L, 30L); /* when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
+            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 2 : 5).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 30L); /* when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
         }
     }
 
@@ -220,7 +220,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
                     if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 6 == 0 && !this.ring) { /* after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
                         this.ring = true;
-                        new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(StaticPlugin.plugin, 0L, 20L);
+                        new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 20L);
                     }
 
                     CustomEntityLargeFireball largeFireball;

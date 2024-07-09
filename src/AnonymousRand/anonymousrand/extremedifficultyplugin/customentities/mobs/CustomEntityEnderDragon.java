@@ -1,10 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityDragonFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityDragonFireballSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntitySmallFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,7 +55,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level or line of sight to initially find a target or maintain it as the target (for the custom fireball goal) */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
     }
 
     @Override // onCrystalDestroyed()
@@ -70,7 +70,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         /* When a crystal is destroyed, dragons shoot a super fireball, then rapid fire 10 normal custom fireballs, then shoot another super fireball */
         if (damageSource.getEntity() != null) {
             Entity damageSourceEntity = damageSource.getEntity();
-            new RunnableDragonRapidShootFireballs(this, damageSourceEntity, 12).runTaskTimer(StaticPlugin.plugin, 0L, 4L);
+            new RunnableDragonRapidShootFireballs(this, damageSourceEntity, 12).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 4L);
         }
     }
 
@@ -218,7 +218,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                     this.nmsWorld.addEntity(newFireball);
                 } else if (rand < 0.96) {
                     new RunnableMobShootArrows(this.enderDragon, (EntityLiving) entity, 12, 1, 30.0, 2, true, true, 10)
-                            .runTaskTimer(StaticPlugin.plugin, 0L, 4L);
+                            .runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 4L);
                 } else {
                     CustomEntityDragonFireballSuper newFireball = new CustomEntityDragonFireballSuper(this.nmsWorld,
                             this.enderDragon, x, y, z, true);

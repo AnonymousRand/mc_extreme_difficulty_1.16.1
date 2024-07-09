@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +31,7 @@ public class ListenerPotionEffect implements Listener {
                     if (bukkitEntity instanceof Player) {
                         event.setCancelled(true);
 
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, () -> {
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, () -> {
                             ((LivingEntity) bukkitEntity).addPotionEffect(new PotionEffect(bukkitPotionEffectType, (int) (bukkitNewEffect.getDuration() * 0.025), bukkitNewEffect.getAmplifier()));
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + bukkitEntity.getName() + " \"Enjoy your " + (int) (bukkitNewEffect.getDuration() * 0.025 / 20.0) + " seconds of " + bukkitPotionEffectType.getName().toLowerCase().replaceAll("_", " ") + "\"");
                         }, 1);

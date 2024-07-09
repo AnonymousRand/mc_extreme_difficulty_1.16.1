@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.StaticPlugin;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -41,7 +41,7 @@ public class ListenerDropItem implements Listener {
                 item.setItemStack(new ItemStack(Material.POISONOUS_POTATO, 16));
                 break;
             case SAND: /* dropped sand despawns after 5 sec to reduce lag */
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(StaticPlugin.plugin, item::remove, 100);
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ExtremeDifficultyPlugin.plugin, item::remove, 100);
                 break;
         }
 
