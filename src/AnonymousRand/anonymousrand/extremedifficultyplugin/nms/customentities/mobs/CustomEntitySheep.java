@@ -40,7 +40,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            if (NMSUtil.distSqIgnoreY(this, this.getGoalTarget()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
+            if (NMSUtil.distSq(this, this.getGoalTarget()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
                 this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }

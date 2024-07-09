@@ -47,20 +47,6 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         return 16.0;
     }
 
-    @Override
-    public double g(double x, double y, double z) {
-        double distX = this.locX() - x;
-        double distZ = this.locZ() - z;
-        return distX * distX + distZ * distZ;
-    }
-
-    @Override
-    public double d(Vec3D vec3d) {
-        double distX = this.locX() - vec3d.x;
-        double distZ = this.locZ() - vec3d.z;
-        return distX * distX + distZ * distZ;
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
