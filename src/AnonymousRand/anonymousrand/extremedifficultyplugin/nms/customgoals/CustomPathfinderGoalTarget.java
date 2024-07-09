@@ -3,27 +3,36 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 
 public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
 
+    protected final boolean ignoreY;
     private static Field a;
 
-    public CustomPathfinderGoalTarget(EntityInsentient goalOwner, boolean needSightToMaintainTarget, boolean nearbyOnly) {
+    public CustomPathfinderGoalTarget(
+            EntityInsentient goalOwner,
+            boolean needSightToMaintainTarget,
+            boolean nearbyOnly,
+            boolean ignoreY) {
+        
         super(goalOwner, needSightToMaintainTarget, nearbyOnly);
+        this.ignoreY = ignoreY;
     }
 
     static {
         try {
             a = PathfinderGoalTarget.class.getDeclaredField("d");
+            a.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
 
-    @Override // shouldContinueExecuting(); overridden here to apply NMSUtil.getDistSqIgnoreY()
+    @Override // shouldContinueExecuting(); overridden here to apply NMSUtil.distSqIgnoreY()
     public boolean b() {
         EntityLiving goalTarget = this.e.getGoalTarget();
         if (goalTarget == null) {
@@ -41,7 +50,14 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 return false;
             } else {
                 double detectionRange = this.k();
-                if (NMSUtil.getDistSqIgnoreY(this.e, goalTarget) > detectionRange * detectionRange) { // doesn't take into account y-level to maintain target
+                double distSq;
+                if (this.ignoreY) {
+                    distSq = NMSUtil.distSqIgnoreY(this.e, goalTarget);
+                } else {
+                    distSq = NMSUtil.distSq(this.e, goalTarget);
+                }
+
+                if (distSq > detectionRange * detectionRange) {
                     return false;
                 } else {
                     if (this.f) {

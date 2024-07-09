@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityShulkerBullet;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,7 +37,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, CustomEntityShulker.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
     }
 
     @Override
@@ -179,19 +180,19 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         public void e() {
             if (CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL) {
                 --this.b;
-                EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
+                EntityLiving goalTarget = CustomEntityShulker.this.getGoalTarget();
 
-                CustomEntityShulker.this.getControllerLook().a(entityLiving, 180.0F, 180.0F);
-                double d0 = CustomEntityShulker.this.h((Entity) entityLiving);
+                CustomEntityShulker.this.getControllerLook().a(goalTarget, 180.0F, 180.0F);
+                double distSqToGoalTarget = NMSUtil.distSqIgnoreY(CustomEntityShulker.this, goalTarget);
 
-                if (d0 < 400.0D) {
+                if (distSqToGoalTarget < 400.0D) { // todo getfollowrange?
                     if (this.b <= 0) {
                         CustomEntityShulker.this.attacks++;
 
                         this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /* shulker takes on average 10 less ticks to shoot */
 
                         for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /* after 35 attacks, shulkers have a 50% to 2 bullets at a time */
-                            CustomEntityShulker.this.getWorld().addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.getWorld(), CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
+                            CustomEntityShulker.this.getWorld().addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.getWorld(), CustomEntityShulker.this, goalTarget, CustomEntityShulker.this.eM().n()));
                         }
 
                         CustomEntityShulker.this.playSound(SoundEffects.ENTITY_SHULKER_SHOOT, 2.0F, (CustomEntityShulker.this.random.nextFloat() - CustomEntityShulker.this.random.nextFloat()) * 0.2F + 1.0F);

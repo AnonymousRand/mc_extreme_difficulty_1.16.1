@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -49,7 +50,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         }
 
         this.attackRemainingCooldown--;
-        double distSqToGoalTarget = this.entity.d(goalTarget.getPositionVector());
+        double distSqToGoalTarget = NMSUtil.distSqIgnoreY(this.entity, goalTarget);
         /* Breaking line of sight does not stop the mob from attacking */
         ++this.seeTime; // todo what this for
 

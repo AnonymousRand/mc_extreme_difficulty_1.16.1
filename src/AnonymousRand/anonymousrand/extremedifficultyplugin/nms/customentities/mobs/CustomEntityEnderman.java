@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -161,13 +162,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                                              /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                                              /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and doesn't take into account y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target */
+        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and ignores y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                  /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
@@ -293,11 +294,11 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         if (this.getGoalTarget() != null) {
             EntityLiving target = this.getGoalTarget();
 
-            /* Endermen have a chance to teleport to target if target can't be seen or is on a different y-level
-               In the latter case, there is a higher chance the closer the player is (and thus the more likely they are towering) */
+            /* Endermen have a chance to teleport to target if target can't be seen or is on a different y-level.
+               In the latter case, there is a higher chance the closer horizontally the player is (and thus the more likely they are towering). */
             if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
                     || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
-                    < 0.05 / this.d(target.getPositionVector()))) {
+                    < 0.05 / NMSUtil.distSqIgnoreY(this, target))) {
                 this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
         }

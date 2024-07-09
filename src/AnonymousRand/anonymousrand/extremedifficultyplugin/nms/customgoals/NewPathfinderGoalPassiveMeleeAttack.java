@@ -1,11 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 import java.util.Random;
 
+// todo why does this have to be different from custompathfindergoalmeleeattack
 public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
     protected final EntityInsentient entity;
@@ -44,7 +46,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
                 return false;
             } else {
                 this.d = this.entity.getNavigation().a(entityLiving, 0);
-                return this.a(entityLiving) >= this.entity.g(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ());
+                return this.a(entityLiving) >= NMSUtil.distSqIgnoreY(this.entity, entityLiving);
             }
         }
     }
@@ -77,10 +79,10 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
         }
 
         this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
-        double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
+        double distanceToSquared = NMSUtil.distSqIgnoreY(this.entity, attackTarget);
 
         this.h = Math.max(this.h - 1, 0);
-        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || attackTarget.g(this.e, this.f, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
+        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSqIgnoreY(attackTarget.locX(), attackTarget.locZ(), this.e, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
             this.e = attackTarget.locX();
             this.f = attackTarget.locY();
             this.g = attackTarget.locZ();

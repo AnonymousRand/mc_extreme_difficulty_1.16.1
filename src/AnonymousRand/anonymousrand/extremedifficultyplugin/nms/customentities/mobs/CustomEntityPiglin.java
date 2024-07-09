@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
@@ -79,7 +80,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /* buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
@@ -411,7 +412,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
                 }
 
                 this.d = this.piglin.getNavigation().a(entityLiving, 0);
-                return this.d != null || this.a(entityLiving) >= this.piglin.g(entityLiving.locX(), entityLiving.locY(), entityLiving.locZ());
+                return this.d != null || this.a(entityLiving) >= NMSUtil.distSqIgnoreY(this.piglin, entityLiving);
             }
 
             return false;

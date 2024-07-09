@@ -225,6 +225,10 @@ somehow nerf endermen drops. for example, drop ender shards (custom item?) which
 
 early return guards for isclientside and stuff
 
+funnier if sheep didnt seek players and just exploded?
+
+standarize goaltarget attacktarget
+
 slimes and mamga cubes still get trapped in cobwebs; just break them?
 
 guardians arent attacking out of water

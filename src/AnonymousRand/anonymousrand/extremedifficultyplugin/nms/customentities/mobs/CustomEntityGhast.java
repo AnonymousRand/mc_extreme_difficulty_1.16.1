@@ -9,6 +9,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.Custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -128,8 +129,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it has a target via CustomNearestAttackableTarget) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
     }
 
     @Override
@@ -185,7 +186,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (this.ghast.d(entityLiving.getPositionVector()) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (NMSUtil.distSqIgnoreY(this.ghast, entityLiving) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.getWorld();
 
                 ++this.chargeTime;
@@ -266,7 +267,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             } else {
                 EntityLiving entityLiving = this.a.getGoalTarget();
 
-                if (entityLiving.h(this.a) < 4096.0D) {
+                if (NMSUtil.distSqIgnoreY(this.a, entityLiving) < 4096.0D) {
                     double d1 = entityLiving.locX() - this.a.locX();
                     double d2 = entityLiving.locZ() - this.a.locZ();
 

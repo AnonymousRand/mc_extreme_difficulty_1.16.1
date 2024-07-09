@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -22,7 +23,7 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
         if (this.targetEntity == null) {
             return false;
-        } else if (this.targetEntity.h(this.entity) > (double) (this.maxFollowDistance * this.maxFollowDistance)) {
+        } else if (NMSUtil.distSqIgnoreY(this.entity, this.targetEntity) > (double) (this.maxFollowDistance * this.maxFollowDistance)) {
             return false;
         } else {
             return true;
@@ -31,7 +32,7 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
     @Override
     public boolean b() {
-        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && this.targetEntity.h(this.entity) < (double) (this.maxFollowDistance * this.maxFollowDistance);
+        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && NMSUtil.distSqIgnoreY(this.entity, this.targetEntity) < (this.maxFollowDistance * this.maxFollowDistance);
     }
 
     @Override

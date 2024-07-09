@@ -29,13 +29,14 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsenti
             int targetChance,
             @Nullable Predicate<EntityLiving> additionalPredicate) {
 
-        // needSightToMaintainTarget (checkSight) is always false, meaning we never need sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
-        super(goalOwner, false, false);
+        // needSightToMaintainTarget is always false, meaning we never need line of sight to continue tracking a target consistently as the goalTarget (checked in b()/shouldContinueExecuting()); by consistently, I mean it doesn't have to keep resetting the goal and rechecking a(), often causing stuttering
+        // in addition, ignoreY is automatically true if we are targeting players, which means shouldContinueExecuting() can continue targeting regardless of y-level
+        super(goalOwner, false, false, targetClass == EntityHuman.class || targetClass == EntityPlayer.class);
         this.targetClass = targetClass;
         this.targetChance = targetChance;
-        // EntityFilter means we ignore y-level, line of sight, invis, and skulls to initially find a player target // todo test invis/skulls
-        this.targetCondition = new EntityFilter(this.k(), // this k() call happens in initPathfinder() in the super() constructor before we are able to change FOLLOW_RANGE, thus we use getDetectionRange() instead
-                targetClass == EntityHuman.class || targetClass == EntityPlayer.class, additionalPredicate);
+        // EntityFilter means we also ignore y-level, line of sight, and invis/skulls to INITIALLY find a player target
+        // also note that this k() call happens in initPathfinder() in the super() constructor before we are able to change FOLLOW_RANGE, thus we have to use getDetectionRange() instead
+        this.targetCondition = new EntityFilter(this.k(), this.ignoreY, additionalPredicate);
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
     }
 
@@ -56,7 +57,8 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsenti
                     ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
         }
 
-        this.targetCondition.setDetectionRange(this.k()); // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
+        // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
+        this.targetCondition.setDetectionRange(this.k());
         super.c();
     }
 

@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalPassiveMoveTowardsTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -39,7 +40,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            if (this.d(this.getGoalTarget().getPositionVector()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
+            if (NMSUtil.distSqIgnoreY(this, this.getGoalTarget()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
                 this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }

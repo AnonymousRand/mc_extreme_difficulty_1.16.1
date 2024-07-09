@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.pr
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -172,7 +173,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalFireballAttack(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
     }
 
     @Override
@@ -216,7 +217,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
-                double distSqToGoalTarget = this.blaze.h((Entity) goalTarget); // todo if eventually changing g() and d() to be global utils, change this too
+                double distSqToGoalTarget = NMSUtil.distSqIgnoreY(this.blaze, goalTarget);
 
                 if (distSqToGoalTarget < 3.0D) { // melee attack
                     if (this.meleeAttackRemainingCooldown <= 0) {

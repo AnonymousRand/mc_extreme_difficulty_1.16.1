@@ -12,8 +12,9 @@ public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget
     private Class<?>[] reinforcementClasses;
 
     public CustomPathfinderGoalHurtByTarget(EntityCreature goalOwner, Class<?>... reinforcementClasses) {
-        // needSightToMaintainTarget (checkSight) is always false, meaning we never need sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
-        super(goalOwner, false, false);
+        // needSightToMaintainTarget is always false, meaning we never need line of sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
+        // in addition, ignoreY is always true for this
+        super(goalOwner, false, false, true);
 
         if (reinforcementClasses.length > 0) {
             this.doesEntityCallForHelp = true;

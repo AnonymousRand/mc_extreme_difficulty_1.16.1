@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.p
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -45,7 +46,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityPlayer player : nearbyPlayers) {
-                if (this.d(player.getPositionVector()) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
+                if (NMSUtil.distSqIgnoreY(this, player) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
                     entityAreaEffectCloud.setPosition(player.locX(), player.locY() + i, player.locZ());
                     break;
                 }

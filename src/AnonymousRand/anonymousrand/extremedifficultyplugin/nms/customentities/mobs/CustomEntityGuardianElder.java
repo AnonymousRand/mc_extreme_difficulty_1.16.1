@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -103,7 +104,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         this.goalSelector.a(7, this.goalRandomStroll);
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target and maintain it as the target */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardianElder.EntitySelectorGuardianTargetHumanSquid(this))); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
     }
 
     @Override
@@ -129,7 +130,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         if ((this.ticksLived  + this.getId()) % 40 == 0) { /* applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute */
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
-            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> this.h((Entity) entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
+            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> NMSUtil.distSqIgnoreY(this, entityPlayer) < 2500.0D && entityPlayer.playerInteractManager.d());
 
             for (EntityPlayer entityPlayer : list) {
                 // plays the animation every time mining fatigue happens (every second)
@@ -229,7 +230,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && entityLiving.h(this.a) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqIgnoreY(this.a, entityLiving) > 9.0D;
         }
     }
 }

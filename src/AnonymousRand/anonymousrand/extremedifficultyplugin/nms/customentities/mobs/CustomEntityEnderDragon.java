@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityDragonFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityDragonFireballSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntitySmallFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,7 +56,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Doesn't take into account y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
     }
 
     @Override // onCrystalDestroyed()
@@ -103,7 +104,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double distToNearestCrystal = Double.MAX_VALUE;
 
             for (EntityEnderCrystal enderCrystal : enderCrystals) {
-                double distToCrystal = enderCrystal.h(this);
+                double distToCrystal = NMSUtil.distSq(this, enderCrystal);
 
                 if (distToCrystal < distToNearestCrystal) {
                     distToNearestCrystal = distToCrystal;

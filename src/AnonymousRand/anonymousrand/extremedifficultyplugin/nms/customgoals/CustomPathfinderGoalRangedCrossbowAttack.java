@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -35,7 +36,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & 
             return;
         }
 
-        double distanceToSquared = this.entity.d(attackTarget.getPositionVector());
+        double distanceToSquared = NMSUtil.distSqIgnoreY(this.entity, attackTarget);
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
         boolean flag2 = (distanceToSquared > (double) this.maxAttackDistSq || this.seeTime < 5) && this.crossbowState == State.UNCHARGED;

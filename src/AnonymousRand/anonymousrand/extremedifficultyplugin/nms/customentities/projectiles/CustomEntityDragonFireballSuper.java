@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.p
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
@@ -47,7 +48,7 @@ public class CustomEntityDragonFireballSuper extends EntityDragonFireball {
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 3)); /* super fireball area effect clouds do twice as much damage */
 
             for (EntityLiving entity : entities) {
-                if (this.d(entity.getPositionVector()) < 144.0D) { /* super fireball area effect clouds snap on to location of closest player within 12 blocks horizontally */
+                if (NMSUtil.distSqIgnoreY(this, entity) < 144.0D) { /* super fireball area effect clouds snap on to location of closest player within 12 blocks horizontally */
                     entityAreaEffectCloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
                     break;
                 }
