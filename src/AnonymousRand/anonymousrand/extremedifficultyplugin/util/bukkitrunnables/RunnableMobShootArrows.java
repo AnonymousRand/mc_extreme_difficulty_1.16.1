@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.scheduler.BukkitRunnable;
 

@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityEnderCrystal;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;

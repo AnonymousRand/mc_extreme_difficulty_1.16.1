@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;

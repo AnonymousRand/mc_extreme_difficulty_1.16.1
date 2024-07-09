@@ -2,8 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.*;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.Entity;
 import org.bukkit.Location;

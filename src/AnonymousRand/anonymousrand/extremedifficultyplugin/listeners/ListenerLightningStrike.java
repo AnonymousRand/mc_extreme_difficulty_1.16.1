@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieThor;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityZombieThor;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableLightningStorm;
 import org.bukkit.Bukkit;

@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;

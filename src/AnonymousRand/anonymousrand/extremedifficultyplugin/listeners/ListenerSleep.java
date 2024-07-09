@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPufferfish;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customgoals.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityPufferfish;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;

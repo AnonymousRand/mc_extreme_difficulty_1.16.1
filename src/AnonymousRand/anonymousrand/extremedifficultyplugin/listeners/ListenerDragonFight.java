@@ -1,10 +1,10 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityWitherMini;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityEnderCrystal;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityWitherMini;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityEnderCrystal;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobRain;
 import net.minecraft.server.v1_16_R1.BlockPosition;

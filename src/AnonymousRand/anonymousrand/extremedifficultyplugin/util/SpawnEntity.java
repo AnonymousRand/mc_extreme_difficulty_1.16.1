@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityCreeper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityPhantom;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityCreeper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityPhantom;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.World;

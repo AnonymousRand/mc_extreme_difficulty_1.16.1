@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityChickenAggressive;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityEnderDragon;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityIronGolem;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.mobs.CustomEntityZombieVillager;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityChickenAggressive;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityEnderDragon;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityIronGolem;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityZombieVillager;
 import net.minecraft.server.v1_16_R1.Entity;
 import net.minecraft.server.v1_16_R1.EntityArrow;
 import net.minecraft.server.v1_16_R1.EntityPlayer;

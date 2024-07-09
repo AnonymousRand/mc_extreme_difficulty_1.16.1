@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityBoat;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityBoat;
 import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;

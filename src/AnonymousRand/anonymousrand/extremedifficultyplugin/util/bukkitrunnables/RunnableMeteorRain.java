@@ -1,9 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityArrowExploding;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.projectiles.CustomEntityLargeFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityLightning;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityArrowExploding;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLargeFireball;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityLightning;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;

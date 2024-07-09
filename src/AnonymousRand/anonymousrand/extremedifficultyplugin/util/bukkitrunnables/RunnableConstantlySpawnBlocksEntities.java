@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.customentities.misc.CustomEntityAreaEffectCloud;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
