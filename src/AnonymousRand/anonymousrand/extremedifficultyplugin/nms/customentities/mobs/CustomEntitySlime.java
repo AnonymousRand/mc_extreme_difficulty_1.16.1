@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalBreakBlocksAround;
@@ -9,7 +10,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPa
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
@@ -175,5 +176,10 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                 this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, this.getSize() / 4 + 1, this.getSize() / 4, this.getSize() / 4 + 1, this.getSize() / 4, false)); /* Breaks most blocks around the mob periodically */
             }
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 }

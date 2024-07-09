@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityTNTPrimed;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
@@ -15,7 +16,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
-public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
@@ -151,6 +152,11 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
                 this.world.addEntity(newTNT);
             }
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 
     static class PathfinderGoalZoglinMeleeAttack extends CustomPathfinderGoalMeleeAttack {

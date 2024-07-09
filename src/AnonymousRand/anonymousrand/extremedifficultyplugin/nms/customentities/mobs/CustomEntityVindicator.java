@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
@@ -11,7 +12,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Arrays;
 
-public class CustomEntityVindicator extends EntityVindicator implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntityVindicator extends EntityVindicator implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
@@ -126,5 +127,10 @@ public class CustomEntityVindicator extends EntityVindicator implements ICustomH
             this.setSlot(EnumItemSlot.HEAD, new ItemStack(Items.NETHERITE_AXE));
             this.addEffect(new MobEffect(MobEffects.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 }

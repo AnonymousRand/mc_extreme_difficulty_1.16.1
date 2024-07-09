@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -14,7 +15,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
 
-public class CustomEntityZombie extends EntityZombie implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntityZombie extends EntityZombie implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
@@ -223,5 +224,10 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             new RunnableMeteorRain(this, 2, 40.0, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
             new RunnableMeteorRain(this, 3, 40.0, 7).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L);
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 }

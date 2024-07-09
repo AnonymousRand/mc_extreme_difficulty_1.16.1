@@ -42,10 +42,10 @@ public class CustomEntityChicken extends EntityChicken {
 
         /* 25% chance to spawn as an aggressive chicken instead */ // todo why not by listener? also todo doesnt always work?
         if (this.ticksLived == 5) {
-            //if (random.nextDouble() < 0.25) {
+            if (random.nextDouble() < 0.25) {
                 new SpawnEntity(this.world, new CustomEntityChickenAggressive(this.world), 1,
                         null, null, this, true, true);
-            //}
+            }
         }
     }
 }

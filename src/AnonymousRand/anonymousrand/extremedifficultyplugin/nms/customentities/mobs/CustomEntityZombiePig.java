@@ -2,12 +2,13 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHostile, IAttackLevelingMob {
+public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
@@ -123,5 +124,10 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
             this.a35 = true;
             this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(50.0);
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 }

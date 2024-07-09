@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
@@ -15,7 +16,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class CustomEntityZombieThor extends EntityZombie implements ICustomHostile { // todo expend custom zombie?
+public class CustomEntityZombieThor extends EntityZombie implements ICustomHostile, IGoalRemovingMob { // todo expend custom zombie?
 
     public PathfinderGoalSelector vanillaTargetSelector;
 
@@ -115,6 +116,11 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         if (this.ticksLived == 5) {
             Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "weather thunder"); /* thor causes thunderstorm */
         }
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 
     public static class PathfinderGoalThorSummonLightning extends PathfinderGoal {

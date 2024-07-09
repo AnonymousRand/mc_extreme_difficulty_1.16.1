@@ -351,7 +351,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         public boolean a() {
             if (this.piglin.frenzyTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
                 if (!((EntityPlayer) this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
-                    return this.piglin.getDistSq(this.piglin.getPositionVector(), this.piglin.getGoalTarget().getPositionVector()) <= 4.0;
+                    return NMSUtil.distSq(this.piglin, this.piglin.getGoalTarget()) <= 4.0;
                 }
             }
 

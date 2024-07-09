@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -10,7 +11,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Arrays;
 
-public class CustomEntityPillager extends EntityPillager implements ICustomHostile {
+public class CustomEntityPillager extends EntityPillager implements ICustomHostile, IGoalRemovingMob {
 
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;
@@ -106,6 +107,11 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
 
     public void increaseAttacks(int increase) {
         this.attacks += increase;
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 
 //    public int[] getAttacksThresholds() {

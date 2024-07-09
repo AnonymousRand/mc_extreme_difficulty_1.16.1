@@ -12,20 +12,13 @@ change get3DDistSq to only require one param
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
-cleaning up customnearestattackabletarget mess: is there a possibiliity of making g() and d() global? if this happens, check all goals, inner goals, h() etc. too since they use those as helper functions. make checkdespawn global too?
-    old version of this todo: see if possible to not have .g() and whatever in all entities and just use a new version in the attacking goals (3 ranged, 2 melee) and custompathfindertargetcondition that passes in both entities and does a check there instead
-    if not, should they still be part of icustomhostile? what about
-
-
-try to clean up big removepathfindergoals switch statement? potentially using interface for those needing a removal so we have a getvanillatargetselector() or something, and also an initvanilletargetselector() for this.targetSelectorVanilla = super.targetSelector;
-
 increment attacks in attack method/goal instead of listener?
 
 make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
 things in terms of getattackthresholds instead of hardcoded
 
-mobs with follow distance <= 32 do not need increased random despawn distance?
+remove checkdespawn for mobs with follow distance <= 32
 
 
 
@@ -39,7 +32,7 @@ wrap spawnentity in util function that creates runnable instance so we dont need
     does spawnentity even need to be a runnable?
     wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
-all utils should be static?
+all utils should be static
 
 
 
@@ -75,9 +68,10 @@ multi0pole ternary operators: align vertically
 
 line breaking complicated stuff with master level and and nested ors etc: indent accordingly like in custompathfindergoalhurtbytarget's callforhelp()
 
-line breaks parameters (only function delcarations): break on new item, indent up to start of first parameter (re: custompathfindergoalnearestattackabetarget)
+line breaks parameters (only function delcarations): break on new item, indent up to start of first parameter (re: custompathfindergoalnearestattackabetarget). same with arithmetic, nested functions in params etc.
+rhs side of euqals red customentitycreeper explode()
 
-investigate why we need to remove goals
+investigate why we need to remove goals, particularly nearestattackabletarget.
 
 all function comments + @override: comments on top?
 
@@ -91,11 +85,11 @@ custom class for large fireball summon lightning and separate newpathfindergoals
 
 uncomment things in custompathfindergoalrangedattack after that
 
-bL() doesnt seem to work
+bL() doesnt seem to work sometimes? check again
 
-investigate why some mobs dont need bl() (maxfallheight) or g() and d() or checkdespawn()
+does bL() need to be in icustomhostile? is it possible to globalize it like g() and d()?
 
-do checkdespawn and bL need to be in icustomhostile? is it possible to globalize them like g() and d()?
+investigate why some mobs dont need bl() (maxfallheight) or checkdespawn()
 
 all util classes not abstract, but include private constryuctor
 
@@ -264,6 +258,11 @@ find better solution for bed destruction on respawn? see if possible to find bed
 remove all abilities to attack regardless of y level and just have more ways to bring player down/reach player?
 
 create full documentation of changes from all /* comments and that google doc?
+
+
+
+
+
 
 balance changes catalog:
 bats on first hit sumnmon 8-10 vanilla bats -> 6-8

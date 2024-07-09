@@ -93,7 +93,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoalMeleeAttack {
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomHostile) {
-                if (((ICustomHostile)this.entity).getDistSq(this.entity.getPositionVector(), entityLiving.getPositionVector()) > d1 && random.nextDouble() < 0.996) { /* mobs can successfully hit you occasionally when they are out of range vertically */
+                if (NMSUtil.distSq (this.entity, entityLiving) > d1 && random.nextDouble() < 0.996) { /* mobs can successfully hit you occasionally when they are out of range vertically */
                     return;
                 }
             }

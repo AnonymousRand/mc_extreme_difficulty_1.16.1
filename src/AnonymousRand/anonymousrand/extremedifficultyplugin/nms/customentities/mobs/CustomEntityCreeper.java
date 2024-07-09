@@ -2,9 +2,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
@@ -134,7 +134,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this));                                                      /* Doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this));                                                      /* Always retaliates against players, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
     @Override
@@ -156,9 +156,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             /* Charged creepers explode with power 50, and all creepers explode more powerfully the further the player is */
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
             if (!this.world.isClientSide) {
-                ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), (float) ((this.isPowered()
-                        ? 75.0F : this.explosionRadius) + Math.max(Math.pow(1.5, Math.sqrt(this.getDistSq(
-                        this.getPositionVector(), this.getGoalTarget().getPositionVector())) - 2.0) - 1.0, 0.0)), false);
+                double extraRadius = Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget())) - 2.0) - 1.0;
+                float explosionRadius = (float) ((this.isPowered() ? 75.0 : this.explosionRadius)
+                                        + Math.max(extraRadius, 0.0));
+                ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, false);
                 this.world.getServer().getPluginManager().callEvent(event);
 
                 if (!event.isCancelled()) {

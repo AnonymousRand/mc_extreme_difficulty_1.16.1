@@ -1,12 +1,13 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
-public class CustomEntityZombieSuper extends EntityZombie implements ICustomHostile { // todo extend custom zombie?
+public class CustomEntityZombieSuper extends EntityZombie implements ICustomHostile, IGoalRemovingMob { // todo extend custom zombie?
 
     public PathfinderGoalSelector vanillaTargetSelector;
 
@@ -136,5 +137,10 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
     @Override
     public int bL() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public PathfinderGoalSelector getVanillaTargetSelector() {
+        return this.vanillaTargetSelector;
     }
 }
