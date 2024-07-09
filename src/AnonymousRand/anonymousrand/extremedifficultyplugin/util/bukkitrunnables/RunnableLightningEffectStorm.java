@@ -46,7 +46,7 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
             Location bukkitLoc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
             for (int i = 0; i < 4; i++) {
-                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitLoc.getY(), this.cycles * 13.0 + i * 60.0);
+                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitLoc.getY(), this.cycles * 13.0 + i * 60.0);
 
                 if (this.effect) {
                     this.bukkitWorld.strikeLightningEffect(bukkitLoc2);

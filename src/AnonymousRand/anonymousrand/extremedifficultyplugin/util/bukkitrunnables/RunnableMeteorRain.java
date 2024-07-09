@@ -63,7 +63,7 @@ public class RunnableMeteorRain extends BukkitRunnable {
         switch (this.type) {
             case 1: // exploding arrows
                 for (int i = 0; i < 4; i++) {
-                    pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
+                    pos = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
                     CustomEntityArrowExploding explodingArrow = new CustomEntityArrowExploding(this.nmsWorld, this.vec, (byte) (random.nextDouble() < 0.25 ? 1 : 0), this.bukkitShooter instanceof LivingEntity ? (LivingEntity) this.bukkitShooter : null, 1.0F); /* 25% of arrows are piecing 1 */
                     explodingArrow.setPosition(pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(explodingArrow);
@@ -71,17 +71,17 @@ public class RunnableMeteorRain extends BukkitRunnable {
                 break;
             case 2: // fireballs
                 for (int i = 0; i < 4; i++) {
-                    pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
+                    pos = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, playerLoc.getY() + random.nextDouble() * 40.0 + 15.0, 361.0);
                     CustomEntityLargeFireball meteorFireball = new CustomEntityLargeFireball(EntityTypes.FIREBALL, this.nmsWorld, 2, new Vec3D(0.0, -2.9, 0.0), pos.getX(), pos.getY(), pos.getZ());
                     this.nmsWorld.addEntity(meteorFireball);
                 }
                 break;
             case 3: // lightning
-                pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.playerLoc.getX(), this.playerLoc.getY(), this.playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
+                pos = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(this.playerLoc.getX(), this.playerLoc.getY(), this.playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
                 new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, pos, false);
                 break;
             case 4: // dragon's breath clouds
-                pos = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
+                pos = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(playerLoc.getX(), playerLoc.getY(), playerLoc.getZ()), random.nextDouble() * this.maxRadius, this.bukkitWorld.getHighestBlockYAt(this.playerLoc), 361.0);
 
                 for (int i = 0; i < 3; i++) {
                     CustomEntityAreaEffectCloud newAEC = new CustomEntityAreaEffectCloud(this.nmsWorld, random.nextInt(2) + 4, 120, 15);

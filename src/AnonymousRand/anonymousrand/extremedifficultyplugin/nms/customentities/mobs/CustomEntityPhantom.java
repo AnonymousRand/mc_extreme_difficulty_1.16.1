@@ -4,7 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerMobSpawnAndReplaceWithCustom;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -233,8 +233,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         @Override
         public boolean a() {
             EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
-
-            return entityLiving != null && CustomEntityPhantom.this.a(CustomEntityPhantom.this.getGoalTarget(), CustomPathfinderTargetCondition.DEFAULT);
+            return entityLiving != null && EntityFilter.BASE.test(CustomEntityPhantom.this, entityLiving);
         }
 
         @Override
@@ -247,7 +246,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         @Override
         public void d() {
             try {
-                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.world.getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
+                CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, (BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this)).up(10 + CustomEntityPhantom.this.random.nextInt(20)));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -272,8 +271,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                     CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, CustomEntityPhantom.this.getGoalTarget().getChunkCoordinates().up(20 + CustomEntityPhantom.this.random.nextInt(20)));
                     BlockPosition orbitPos = ((BlockPosition)CustomEntityPhantom.this.orbitPosition.get(CustomEntityPhantom.this));
 
-                    if (orbitPos.getY() < CustomEntityPhantom.this.world.getSeaLevel()) {
-                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.world.getSeaLevel() + 1, orbitPos.getZ()));
+                    if (orbitPos.getY() < CustomEntityPhantom.this.getWorld().getSeaLevel()) {
+                        CustomEntityPhantom.this.orbitPosition.set(CustomEntityPhantom.this, new BlockPosition(orbitPos.getX(), CustomEntityPhantom.this.getWorld().getSeaLevel() + 1, orbitPos.getZ()));
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -333,7 +332,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
                 CustomEntityPhantom.this.attackEntity(entityLiving);
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
                 if (!CustomEntityPhantom.this.isSilent()) {
-                    CustomEntityPhantom.this.world.triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);
+                    CustomEntityPhantom.this.getWorld().triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);
                 }
             } else if (CustomEntityPhantom.this.positionChanged || CustomEntityPhantom.this.hurtTicks > 0) {
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
@@ -391,12 +390,12 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             try {
                 Vec3D orbitOff = ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this));
 
-                if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
+                if (orbitOff.y < CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.getWorld().isEmpty(CustomEntityPhantom.this.getChunkCoordinates().down(1))) {
                     this.e = Math.max(1.0F, this.e);
                     this.h();
                 }
 
-                if (orbitOff.y > CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.world.isEmpty(CustomEntityPhantom.this.getChunkCoordinates().up(1))) {
+                if (orbitOff.y > CustomEntityPhantom.this.locY() && !CustomEntityPhantom.this.getWorld().isEmpty(CustomEntityPhantom.this.getChunkCoordinates().up(1))) {
                     this.e = Math.min(-1.0F, this.e);
                     this.h();
                 }

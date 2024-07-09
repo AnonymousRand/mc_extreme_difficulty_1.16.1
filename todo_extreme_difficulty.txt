@@ -28,6 +28,7 @@ things in terms of getattackthresholds instead of hardcoded
 mobs with follow distance <= 32 do not need increased random despawn distance?
 
 
+
 registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
@@ -38,18 +39,22 @@ wrap spawnentity in util function that creates runnable instance so we dont need
     does spawnentity even need to be a runnable?
     wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
-should all utils be static?
+all utils should be static?
 
 
 
 
 better documentation for removing y-level/los requirements for finding targets
 
+change this.entity in goals to this.goalowner?
+
 personalize all doc comments with mob name?
 
 no blank lines after class declaration and before instance variable decalarations?
 
 all -- and ++ to after if possible
+
+all static initializer blocks before constructors?
 
 listeners group by event?
 
@@ -100,7 +105,7 @@ standardize customentity.this vs this.customentity in inner goal classes
 
 optimize fall damage algo further? check what happens in cobweb, sweet bush, scaffold
 
-make thor lightning storm less constant and annoying
+make thor lightning storm less constant and anIgnoreYing
 
 thor general refactoring (sketchy ListenerLightningStrike.storm?)
 

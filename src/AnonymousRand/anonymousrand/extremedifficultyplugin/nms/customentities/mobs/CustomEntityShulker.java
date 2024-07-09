@@ -161,7 +161,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         public boolean a() {
             EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
-            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL : false;
+            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
         }
 
         @Override
@@ -177,7 +177,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
         @Override
         public void e() {
-            if (CustomEntityShulker.this.world.getDifficulty() != EnumDifficulty.PEACEFUL) {
+            if (CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL) {
                 --this.b;
                 EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
 
@@ -191,7 +191,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                         this.b = 10 + CustomEntityShulker.this.random.nextInt(10) * 10; /* shulker takes on average 10 less ticks to shoot */
 
                         for (int i = 0; i < (CustomEntityShulker.this.attacks < 35 ? 1 : CustomEntityShulker.this.random.nextDouble() < 0.5 ? 1 : 2); i++) { /* after 35 attacks, shulkers have a 50% to 2 bullets at a time */
-                            CustomEntityShulker.this.world.addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.world, CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
+                            CustomEntityShulker.this.getWorld().addEntity(new CustomEntityShulkerBullet(CustomEntityShulker.this.getWorld(), CustomEntityShulker.this, entityLiving, CustomEntityShulker.this.eM().n()));
                         }
 
                         CustomEntityShulker.this.playSound(SoundEffects.ENTITY_SHULKER_SHOOT, 2.0F, (CustomEntityShulker.this.random.nextFloat() - CustomEntityShulker.this.random.nextFloat()) * 0.2F + 1.0F);

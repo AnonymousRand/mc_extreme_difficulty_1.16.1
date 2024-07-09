@@ -49,7 +49,7 @@ public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
         EntityPlayer player;
         player = (EntityPlayer) this.entity.getGoalTarget();
 
-        BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+        BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), h, this.entity.locY(), 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
         BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
         if (pos2 != null) {

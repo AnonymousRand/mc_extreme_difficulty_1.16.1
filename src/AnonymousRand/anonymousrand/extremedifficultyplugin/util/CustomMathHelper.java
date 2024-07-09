@@ -22,7 +22,7 @@ public class CustomMathHelper {
         }
     }
 
-    public static BlockPosition coordsFromHypotenuseAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
+    public static BlockPosition coordsFromHypotAndAngle(BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle > 360) { // random angle
             angle = random.nextInt(720);
         } else {
@@ -44,7 +44,7 @@ public class CustomMathHelper {
         }
     }
 
-    public static Location coordsFromHypotenuseAndAngle(World bukkitWorld, BlockPosition origin, double hypotenuse, double y, double angle) {
+    public static Location coordsFromHypotAndAngle(World bukkitWorld, BlockPosition origin, double hypotenuse, double y, double angle) {
         if (angle > 360) { // random angle
             angle = random.nextInt(720);
         } else {

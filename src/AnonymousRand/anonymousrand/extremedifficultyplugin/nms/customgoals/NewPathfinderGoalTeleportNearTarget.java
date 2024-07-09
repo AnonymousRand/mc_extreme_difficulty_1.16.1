@@ -1,7 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -49,10 +50,10 @@ public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleport(double hypo) {
-        EntityPlayer player = this.entity.getWorld().a(EntityPlayer.class, CustomPathfinderTargetCondition.DEFAULT, this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), this.entity.getBoundingBox().grow(128.0, 128.0, 128.0)); // get closest player within 128 sphere radius of this.entity
+        EntityHuman human = NMSUtil.getClosestEntityFromList(this.entity.getWorld().getPlayers(), EntityFilter.BASE, this.entity);
 
-        if (player != null) {
-            BlockPosition pos = CustomMathHelper.coordsFromHypotenuseAndAngle(new BlockPosition(player.locX(), player.locY(), player.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+        if (human != null) {
+            BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(human.locX(), human.locY(), human.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
             BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
             if (pos2 != null && pos2.getY() < 128.0) { // teleport to highest block if there is one in that location

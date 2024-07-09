@@ -160,7 +160,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         @Override
         public void e() {
             if (random.nextDouble() < 0.05) {
-                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.blockPosition, 20.0, this.bukkitWorld.getHighestBlockYAt(new Location(this.bukkitWorld, this.blockPosition.getX(), this.blockPosition.getY(), this.blockPosition.getZ())), 361.0);
+                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, this.blockPosition, 20.0, this.bukkitWorld.getHighestBlockYAt(new Location(this.bukkitWorld, this.blockPosition.getX(), this.blockPosition.getY(), this.blockPosition.getZ())), 361.0);
                 if (random.nextDouble() < 0.25) {
                     this.bukkitWorld.strikeLightning(bukkitLoc2);
                 } else {

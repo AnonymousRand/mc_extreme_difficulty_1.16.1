@@ -254,9 +254,9 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             CustomEntityIllusionerFake fakeIllusioner;
 
             for (int i = 0; i < (CustomEntityIllusioner.this.getAttacks() < 12 ? 4 : 5); i++) { /* summons 4 additional fake illusioners that actually shoot arrows as well with varying speeds (5 after 12 attacks) */
-                fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.world, CustomEntityIllusioner.this);
+                fakeIllusioner = new CustomEntityIllusionerFake(CustomEntityIllusioner.this.getWorld(), CustomEntityIllusioner.this);
                 fakeIllusioner.setPosition(CustomEntityIllusioner.this.locX(), CustomEntityIllusioner.this.locY(), CustomEntityIllusioner.this.locZ());
-                CustomEntityIllusioner.this.world.addEntity(fakeIllusioner);
+                CustomEntityIllusioner.this.getWorld().addEntity(fakeIllusioner);
                 CustomEntityIllusioner.this.fakeIllusioners.add(fakeIllusioner);
             }
         }

@@ -68,7 +68,7 @@ public class RunnableMobRain extends BukkitRunnable {
         Location bukkitLoc;
         do { /* mobs can't spawn within an 8 block radius of 0,0 to prevent them from just falling into the end portal and they can't spawn into the void */
             loopCounter++; // to prevent rare infinite loops
-            bukkitLoc = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, this.originPos, random.nextDouble() * this.radius, this.target != null ? this.target.locY() + 35.0 : this.y + 35.0, 361.0);
+            bukkitLoc = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, this.originPos, random.nextDouble() * this.radius, this.target != null ? this.target.locY() + 35.0 : this.y + 35.0, 361.0);
         } while ((Math.abs(bukkitLoc.getX() - 0.0) < 8.0 || Math.abs(bukkitLoc.getY() - 0.0) < 8.0 || this.bukkitWorld.getHighestBlockYAt(bukkitLoc) < 10.0) && loopCounter < 20);
 
         int index = random.nextInt(this.entitiesToSpawn.get(this.wave).size());

@@ -54,7 +54,7 @@ public class RunnableLightningStorm extends BukkitRunnable {
         }
 
         if (this.cycles <= this.maxCycles) {
-            Location bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.bukkitLoc), 361.0);
+            Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.bukkitLoc), 361.0);
 
             if (this.customLightning) {
                 new SpawnEntity(this.nmsWorld, new CustomEntityLightning(this.nmsWorld), 1, null, bukkitLoc2, false);

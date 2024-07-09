@@ -174,7 +174,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
 
                 for (int i = 0; i < Math.ceil(this.husk.getSandStormStrength() / 5.0); i++) {
                     for (int j = 0; j < this.husk.getSandStormStrength() * 8.0; j++) {
-                        this.bukkitLocTemp = CustomMathHelper.coordsFromHypotenuseAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + (this.husk.attacks < 20 ? 8.0 : 9.0) + i, 361.0);
+                        this.bukkitLocTemp = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(this.huskPos.getX(), this.huskPos.getY(), this.huskPos.getZ()), random.nextInt(16), this.husk.getGoalTarget().locY() + (this.husk.attacks < 20 ? 8.0 : 9.0) + i, 361.0);
                         this.randomDouble = random.nextDouble();
 
                         if (this.husk.attacks < 20) {

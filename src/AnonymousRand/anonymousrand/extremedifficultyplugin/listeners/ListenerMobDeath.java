@@ -112,12 +112,12 @@ public class ListenerMobDeath implements Listener {
                     Location bukkitLoc2;
 
                     for (int i = 0; i < 8; i++) {
-                        bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 45.0);
+                        bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 45.0);
                         bukkitWorld.strikeLightning(bukkitLoc2);
                     }
 
                     for (int i = 0; i < 20; i++) {
-                        bukkitLoc2 = CustomMathHelper.coordsFromHypotenuseAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 18.0);
+                        bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 10.0, bukkitWorld.getHighestBlockYAt(bukkitLoc), i * 18.0);
                         new SpawnEntity(nmsWorld, new CustomEntityLightning(nmsWorld), 1, null, bukkitLoc2, false);
                     }
                 } else if (nmsEntity instanceof CustomEntityZombieSuper) {

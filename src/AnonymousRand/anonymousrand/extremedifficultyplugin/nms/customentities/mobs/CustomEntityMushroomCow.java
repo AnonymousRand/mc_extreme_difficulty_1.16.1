@@ -1,8 +1,9 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 public class CustomEntityMushroomCow extends EntityMushroomCow {
@@ -32,21 +33,18 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
     }
 
     @Override
-    public EnumInteractionResult b(EntityHuman entityHuman, EnumHand enumhand) {
-        ItemStack itemstack = entityHuman.b(enumhand);
+    public EnumInteractionResult b(EntityHuman human, EnumHand enumhand) {
+        ItemStack heldItem = human.b(enumhand);
 
-        if ((itemstack.getItem() == Items.BOWL && !this.isBaby()) || (itemstack.getItem() == Items.SHEARS && this.canShear())) {
-            EntityPlayer player = this.world.a(EntityPlayer.class, CustomPathfinderTargetCondition.DEFAULT, this, this.locX(), this.locY(), this.locZ(), this.getBoundingBox().grow(6.0, 6.0, 6.0)); // get closest player within bounding box, default predicate (no extra conditions)
-
-            if (player != null) { /* mooshrooms inflict these effects when they are milked/sheared */
-                player.addEffect(new MobEffect(MobEffects.WEAKNESS, 1200, 255));
-                player.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 1200, 255));
-            }
+        if ((heldItem.getItem() == Items.BOWL && !this.isBaby()) || (heldItem.getItem() == Items.SHEARS && this.canShear())) {
+            /* mooshrooms inflict these effects when they are milked/sheared */
+            human.addEffect(new MobEffect(MobEffects.WEAKNESS, 1200, 255));
+            human.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 1200, 255));
 
             this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY); /* mooshrooms explode massively and die when they are milked/sheared */
             this.die();
         }
 
-        return super.b(entityHuman, enumhand);
+        return super.b(human, enumhand);
     }
 }

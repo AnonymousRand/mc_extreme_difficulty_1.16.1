@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import com.google.common.collect.Lists;
@@ -183,11 +183,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     class PathfinderGoalEvokerSummonVexSpell extends EntityIllagerWizard.c {
 
-        private final PathfinderTargetCondition e;
-
         private PathfinderGoalEvokerSummonVexSpell() {
             super();
-            this.e = new CustomPathfinderTargetCondition(28.0);
         }
 
         @Override
@@ -195,9 +192,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             if (!super.a()) {
                 return false;
             } else {
-                int i = CustomEntityEvoker.this.world.a(EntityVex.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().g(28.0D)).size();
+                int numVexesNearby = CustomEntityEvoker.this.getWorld().a(EntityVex.class, CustomEntityEvoker.this.getBoundingBox().g(28.0D)).size();
 
-                return 25 > i; // evoker can have up to 25 vexes in its vicinity (28 blocks)
+                return 25 > numVexesNearby; // evoker can have up to 25 vexes in its vicinity (28 blocks)
             }
         }
 
@@ -217,14 +214,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             for (int i = 0; i < 6; ++i) { /* summons 6 vexes at a time instead of 3 */
                 BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + random.nextInt(5), 1, -2 + random.nextInt(5));
-                CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.world);
+                CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
                 newVex.setPositionRotation(blockPosition, 0.0F, 0.0F);
-                newVex.prepare(CustomEntityEvoker.this.world, CustomEntityEvoker.this.world.getDamageScaler(blockPosition), EnumMobSpawn.MOB_SUMMONED, null, null);
+                newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition), EnumMobSpawn.MOB_SUMMONED, null, null);
                 newVex.a(CustomEntityEvoker.this);
                 newVex.g(blockPosition);
                 newVex.a(20 * (30 + random.nextInt(90)));
-                CustomEntityEvoker.this.world.addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
+                CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
         }
 
@@ -295,12 +292,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             do {
                 BlockPosition blockPosition1 = blockPosition.down();
-                IBlockData iblockdata = CustomEntityEvoker.this.world.getType(blockPosition1);
+                IBlockData iblockdata = CustomEntityEvoker.this.getWorld().getType(blockPosition1);
 
-                if (iblockdata.d(CustomEntityEvoker.this.world, blockPosition1, EnumDirection.UP)) {
-                    if (!CustomEntityEvoker.this.world.isEmpty(blockPosition)) {
-                        IBlockData iblockdata1 = CustomEntityEvoker.this.world.getType(blockPosition);
-                        VoxelShape voxelshape = iblockdata1.getCollisionShape(CustomEntityEvoker.this.world, blockPosition);
+                if (iblockdata.d(CustomEntityEvoker.this.getWorld(), blockPosition1, EnumDirection.UP)) {
+                    if (!CustomEntityEvoker.this.getWorld().isEmpty(blockPosition)) {
+                        IBlockData iblockdata1 = CustomEntityEvoker.this.getWorld().getType(blockPosition);
+                        VoxelShape voxelshape = iblockdata1.getCollisionShape(CustomEntityEvoker.this.getWorld(), blockPosition);
 
                         if (!voxelshape.isEmpty()) {
                             d4 = voxelshape.c(EnumDirection.EnumAxis.Y);
@@ -320,7 +317,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
 
-                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.world.getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
+                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
                 while (iterator.hasNext()) { /* every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
                     bukkitLocBase = iterator.next().getLocation();
                     Random random = new Random();
@@ -328,7 +325,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     for (int x = -1; x <= 1; x++) {
                         for (int y = -1; y <= 1; y++) {
                             for (int z = -1; z <= 1; z++) {
-                                bukkitLoc = new Location(CustomEntityEvoker.this.world.getWorld(), bukkitLocBase.getX() + x, bukkitLocBase.getY() + y, bukkitLocBase.getZ() + z);
+                                bukkitLoc = new Location(CustomEntityEvoker.this.getWorld().getWorld(), bukkitLocBase.getX() + x, bukkitLocBase.getY() + y, bukkitLocBase.getZ() + z);
                                 bukkitBlock = bukkitLoc.getBlock();
                                 bukkitMaterial = bukkitBlock.getType();
 
@@ -344,7 +341,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     }
                 }
 
-                CustomEntityEvoker.this.world.addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.world, d0, (double) blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
+                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double) blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
             }
         }
 
@@ -377,10 +374,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 return false;
             } else if (CustomEntityEvoker.this.ticksLived < this.c) {
                 return false;
-            } else if (!CustomEntityEvoker.this.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
+            } else if (!CustomEntityEvoker.this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
                 return false;
             } else {
-                List<EntitySheep> list = CustomEntityEvoker.this.world.a(EntitySheep.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().grow(32.0D, 128.0D, 32.0D));
+                List<EntitySheep> list = CustomEntityEvoker.this.getWorld().a(EntitySheep.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().grow(32.0D, 128.0D, 32.0D));
 
                 if (list.isEmpty()) {
                     return false;

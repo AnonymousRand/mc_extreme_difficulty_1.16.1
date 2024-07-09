@@ -1,7 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityPufferfish;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -39,30 +40,30 @@ public class ListenerSleep implements Listener {
             return;
         }
 
-        EntityLiving closestMonster = nmsWorld.a(EntityMonster.class, CustomPathfinderTargetCondition.DEFAULT, nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest monster within 50 blocks horizontally of player
-        CustomEntityPufferfish closestPufferfish = nmsWorld.a(CustomEntityPufferfish.class, CustomPathfinderTargetCondition.DEFAULT, nmsPlayer, nmsPlayer.locX(), nmsPlayer.locY(), nmsPlayer.locZ(), nmsPlayer.getBoundingBox().grow(50.0, 128.0, 50.0)); // get closest pufferfish within 50 blocks horizontally of player
-        double monsterDistanceNoY;
-        double pufferfishDistanceNoY;
+        EntityLiving closestMonster = NMSUtil.getClosestEntityWithinRange(EntityMonster.class, EntityFilter.BASE, nmsPlayer, 50.0, 128.0, 50.0);
+        CustomEntityPufferfish closestPufferfish = NMSUtil.getClosestEntityWithinRange(CustomEntityPufferfish.class, EntityFilter.BASE, nmsPlayer, 50.0, 128.0, 50.0);
+        double monsterDistanceIgnoreY;
+        double pufferfishDistanceIgnoreY;
 
         try {
-            monsterDistanceNoY = Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2);
+            monsterDistanceIgnoreY = Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2);
         } catch (NullPointerException e) {
-            monsterDistanceNoY = Integer.MAX_VALUE;
+            monsterDistanceIgnoreY = Integer.MAX_VALUE;
         }
 
         try {
-            pufferfishDistanceNoY = Math.pow(closestPufferfish.locX() - bukkitBed.getX(), 2) + Math.pow(closestPufferfish.locZ() - bukkitBed.getZ(), 2);
+            pufferfishDistanceIgnoreY = Math.pow(closestPufferfish.locX() - bukkitBed.getX(), 2) + Math.pow(closestPufferfish.locZ() - bukkitBed.getZ(), 2);
         } catch (NullPointerException e) {
-            pufferfishDistanceNoY = Integer.MAX_VALUE;
+            pufferfishDistanceIgnoreY = Integer.MAX_VALUE;
         }
 
-        if (pufferfishDistanceNoY < monsterDistanceNoY) { /* pufferfish also count as monsters to prevent sleeping */
+        if (pufferfishDistanceIgnoreY < monsterDistanceIgnoreY) { /* pufferfish also count as monsters to prevent sleeping */
             closestMonster = closestPufferfish;
-            monsterDistanceNoY = pufferfishDistanceNoY;
+            monsterDistanceIgnoreY = pufferfishDistanceIgnoreY;
         }
 
         if (closestMonster != null) {
-            if (monsterDistanceNoY <= 1024.0) { // player within 32 blocks horizontally of closestMonster
+            if (monsterDistanceIgnoreY <= 1024.0) { // player within 32 blocks horizontally of closestMonster
                 if (Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locY() - bukkitBed.getY(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2) <= 1024.0) { // player within 32 blocks including vertical distance of closestMonster
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + nmsPlayer.getName() + " \"You may not sleep now, there are monsters nearby\"");
                     event.setCancelled(true);

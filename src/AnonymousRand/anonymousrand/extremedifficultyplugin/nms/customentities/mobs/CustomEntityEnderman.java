@@ -4,7 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.CustomPathfinderTargetCondition;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -315,7 +315,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
             super(enderman, EntityPlayer.class);
-            this.targetCondition = new CustomPathfinderTargetCondition(64.0, (entityLiving) ->
+            this.targetCondition = new EntityFilter(64.0, (entityLiving) ->
                     enderman.validPlayerIsLooking((EntityPlayer) entityLiving)); // endermen can still be aggroed from up to 64 blocks away
             this.enderman = enderman;
         }

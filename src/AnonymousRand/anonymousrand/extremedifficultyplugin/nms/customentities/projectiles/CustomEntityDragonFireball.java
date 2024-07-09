@@ -27,12 +27,12 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
         }
 
         Entity shooter = this.getShooter();
-        List<EntityLiving> entities;
+        List<EntityPlayer> nearbyPlayers;
         CustomEntityAreaEffectCloud entityAreaEffectCloud;
         boolean largerRadius = random.nextDouble() < 0.05;
 
         for (int i = -3; i < 3; i++) { /* area effect clouds are 6 blocks high and take 5 ticks less to start doing damage, but only last 5 seconds; 5% chance to create a wider area effect cloud with radius 7 */
-            entities = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
+            nearbyPlayers = this.world.a(EntityPlayer.class, this.getBoundingBox().grow(11.5, 128.0, 11.5));
             entityAreaEffectCloud = new CustomEntityAreaEffectCloud(this.world, largerRadius ? 7.0F : 3.0F, 100, 15);
 
             if (shooter instanceof EntityLiving) {
@@ -44,9 +44,9 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
             entityAreaEffectCloud.setRadiusPerTick((largerRadius ? 7.0F : 5.0F - entityAreaEffectCloud.getRadius()) / (float) entityAreaEffectCloud.getDuration()); /* area effect clouds only expand to a max of radius 5 and wide clouds don't expand */
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
-            for (EntityLiving entity : entities) {
-                if (this.d(entity.getPositionVector()) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
-                    entityAreaEffectCloud.setPosition(entity.locX(), entity.locY() + i, entity.locZ());
+            for (EntityPlayer player : nearbyPlayers) {
+                if (this.d(player.getPositionVector()) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
+                    entityAreaEffectCloud.setPosition(player.locX(), player.locY() + i, player.locZ());
                     break;
                 }
             }
