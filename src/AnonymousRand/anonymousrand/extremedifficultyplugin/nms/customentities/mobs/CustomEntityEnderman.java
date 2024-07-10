@@ -55,6 +55,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -115,12 +123,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if (metThreshold == attackThresholds[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 25 attacks, endermen get 40 max health and regen 3 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[2]) {
                 /* After 40 attacks, endermen summon 5 endermites */
                 new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 5, null, null, this, false, true);
@@ -153,7 +161,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
@@ -305,7 +313,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         private final CustomEntityEnderman enderman;
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
-            super(enderman, EntityPlayer.class, CustomEntityEnderman.IGNORE_LOS, CustomEntityEnderman.IGNORE_Y);
+            super(enderman, EntityPlayer.class);
             this.targetCondition = new EntityFilter(64.0, true, true, (entityLiving) ->
                     enderman.validPlayerIsLooking((EntityPlayer) entityLiving)); // endermen can still be aggroed from up to 64 blocks away
             this.enderman = enderman;
@@ -345,7 +353,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         private final CustomEntityEnderman enderman;
 
         public PathfinderGoalNearestAttackableTarget(S enderman, Class<T> targetClass) {
-            super(enderman, targetClass, CustomEntityEnderman.IGNORE_LOS, CustomEntityEnderman.IGNORE_Y);
+            super(enderman, targetClass);
             this.enderman = enderman;
         }
 

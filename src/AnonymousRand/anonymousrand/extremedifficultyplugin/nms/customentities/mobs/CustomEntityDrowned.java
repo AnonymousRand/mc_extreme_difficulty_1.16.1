@@ -42,6 +42,14 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         return 40.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -120,18 +128,18 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     @Override
     public void m() {
         /* No longer targets iron golems and villagers */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                                             /* Spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0, 7, 40.0F));                         /* Drowned throw tridents every 7 ticks, and continue attacking regardless of line of sight and y-level (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0, 7));           /* Drowned throw tridents every 7 ticks, and continue attacking regardless of line of sight and y-level (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));                                                    /* Also attacks in the day, and continues attacking regardless of line of sight and y-level */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));                              /* Drowned also attack in the day */
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0));
-        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));                                  /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, false, false, EntityTurtle.bv));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,27 +293,27 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     static class PathfinderGoalTridentAttack<T extends CustomEntityDrowned> extends CustomPathfinderGoalRangedAttack<T> {
 
-        public PathfinderGoalTridentAttack(T drowned, double d0, int i, float f) {
-            super(drowned, d0, i, f);
+        public PathfinderGoalTridentAttack(T drowned, double d0, int i) {
+            super(drowned, d0, i);
         }
 
         @Override
         public boolean a() {
-            return super.a() && this.entity.getItemInMainHand().getItem() == Items.TRIDENT;
+            return super.a() && this.goalOwner.getItemInMainHand().getItem() == Items.TRIDENT;
         }
 
         @Override
         public void c() {
             super.c();
-            this.entity.setAggressive(true);
-            this.entity.c(EnumHand.MAIN_HAND);
+            this.goalOwner.setAggressive(true);
+            this.goalOwner.c(EnumHand.MAIN_HAND);
         }
 
         @Override
         public void d() {
             super.d();
-            this.entity.clearActiveItem();
-            this.entity.setAggressive(false);
+            this.goalOwner.clearActiveItem();
+            this.goalOwner.setAggressive(false);
         }
     }
 }

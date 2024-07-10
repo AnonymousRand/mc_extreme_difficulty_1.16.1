@@ -74,8 +74,8 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -93,6 +93,14 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
 
     public double getDetectionRange() { /* aggressive sheep have 64 block detection range (128 after 60 attacks) */
         return this.attacks < 20 ? 64.0 : 128.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -154,7 +162,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         if (this.attacks == 20 && !this.a20) { /* after 20 attacks, aggressive sheep gain speed 1 */
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 
         if (this.attacks == 40 && !this.a40) { /* after 40 attacks, aggressive sheep gain a slight knockback boost and regen 4 */

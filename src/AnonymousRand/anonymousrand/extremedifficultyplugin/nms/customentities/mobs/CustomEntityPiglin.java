@@ -52,9 +52,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
             /* todo: piglins attack 2 times faster when frenzied */
-            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -85,7 +85,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /* buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
@@ -195,6 +195,14 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     public double getDetectionRange() { /* piglins have 32 block detection range */
         return 32.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override

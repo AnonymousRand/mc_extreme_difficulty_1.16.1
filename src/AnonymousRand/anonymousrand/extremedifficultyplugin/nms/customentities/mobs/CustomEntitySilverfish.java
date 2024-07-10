@@ -43,7 +43,8 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTargetYLevel(this, 1.0, random.nextDouble() * 3.0, 0.0075)); /* Occasionally teleports to a spot closer in y-level to its target */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -58,6 +59,14 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
 
     public double getDetectionRange() { /* silverfish have 20 block detection range */
         return 20.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -131,13 +140,5 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
-    }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
     }
 }

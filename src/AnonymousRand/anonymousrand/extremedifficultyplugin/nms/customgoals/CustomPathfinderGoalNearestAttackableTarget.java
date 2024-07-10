@@ -11,8 +11,8 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsentient & ICustomHostile, T extends EntityLiving>
-        extends CustomPathfinderGoalTarget {
+public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsentient & ICustomHostile,
+        T extends EntityLiving> extends CustomPathfinderGoalTarget {
 
     protected final Class<T> targetClass;
     protected final int targetChance;
@@ -23,11 +23,28 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsenti
 
     public CustomPathfinderGoalNearestAttackableTarget(
             S goalOwner,
+            Class<T> targetClass) {
+
+        this(goalOwner, targetClass, 10, goalOwner.ignoresLOS(), goalOwner.ignoresY(), null);
+    }
+
+    public CustomPathfinderGoalNearestAttackableTarget(
+            S goalOwner,
             Class<T> targetClass,
             boolean ignoreLOS,
             boolean ignoreY) {
 
         this(goalOwner, targetClass, 10, ignoreLOS, ignoreY, null);
+    }
+
+    public CustomPathfinderGoalNearestAttackableTarget(
+            S goalOwner,
+            Class<T> targetClass,
+            boolean ignoreLOS,
+            boolean ignoreY,
+            Predicate<EntityLiving> extraPredicate) {
+
+        this(goalOwner, targetClass, 10, ignoreLOS, ignoreY, extraPredicate);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(

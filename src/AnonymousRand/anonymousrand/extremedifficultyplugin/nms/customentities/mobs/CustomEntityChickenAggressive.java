@@ -74,6 +74,14 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         return 16.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -117,21 +125,22 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     protected void initPathfinder() {
         /* Aggressive chickens won't panic/breed/follow parent/be tempted with seeds */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                        /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                           /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
-        /* Aggressive chickens attack these in decreasing priority: silverfish, endermites, other monsters, players, chickens, aggressive chickens, exploding aggressive chickens */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class, false, false));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class, false, false));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, false, false));
-        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y));  /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodicaly retargets to the closest option */
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false, false));
-        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class, false, false));
-        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class, false, false));
-        this.targetSelector.a(7, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));                                   /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        /* Aggressive chickens attack these in decreasing priority: silverfish, endermites, other monsters,
+           players, chickens, aggressive chickens, exploding aggressive chickens */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntitySilverfish.class, false, false));
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityEndermite.class, false, false));
+        this.targetSelector.a(3, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityMonster.class, false, false));
+        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodicaly retargets to the closest option */
+        this.targetSelector.a(5, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChicken.class, false, false));
+        this.targetSelector.a(6, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressive.class, false, false));
+        this.targetSelector.a(7, new CustomPathfinderGoalNearestAttackableTarget<>(this, CustomEntityChickenAggressiveExploding.class, false, false));
     }
 
     @Override

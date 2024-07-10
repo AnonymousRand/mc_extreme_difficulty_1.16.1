@@ -52,8 +52,9 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile, IG
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalRangedAttack<>(this, 1.0, 5, 24.0F)); /* throws a potion every 5 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.goalSelector.a(1, new CustomPathfinderGoalRangedAttack<>(this, 1.0, 5)); /* throws a potion every 5 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -133,6 +134,14 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile, IG
         return 24.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -203,13 +212,5 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile, IG
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
-    }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
     }
 }

@@ -4,10 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -40,6 +37,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
     }
 
     @Override
@@ -47,9 +45,10 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         super.setRabbitType(i);
 
         if (i == 99) {
-            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this, 1.5, IGNORE_LOS)); /* Killer rabbits move speed 1.4 -> 1.5 */
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+            // todo can literally just use new setminattackreach thingy
+            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+            this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /* changing attributes don't work on rabbits so killer bunnies have speed 3 and jump boost 1 */
             this.addEffect(new MobEffect(MobEffects.JUMP, Integer.MAX_VALUE, 1));
@@ -68,6 +67,14 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     public double getDetectionRange() { /* killer bunnies have 16 block detection range (28 after 5 attacks, 40 after 15 attacks) */
         return this.attacks < 5 ? 16.0 : this.attacks < 15 ? 28.0 : 40.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -130,13 +137,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
             if (this.attacks == 5 && !this.a5) { /* after 5 attacks, killer bunnies gain speed 4 */
                 this.a5 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             }
 
             if (this.attacks == 15 && !this.a15) { /* after 15 attacks, killer bunnies gain speed 5 */
                 this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             }
 
             if (this.attacks == 25 && !this.a25) { /* after 25 attacks, killer bunnies gain speed 6 and 10 max health and health */
@@ -160,22 +167,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
     }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
-    }
 
-    static class PathfinderGoalKillerRabbitMeleeAttack extends CustomPathfinderGoalMeleeAttack {
+    static class PathfinderGoalKillerRabbitMeleeAttack<T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalMeleeAttack<T> {
 
         public PathfinderGoalKillerRabbitMeleeAttack(
-                EntityRabbit entityRabbit,
-                double speedTowardsTarget,
-                boolean continuePathingIfNoLOS) {
-            super(entityRabbit, speedTowardsTarget, continuePathingIfNoLOS);
+                T entityRabbit,
+                double speedTowardsTarget) {
+            super(entityRabbit, speedTowardsTarget);
         }
 
         @Override

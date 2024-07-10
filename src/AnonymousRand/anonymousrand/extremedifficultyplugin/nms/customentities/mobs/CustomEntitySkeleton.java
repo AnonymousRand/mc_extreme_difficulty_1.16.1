@@ -48,9 +48,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));               /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, false, false, EntityTurtle.bv));
     }
 
     @Override
@@ -73,6 +73,14 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
 
     public double getDetectionRange() { /* skeletons have 24 block detection range (32 after 20 attacks) */
         return this.attacks < 20 ? 24.0 : 32.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -135,7 +143,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             this.a20 = true;
             ((LivingEntity) this.getBukkitEntity()).setMaxHealth(35.0);
             this.setHealth(35.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 
         if (this.attacks == 90 && !this.a90) { /* after 90 attacks, skeletons summon an iron golem */

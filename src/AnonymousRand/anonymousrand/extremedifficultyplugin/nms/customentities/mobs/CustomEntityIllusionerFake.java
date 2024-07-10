@@ -96,8 +96,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
         // todo test removing forget after 300 ticks
     }
 

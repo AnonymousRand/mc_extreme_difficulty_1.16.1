@@ -40,8 +40,8 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         this.goalSelector.a(4, new CustomEntityShulker.PathfinderGoalShulkerBulletAttack());
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y, CustomEntityShulker.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, CustomEntityShulker.class));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -63,6 +63,14 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
     public double getDetectionRange() { /* shulkers have 40 block detection range */
         return 40.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override

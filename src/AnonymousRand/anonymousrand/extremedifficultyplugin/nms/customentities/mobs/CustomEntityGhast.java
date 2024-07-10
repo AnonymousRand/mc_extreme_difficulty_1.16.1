@@ -44,6 +44,14 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         return 80.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -120,7 +128,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new PathfinderGoalGhastFireball(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override

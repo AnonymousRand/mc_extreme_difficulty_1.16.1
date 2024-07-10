@@ -43,9 +43,9 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));               /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, false, false, EntityTurtle.bv));
     }
 
     @Override
@@ -65,6 +65,14 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
 
     public double getDetectionRange() { /* strays have 24 block detection range (32 after 20 attacks) */
         return this.attacks < 20 ? 24.0 : 32.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -127,7 +135,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
             this.a20 = true;
             ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0);
             this.setHealth(30.0F);
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 
         if (this.attacks == 45 && !this.a45) { /* after 45 attacks, strays get 40 max health and health and regen 2 */
@@ -135,7 +143,7 @@ public class CustomEntitySkeletonStray extends EntitySkeletonStray implements IC
             ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
             this.setHealth(40.0F);
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 
         if (this.attacks == 60 && !this.a60) { /* after 60 attacks, strays summon 5 vanilla skeletons */

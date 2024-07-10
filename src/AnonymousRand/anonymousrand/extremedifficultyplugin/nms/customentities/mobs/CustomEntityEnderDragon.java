@@ -17,6 +17,8 @@ import java.util.UUID;
 
 public class CustomEntityEnderDragon extends EntityEnderDragon implements ICustomHostile {
 
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     public ArrayList<Entity> goalTargets = new ArrayList<>();
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
@@ -32,6 +34,14 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     /* Ender dragons have 128 block detection range for new constant fireball attack */
     public double getDetectionRange() {
         return 128.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

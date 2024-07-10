@@ -44,8 +44,9 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -63,6 +64,14 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
 
     public double getDetectionRange() { /* ravagers have 40 block detection range (80 after 20 attacks) */
         return this.attacks < 20 ? 40.0 : 80.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -125,7 +134,7 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
             this.a20 = true;
             this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
         }
 
         if (this.attacks == 60 && !this.a60) { /* after 60 attacks, ravagers get extra knockback */
@@ -142,13 +151,5 @@ public class CustomEntityRavager extends EntityRavager implements ICustomHostile
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
-    }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
     }
 }

@@ -44,6 +44,14 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         return (this.attackLevelingController == null || this.getAttacks() < 10) ? 40.0 : 64.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -102,7 +110,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
             if (metThreshold == attackThresholds[0]) {
                 /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 20 attacks, hoglins get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
@@ -137,14 +145,6 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
     }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
-    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                               Overridden vanilla functions                                //
@@ -159,8 +159,9 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /* custom goal that breaks repellant blocks around the mob periodically */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override

@@ -21,16 +21,24 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
     public void initPathfinder() { /* no longer avoids llamas, breeds, follows/defends owners, begs, and attack skeletons */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(4, new PathfinderGoalLeapAtTarget(this, 0.4F));
-        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(10, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y, CustomEntityWolf.class));
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* always aggro at players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, CustomEntityWolf.class));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* always aggro at players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     public double getDetectionRange() { /* wolves have 16 blocks detection range */
         return 16.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override

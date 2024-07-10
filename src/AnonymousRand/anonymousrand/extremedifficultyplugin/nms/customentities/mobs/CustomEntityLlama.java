@@ -56,6 +56,14 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         return 24.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                    IAttackLevelingMob                                     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,14 +103,14 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 1.25D, 40, 20.0F));
+        this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 1.25D, 40));
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));               /* custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage */
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     public void a(EntityLiving entityLiving, float f) { // shoot()

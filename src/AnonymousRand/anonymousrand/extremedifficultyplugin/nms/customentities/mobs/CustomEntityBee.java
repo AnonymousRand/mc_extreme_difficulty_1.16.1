@@ -3,10 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -51,6 +48,14 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
         return 16.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,14 +70,6 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
     }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
-    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                               Overridden vanilla functions                                //
@@ -81,10 +78,11 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.5, IGNORE_LOS));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.5));                              /* Bees move speed multiplier when angry 1.4 -> 1.5 */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override

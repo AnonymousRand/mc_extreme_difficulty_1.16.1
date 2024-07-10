@@ -45,6 +45,14 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         return (this.attackLevelingController == null || this.getAttacks() < 8) ? 24.0 : 32.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -96,7 +104,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 12 attacks, guardians gain regen 3 and 40 max health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);

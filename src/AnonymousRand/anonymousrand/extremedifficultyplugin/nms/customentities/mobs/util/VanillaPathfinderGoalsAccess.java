@@ -52,7 +52,7 @@ public class VanillaPathfinderGoalsAccess {
      *
      * @param entity the entity to remove the goal from
      */
-    public static <T extends EntityInsentient & IGoalRemovingMob> void removePathfinderGoals(T entity) {
+    public static <T extends EntityInsentient & ICustomHostile & IGoalRemovingMob> void removePathfinderGoals(T entity) {
         ArrayList<PathfinderGoal> goalsToRemove = new ArrayList<>();
 
         // need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
@@ -69,11 +69,5 @@ public class VanillaPathfinderGoalsAccess {
                 entity.targetSelector.a(goal);      // removeGoal()
             }
         }
-
-        /* Mobs always retaliate against players and teleport to them if they are out of range/
-           do not have line of sight, but don't retaliate against other mobs (in case the
-           EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(entity,
-                entity.getIgnoreLOS(), entity.getIgnoreY()));
     }
 }

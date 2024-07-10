@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -7,19 +8,23 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import java.util.EnumSet;
 import java.util.List;
 
-public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget {
+public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalTarget {
 
     private boolean doesEntityCallForHelp;
     private Class<?>[] reinforcementClasses;
 
+    public CustomPathfinderGoalHurtByTarget(T goalOwner, Class<?>... reinforcementClasses) {
+
+        this(goalOwner, goalOwner.ignoresLOS(), goalOwner.ignoresY(), reinforcementClasses);
+    }
+
     public CustomPathfinderGoalHurtByTarget(
-            EntityInsentient goalOwner,
+            T goalOwner,
             boolean ignoreLOS,
             boolean ignoreY,
             Class<?>... reinforcementClasses) {
 
         super(goalOwner, false, ignoreLOS, ignoreY);
-
         if (reinforcementClasses.length > 0) {
             this.doesEntityCallForHelp = true;
             this.reinforcementClasses = reinforcementClasses;

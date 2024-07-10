@@ -10,9 +10,9 @@ import java.util.Random;
 
 // Entire class rewritten instead of inherited from PathfinderGoalMeleeAttack in order to apply our own logic
 // without being too hacky or needing too much reflection (everything's private :/)
-public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
+public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile> extends PathfinderGoal {
 
-    protected final EntityInsentient goalOwner;
+    protected final T goalOwner;
     protected final double speedTowardsTarget;
     protected final boolean continuePathingIfNoLOS;
     protected PathEntity path;
@@ -24,17 +24,19 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
     protected int remainingAttackCooldown;
     protected double minAttackReach;
 
-    public CustomPathfinderGoalMeleeAttack(
-            EntityInsentient goalOwner,
-            double speedTowardsTarget,
-            boolean continuePathingIfNoLOS) {
+    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
 
         // default minimum attack reach is 2.0 blocks to help baby zombies out
+        this(goalOwner, speedTowardsTarget, goalOwner.ignoresLOS(), 20, 2.0);
+    }
+
+    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget, boolean continuePathingIfNoLOS) {
+
         this(goalOwner, speedTowardsTarget, continuePathingIfNoLOS, 20, 2.0);
     }
 
     public CustomPathfinderGoalMeleeAttack(
-            EntityInsentient goalOwner,
+            T goalOwner,
             double speedTowardsTarget,
             boolean continuePathingIfNoLOS,
             int attackCooldown,
@@ -100,7 +102,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
         }
 
         this.goalOwner.setAggressive(false);
-        this.goalOwner.getNavigation().o();
+        this.goalOwner.getNavigation().o(); // clearPath()
     }
 
     @Override
@@ -113,17 +115,16 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
         }
 
         this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F);
-        double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, true);
+        double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, false); // todo make sure no ignore y is fine; also comment on it?
 
         // repath to target
         this.repathCooldown = Math.max(this.repathCooldown - 1, 0);
-        // chance to repath if stationary target increased from vanilla 0.05 to 0.075
         boolean shouldRepathToTarget =
                 this.repathCooldown <= 0
                 && (this.continuePathingIfNoLOS ? true : this.goalOwner.getEntitySenses().a(goalTarget))
                 && (NMSUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(),
                             this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
-                    || this.goalOwner.getRandom().nextFloat() < 0.075F);
+                    || this.goalOwner.getRandom().nextFloat() < 0.075F); // chance to repath if stationary target increased from 0.05 to 0.075
         if (shouldRepathToTarget) {
             this.oldTargetX = goalTarget.locX();
             this.oldTargetY = goalTarget.locY();
@@ -135,7 +136,7 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
                 this.repathCooldown += 5;
             }
 
-            if (!this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget)) {
+            if (!this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget)) { // tryMoveTo()
                 this.repathCooldown += 15;
             }
         }

@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalSlimeMeleeAttack;
@@ -38,7 +39,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /* custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count */
         this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* uses the custom goal that atstacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores y-level, line of sight, and invis/skulls to find a target; for some reason the magma cubes run away after a while without the extra parameters */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, and invis/skulls to find a target; for some reason the magma cubes run away after a while without the extra parameters */
     }
 
     @Override
@@ -62,6 +64,14 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     public double getDetectionRange() { /* magma cubes have 40 block detection range */
         return 40.0;
+    }
+
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
     }
 
     @Override
@@ -151,14 +161,6 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
-    }
-    
-    public boolean getIgnoreLOS() {
-        return IGNORE_LOS;
-    }
-    
-    public boolean getIgnoreY() {
-        return IGNORE_Y;
     }
 
     static class PathfinderGoalMagmaCubeFireAndLava extends PathfinderGoal {

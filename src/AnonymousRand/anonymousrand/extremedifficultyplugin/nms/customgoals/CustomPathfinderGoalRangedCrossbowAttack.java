@@ -5,7 +5,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack {
+public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack<T> {
 
     protected final T entity;
     protected CustomPathfinderGoalRangedCrossbowAttack.State crossbowState;

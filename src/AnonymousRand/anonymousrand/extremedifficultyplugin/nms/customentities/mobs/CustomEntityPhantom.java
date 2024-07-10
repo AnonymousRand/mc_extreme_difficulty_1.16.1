@@ -77,6 +77,14 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         return 64.0;
     }
 
+    public boolean ignoresLOS() {
+        return IGNORE_LOS;
+    }
+
+    public boolean ignoresY() {
+        return IGNORE_Y;
+    }
+
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
@@ -148,7 +156,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         this.goalSelector.a(2, new PathfinderGoalPhantomSweepAttack());
         this.goalSelector.a(3, new CustomEntityPhantom.PathfinderGoalPhantomOrbitPoint());
         // todo make sure using normal nearestattackabletarget is fine
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
     }
 
     private void updateSizeStats(int change) { /* phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */
