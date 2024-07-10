@@ -144,7 +144,7 @@ public class ListenerPlayerDamage implements Listener {
 
                     if (nmsDamager instanceof CustomEntityZombieThor) {
                         bukkitWorld.strikeLightning(bukkitPlayer.getLocation());
-                    } else {
+                    } else if (nmsDamager instanceof CustomEntityZombie) {
                         CustomEntityZombie zombie = (CustomEntityZombie)nmsDamager;
 
                         if (zombie.getAttacks() >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it hits the player */

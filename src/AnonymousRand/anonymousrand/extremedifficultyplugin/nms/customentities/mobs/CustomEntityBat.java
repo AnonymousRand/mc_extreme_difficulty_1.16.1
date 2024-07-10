@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -215,7 +215,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); // todo test if this still works; if yes, replace all passivemelee with custommelee
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
     }
 

@@ -8,6 +8,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -15,7 +16,7 @@ import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -40,8 +41,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     private void initAttributes() {
         /* Endermen only have 20 health */
-        this.setHealth(20.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);
+        this.setHealth(20.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,24 +227,23 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             }
 
             if (targetBlockData.getMaterial() != Material.AIR) {
+                /* Endermen can teleport even if it will collide with blocks (2-tall ceilings etc.) */
                 this.enderTeleportTo(targetBlockPosition.getX(), targetBlockPosition.getY() + 1.0, targetBlockPosition.getZ());
-                if (world.getCubes(this)) { // check for collisions; if passed, then teleport is successful
-                    world.broadcastEntityEffect(this, (byte) 46);
-                    this.getNavigation().o();
+                world.broadcastEntityEffect(this, (byte) 46);
+                this.getNavigation().o();
 
-                    if (!this.isSilent()) {
-                        this.world.playSound(null, this.lastX, this.lastY, this.lastZ,
-                                SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-                        this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-                    }
-
-                    /* Endermen have a 10% chance to summon an endermite where it teleports to */
-                    if (random.nextDouble() < 0.1) {
-                        new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
-                    }
-
-                    return true;
+                if (!this.isSilent()) {
+                    this.world.playSound(null, this.lastX, this.lastY, this.lastZ,
+                            SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+                    this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
                 }
+
+                /* Endermen have a 10% chance to summon an endermite where it teleports to */
+                if (random.nextDouble() < 0.1) {
+                    new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
+                }
+
+                return true;
             }
         }
 
@@ -286,9 +286,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
             /* Endermen have a chance to teleport to target if target do not have line of sight or is on a different y-level.
                In the latter case, there is a higher chance the closer horizontally the player is (and thus the more likely they are towering). */
-            if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
+            if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.009)
                     || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
-                    < 0.05 / NMSUtil.distSq(this, target, true))) {
+                        < 0.05 / NMSUtil.distSq(this, target, true))) {
                 this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
         }
@@ -314,7 +314,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         @Override
         // Note that this function is somehow not run if enderman already has a target, i.e. look-aggro does not take precendence over other aggro. This is a feature, not a bug.
         public boolean a() {
-            /* Endermen can be aggroed regardless of y-level and line of sight */
+            /* Endermen can be aggroed regardless of line of sight and y-level */
             this.potentialTarget = this.findClosestPotentialTarget();
             return this.potentialTarget != null;
         }
@@ -393,10 +393,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
 
         @Override
-        /* Endermen pick up blocks four times as frequently */
+        /* Endermen pick up blocks 5 times as frequently */
         public boolean a() {
             return this.enderman.getCarried() == null && this.enderman.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
-                    && this.enderman.getRandom().nextInt(5) == 0;
+                    && this.enderman.getRandom().nextInt(4) == 0;
         }
 
         @Override
@@ -434,10 +434,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
 
         @Override
-        /* Endermen place down blocks four times as frequently */
+        /* Endermen place down blocks 5 times as frequently */
         public boolean a() {
             return this.enderman.getCarried() != null && this.enderman.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
-                    && this.enderman.getRandom().nextInt(500) == 0;
+                    && this.enderman.getRandom().nextInt(400) == 0;
         }
 
         @Override

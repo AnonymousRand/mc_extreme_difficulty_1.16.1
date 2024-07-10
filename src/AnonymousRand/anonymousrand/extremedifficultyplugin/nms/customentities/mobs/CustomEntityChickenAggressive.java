@@ -15,7 +15,7 @@ import java.util.Map;
 // todo if customentitychicken that thing moved to listener, extend it?
 public class CustomEntityChickenAggressive extends EntityChicken implements ICustomHostile {
     
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -119,8 +119,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                        /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                           /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0));
-        this.goalSelector.a(2, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange()));                /* Moves towards target, menacingly */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));

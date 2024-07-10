@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -30,8 +30,8 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
         this.newAEC.addEffect(new MobEffect(MobEffects.HARM, 0));
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /* cave spiders move 70% faster but only do 1 damage and have 8 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-        this.setHealth(8.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(8.0);
+        this.setHealth(8.0F);
     }
 
     @Override

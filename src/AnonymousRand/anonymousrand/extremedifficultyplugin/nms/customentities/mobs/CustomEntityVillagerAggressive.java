@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class CustomEntityVillagerAggressive extends EntityVillager implements ICustomHostile {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -30,7 +30,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
             e.printStackTrace();
         }
 
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(12.0); /* aggressive villagers do 12 damage */
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0); /* aggressive villagers do 10 damage */
     }
 
     static {
@@ -55,8 +55,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
         super.initPathfinder(); /* will still panic and flee if hit */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0));
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); /* Moves towards target, menacingly */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 3.0, IGNORE_LOS)); /* Aggressive villagers move 3 times as fast when chasing down a target */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 

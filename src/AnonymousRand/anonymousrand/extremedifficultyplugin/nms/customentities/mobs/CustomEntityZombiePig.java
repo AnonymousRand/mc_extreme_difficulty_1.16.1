@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -42,7 +42,7 @@ public class CustomEntityZombiePig extends EntityPigZombie implements ICustomHos
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTargetYLevel(this, 5.0, random.nextDouble() * 5 + 10.0, 0.0005));  /* Occasionally teleports to a spot closer in y-level to its target */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0005)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /* custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
-        this.goalSelector.a(1, new CustomPathfinderGoalZombieAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* always aggro; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 

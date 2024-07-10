@@ -41,8 +41,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
     private void initAttributes() {
         /* Blazes only have 12.5 health */
-        this.setHealth(12.5F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.5);
+        this.setHealth(12.5F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

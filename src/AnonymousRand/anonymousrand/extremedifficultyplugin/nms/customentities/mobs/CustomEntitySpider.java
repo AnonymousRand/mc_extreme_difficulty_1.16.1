@@ -11,7 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CustomEntitySpider extends EntitySpider implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -30,8 +30,8 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
         this.a80 = false;
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.51); /* spiders move 70% faster but only do 1 damage and have 10 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
-        this.setHealth(10.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(10.0);
+        this.setHealth(10.0F);
     }
 
     @Override

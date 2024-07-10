@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -35,8 +35,8 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         this.a60 = false;
         this.getBukkitEntity().setCustomName("Am I worse than phantoms?");
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(2.0); /* vexes only have 12 health and do 2 damage */
-        this.setHealth(12.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.0);
+        this.setHealth(12.0F);
         VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityWitherMini extends CustomEntityWither {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -63,7 +63,7 @@ public class CustomEntityWitherMini extends CustomEntityWither {
         CustomEntityWitherSkull entityWitherSkull = new CustomEntityWitherSkull(this.world, this, d6, d7, d8);
         entityWitherSkull.setShooter(this);
 
-        if (this.random.nextFloat() < 0.05 || alwaysBlue) { /* mini withers shoot blue skulls 5% of the time */
+        if (this.random.nextDouble() < 0.05 || alwaysBlue) { /* mini withers shoot blue skulls 5% of the time */
             entityWitherSkull.setCharged(true);
         }
 

@@ -9,10 +9,6 @@ private instead of protected where possible, dont target villagers
 standardize multiline comment indent
 stopped after: customentityenderman
 
-make melee attacking goals just always account for y level. also mobs ignoring los should be able to hit through walls?
-difference from vanilla?
-check ranged attacking goals
-
 consolidate all rangedattackgoals into one and just choose projectile?
     etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
 
@@ -28,17 +24,20 @@ remove checkdespawn for mobs with follow distance <= 32
 
 
 
+
 registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
 
-hoglins either have insane reach or jump boost if they can utilize it
+hoglins either have insane reach. also golems too?
 
 mobs when hit by a player further than detection range/cant see: they teleport to player. teleport util?
 
 is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
 
 piglin frenzy when you open chest; make frenzy have explosive effects and set goal target if possible
+
+endermites and silverfish should die after a random long time
 
 skeletons less arrows
 
@@ -61,9 +60,15 @@ change this.entity in goals to this.goalowner?
 
 personalize all doc comments with mob name?
 
+pink sheep and stuff dont do the fling into the air to avoid knockback thing?
+
+aggressive villagers sweat or have custom texture or something (register custom entity?)
+
 no blank lines after class declaration and before instance variable decalarations?
 
 all -- and ++ to after if possible
+
+be funny and make thorns spawn cacti? make sure cacti do a lot of damage. but also prevent abuse?
 
 all static initializer blocks before constructors?
 
@@ -90,7 +95,7 @@ standaridze static final (constant) capitalization
 
 multi0pole ternary operators: align vertically
 
-standardize randoms (global one? goals use entity's one?)
+standardize randoms (global one? goals use entity's one?). seems like vanilla goals use entity's one
 
 make sure all hurtbytarget goals have priorirty 0
 
@@ -161,6 +166,8 @@ attacks comments/docs all into initattack method instead of increase attacks?
 remove unnecessary casts???
 
 util function for Bukkit.getServer().getOnlinePlayers().size()?
+
+isntead of teleporting near y, creepers teleport onto player if cant see after a while, like enderman? make this a goal with customizable chances? (cant see, diff y level)
 
 breakblocksaround goals make sure never remove blocks underneath unless intentional?
 
@@ -247,8 +254,6 @@ somehow nerf endermen drops. for example, drop ender shards (custom item?) which
 
 early return guards for isclientside and stuff
 
-funnier if sheep didnt seek players and just exploded?
-
 would be funny to have some good mob have avoidentity goal like villager avoiding player or something
 
 slimes and mamga cubes still get trapped in cobwebs; just break them?
@@ -320,10 +325,13 @@ endermen endermite summon on tp chance 30% -> 10%
 endermen no longer deaggro out of range
 endermen look aggro distance 128 -> 64
 endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10
-endermen pick up blocks chance per check 1/20 -> 1/5 (four times as frequent)
-endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequent)
+endermen pick up blocks chance per check 1/20 -> 1/4 (5 times as frequent)
+endermen put down blocks chance per check 1/2000 -> 1/400 (5 times as frequent)
 evokers, illusioners forget players after 60 ticks instead of 300
 iron golem death silverfish 15 -> 10
 mooshroom death explosion power 15 -> 10
 killer rabbit move speed multiplier 1.4 -> 1.5
+sheep no longer seek players; they just spontaneously combust
+aggressive villager move speed multiplier 1 -> 3
+aggressive villager damage 12 -> 10
 zoglin no longer throws players around erractically after 25 attack

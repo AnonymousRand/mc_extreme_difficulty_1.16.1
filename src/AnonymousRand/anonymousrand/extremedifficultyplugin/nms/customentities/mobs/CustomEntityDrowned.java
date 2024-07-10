@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -123,9 +123,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                                             /* Spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0, 7, 40.0F));                         /* Drowned throw tridents every 7 ticks, and continue attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0, 7, 40.0F));                         /* Drowned throw tridents every 7 ticks, and continue attacking regardless of line of sight and y-level (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0, IGNORE_LOS));                                                    /* Also attacks in the day, and continues attacking regardless of y-level and line of sight */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));                                                    /* Also attacks in the day, and continues attacking regardless of line of sight and y-level */
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0));

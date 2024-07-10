@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalRemovingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -38,8 +38,8 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     private void initAttributes() {
         /* Bees do 420 damage but only have 5 health */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(420.0);
-        this.setHealth(5.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(5.0);
+        this.setHealth(5.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

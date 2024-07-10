@@ -30,8 +30,8 @@ public class CustomEntityCow extends EntityCow {
     private void initAttributes() {
         /* Cows move twice as fast and have 20 health */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
-        this.setHealth(20.0F);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);
+        this.setHealth(20.0F);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

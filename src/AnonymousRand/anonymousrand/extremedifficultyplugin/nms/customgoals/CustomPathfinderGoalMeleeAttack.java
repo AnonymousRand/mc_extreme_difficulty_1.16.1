@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -21,36 +22,35 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
     protected int repathCooldown;
     protected int attackCooldown;
     protected int remainingAttackCooldown;
+    protected double minAttackReach;
 
     public CustomPathfinderGoalMeleeAttack(
             EntityInsentient goalOwner,
             double speedTowardsTarget,
             boolean continuePathingIfNoLOS) {
 
-        this(goalOwner, speedTowardsTarget, continuePathingIfNoLOS, 20);
+        // default minimum attack reach is 2.0 blocks to help baby zombies out
+        this(goalOwner, speedTowardsTarget, continuePathingIfNoLOS, 20, 2.0);
     }
 
     public CustomPathfinderGoalMeleeAttack(
             EntityInsentient goalOwner,
             double speedTowardsTarget,
             boolean continuePathingIfNoLOS,
-            int attackCooldown) {
+            int attackCooldown,
+            double minAttackReach) {
 
         this.goalOwner = goalOwner;
         this.speedTowardsTarget = speedTowardsTarget;
         this.continuePathingIfNoLOS = continuePathingIfNoLOS;
         this.attackCooldown = attackCooldown;
         this.remainingAttackCooldown = attackCooldown;
+        this.minAttackReach = minAttackReach;
         this.a(EnumSet.of(Type.MOVE, Type.LOOK));
     }
 
     @Override
-    public boolean a() { // todo make sure this is called every tick! for remainingattackcooldown--
-        this.remainingAttackCooldown--;
-        if (this.remainingAttackCooldown > 0) {
-            return false;
-        }
-
+    public boolean a() {
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
         if (goalTarget == null || goalTarget.isSpectator() || goalTarget.isInvulnerable() || !goalTarget.isAlive()) {
             return false;
@@ -83,13 +83,12 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
         this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
         this.goalOwner.setAggressive(true);
         this.repathCooldown = 0;
-        this.remainingAttackCooldown = this.attackCooldown;
 
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
         if (goalTarget != null) {
-            this.oldTargetX = goalTarget.locX();
-            this.oldTargetY = goalTarget.locY();
-            this.oldTargetZ = goalTarget.locZ();
+            this.oldTargetX = Double.MAX_VALUE;
+            this.oldTargetY = Double.MAX_VALUE;
+            this.oldTargetZ = Double.MAX_VALUE;
         }
     }
     
@@ -106,6 +105,8 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
 
     @Override
     public void e() {
+        this.remainingAttackCooldown--;
+
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
         if (goalTarget == null) {
             return;
@@ -114,14 +115,16 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
         this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F);
         double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, true);
 
+        // repath to target
         this.repathCooldown = Math.max(this.repathCooldown - 1, 0);
+        // chance to repath if stationary target increased from vanilla 0.05 to 0.075
         boolean shouldRepathToTarget =
-                (this.continuePathingIfNoLOS || this.goalOwner.getEntitySenses().a(goalTarget))
-                && this.repathCooldown <= 0
+                this.repathCooldown <= 0
+                && (this.continuePathingIfNoLOS ? true : this.goalOwner.getEntitySenses().a(goalTarget))
                 && (NMSUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(),
-                            this.oldTargetX, this.oldTargetY, this.oldTargetZ, true) >= 1.0
-                    || this.goalOwner.getRandom().nextFloat() < 0.05F);
-        if (shouldRepathToTarget) { /* no longer requires line of sight to continue attacking */
+                            this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
+                    || this.goalOwner.getRandom().nextFloat() < 0.075F);
+        if (shouldRepathToTarget) {
             this.oldTargetX = goalTarget.locX();
             this.oldTargetY = goalTarget.locY();
             this.oldTargetZ = goalTarget.locZ();
@@ -137,17 +140,24 @@ public class CustomPathfinderGoalMeleeAttack extends PathfinderGoal {
             }
         }
 
-        if (distSqToGoalTarget <= this.getAttackReachSq(goalTarget)) {
+        // attack
+        if (this.remainingAttackCooldown <= 0 && distSqToGoalTarget <= this.getAttackReachSq(goalTarget)) {
+            this.remainingAttackCooldown = this.attackCooldown;
             this.goalOwner.swingHand(EnumHand.MAIN_HAND);
             this.goalOwner.attackEntity(goalTarget);
         }
     }
 
-    protected void setAttackCooldown(int attackCooldown) {
+    protected double getAttackReachSq(EntityLiving goalTarget) {
+        return Math.max(this.goalOwner.getWidth() * 2.0F * this.goalOwner.getWidth() * 2.0F + goalTarget.getWidth(),
+                this.minAttackReach);
+    }
+
+    public void setAttackCooldown(int attackCooldown) {
         this.attackCooldown = attackCooldown;
     }
 
-    protected double getAttackReachSq(EntityLiving goalTarget) {
-        return this.goalOwner.getWidth() * 2.0F * this.goalOwner.getWidth() * 2.0F + goalTarget.getWidth();
+    public void setMinAttackReach(double minAttackReach) {
+        this.minAttackReach = minAttackReach;
     }
 }

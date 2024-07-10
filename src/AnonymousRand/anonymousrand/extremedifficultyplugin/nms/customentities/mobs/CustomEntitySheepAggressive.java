@@ -74,8 +74,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0));
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); /* Moves towards target, menacingly */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
@@ -155,7 +154,6 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         if (this.attacks == 20 && !this.a20) { /* after 20 attacks, aggressive sheep gain speed 1 */
             this.a65 = true;
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-            this.goalSelector.a(0, new NewPathfinderGoalPassiveMoveTowardsTarget(this, (float) this.getDetectionRange())); // update follow range
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
         }
 

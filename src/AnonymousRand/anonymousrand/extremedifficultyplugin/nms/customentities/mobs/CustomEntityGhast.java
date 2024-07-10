@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -301,9 +301,9 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         @Override
         public void c() {
             Random random = this.a.getRandom();
-            double d0 = this.a.locX() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
-            double d1 = this.a.locY() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
-            double d2 = this.a.locZ() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
+            double d0 = this.a.locX() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
+            double d1 = this.a.locY() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
+            double d2 = this.a.locZ() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
 
             this.a.getControllerMove().a(d0, d1, d2, 1.0);
         }

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -38,8 +38,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
     private void initAttributes() {
         float health = (float) (random.nextDouble() * 12.0 + 20.0); /* fake illusioners have anywhere between 20 and 32 health */
-        this.setHealth(health);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(health);
+        this.setHealth(health);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

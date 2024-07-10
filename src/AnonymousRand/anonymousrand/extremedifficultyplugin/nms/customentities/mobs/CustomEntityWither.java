@@ -20,7 +20,7 @@ import java.util.Random;
 
 public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+    /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
@@ -84,7 +84,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         }
 
         /* withers have higher chances to shoot blue skulls the more players are online */
-        boolean flag = this.random.nextFloat() < ((-0.3 + (Math.log10(this.world.getServer().getOnlinePlayers().size() + 3.0) / (Math.log10(3.0) - 0.15))) / 150.0);
+        boolean flag = this.random.nextDouble() < ((-0.3 + (Math.log10(this.world.getServer().getOnlinePlayers().size() + 3.0) / (Math.log10(3.0) - 0.15))) / 150.0);
         double d3 = this.getHeadX(i);
         double d4 = this.getHeadY(i);
         double d5 = this.getHeadZ(i);
