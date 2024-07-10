@@ -1,5 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -11,10 +12,13 @@ public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget
     private boolean doesEntityCallForHelp;
     private Class<?>[] reinforcementClasses;
 
-    public CustomPathfinderGoalHurtByTarget(EntityCreature goalOwner, Class<?>... reinforcementClasses) {
-        // needSightToMaintainTarget is always false, meaning we never need line of sight to continue tracking a target as the goalTarget (checked in shouldContinueExecuting())
-        // in addition, ignoreY is always true for this
-        super(goalOwner, false, false, true);
+    public CustomPathfinderGoalHurtByTarget(
+            EntityInsentient goalOwner,
+            boolean ignoreLOS,
+            boolean ignoreY,
+            Class<?>... reinforcementClasses) {
+
+        super(goalOwner, false, ignoreLOS, ignoreY);
 
         if (reinforcementClasses.length > 0) {
             this.doesEntityCallForHelp = true;
@@ -24,11 +28,31 @@ public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget
         this.a(EnumSet.of(Type.TARGET));
     }
 
-    @Override
     // Mobs only retaliate against players in survival
+    @Override
     public boolean a() {
-        return (this.e.getLastDamager() instanceof EntityPlayer
-                && !((EntityPlayer) this.e.getLastDamager()).abilities.isInvulnerable);
+        EntityLiving revengeTarget = this.e.getLastDamager();
+
+        boolean isValidPlayer = revengeTarget instanceof EntityPlayer
+                && !((EntityPlayer) revengeTarget).abilities.isInvulnerable;
+        if (!isValidPlayer) {
+            return false;
+        }
+
+        // teleport to target if outside detection range/has no line of sight
+        double detectionRange = this.k();
+        if (NMSUtil.distSq(this.e, revengeTarget, this.ignoreY) > detectionRange * detectionRange
+                || !this.e.getEntitySenses().a(revengeTarget)) {
+            if (!this.e.isSilent()) {
+                this.e.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+            this.e.enderTeleportTo(revengeTarget.locX(), revengeTarget.locY(), revengeTarget.locZ());
+            if (!this.e.isSilent()) {
+                this.e.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -42,6 +66,7 @@ public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget
         super.c();
     }
 
+    // todo test eventually with like piglin or something
     protected void callForHelp() {
         double reinforcementRange = this.k();
         List<EntityInsentient> entitiesInRange = this.e.world.b(this.e.getClass(),
@@ -50,13 +75,13 @@ public class CustomPathfinderGoalHurtByTarget extends CustomPathfinderGoalTarget
         // the original code here had 5 nested do-while loops
         // in unrelated news I'm typing this with one hand as I recover from my stroke
         for (EntityInsentient entity : entitiesInRange) {
-            boolean doNotConsider =
-                    this.e == entity
-                    || entity.getGoalTarget() != null
-                    || (this.e instanceof EntityTameableAnimal)
-                    && ((EntityTameableAnimal) this.e).getOwner() != ((EntityTameableAnimal) entity).getOwner()
-                    || entity.r(this.e.getLastDamager());
-            if (doNotConsider) {
+            boolean passedBasicChecks =
+                    this.e != entity
+                    && entity.getGoalTarget() == null
+                    && (!(this.e instanceof EntityTameableAnimal)
+                        || ((EntityTameableAnimal) this.e).getOwner() == ((EntityTameableAnimal) entity).getOwner())
+                    && !entity.r(this.e.getLastDamager());
+            if (!passedBasicChecks) {
                 continue;
             }
 

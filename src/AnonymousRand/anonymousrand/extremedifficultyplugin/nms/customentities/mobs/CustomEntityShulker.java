@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 
 public class CustomEntityShulker extends EntityShulker implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private int attacks;
     private boolean a10, a21, a40;
 
@@ -36,19 +40,19 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
         this.goalSelector.a(4, new CustomEntityShulker.PathfinderGoalShulkerBulletAttack());
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, CustomEntityShulker.class));
-        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y, CustomEntityShulker.class));
+        this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
 
-        if (tookDamage && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
+        if (wasDamageTaken && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
-        return tookDamage;
+        return wasDamageTaken;
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -169,7 +173,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 EntityLiving goalTarget = CustomEntityShulker.this.getGoalTarget();
 
                 CustomEntityShulker.this.getControllerLook().a(goalTarget, 180.0F, 180.0F);
-                double distSqToGoalTarget = NMSUtil.distSqExcludeY(CustomEntityShulker.this, goalTarget);
+                double distSqToGoalTarget = NMSUtil.distSq(CustomEntityShulker.this, goalTarget, true);
 
                 if (distSqToGoalTarget < 400.0D) { // todo getfollowrange?
                     if (this.b <= 0) {

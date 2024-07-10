@@ -13,6 +13,10 @@ import java.util.Arrays;
 
 public class CustomEntityPillager extends EntityPillager implements ICustomHostile, IGoalRemovingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;
 
@@ -45,7 +49,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /* custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
         this.goalSelector.a(2, new CustomPathfinderGoalRangedCrossbowAttack<>(this, 1.0, 4, 24.0F)); /* shoots every 4 ticks; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -112,6 +116,14 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
+    }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
     }
 
 //    public int[] getAttacksThresholds() {

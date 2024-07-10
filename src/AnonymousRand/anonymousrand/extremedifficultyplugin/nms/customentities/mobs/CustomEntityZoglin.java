@@ -18,6 +18,11 @@ import java.util.Random;
 
 public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
+
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a8, a30;
@@ -45,25 +50,25 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
 
         if (this.world.isClientSide) {
             return false;
-        } else if (tookDamage && damageSource.getEntity() instanceof EntityLiving) {
+        } else if (wasDamageTaken && damageSource.getEntity() instanceof EntityLiving) {
             EntityLiving entityLiving = (EntityLiving) damageSource.getEntity();
 
             if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0D)) { /* only retaliate against players */
                 this.k(entityLiving);
             }
 
-            return tookDamage;
+            return wasDamageTaken;
         } else {
-            return tookDamage;
+            return wasDamageTaken;
         }
     }
 
@@ -79,7 +84,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -157,6 +162,14 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
+    }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
     }
 
     static class PathfinderGoalZoglinMeleeAttack extends CustomPathfinderGoalMeleeAttack {

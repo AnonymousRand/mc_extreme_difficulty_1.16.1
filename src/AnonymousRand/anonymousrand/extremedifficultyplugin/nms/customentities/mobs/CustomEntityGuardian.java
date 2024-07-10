@@ -19,6 +19,10 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardian extends EntityGuardian implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityGuardian(World world) {
@@ -49,7 +53,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -92,7 +96,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 12 attacks, guardians gain regen 3 and 40 max health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
@@ -128,7 +132,8 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         this.goalSelector.a(9, new PathfinderGoalRandomLookaround(this));
         this.goalRandomStroll.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
         pathfindergoalmovetowardsrestriction.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        // todo dont need custom entity seelctor?
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityLiving.class, 10, IGNORE_LOS, IGNORE_Y, new CustomEntityGuardian.EntitySelectorGuardianTargetHumanSquid(this))); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -243,7 +248,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSqExcludeY(this.a, entityLiving) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSq(this.a, entityLiving, true) > 9.0D;
         }
     }
 }

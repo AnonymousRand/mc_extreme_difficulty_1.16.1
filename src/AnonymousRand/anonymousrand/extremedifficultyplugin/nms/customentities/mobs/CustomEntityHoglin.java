@@ -9,6 +9,9 @@ import org.bukkit.block.Block;
 
 public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    private static final boolean IGNORE_LOS = false;
+    private static final boolean IGNORE_Y = false;
+
     private AttackLevelingController attackLevelingController = null;
     public PathfinderGoalSelector vanillaTargetSelector;
 
@@ -49,7 +52,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -99,7 +102,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
             if (metThreshold == attackThresholds[0]) {
                 /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 20 attacks, hoglins get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
@@ -134,6 +137,14 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
     }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                               Overridden vanilla functions                                //
@@ -149,7 +160,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new CustomEntityHoglin.NewPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /* custom goal that breaks repellant blocks around the mob periodically */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override

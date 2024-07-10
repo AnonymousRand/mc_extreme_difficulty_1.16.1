@@ -42,7 +42,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     public void initPathfinder() {
         super.initPathfinder();
         this.goalSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalFireball(this));                                      /* Constantly shoots fireballs instead of only during the strafe phase */
-        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
+        this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Ignores y-level, line of sight, and invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
     }
 
     @Override // onCrystalDestroyed()
@@ -90,7 +90,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double distToNearestCrystal = Double.MAX_VALUE;
 
             for (EntityEnderCrystal enderCrystal : enderCrystals) {
-                double distToCrystal = NMSUtil.distSq(this, enderCrystal);
+                double distToCrystal = NMSUtil.distSq(this, enderCrystal, false);
 
                 if (distToCrystal < distToNearestCrystal) {
                     distToNearestCrystal = distToCrystal;

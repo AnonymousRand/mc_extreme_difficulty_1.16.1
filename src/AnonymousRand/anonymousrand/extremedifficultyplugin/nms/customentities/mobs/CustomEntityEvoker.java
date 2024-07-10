@@ -23,6 +23,10 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private EntitySheep wololoTarget;
     private AttackLevelingController attackLevelingController = null;
 
@@ -54,7 +58,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -143,8 +147,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, EntityRaider.class)); /* Always retaliates against players, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y, EntityRaider.class)); /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y))); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
         // todo test removing forget after 300 ticks
     }
 
@@ -245,7 +249,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             float f = (float) MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
             int i;
 
-            if (NMSUtil.distSqExcludeY(CustomEntityEvoker.this, entityLiving) < 9.0) {
+            if (NMSUtil.distSq(CustomEntityEvoker.this, entityLiving, true) < 9.0) {
                 float f1;
 
                 for (i = 0; i < 5; ++i) {

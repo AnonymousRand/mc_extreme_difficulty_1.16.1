@@ -9,6 +9,9 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
 
+    private static final boolean IGNORE_LOS = false;
+    private static final boolean IGNORE_Y = false;
+
     public CustomEntitySheep(World world) {
         super(EntityTypes.SHEEP, world);
         /* No longer avoids fire and lava */
@@ -23,7 +26,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* this mob now seeks out players; uses the custom goal which doesn't need line of sight to start attacking (passes to CustomPathfinderGoalNearestAttackableTarget.g() which passes to CustomIEntityAccess.customFindPlayer() which passes to CustomIEntityAccess.customFindEntity() which passes to CustomPathfinderTargetConditions.a() which removes line of sight requirement) */
     }
 
     public double getDetectionRange() { /* sheep have 32 block detection range */
@@ -40,7 +43,7 @@ public class CustomEntitySheep extends EntitySheep implements ICustomHostile {
         super.tick();
 
         if (this.getGoalTarget() != null) {
-            if (NMSUtil.distSq(this, this.getGoalTarget()) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
+            if (NMSUtil.distSq(this, this.getGoalTarget(), false) <= 4.0) { /* sheep explode instantly when it is less than 2 blocks away from player */
                 this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 1.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }

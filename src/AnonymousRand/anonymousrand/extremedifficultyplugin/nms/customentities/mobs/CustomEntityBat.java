@@ -20,6 +20,10 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private NewPathfinderGoalBuffMobs buffMobs;
     private BlockPosition targetPosition;
     private boolean firstDuplicate;
@@ -100,7 +104,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -210,16 +214,16 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     @Override
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                           /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
+        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                                                 /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.firstDuplicate) {
+        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.firstDuplicate) {
             this.firstDuplicate = false;
             new SpawnEntity(this.world, new EntityBat(EntityTypes.BAT, this.world), random.nextInt(3) + 6,
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
@@ -231,7 +235,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             }
         }
 
-        return tookDamage;
+        return wasDamageTaken;
     }
 
     // Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out)

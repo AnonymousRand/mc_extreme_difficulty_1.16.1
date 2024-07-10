@@ -15,6 +15,10 @@ import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private boolean lookedAt;
 
     public CustomEntityEnderman(World world) {
@@ -58,7 +62,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -110,12 +114,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if (metThreshold == attackThresholds[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 25 attacks, endermen get 40 max health and regen 3 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             } else if (metThreshold == attackThresholds[2]) {
                 /* After 40 attacks, endermen summon 5 endermites */
                 new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 5, null, null, this, false, true);
@@ -154,9 +158,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, and ignores y-level, line of sight, or invis/skulls to initially find a target or maintain it as the target */
+        this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, ignores invis/skulls to initially find a target or maintain it as the target, and periodically retargets the closest option */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                  /* Always retaliates against players, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(3, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));            /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(5, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 
@@ -228,8 +232,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                     this.getNavigation().o();
 
                     if (!this.isSilent()) {
-                        this.world.playSound(null, this.lastX, this.lastY, this.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT,
-                                this.getSoundCategory(), 1.0F, 1.0F);
+                        this.world.playSound(null, this.lastX, this.lastY, this.lastZ,
+                                SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
                         this.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
                     }
 
@@ -261,15 +265,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 return false;
             }
 
-            boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-            if (tookDamage && this.isAlive()) {
+            boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+            if (wasDamageTaken && this.isAlive()) {
                 /* After 40 attacks, endermen summon an endermite when hit and not killed */
                 if (this.getAttacks() >= 40) {
                     new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false, true);
                 }
             }
 
-            return tookDamage;
+            return wasDamageTaken;
         }
     }
 
@@ -280,11 +284,11 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         if (this.getGoalTarget() != null) {
             EntityLiving target = this.getGoalTarget();
 
-            /* Endermen have a chance to teleport to target if target can't be seen or is on a different y-level.
+            /* Endermen have a chance to teleport to target if target do not have line of sight or is on a different y-level.
                In the latter case, there is a higher chance the closer horizontally the player is (and thus the more likely they are towering). */
             if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
                     || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
-                    < 0.05 / NMSUtil.distSqExcludeY(this, target))) {
+                    < 0.05 / NMSUtil.distSq(this, target, true))) {
                 this.teleportTo(target.locX(), target.locY(), target.locZ());
             }
         }
@@ -301,8 +305,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         private final CustomEntityEnderman enderman;
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
-            super(enderman, EntityPlayer.class);
-            this.targetCondition = new EntityFilter(64.0, (entityLiving) ->
+            super(enderman, EntityPlayer.class, CustomEntityEnderman.IGNORE_LOS, CustomEntityEnderman.IGNORE_Y);
+            this.targetCondition = new EntityFilter(64.0, true, true, (entityLiving) ->
                     enderman.validPlayerIsLooking((EntityPlayer) entityLiving)); // endermen can still be aggroed from up to 64 blocks away
             this.enderman = enderman;
         }
@@ -311,7 +315,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         // Note that this function is somehow not run if enderman already has a target, i.e. look-aggro does not take precendence over other aggro. This is a feature, not a bug.
         public boolean a() {
             /* Endermen can be aggroed regardless of y-level and line of sight */
-            this.potentialTarget = this.findPotentialValidTarget();
+            this.potentialTarget = this.findClosestPotentialTarget();
             return this.potentialTarget != null;
         }
 
@@ -341,7 +345,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         private final CustomEntityEnderman enderman;
 
         public PathfinderGoalNearestAttackableTarget(S enderman, Class<T> targetClass) {
-            super(enderman, targetClass);
+            super(enderman, targetClass, CustomEntityEnderman.IGNORE_LOS, CustomEntityEnderman.IGNORE_Y);
             this.enderman = enderman;
         }
 
@@ -360,8 +364,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         private final CustomEntityEnderman enderman;
 
-        public PathfinderGoalHurtByTarget(CustomEntityEnderman enderman, Class<?>... aclass) {
-            super(enderman, aclass);
+        public PathfinderGoalHurtByTarget(
+                CustomEntityEnderman enderman,
+                boolean ignoreLOS,
+                boolean ignoreY,
+                Class<?>... reinforcementClasses) {
+            super(enderman, ignoreLOS, ignoreY, reinforcementClasses);
             this.enderman = enderman;
         }
 

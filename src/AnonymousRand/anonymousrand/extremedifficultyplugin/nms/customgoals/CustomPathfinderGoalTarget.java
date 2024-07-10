@@ -3,22 +3,27 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.lang.reflect.Field;
 
 public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
 
+    protected final boolean ignoreLOS;
     protected final boolean ignoreY;
     private static Field a;
 
     public CustomPathfinderGoalTarget(
             EntityInsentient goalOwner,
-            boolean needSightToMaintainTarget,
             boolean nearbyOnly,
+            boolean ignoreLOS,
             boolean ignoreY) {
-        
-        super(goalOwner, needSightToMaintainTarget, nearbyOnly);
+
+        // even if a()'s EntityFilter still allows ignoring LoS for initially finding a target, if ignoreLOS is false,
+        // the goal will keep resetting and rechecking a(), causing inconsistent attack timing
+        super(goalOwner, !ignoreLOS, nearbyOnly);
+        this.ignoreLOS = ignoreLOS;
         this.ignoreY = ignoreY;
     }
 
@@ -31,7 +36,8 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
         }
     }
 
-    @Override // shouldContinueExecuting(); overridden here to apply NMSUtil.distSqIgnoreY()
+    // Overridden to apply NMSUtil.distSqIgnoreY()
+    @Override // shouldContinueExecuting()
     public boolean b() {
         EntityLiving goalTarget = this.e.getGoalTarget();
         if (goalTarget == null) {
@@ -49,17 +55,10 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
                 return false;
             } else {
                 double detectionRange = this.k();
-                double distSq;
-                if (this.ignoreY) {
-                    distSq = NMSUtil.distSqExcludeY(this.e, goalTarget);
-                } else {
-                    distSq = NMSUtil.distSq(this.e, goalTarget);
-                }
-
-                if (distSq > detectionRange * detectionRange) {
+                if (NMSUtil.distSq(this.e, goalTarget, this.ignoreY) > detectionRange * detectionRange) {
                     return false;
                 } else {
-                    if (this.f) {
+                    if (this.f) { // this.f is !ignoreLOS
                         if (this.e.getEntitySenses().a(goalTarget)) {
                             try {
                                 a.setInt(this, 0);
@@ -89,7 +88,8 @@ public abstract class CustomPathfinderGoalTarget extends PathfinderGoalTarget {
         }
     }
 
-    @Override // getDetectionRange(); overridden here for both subclasses CustomPathfinderGoalNearestAttackableTarget and CustomPathfinderGoalHurtByTarget to use
+    // Overridden to use entities' getDetectionRange()
+    @Override // getDetectionRange()
     protected double k() {
         return ((ICustomHostile) this.e).getDetectionRange();
     }

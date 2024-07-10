@@ -13,6 +13,11 @@ import java.util.Random;
 
 public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
+
     public CustomEntityDrowned(World world) {
         super (EntityTypes.DROWNED, world);
         this.initCustom();
@@ -45,7 +50,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -115,18 +120,18 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     @Override
     public void m() {
         /* No longer targets iron golems and villagers */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
-        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0D, 7, 40.0F));   /* Drowned throw tridents every 7 ticks, and continue attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                                             /* Spawns lightning randomly */
+        this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack<>(this, 1.0D, 7, 40.0F));                         /* Drowned throw tridents every 7 ticks, and continue attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0D));
-        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D));                              /* Also attacks in the day, and continues attacking regardless of y-level and line of sight */
+        this.goalSelector.a(2, new CustomPathfinderGoalZombieAttack(this, 1.0D));                                                    /* Also attacks in the day, and continues attacking regardless of y-level and line of sight */
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0D));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0D, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
-        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this));                                  /* Always retaliates against players, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
-        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, EntityTurtle.bv));
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));                                  /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(4, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, false, false, EntityTurtle.bv));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -9,50 +9,34 @@ import java.util.List;
 public class NMSUtil {
 
     /**
-     * Calculate distance between <code>entityFrom</code> and <code>entityTo</code>, including y-level.
+     * Calculate distance between <code>entityFrom</code> and <code>entityTo</code>.
      */
-    public static double distSq(Entity entityFrom, Entity entityTo) {
-        return NMSUtil.distSq(entityFrom.getPositionVector(), entityTo.getPositionVector());
+    public static double distSq(Entity entityFrom, Entity entityTo, boolean ignoreY) {
+        return distSq(entityFrom.getPositionVector(), entityTo.getPositionVector(), ignoreY);
     }
 
     /**
-     * Calculate distance between <code>vec3DFrom</code> and <code>vec3DTo</code>, including y-level.
+     * Calculate distance between <code>vec3DFrom</code> and <code>vec3DTo</code>.
      */
-    public static double distSq(Vec3D vec3DFrom, Vec3D vec3DTo) {
-        return distSq(vec3DFrom.getX(), vec3DFrom.getY(), vec3DFrom.getZ(), vec3DTo.getX(), vec3DTo.getY(), vec3DTo.getZ());
+    public static double distSq(Vec3D vec3DFrom, Vec3D vec3DTo, boolean ignoreY) {
+        return distSq(vec3DFrom.getX(), vec3DFrom.getY(), vec3DFrom.getZ(),
+                vec3DTo.getX(), vec3DTo.getY(), vec3DTo.getZ(), ignoreY);
     }
 
     /**
-     * Calculate distance between the first set of three coordinates and the second set, including y-level.
+     * Calculate distance between the first set of three coordinates and the second set.
      */
-    public static double distSq(double x1, double y1, double z1, double x2, double y2, double z2) {
-        double distX = x1 - x2;
-        double distY = y1 - y2;
-        double distZ = z1 - z2;
-        return distX * distX + distY * distY + distZ * distZ;
-    }
-
-    /**
-     * Calculate distance between <code>entityFrom</code> and <code>entityTo</code>, excluding y-level.
-     */
-    public static double distSqExcludeY(Entity entityFrom, Entity entityTo) {
-        return NMSUtil.distSqExcludeY(entityFrom.getPositionVector(), entityTo.getPositionVector());
-    }
-
-    /**
-     * Calculate distance between <code>vec3DFrom</code> and <code>vec3DTo</code>, excluding y-level.
-     */
-    public static double distSqExcludeY(Vec3D vec3DFrom, Vec3D vec3DTo) {
-        return distSqExcludeY(vec3DFrom.getX(), vec3DFrom.getZ(), vec3DTo.getX(), vec3DTo.getZ());
-    }
-
-    /**
-     * Calculate distance between the first set of three coordinates and the second set, excluding y-level.
-     */
-    public static double distSqExcludeY(double x1, double z1, double x2, double z2) {
-        double distX = x1 - x2;
-        double distZ = z1 - z2;
-        return distX * distX + distZ * distZ;
+    public static double distSq(double x1, double y1, double z1, double x2, double y2, double z2, boolean ignoreY) {
+        if (ignoreY) {
+            double distX = x1 - x2;
+            double distZ = z1 - z2;
+            return distX * distX + distZ * distZ;
+        } else {
+            double distX = x1 - x2;
+            double distY = y1 - y2;
+            double distZ = z1 - z2;
+            return distX * distX + distY * distY + distZ * distZ;
+        }
     }
 
     /**
@@ -99,7 +83,7 @@ public class NMSUtil {
         for (T candidate : candidates) {
             if (entityFilter == null || entityFilter.test(fromEntity, candidate)) {
                 double distSq;
-                distSq = NMSUtil.distSq(fromEntity, candidate); // doesn't matter here if we're not ignoring Y; that's entityFilter's job
+                distSq = NMSUtil.distSq(fromEntity, candidate, false); // doesn't matter here if we're not ignoring Y; that's entityFilter's job
 
                 if (distSq < minDistSq) {
                     minDistSq = distSq;

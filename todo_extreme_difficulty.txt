@@ -1,14 +1,16 @@
 todo:
 
 overriden functions like checkdespawn try to use descriptive variable names
-comment syntax update, line lengths, have last newline, space after cast, standard multiline comment for changes docs,
+comment syntax update, line lengths, space after cast, standard multiline comment for changes docs,
 plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 reorganize all custommobs to use new attacks thing and whatever (including blaze).
 custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 private instead of protected where possible, dont target villagers
+standardize multiline comment indent
 stopped after: customentityenderman
 
-change get3DDistSq to only require one param
+    make melee attacking goals just always account for y level, or just use vanilla for those with ignore false? also mobs ignoring los should be able to hit through walls?
+    check ranged attacking goals
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
@@ -25,6 +27,21 @@ remove checkdespawn for mobs with follow distance <= 32
 registerGenericAttribute() into util with static? pass in this. pulling attributemap in initattribute too
 
 should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
+
+hoglins either have insane reach or jump boost if they can utilize it
+
+mobs when hit by a player further than detection range/cant see: they teleport to player. teleport util?
+
+is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
+
+piglin frenzy when you open chest; make frenzy have explosive effects and set goal target if possible
+
+consolidate all rangedattackgoals into one and just choose projectile?
+    etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
+
+skeletons less arrows
+
+either make sure drowned tridents are hitscan or make pufferfish teleport and ignore y
 
 some utils like spawn entity DO NOT have to be runnables; check performance and also check what runnables actually do (if theyre not async, theyre useless?)
 
@@ -64,7 +81,19 @@ add polar bear?
 
 better nametag names? like wtf is "insert name here"
 
+have a mob with faster melee like 10 tick attack cooldown
+
+standarize where to use final
+
+standaridze static final (constant) capitalization
+    external constant variable references use class name dot, but not internal? all caps to differentiate from local variable?
+    but nested classes always use dot?
+
 multi0pole ternary operators: align vertically
+
+standardize randoms (global one? goals use entity's one?)
+
+make sure all hurtbytarget goals have priorirty 0
 
 line breaking complicated stuff with master level and and nested ors etc: indent accordingly like in custompathfindergoalhurtbytarget's callforhelp()
 
@@ -92,8 +121,6 @@ does bL() need to be in icustomhostile? is it possible to globalize it like g() 
 investigate why some mobs dont need bl() (maxfallheight) or checkdespawn()
 
 all util classes not abstract, but include private constryuctor
-
-all static references even internal use class name to differentiate from local variable?
 
 optimize predicates (not bedrock into base? etc)
 
@@ -265,6 +292,7 @@ create full documentation of changes from all /* comments and that google doc?
 
 
 balance changes catalog:
+mobs teleport to the player that hurt them if they are outside range/do not have line of sight
 bats on first hit sumnmon 8-10 vanilla bats -> 6-8
 bats vertical flight speed 0.7 -> 1
 bats no longer can duplicate into a swarm of vanilla bats at a certain threshold
@@ -274,10 +302,12 @@ bats buff arrow shoot cooldown 20/14/8 ticks -> 40/30/20
 bats buff silverfish spawn cooldown 12 seconds -> 15
 striders die faster (find number!)
 elder guardians random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
+blazes attack thresholds 50, 125, 250 -> 100, 200, 300
 blazes inaccuracy non rapidfire 0% -> 20% vanilla
 blazes inaccuracy rapidfire 35% -> 250% vanilla
 blazes normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
 blazes rapidfire attack cooldown 3 ticks -> 4
+blazes melee now considers y-level
 (this was more of a bug) blaze melee cooldown 0 ticks -> 20
 creepers default fuse 15 ticks -> 20
 creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1

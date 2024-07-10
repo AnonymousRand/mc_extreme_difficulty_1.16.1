@@ -49,7 +49,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         }
 
         this.attackRemainingCooldown--;
-        double distSqToGoalTarget = NMSUtil.distSqExcludeY(this.entity, goalTarget);
+        double distSqToGoalTarget = NMSUtil.distSq(this.entity, goalTarget, true);
         /* Breaking line of sight does not stop the mob from attacking */
         ++this.seeTime; // todo what this for
 

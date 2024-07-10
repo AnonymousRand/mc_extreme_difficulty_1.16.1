@@ -14,6 +14,8 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    private static final boolean IGNORE_LOS = false;
+    private static final boolean IGNORE_Y = false;
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a5, a15, a25, die;
@@ -46,8 +48,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
         if (i == 99) {
             this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class));
-            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
+            this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
 
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /* changing attributes don't work on rabbits so killer bunnies have speed 3 and jump boost 1 */
             this.addEffect(new MobEffect(MobEffects.JUMP, Integer.MAX_VALUE, 1));
@@ -56,8 +58,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
             new SpawnEntity(this.world, new CustomEntityRabbit(this.world), 1, null, null, this, false, true);
         }
 
@@ -76,7 +78,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -128,13 +130,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
             if (this.attacks == 5 && !this.a5) { /* after 5 attacks, killer bunnies gain speed 4 */
                 this.a5 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 3));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             }
 
             if (this.attacks == 15 && !this.a15) { /* after 15 attacks, killer bunnies gain speed 5 */
                 this.a15 = true;
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 4));
-                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+                this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range
             }
 
             if (this.attacks == 25 && !this.a25) { /* after 25 attacks, killer bunnies gain speed 6 and 10 max health and health */
@@ -157,6 +159,14 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
+    }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
     }
 
     static class PathfinderGoalKillerRabbitMeleeAttack extends CustomPathfinderGoalMeleeAttack {

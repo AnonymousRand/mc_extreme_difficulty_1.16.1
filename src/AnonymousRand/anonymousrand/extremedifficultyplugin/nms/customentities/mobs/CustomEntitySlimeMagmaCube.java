@@ -12,6 +12,8 @@ import net.minecraft.server.v1_16_R1.*;
 
 public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    private static final boolean IGNORE_LOS = false;
+    private static final boolean IGNORE_Y = false;
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a15, a40, deathExplosion;
@@ -36,7 +38,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         super.initPathfinder();
         this.goalSelector.a(0, new CustomEntitySlimeMagmaCube.PathfinderGoalMagmaCubeFireAndLava(this)); /* custom goal that allows magma cube to summon fire, magma cubes and/or lava on it depending on attack count */
         this.goalSelector.a(1, new NewPathfinderGoalSlimeMeleeAttack(this, 1.0)); /* uses the custom goal that atstacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls to find a target; for some reason the magma cubes run away after a while without the extra parameters */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores y-level, line of sight, and invis/skulls to find a target; for some reason the magma cubes run away after a while without the extra parameters */
     }
 
     @Override
@@ -70,7 +72,7 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -149,6 +151,14 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
+    }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
     }
 
     static class PathfinderGoalMagmaCubeFireAndLava extends PathfinderGoal {

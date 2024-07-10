@@ -18,7 +18,7 @@ public class NewPathfinderGoalSlimeMeleeAttack extends NewPathfinderGoalPassiveM
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomHostile) {
-                if (NMSUtil.distSq(this.entity, entityLiving) > d1 && random.nextDouble() < 0.875) { /* mobs can only successfully hit you occasionally when they are very distant vertically */
+                if (NMSUtil.distSq(this.entity, entityLiving, false) > d1 && random.nextDouble() < 0.875) { /* mobs can only successfully hit you occasionally when they are very distant vertically */
                     return;
                 }
             }

@@ -46,7 +46,7 @@ public class CustomEntityDragonFireball extends EntityDragonFireball {
             entityAreaEffectCloud.addEffect(new MobEffect(MobEffects.HARM, 1, 2));
 
             for (EntityPlayer player : nearbyPlayers) {
-                if (NMSUtil.distSqExcludeY(this, player) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
+                if (NMSUtil.distSq(this, player, true) < 64.0D) { /* area effect clouds snap on to location of closest player within 8 blocks horizontally */
                     entityAreaEffectCloud.setPosition(player.locX(), player.locY() + i, player.locZ());
                     break;
                 }

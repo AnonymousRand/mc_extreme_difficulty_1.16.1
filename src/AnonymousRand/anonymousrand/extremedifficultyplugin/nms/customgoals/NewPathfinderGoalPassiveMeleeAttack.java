@@ -46,7 +46,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
                 return false;
             } else {
                 this.d = this.entity.getNavigation().a(entityLiving, 0);
-                return this.a(entityLiving) >= NMSUtil.distSqExcludeY(this.entity, entityLiving);
+                return this.a(entityLiving) >= NMSUtil.distSq(this.entity, entityLiving, true);
             }
         }
     }
@@ -79,10 +79,10 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
         }
 
         this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
-        double distanceToSquared = NMSUtil.distSqExcludeY(this.entity, attackTarget);
+        double distanceToSquared = NMSUtil.distSq(this.entity, attackTarget, true);
 
         this.h = Math.max(this.h - 1, 0);
-        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSqExcludeY(attackTarget.locX(), attackTarget.locZ(), this.e, this.g) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
+        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSq(attackTarget.locX(), attackTarget.locY(), attackTarget.locZ(), this.e, this.f, this.g, true) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
             this.e = attackTarget.locX();
             this.f = attackTarget.locY();
             this.g = attackTarget.locZ();
@@ -107,7 +107,7 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
         if (d0 <= d1 && this.i <= 0) {
             if (this.entity instanceof ICustomHostile) {
-                if (NMSUtil.distSq(this.entity, entityLiving) > d1 && random.nextDouble() < 0.996) { /* mobs can only successfully hit you occasionally when they are very distant vertically */ // todo test frequency
+                if (NMSUtil.distSq(this.entity, entityLiving, false) > d1 && random.nextDouble() < 0.996) { /* mobs can only successfully hit you occasionally when they are very distant vertically */ // todo test frequency
                     return;
                 }
             }

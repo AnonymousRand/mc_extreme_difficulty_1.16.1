@@ -17,6 +17,11 @@ import java.util.EnumSet;
 
 public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
+
     private AttackLevelingController attackLevelingController = null;
     private boolean deathExplosion, duplicate;
     private CustomEntityPhantom.AttackPhase attackPhase;
@@ -80,7 +85,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -142,7 +147,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         this.goalSelector.a(1, new CustomEntityPhantom.PathfinderGoalPhantomPickAttack());
         this.goalSelector.a(2, new PathfinderGoalPhantomSweepAttack());
         this.goalSelector.a(3, new CustomEntityPhantom.PathfinderGoalPhantomOrbitPoint());
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));
+        // todo make sure using normal nearestattackabletarget is fine
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y));
     }
 
     private void updateSizeStats(int change) { /* phantoms gain +0.3 health and 0.125 damage per size and starts with 11 health and 2 damage at size 0 */

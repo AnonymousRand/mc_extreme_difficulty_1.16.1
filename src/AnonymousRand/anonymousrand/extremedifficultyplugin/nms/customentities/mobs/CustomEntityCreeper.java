@@ -13,6 +13,10 @@ import java.util.Collection;
 
 public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private static Field fuseTicks;
 
     public CustomEntityCreeper(World world) {
@@ -63,7 +67,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -122,32 +126,32 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     @Override
     protected void initPathfinder() {
         /* Creepers are no longer scared of cats and ocelots */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                     /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                        /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0));                                           /* Spawns lightning randomly */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* Occasionally teleports to a spot closer in y-level to its target */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001));             /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0));                                             /* Spawns lightning randomly */
+        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045));   /* Occasionally teleports to a spot closer in y-level to its target */
+        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001));               /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));
         this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, 1.0D, false));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this));                                                      /* Always retaliates against players, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y));                                  /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
         /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2 if charged) */
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()
+        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()
                 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) {
             new SpawnEntity(this.world, this.getMaxFuseTicks(), new CustomEntityCreeper(this.world),
                     this.isPowered() ? 2 : 1, null, null, this, false, true);
         }
 
-        return tookDamage;
+        return wasDamageTaken;
     }
 
     @Override
@@ -156,7 +160,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             /* Charged creepers explode with power 50, and all creepers explode more powerfully the further the player is */
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
             if (!this.world.isClientSide) {
-                double extraRadius = Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget())) - 2.0) - 1.0;
+                double extraRadius = Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
                 float explosionRadius = (float) ((this.isPowered() ? 75.0 : this.explosionRadius)
                                         + Math.max(extraRadius, 0.0));
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, false);
@@ -182,7 +186,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         /* Charged creepers have 100 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(100.0);
         this.setHealth(100.0F);
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); // update follow range // todo unnecessary now?
     }
 
     private void createEffectCloud() {

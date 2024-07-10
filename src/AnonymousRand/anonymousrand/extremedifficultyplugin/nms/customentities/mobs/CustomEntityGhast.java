@@ -19,6 +19,10 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     private AttackLevelingController attackLevelingController = null;
     private boolean deathFireballs;
 
@@ -48,7 +52,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -116,7 +120,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
         this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
@@ -172,7 +176,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (NMSUtil.distSqExcludeY(this.ghast, entityLiving) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (NMSUtil.distSq(this.ghast, entityLiving, true) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.getWorld();
 
                 ++this.chargeTime;
@@ -253,7 +257,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             } else {
                 EntityLiving entityLiving = this.a.getGoalTarget();
 
-                if (NMSUtil.distSqExcludeY(this.a, entityLiving) < 4096.0D) {
+                if (NMSUtil.distSq(this.a, entityLiving, true) < 4096.0D) {
                     double d1 = entityLiving.locX() - this.a.locX();
                     double d2 = entityLiving.locZ() - this.a.locZ();
 

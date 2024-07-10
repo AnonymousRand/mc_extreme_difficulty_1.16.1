@@ -36,7 +36,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & 
             return;
         }
 
-        double distanceToSquared = NMSUtil.distSqExcludeY(this.entity, attackTarget);
+        double distanceToSquared = NMSUtil.distSq(this.entity, attackTarget, true);
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
         boolean flag2 = (distanceToSquared > (double) this.maxAttackDistSq || this.seeTime < 5) && this.crossbowState == State.UNCHARGED;

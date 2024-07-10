@@ -15,6 +15,10 @@ import java.util.EnumSet;
 
 public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    /* Ignores y-level for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = false;
+    private static final boolean IGNORE_Y = true;
     private boolean rapidFire;
 
     public CustomEntityBlaze(World world) {
@@ -58,7 +62,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX()- this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -92,7 +96,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     private AttackLevelingController attackLevelingController = null;
 
     private void initAttackLevelingMob() {
-        this.attackLevelingController = new AttackLevelingController(50, 125, 250);
+        this.attackLevelingController = new AttackLevelingController(100, 200, 300);
     }
 
     public int getAttacks() {
@@ -103,7 +107,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /* After 50 attacks, blazes shoot an exploding fireball with power 1 */
+                /* After 100 attacks, blazes shoot an exploding fireball with power 1 */
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
                 double d3 = this.getGoalTarget().locZ() - this.locZ();
@@ -112,10 +116,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                 largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
                 this.world.addEntity(largeFireball);
             } else if (metThreshold == attackThresholds[1]) {
-                /* After 125 attacks, blazes shoot out a ring of fireballs */
+                /* After 200 attacks, blazes shoot out a ring of fireballs */
                 new RunnableRingOfFireballs(this, 0.5, 1).run();
             } else if (metThreshold == attackThresholds[2]) {
-                /* After 250 attacks, blazes enter rapid fire state */
+                /* After 300 attacks, blazes enter rapid fire state */
                 this.rapidFire = true;
             }
         }
@@ -140,6 +144,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
     }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                  Other custom functions                                   //
@@ -156,10 +168,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalFireballAttack(this));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                          /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(3, new PathfinderGoalBlazeAttack(this));
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
     }
 
     @Override
@@ -172,13 +184,13 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                Mob-specific goals/classes                                 //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    static class PathfinderGoalFireballAttack extends PathfinderGoal {
+    static class PathfinderGoalBlazeAttack extends PathfinderGoal {
         private final CustomEntityBlaze blaze;
         private final World nmsWorld;
         private int rangedAttackRemainingCooldown;
         private int meleeAttackRemainingCooldown;
 
-        public PathfinderGoalFireballAttack(CustomEntityBlaze entityBlaze) {
+        public PathfinderGoalBlazeAttack(CustomEntityBlaze entityBlaze) {
             this.blaze = entityBlaze;
             this.nmsWorld = entityBlaze.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
@@ -196,14 +208,14 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             this.meleeAttackRemainingCooldown = 0;
         }
 
-        @Override // tick(); fires if shouldExecute() or shouldContinueExecuting() is true
+        @Override // tick()
         public void e() {
             --this.rangedAttackRemainingCooldown;
             --this.meleeAttackRemainingCooldown;
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
-                double distSqToGoalTarget = NMSUtil.distSqExcludeY(this.blaze, goalTarget);
+                double distSqToGoalTarget = NMSUtil.distSq(this.blaze, goalTarget, false);
 
                 if (distSqToGoalTarget < 3.0D) { // melee attack
                     if (this.meleeAttackRemainingCooldown <= 0) {

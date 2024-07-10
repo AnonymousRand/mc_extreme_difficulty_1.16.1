@@ -13,6 +13,10 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
+       as the target, as well as for retaliating against players */
+    private static final boolean IGNORE_LOS = true;
+    private static final boolean IGNORE_Y = true;
     public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a20, a30, a45, a60;
@@ -41,17 +45,17 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores y-level, line of sight, or invis/skulls for initially finding a target and maintaining it as the target if it's a player */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean tookDamage = super.damageEntity(damageSource, damageAmount);
-        if (tookDamage && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
+        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
             new SpawnEntity(this.world, new CustomEntityVex(this.world), 1, null, null, this, false, false);
         }
 
-        return tookDamage;
+        return wasDamageTaken;
     }
 
     public double getDetectionRange() { /* vexes have 32 bock detection range */
@@ -66,7 +70,7 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at y=256, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
                 double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
@@ -141,6 +145,14 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
     @Override
     public PathfinderGoalSelector getVanillaTargetSelector() {
         return this.vanillaTargetSelector;
+    }
+    
+    public boolean getIgnoreLOS() {
+        return IGNORE_LOS;
+    }
+    
+    public boolean getIgnoreY() {
+        return IGNORE_Y;
     }
 
     class ControllerMoveVex extends ControllerMove {

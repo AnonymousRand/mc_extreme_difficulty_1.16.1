@@ -70,9 +70,10 @@ public class VanillaPathfinderGoalsAccess {
             }
         }
 
-        if (entity instanceof EntityCreature) {
-            /* These mobs retaliate against players, but don't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-            entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget((EntityCreature) entity));
-        }
+        /* Mobs always retaliate against players and teleport to them if they are out of range/
+           do not have line of sight, but don't retaliate against other mobs (in case the
+           EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        entity.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget(entity,
+                entity.getIgnoreLOS(), entity.getIgnoreY()));
     }
 }

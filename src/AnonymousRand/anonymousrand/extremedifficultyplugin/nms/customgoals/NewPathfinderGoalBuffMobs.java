@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.*;
@@ -44,7 +45,7 @@ public class NewPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevel
     public void e() {
         int attacksLocal = this.entity.getAttacks();
         this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
-            if (entity instanceof EntityPlayer || this.normalGetDistSq(this.entity.getPositionVector(), entity.getPositionVector()) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
+            if (entity instanceof EntityPlayer || NMSUtil.distSq(this.entity, entity, false) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
                 return;
             }
 
@@ -56,13 +57,5 @@ public class NewPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevel
                 }
             }
         });
-    }
-
-    public double normalGetDistSq(Vec3D vec3d1, Vec3D vec3d2) { // todo why here? use mobs/util if eventually converted?
-        double d0 = vec3d2.getX() - vec3d1.getX();
-        double d1 = vec3d2.getY() - vec3d1.getY();
-        double d2 = vec3d2.getZ() - vec3d1.getZ();
-
-        return d0 * d0 + d1 * d1 + d2 * d2;
     }
 }

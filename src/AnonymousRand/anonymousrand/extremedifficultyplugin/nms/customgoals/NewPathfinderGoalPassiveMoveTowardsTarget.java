@@ -23,7 +23,7 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
         if (this.targetEntity == null) {
             return false;
-        } else if (NMSUtil.distSqExcludeY(this.entity, this.targetEntity) > (double) (this.maxFollowDistance * this.maxFollowDistance)) {
+        } else if (NMSUtil.distSq(this.entity, this.targetEntity, true) > (double) (this.maxFollowDistance * this.maxFollowDistance)) {
             return false;
         } else {
             return true;
@@ -32,7 +32,7 @@ public class NewPathfinderGoalPassiveMoveTowardsTarget extends PathfinderGoal {
 
     @Override
     public boolean b() {
-        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && NMSUtil.distSqExcludeY(this.entity, this.targetEntity) < (this.maxFollowDistance * this.maxFollowDistance);
+        return !this.entity.getNavigation().m() && this.targetEntity.isAlive() && NMSUtil.distSq(this.entity, this.targetEntity, true) < (this.maxFollowDistance * this.maxFollowDistance);
     }
 
     @Override

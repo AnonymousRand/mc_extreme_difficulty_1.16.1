@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 
 import javax.annotation.Nullable;
@@ -11,17 +12,15 @@ import java.util.function.Predicate;
 public class EntityFilter {
 
     private double detectionRange;
+    private final boolean ignoreLOS;
     private final boolean ignoreY;
-    private Predicate<EntityLiving> additionalPredicate;
+    private Predicate<EntityLiving> extraPredicate;
 
-    public EntityFilter(double detectionRange, @Nullable Predicate<EntityLiving> additionalPredicate) {
-        this(detectionRange, true, additionalPredicate);
-    }
-
-    public EntityFilter(double detectionRange, boolean ignoreY, @Nullable Predicate<EntityLiving> additionalPredicate) {
+    public EntityFilter(double detectionRange, boolean ignoreLOS, boolean ignoreY, @Nullable Predicate<EntityLiving> extraPredicate) {
         this.detectionRange = detectionRange;
+        this.ignoreLOS = ignoreLOS;
         this.ignoreY = ignoreY;
-        this.additionalPredicate = additionalPredicate;
+        this.extraPredicate = extraPredicate;
     }
 
     public void setDetectionRange(double detectionRange) {
@@ -38,7 +37,7 @@ public class EntityFilter {
             return false;
         }
 
-        if (this.additionalPredicate != null && !this.additionalPredicate.test(target)) {
+        if (this.extraPredicate != null && !this.extraPredicate.test(target)) {
             return false;
         } else {
             if (from != null) {
@@ -46,16 +45,16 @@ public class EntityFilter {
                     return false;
                 }
 
-                if (this.detectionRange > 0.0) {
-                    if (this.ignoreY) {
-                        if (NMSUtil.distSqExcludeY(from, target) > this.detectionRange * this.detectionRange) {
-                            return false;
-                        }
-                    } else {
-                        if (NMSUtil.distSq(from, target) > this.detectionRange * this.detectionRange) {
-                            return false;
-                        }
-                    }
+                // distance check
+                if (this.detectionRange > 0.0
+                        && NMSUtil.distSq(from, target, this.ignoreY) > this.detectionRange * this.detectionRange) {
+                        return false;
+                }
+
+                // line of sight check
+                if (!this.ignoreLOS && from instanceof EntityInsentient
+                        && !((EntityInsentient) from).getEntitySenses().a(target)) {
+                    return false;
                 }
             }
 
