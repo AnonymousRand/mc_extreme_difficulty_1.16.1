@@ -47,7 +47,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         super.setRabbitType(i);
 
         if (i == 99) {
-            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this, 1.5, IGNORE_LOS)); /* Killer rabbits move speed 1.4 -> 1.5 */
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
             this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
 
@@ -75,7 +75,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -171,13 +171,16 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     static class PathfinderGoalKillerRabbitMeleeAttack extends CustomPathfinderGoalMeleeAttack {
 
-        public PathfinderGoalKillerRabbitMeleeAttack(EntityRabbit entityRabbit) {
-            super(entityRabbit, 1.4D);
+        public PathfinderGoalKillerRabbitMeleeAttack(
+                EntityRabbit entityRabbit,
+                double speedTowardsTarget,
+                boolean continuePathingIfNoLOS) {
+            super(entityRabbit, speedTowardsTarget, continuePathingIfNoLOS);
         }
 
         @Override
-        protected double a(EntityLiving entityLiving) {
-            return (4.0F + entityLiving.getWidth());
+        protected double getAttackReachSq(EntityLiving goalTarget) {
+            return (4.0F + goalTarget.getWidth());
         }
     }
 }

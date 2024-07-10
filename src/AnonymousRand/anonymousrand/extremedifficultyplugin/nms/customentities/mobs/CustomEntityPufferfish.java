@@ -10,8 +10,8 @@ import java.lang.reflect.Field;
 
 public class CustomEntityPufferfish extends EntityPufferFish implements ICustomHostile {
 
-    /* Ignores line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = false;
     private int lastStingTicks;
@@ -67,7 +67,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */

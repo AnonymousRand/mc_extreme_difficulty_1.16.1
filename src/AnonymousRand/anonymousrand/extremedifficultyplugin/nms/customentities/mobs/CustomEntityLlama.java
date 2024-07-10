@@ -12,8 +12,8 @@ import java.lang.reflect.Field;
 
 public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
 
@@ -95,9 +95,9 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 1.25D, 40, 20.0F)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
-        this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0D));
-        this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0D));
+        this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 1.25D, 40, 20.0F));
+        this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
+        this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));

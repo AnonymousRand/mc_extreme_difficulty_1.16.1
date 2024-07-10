@@ -10,8 +10,8 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
 
@@ -52,7 +52,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0);
 
             if (entityHuman != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -146,7 +146,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));

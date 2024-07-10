@@ -5,13 +5,13 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot {
+public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot<T> {
 
     protected final T entity;
     protected final double speedTowardsTarget;
     protected int attackInterval;
     protected float maxAttackDistSq;
-    protected int attackRemainingCooldown = -1;
+    protected int remainingAttackCooldown = -1;
     protected int seeTime;
     protected boolean strafingClockwise;
     protected boolean strafingBackwards;
@@ -32,12 +32,12 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
 
     @Override
     public void e() {
-        EntityLiving attackTarget = this.entity.getGoalTarget();
+        EntityLiving goalTarget = this.entity.getGoalTarget();
 
-        if (attackTarget == null) {
+        if (goalTarget == null) {
             return;
         }
-        double distanceToSquared = NMSUtil.distSq(this.entity, attackTarget, true);
+        double distanceToSquared = NMSUtil.distSq(this.entity, goalTarget, true);
         /* breaking line of sight does not stop the mob from attacking */
         ++this.seeTime;
 
@@ -45,7 +45,7 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
             this.entity.getNavigation().o();
             ++this.strafingTime;
         } else {
-            this.entity.getNavigation().a(attackTarget, this.speedTowardsTarget);
+            this.entity.getNavigation().a(goalTarget, this.speedTowardsTarget);
             this.strafingTime = -1;
         }
 
@@ -69,16 +69,16 @@ public class CustomPathfinderGoalRangedBowAttack<T extends EntityMonster & IRang
             }
 
             this.entity.getControllerMove().a(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
-            this.entity.a(attackTarget, 30.0F, 30.0F);
+            this.entity.a(goalTarget, 30.0F, 30.0F);
         } else {
-            this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
+            this.entity.getControllerLook().a(goalTarget, 30.0F, 30.0F);
         }
 
         if (this.entity.isHandRaised()) {
             this.entity.clearActiveItem();
-            this.entity.a(attackTarget, ItemBow.a(20)); // shoot(); ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (manually setting it to the normal 20 here to allow rapid fire, because normally this only runs if mob has charged bow for 20 ticks)
-            this.attackRemainingCooldown = this.attackInterval;
-        } else if (--this.attackRemainingCooldown <= 0 && this.seeTime >= -60) {
+            this.entity.a(goalTarget, ItemBow.a(20)); // shoot(); ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (manually setting it to the normal 20 here to allow rapid fire, because normally this only runs if mob has charged bow for 20 ticks)
+            this.remainingAttackCooldown = this.attackInterval;
+        } else if (--this.remainingAttackCooldown <= 0 && this.seeTime >= -60) {
             this.entity.c(ProjectileHelper.a(this.entity, Items.BOW)); // startUsingItem()
         }
     }

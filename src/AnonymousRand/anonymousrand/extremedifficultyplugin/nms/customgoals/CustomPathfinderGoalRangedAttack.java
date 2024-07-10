@@ -11,17 +11,17 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
     protected final T entity;
     protected final double speedTowardsTarget;
-    protected int attackCooldown;
+    protected final int attackCooldown;
+    protected int remainingAttackCooldown;
     protected float maxAttackDistance;
-    protected int attackRemainingCooldown;
     protected int seeTime;
 
     public CustomPathfinderGoalRangedAttack(T entity, double speedTowardsTarget, int attackCooldown, float maxAttackDistance) {
         this.entity = entity;
         this.speedTowardsTarget = speedTowardsTarget;
         this.attackCooldown = attackCooldown;
+        this.remainingAttackCooldown = -1;
         this.maxAttackDistance = maxAttackDistance;
-        this.attackRemainingCooldown = -1;
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
@@ -38,7 +38,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     @Override
     public void d() {
         this.seeTime = 0;
-        this.attackRemainingCooldown = -1;
+        this.remainingAttackCooldown = -1;
     }
 
     @Override
@@ -48,9 +48,9 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
             return;
         }
 
-        this.attackRemainingCooldown--;
-        double distSqToGoalTarget = NMSUtil.distSq(this.entity, goalTarget, true);
-        /* Breaking line of sight does not stop the mob from attacking */
+        this.remainingAttackCooldown--; // todo move this to a() like melee?
+        double distSqToGoalTarget = NMSUtil.distSq(this.entity, goalTarget, true); // todo pass in ignorey
+        /* Breaking line of sight does not stop the mob from attacking */ // todo pass in ignorelos
         ++this.seeTime; // todo what this for
 
         if (distSqToGoalTarget <= (double) (this.maxAttackDistance * this.maxAttackDistance) && this.seeTime >= 5) {
@@ -61,8 +61,8 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
         this.entity.getControllerLook().a(goalTarget, 30.0F, 30.0F);
 
-        if (this.attackRemainingCooldown <= 0) {
-            this.attackRemainingCooldown = this.attackCooldown;
+        if (this.remainingAttackCooldown <= 0) {
+            this.remainingAttackCooldown = this.attackCooldown;
             // this.entity.increaseAttacks(1); // todo uncomment once all have been converted
 
             float f1 = MathHelper.a(MathHelper.sqrt(distSqToGoalTarget) / this.maxAttackDistance, 0.1F, 1.0F);

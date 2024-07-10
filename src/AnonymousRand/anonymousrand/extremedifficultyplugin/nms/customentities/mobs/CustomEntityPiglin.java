@@ -28,6 +28,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
     private static Field goalTarget;
 
+    // todo function for frenzy and unfrenzy
     public CustomEntityPiglin(World world) {
         super(EntityTypes.PIGLIN, world);
         /* No longer avoids fire and lava */
@@ -51,8 +52,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinFasterMelee(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+            /* todo: piglins attack 2 times faster when frenzied */
+            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -200,7 +202,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0);
 
             if (entityHuman != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -374,42 +376,6 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             if (this.piglin.isBaby()) {
                 this.piglin.die();
             }
-        }
-    }
-
-    static class PathfinderGoalPiglinFasterMelee extends CustomPathfinderGoalMeleeAttack { /* piglins attack 2 times faster when frenzied */
-
-        private final CustomEntityPiglin piglin;
-
-        public PathfinderGoalPiglinFasterMelee(CustomEntityPiglin piglin, double speedTowardsTarget) {
-            super(piglin, speedTowardsTarget);
-            this.piglin = piglin;
-        }
-
-        @Override
-        public boolean a() {
-            long i = this.a.getWorld().getTime();
-
-            if (i - this.k < 5L) { // attacks 2 times faster
-                return false;
-            } else if (this.piglin.frenzyTicks > 0) {
-                this.k = i;
-                EntityLiving entityLiving = this.piglin.getGoalTarget();
-
-                if (entityLiving == null || !entityLiving.isAlive()) {
-                    return false;
-                }
-
-                this.path = this.piglin.getNavigation().a(entityLiving, 0);
-                return this.path != null || this.a(entityLiving) >= NMSUtil.distSq(this.piglin, entityLiving, true);
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean b() {
-            return this.a();
         }
     }
 

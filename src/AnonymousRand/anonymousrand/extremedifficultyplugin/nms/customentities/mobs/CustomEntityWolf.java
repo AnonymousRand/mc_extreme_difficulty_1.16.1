@@ -21,8 +21,8 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
     public void initPathfinder() { /* no longer avoids llamas, breeds, follows/defends owners, begs, and attack skeletons */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(4, new PathfinderGoalLeapAtTarget(this, 0.4F));
-        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 1.0D));
+        this.goalSelector.a(5, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(10, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(3, new CustomPathfinderGoalHurtByTarget(this, IGNORE_LOS, IGNORE_Y, CustomEntityWolf.class));
@@ -38,7 +38,7 @@ public class CustomEntityWolf extends EntityWolf implements ICustomHostile {
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */

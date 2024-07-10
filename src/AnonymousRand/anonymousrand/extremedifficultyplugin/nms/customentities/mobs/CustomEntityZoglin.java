@@ -18,8 +18,8 @@ import java.util.Random;
 
 public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
 
@@ -46,8 +46,8 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         super.initPathfinder();
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new PathfinderGoalZoglinMeleeAttack(this, 1.0D)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D)); // instead of using behavior-controlled idle actions
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
@@ -81,7 +81,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -170,62 +170,5 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     
     public boolean getIgnoreY() {
         return IGNORE_Y;
-    }
-
-    static class PathfinderGoalZoglinMeleeAttack extends CustomPathfinderGoalMeleeAttack {
-
-        protected final CustomEntityZoglin zoglin;
-        private boolean moveEverywhere;
-
-        public PathfinderGoalZoglinMeleeAttack(CustomEntityZoglin zoglin, double speedTowardsTarget) {
-            super(zoglin, speedTowardsTarget);
-            this.zoglin = zoglin;
-            this.moveEverywhere = false;
-        }
-
-        @Override
-        public void e() {
-            super.e();
-
-            EntityLiving entityLiving = this.zoglin.getGoalTarget();
-
-            if (entityLiving == null) {
-                return;
-            }
-
-            if (this.zoglin.attacks >= 8) {
-                if (this.zoglin.attacks == 25 && !this.moveEverywhere) { /* after 25 attacks, zoglins throw players around erratically, often high in the air, for a few seconds before teleporting to the player to continue attacking */
-                    this.moveEverywhere = true;
-                    new RunnableZoglinThrowPlayerAround(this.zoglin, entityLiving, 12).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 5L);
-                }
-            }
-        }
-    }
-
-    static class RunnableZoglinThrowPlayerAround extends BukkitRunnable {
-
-        private final CustomEntityZoglin zoglin;
-        private final EntityLiving target;
-        private int cycles;
-        private final int maxCycles;
-        private static final Random random = new Random();
-
-        public RunnableZoglinThrowPlayerAround(CustomEntityZoglin zoglin, EntityLiving target, int maxCycles) {
-            this.zoglin = zoglin;
-            this.target = target;
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
-        }
-
-        @Override
-        public void run() {
-            if (++this.cycles <= this.maxCycles) {
-                LivingEntity bukkitEntity = (LivingEntity) this.target.getBukkitEntity();
-                bukkitEntity.setVelocity(new Vector(random.nextDouble() * 6 - random.nextDouble() * 3, random.nextDouble() * 3 - random.nextDouble() * 1.5, random.nextDouble() * 6 - random.nextDouble() * 3));
-            } else if (++this.cycles - 32 >= this.maxCycles) {
-                this.cancel();
-                this.zoglin.setPosition(this.target.locX(), this.target.locY(), this.target.locZ()); // zoglin teleports to player after 8 seconds so that it can continue attacking
-            }
-        }
     }
 }

@@ -15,8 +15,8 @@ import java.util.Random;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private boolean lookedAt;
@@ -59,7 +59,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -152,7 +152,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0D));                                              /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
@@ -189,7 +189,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         double dotProd = playerLookDirection.b(directionToPlayer);
         /* Endermen no longer need line of sight to aggro by sight (i.e. can be aggroed through blocks) */
-        return dotProd > 1.0D - 0.025D / directionToPlayerMagnitude;
+        return dotProd > 1.0 - 0.025D / directionToPlayerMagnitude;
     }
 
     @Override // teleportRandomly()
@@ -445,9 +445,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             Random random = this.enderman.getRandom();
             World world = this.enderman.getWorld();
 
-            int x = MathHelper.floor(this.enderman.locX() - 1.0D + random.nextDouble() * 2.0D);
+            int x = MathHelper.floor(this.enderman.locX() - 1.0 + random.nextDouble() * 2.0D);
             int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 2.0D);
-            int z = MathHelper.floor(this.enderman.locZ() - 1.0D + random.nextDouble() * 2.0D);
+            int z = MathHelper.floor(this.enderman.locZ() - 1.0 + random.nextDouble() * 2.0D);
             BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
             IBlockData targetBlockData = world.getType(targetBlockPosition);
             BlockPosition targetBlockPositionBelow = targetBlockPosition.down();

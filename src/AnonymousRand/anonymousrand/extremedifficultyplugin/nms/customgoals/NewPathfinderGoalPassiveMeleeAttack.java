@@ -73,19 +73,19 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
 
     @Override
     public void e() { // tick(); fires if shouldExecute() or shouldContinueExecuting() is true
-        EntityLiving attackTarget = this.entity.getGoalTarget();
-        if (attackTarget == null) {
+        EntityLiving goalTarget = this.entity.getGoalTarget();
+        if (goalTarget == null) {
             return;
         }
 
-        this.entity.getControllerLook().a(attackTarget, 30.0F, 30.0F);
-        double distanceToSquared = NMSUtil.distSq(this.entity, attackTarget, true);
+        this.entity.getControllerLook().a(goalTarget, 30.0F, 30.0F);
+        double distanceToSquared = NMSUtil.distSq(this.entity, goalTarget, true);
 
         this.h = Math.max(this.h - 1, 0);
-        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSq(attackTarget.locX(), attackTarget.locY(), attackTarget.locZ(), this.e, this.f, this.g, true) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
-            this.e = attackTarget.locX();
-            this.f = attackTarget.locY();
-            this.g = attackTarget.locZ();
+        if (this.c && this.h <= 0 && (this.e == 0.0D && this.f == 0.0D && this.g == 0.0D || NMSUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), this.e, this.f, this.g, true) >= 1.0 || this.entity.getRandom().nextFloat() < 0.05F)) { /* no longer requires line of sight to continue attacking */
+            this.e = goalTarget.locX();
+            this.f = goalTarget.locY();
+            this.g = goalTarget.locZ();
             this.h = 4 + this.entity.getRandom().nextInt(7);
             if (distanceToSquared > 1024.0D) {
                 this.h += 10;
@@ -93,13 +93,13 @@ public class NewPathfinderGoalPassiveMeleeAttack extends PathfinderGoal {
                 this.h += 5;
             }
 
-            if (!this.entity.getNavigation().a(attackTarget, this.b)) {
+            if (!this.entity.getNavigation().a(goalTarget, this.b)) {
                 this.h += 15;
             }
         }
 
         this.i = Math.max(this.i - 1, 0);
-        this.a(attackTarget, distanceToSquared);
+        this.a(goalTarget, distanceToSquared);
     }
 
     protected void a(EntityLiving entityLiving, double d0) {

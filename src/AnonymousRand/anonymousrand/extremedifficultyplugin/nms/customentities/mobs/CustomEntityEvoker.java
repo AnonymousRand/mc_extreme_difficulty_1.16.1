@@ -23,8 +23,8 @@ import java.util.*;
 
 public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private EntitySheep wololoTarget;
@@ -55,7 +55,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -140,7 +140,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
-        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0D));
+        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0));
         this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
         this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
         this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
@@ -245,7 +245,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         protected void j() {
             EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
             double d0 = Math.min(entityLiving.locY(), CustomEntityEvoker.this.locY());
-            double d1 = Math.max(entityLiving.locY(), CustomEntityEvoker.this.locY()) + 1.0D;
+            double d1 = Math.max(entityLiving.locY(), CustomEntityEvoker.this.locY()) + 1.0;
             float f = (float) MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
             int i;
 
@@ -254,7 +254,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
                 for (i = 0; i < 5; ++i) {
                     f1 = f + (float) i * 3.1415927F * 0.4F;
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 1.5D, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 1.5D, d0, d1, f1, 0);
+                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 1.5, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 1.5, d0, d1, f1, 0);
                 }
 
                 for (i = 0; i < 8; ++i) {

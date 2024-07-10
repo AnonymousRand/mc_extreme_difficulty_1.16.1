@@ -20,8 +20,8 @@ import java.util.Map;
 
 public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private NewPathfinderGoalBuffMobs buffMobs;
@@ -101,7 +101,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -215,7 +215,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                       /* Still moves fast in cobwebs */
-        this.goalSelector.a(1, new NewPathfinderGoalPassiveMeleeAttack(this, 1.0D));                                                 /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack(this, 1.0, IGNORE_LOS)); // todo test if this still works; if yes, replace all passivemelee with custommelee
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
     }
 
@@ -273,7 +273,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             double d2 = (double) this.targetPosition.getZ() + 0.5D - this.locZ();
             Vec3D currentMotion = this.getMot();
             Vec3D newMotion = currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D,
-                    (Math.signum(d1) * 1.0D - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
+                    (Math.signum(d1) * 1.0 - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
 
             this.setMot(newMotion);
             float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;

@@ -15,8 +15,8 @@ import java.util.EnumSet;
 
 public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
-    /* Ignores y-level for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players */
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = true;
     private boolean rapidFire;
@@ -59,7 +59,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -187,8 +187,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     static class PathfinderGoalBlazeAttack extends PathfinderGoal {
         private final CustomEntityBlaze blaze;
         private final World nmsWorld;
-        private int rangedAttackRemainingCooldown;
-        private int meleeAttackRemainingCooldown;
+        private int rangedRemainingAttackCooldown;
+        private int meleeRemainingAttackCooldown;
 
         public PathfinderGoalBlazeAttack(CustomEntityBlaze entityBlaze) {
             this.blaze = entityBlaze;
@@ -204,22 +204,22 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
         @Override // startExecuting()
         public void c() {
-            this.rangedAttackRemainingCooldown = 0;
-            this.meleeAttackRemainingCooldown = 0;
+            this.rangedRemainingAttackCooldown = 0;
+            this.meleeRemainingAttackCooldown = 0;
         }
 
         @Override // tick()
         public void e() {
-            --this.rangedAttackRemainingCooldown;
-            --this.meleeAttackRemainingCooldown;
+            --this.rangedRemainingAttackCooldown;
+            --this.meleeRemainingAttackCooldown;
             EntityLiving goalTarget = this.blaze.getGoalTarget();
 
             if (goalTarget != null) {
                 double distSqToGoalTarget = NMSUtil.distSq(this.blaze, goalTarget, false);
 
                 if (distSqToGoalTarget < 3.0D) { // melee attack
-                    if (this.meleeAttackRemainingCooldown <= 0) {
-                        this.meleeAttackRemainingCooldown = 20;
+                    if (this.meleeRemainingAttackCooldown <= 0) {
+                        this.meleeRemainingAttackCooldown = 20;
 
                         this.blaze.attackEntity(goalTarget);
                         /* Blaze melee attack creates a power 0.5 explosion on the player's location */
@@ -227,13 +227,13 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                                 goalTarget.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
                     }
 
-                    this.blaze.getControllerMove().a(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), 1.0D);
+                    this.blaze.getControllerMove().a(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), 1.0);
                 } else {
                     double distToGoalTargetX = goalTarget.locX() - this.blaze.locX();
                     double distToGoalTargetY = goalTarget.e(0.5D) - this.blaze.e(0.5D);
                     double distToGoalTargetZ = goalTarget.locZ() - this.blaze.locZ();
 
-                    if (this.rangedAttackRemainingCooldown <= 0) {
+                    if (this.rangedRemainingAttackCooldown <= 0) {
                         this.blaze.increaseAttacks(1);
 
                         if (!this.blaze.isSilent()) {
@@ -244,7 +244,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
                         if (this.blaze.isRapidFire()) {
-                            this.rangedAttackRemainingCooldown = 4;
+                            this.rangedRemainingAttackCooldown = 4;
 
                             /* In rapid fire state, blazes shoot 2 fireballs at a time, with 250% of their vanilla inaccuracy */
                             CustomEntitySmallFireball smallFireball;
@@ -257,7 +257,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                                 this.nmsWorld.addEntity(smallFireball);
                             }
                         } else {
-                            this.rangedAttackRemainingCooldown = 6;
+                            this.rangedRemainingAttackCooldown = 6;
 
                             /* In normal firing state, blazes have 20% of their vanilla inaccuracy */
                             CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze,

@@ -7,8 +7,8 @@ import net.minecraft.server.v1_16_R1.EntityLiving;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-// Entire class rewritten instead of inherited from PathfinderTargetCondition in order to apply our own NMSUtil.distSqIgnoreY()
-// without being too hacky or needing too much reflection (everything's private :sob:)
+// Entire class rewritten instead of inherited from PathfinderTargetCondition in order to apply our own logic
+// without being too hacky or needing too much reflection (everything's private :/)
 public class EntityFilter {
 
     private double detectionRange;

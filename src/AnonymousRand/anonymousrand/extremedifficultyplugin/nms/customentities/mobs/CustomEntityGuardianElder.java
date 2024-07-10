@@ -19,8 +19,8 @@ import java.util.function.Predicate;
 
 public class CustomEntityGuardianElder extends EntityGuardianElder implements ICustomHostile {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
 
@@ -47,7 +47,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -83,8 +83,8 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
     @Override
     public void initPathfinder() {
-        PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0D);
-        this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0D, 80);
+        PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0);
+        this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0, 80);
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */

@@ -19,8 +19,8 @@ import java.util.Random;
 
 public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IAttackLevelingMob {
 
-    /* Ignores y-level and line of sight for initially finding a player target and maintaining it
-       as the target, as well as for retaliating against players */
+    /* Ignores y-level and line of sight for initially finding a player target and maintaining it as the target,
+       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private AttackLevelingController attackLevelingController = null;
@@ -49,7 +49,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL && this.L()) {
             this.die();
         } else if (!this.isPersistent() && !this.isSpecialPersistence()) {
-            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0D);
+            EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
                 /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
@@ -119,7 +119,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalGhastIdleMove(this));
         this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastMoveTowardsTarget(this));
-        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this)); /* Continues attacking regardless of y-level and line of sight (the old goal stopped the mob from attacking even if it still has a target) */
+        this.goalSelector.a(7, new PathfinderGoalGhastFireball(this));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, IGNORE_LOS, IGNORE_Y)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
     }
 
@@ -289,7 +289,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                 double d2 = controllermove.f() - this.a.locZ();
                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
-                return d3 < 1.0D || d3 > 3600.0D;
+                return d3 < 1.0 || d3 > 3600.0D;
             }
         }
 
@@ -305,7 +305,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             double d1 = this.a.locY() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
             double d2 = this.a.locZ() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
 
-            this.a.getControllerMove().a(d0, d1, d2, 1.0D);
+            this.a.getControllerMove().a(d0, d1, d2, 1.0);
         }
     }
 }

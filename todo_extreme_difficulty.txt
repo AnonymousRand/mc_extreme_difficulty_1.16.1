@@ -9,8 +9,12 @@ private instead of protected where possible, dont target villagers
 standardize multiline comment indent
 stopped after: customentityenderman
 
-    make melee attacking goals just always account for y level, or just use vanilla for those with ignore false? also mobs ignoring los should be able to hit through walls?
-    check ranged attacking goals
+make melee attacking goals just always account for y level. also mobs ignoring los should be able to hit through walls?
+difference from vanilla?
+check ranged attacking goals
+
+consolidate all rangedattackgoals into one and just choose projectile?
+    etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
@@ -35,9 +39,6 @@ mobs when hit by a player further than detection range/cant see: they teleport t
 is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
 
 piglin frenzy when you open chest; make frenzy have explosive effects and set goal target if possible
-
-consolidate all rangedattackgoals into one and just choose projectile?
-    etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
 
 skeletons less arrows
 
@@ -80,8 +81,6 @@ nms, bukkit etc labels use underscore?
 add polar bear?
 
 better nametag names? like wtf is "insert name here"
-
-have a mob with faster melee like 10 tick attack cooldown
 
 standarize where to use final
 
@@ -250,8 +249,6 @@ early return guards for isclientside and stuff
 
 funnier if sheep didnt seek players and just exploded?
 
-standarize goaltarget attacktarget
-
 would be funny to have some good mob have avoidentity goal like villager avoiding player or something
 
 slimes and mamga cubes still get trapped in cobwebs; just break them?
@@ -275,6 +272,8 @@ speed up dragon fireball projectile speeds
 bug: exiting rejoining causes withers to still aggro other mobs
 
 standardize super in functions start/end
+
+zoglin something more for 25 attacks now that throw players around is not a thing
 
 change eggs lottery to json or something/loot table
 
@@ -326,3 +325,5 @@ endermen put down blocks chance per check 1/2000 -> 1/500 (four times as frequen
 evokers, illusioners forget players after 60 ticks instead of 300
 iron golem death silverfish 15 -> 10
 mooshroom death explosion power 15 -> 10
+killer rabbit move speed multiplier 1.4 -> 1.5
+zoglin no longer throws players around erractically after 25 attack

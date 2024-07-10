@@ -4,12 +4,13 @@ import net.minecraft.server.v1_16_R1.EntityZombie;
 
 public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeAttack {
 
-    private final EntityZombie zombie;
     private int raiseArmTicks;
 
-    public CustomPathfinderGoalZombieAttack(EntityZombie entityZombie, double speedTowardsTarget) {
-        super(entityZombie, speedTowardsTarget);
-        this.zombie = entityZombie;
+    public CustomPathfinderGoalZombieAttack(
+            EntityZombie goalOwner,
+            double speedTowardsTarget,
+            boolean continuePathingIfNoLOS) {
+        super(goalOwner, speedTowardsTarget, continuePathingIfNoLOS);
     }
 
     @Override
@@ -19,21 +20,15 @@ public class CustomPathfinderGoalZombieAttack extends CustomPathfinderGoalMeleeA
     }
 
     @Override
-    public void d() {
-        super.d();
-        this.zombie.setAggressive(false);
-    }
-
-    @Override
     public void e() {
         super.e();
-        ++this.raiseArmTicks;
 
-        if (this.raiseArmTicks >= 5 && this.j() < this.k() / 2) {
-            this.zombie.setAggressive(true);
+        // todo what in the everliving frickity frick is this for?
+        this.raiseArmTicks++;
+        if (this.raiseArmTicks >= 5 && this.remainingAttackCooldown < this.attackCooldown / 2) {
+            this.goalOwner.setAggressive(true);
         } else {
-            this.zombie.setAggressive(false);
+            this.goalOwner.setAggressive(false);
         }
-
     }
 }
