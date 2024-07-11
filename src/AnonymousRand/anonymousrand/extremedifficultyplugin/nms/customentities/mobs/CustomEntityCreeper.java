@@ -75,8 +75,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -90,8 +92,10 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
@@ -145,15 +149,16 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
         this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget<>(this));                                                    /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
-        /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2 if charged) */
-        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive()
+        /* Creepers have a 50% chance to duplicate when hit by player and not killed (100% chance to duplicate into 2
+           if charged) */
+        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer
                 && random.nextDouble() < (this.isPowered() ? 1.0 : 0.5)) {
             new SpawnEntity(this.world, this.getMaxFuseTicks(), new CustomEntityCreeper(this.world),
                     this.isPowered() ? 2 : 1, null, null, this, false, true);
@@ -165,12 +170,13 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     @Override
     public void explode() {
         if (this.getGoalTarget() != null) {
-            /* Charged creepers explode with power 50, and all creepers explode more powerfully the further the player is */
+            /* Charged creepers explode with power 50, and creepers explode more powerfully the further the player is */
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
             if (!this.world.isClientSide) {
-                double extraRadius = Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
-                float explosionRadius = (float) ((this.isPowered() ? 75.0 : this.explosionRadius)
-                                        + Math.max(extraRadius, 0.0));
+                double extraRadius =
+                        Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
+                float explosionRadius =
+                        (float) ((this.isPowered() ? 75.0 : this.explosionRadius) + Math.max(extraRadius, 0.0));
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, false);
                 this.world.getServer().getPluginManager().callEvent(event);
 
@@ -203,7 +209,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             return;
         }
 
-        EntityAreaEffectCloud areaEffectCloud = new EntityAreaEffectCloud(this.world, this.locX(), this.locY(), this.locZ());
+        EntityAreaEffectCloud areaEffectCloud =
+                new EntityAreaEffectCloud(this.world, this.locX(), this.locY(), this.locZ());
 
         areaEffectCloud.setInvisible(true);
         areaEffectCloud.setRadius(2.5F);
@@ -218,11 +225,11 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
 
             // todo predicate for this?
             /* Creepers only create area effect clouds of negative effects */
-            if (effect.equals(MobEffects.BAD_OMEN) || effect.equals(MobEffects.BLINDNESS)
-                    || effect.equals(MobEffects.CONFUSION) || effect.equals(MobEffects.HUNGER)
-                    || effect.equals(MobEffects.LEVITATION)|| effect.equals(MobEffects.POISON)
+            if (effect.equals(MobEffects.BAD_OMEN)          || effect.equals(MobEffects.BLINDNESS)
+                    || effect.equals(MobEffects.CONFUSION)  || effect.equals(MobEffects.HUNGER)
+                    || effect.equals(MobEffects.LEVITATION) || effect.equals(MobEffects.POISON)
                     || effect.equals(MobEffects.SLOWER_DIG) || effect.equals(MobEffects.SLOWER_MOVEMENT)
-                    || effect.equals(MobEffects.UNLUCK) || effect.equals(MobEffects.WEAKNESS)
+                    || effect.equals(MobEffects.UNLUCK)     || effect.equals(MobEffects.WEAKNESS)
                     || effect.equals(MobEffects.WITHER)) {
                 areaEffectCloud.addEffect(new MobEffect(mobeffect));
             }

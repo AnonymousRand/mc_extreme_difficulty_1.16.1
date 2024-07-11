@@ -75,7 +75,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
     @Override
@@ -111,8 +111,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -126,8 +128,10 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
                 int randomDespawnDist = this.getEntityType().e().g() + 32;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;

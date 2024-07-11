@@ -4,6 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -11,120 +12,110 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityInsentient & ICustomHostile,
-        T extends EntityLiving> extends CustomPathfinderGoalTarget {
+// All the line of sight/y-level checking vanillaly in the melee/ranged attack goals has been moved here
+// so those goals only have to deal with, well, attacking
+public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
+        T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalTarget<T> {
 
-    protected final Class<T> targetClass;
+    protected final Class<S> targetClass;
     protected final int targetChance;
-    protected T potentialTarget;
-    protected Predicate<EntityLiving> extraPredicate;
-    protected EntityFilter targetCondition;
     private static final Random random = new Random();
 
     public CustomPathfinderGoalNearestAttackableTarget(
-            S goalOwner,
-            Class<T> targetClass) {
+            T goalOwner,
+            Class<S> targetClass) {
 
-        this(goalOwner, targetClass, 10, goalOwner.ignoresLOS(), goalOwner.ignoresY(), null);
+        this(goalOwner, targetClass, goalOwner.ignoresLOS(), goalOwner.ignoresY(), 10, null);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(
-            S goalOwner,
-            Class<T> targetClass,
+            T goalOwner,
+            Class<S> targetClass,
             boolean ignoreLOS,
             boolean ignoreY) {
 
-        this(goalOwner, targetClass, 10, ignoreLOS, ignoreY, null);
+        this(goalOwner, targetClass, ignoreLOS, ignoreY, 10, null);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(
-            S goalOwner,
-            Class<T> targetClass,
+            T goalOwner,
+            Class<S> targetClass,
             boolean ignoreLOS,
             boolean ignoreY,
-            Predicate<EntityLiving> extraPredicate) {
+            @Nullable Predicate<EntityLiving> extraEntityPredicate) {
 
-        this(goalOwner, targetClass, 10, ignoreLOS, ignoreY, extraPredicate);
+        this(goalOwner, targetClass, ignoreLOS, ignoreY, 10, extraEntityPredicate);
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(
-            S goalOwner,
-            Class<T> targetClass,
+            T goalOwner,
+            Class<S> targetClass,
+            boolean ignoreLOS,
+            boolean ignoreY,
             int targetChance,
-            boolean ignoreLOS,
-            boolean ignoreY,
-            @Nullable Predicate<EntityLiving> extraPredicate) {
+            @Nullable Predicate<EntityLiving> extraEntityPredicate) {
 
-        // passing in ignoreLOS and ignoreY affects CONTINUING to track a target (in b()/shouldContinueExecuting())
-        super(goalOwner, false, ignoreLOS, ignoreY);
+        super(goalOwner, ignoreLOS, ignoreY, extraEntityPredicate);
         this.targetClass = targetClass;
         this.targetChance = targetChance;
-        this.extraPredicate = extraPredicate;
-        // EntityFilter with ignoreLOS and ignoreY true affects INITIALLY finding a player target,
-        // and always ignores invis/skulls (which is the main reason we don't just use vanilla
-        // PathfinderGoalNearestAttackableTarget if ignoreYAndLOS is false) // todo verify difference
-        // also note that this k() call happens in initPathfinder() in the super() constructor
-        // before we are able to change FOLLOW_RANGE, thus we have to use getDetectionRange() instead
-        this.targetCondition = new EntityFilter(this.k(), ignoreLOS, ignoreY, extraPredicate);
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
     }
 
     @Override
     public boolean a() {
-        if (this.targetChance > 0 && this.e.getRandom().nextInt(this.targetChance) != 0) {
+        if (this.goalOwner.getRandom().nextInt(this.targetChance) != 0) {
             return false;
-        } else {
-            this.potentialTarget = this.findClosestPotentialTarget();
-            return this.potentialTarget != null;
         }
+        return super.a();
     }
 
-    // Overridden to periodically change target to the closest one (including y) to prevent strats like
+    // Overridden to periodically change target to the nearest one (including y) to prevent strats like
     // one player leading mobs away from another at build height, taking advantage of ignoreY = true
     // todo test with offline multimc 2 player?
     @Override
     public boolean b() {
-        boolean superRet = super.b();
+        if (!super.b()) {
+            return false;
+        }
 
-        if (superRet && random.nextDouble() < 0.025 && this.potentialTarget != null) {
-            T closestPotentialTarget = this.findClosestPotentialTargetNoIgnoreY();
-            if (closestPotentialTarget != null
-                    && closestPotentialTarget.getUniqueID() != this.potentialTarget.getUniqueID()) {
-                this.potentialTarget = closestPotentialTarget;
+        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
+        if (random.nextDouble() < 0.025 && goalTarget != null) {
+            S nearestPotentialTarget = this.findNearestPotentialTarget(false);
+            if (nearestPotentialTarget != null
+                    && nearestPotentialTarget.getUniqueID() != goalTarget.getUniqueID()) {
+                this.goalOwner.setGoalTarget(nearestPotentialTarget);
             }
         }
 
-        return superRet;
+        return true;
     }
 
     @Override
     public void c() {
-        if (this.potentialTarget != null) {
-            this.e.setGoalTarget(this.potentialTarget, this.potentialTarget instanceof EntityPlayer
-                    ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
-        }
-
-        // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
-        this.targetCondition.setDetectionRange(this.k());
         super.c();
-    }
 
-    protected T findClosestPotentialTarget() {
-        if (this.targetClass == EntityHuman.class || this.targetClass == EntityPlayer.class) {
-            return (T) NMSUtil.getClosestEntityFromList(this.e.getWorld().getPlayers(), this.targetCondition, this.e);
-        } else {
-            return NMSUtil.getClosestEntityWithinRange(this.targetClass, this.targetCondition,
-                    this.e, this.k(), 4.0D, this.k());
+        if (this.potentialTarget != null) {
+            this.goalOwner.setGoalTarget(this.potentialTarget, this.potentialTarget instanceof EntityPlayer
+                    ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+                    true);
         }
     }
 
-    protected T findClosestPotentialTargetNoIgnoreY() {
-        if (this.targetClass == EntityHuman.class || this.targetClass == EntityPlayer.class) {
-            return (T) NMSUtil.getClosestEntityFromList(this.e.getWorld().getPlayers(),
-                    new EntityFilter(this.k(), this.ignoreLOS, false, extraPredicate), this.e);
+    @Override
+    protected S findNearestPotentialTarget(boolean allowIgnoreY) {
+        EntityFilter targetCondition; // I'm sure there's a cleaner way but I can't think of it at the moment
+        if (allowIgnoreY) {
+            targetCondition = this.targetCondition;
         } else {
-            return NMSUtil.getClosestEntityWithinRange(this.targetClass,
-                    new EntityFilter(this.k(), this.ignoreLOS, false, extraPredicate), this.e, this.k(), 4.0D, this.k());
+            targetCondition = this.targetConditionNoIgnoreY;
+        }
+
+        if (this.targetClass == EntityHuman.class || this.targetClass == EntityPlayer.class) {
+            return (S) NMSUtil.getNearestEntityFromList(this.goalOwner.getWorld().getPlayers(), targetCondition,
+                    this.goalOwner);
+        } else {
+            return NMSUtil.getNearestEntityWithinRange(this.targetClass, targetCondition, this.goalOwner,
+                    this.getDetectionRange(), 4.0D, this.getDetectionRange());
         }
     }
 }

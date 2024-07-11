@@ -63,7 +63,8 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
             EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();

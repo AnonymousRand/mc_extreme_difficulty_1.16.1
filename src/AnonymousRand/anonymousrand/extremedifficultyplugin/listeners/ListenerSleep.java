@@ -40,34 +40,34 @@ public class ListenerSleep implements Listener {
             return;
         }
 
-        EntityLiving closestMonster = NMSUtil.getClosestEntityWithinRange(EntityMonster.class, null, nmsPlayer, 50.0, 128.0, 50.0);
-        CustomEntityPufferfish closestPufferfish = NMSUtil.getClosestEntityWithinRange(CustomEntityPufferfish.class, null, nmsPlayer, 50.0, 128.0, 50.0);
+        EntityLiving nearestMonster = NMSUtil.getNearestEntityWithinRange(EntityMonster.class, null, nmsPlayer, 50.0, 128.0, 50.0);
+        CustomEntityPufferfish nearestPufferfish = NMSUtil.getNearestEntityWithinRange(CustomEntityPufferfish.class, null, nmsPlayer, 50.0, 128.0, 50.0);
         double monsterDistanceIgnoreY;
         double pufferfishDistanceIgnoreY;
 
         try {
-            monsterDistanceIgnoreY = Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2);
+            monsterDistanceIgnoreY = Math.pow(nearestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(nearestMonster.locZ() - bukkitBed.getZ(), 2);
         } catch (NullPointerException e) {
             monsterDistanceIgnoreY = Integer.MAX_VALUE;
         }
 
         try {
-            pufferfishDistanceIgnoreY = Math.pow(closestPufferfish.locX() - bukkitBed.getX(), 2) + Math.pow(closestPufferfish.locZ() - bukkitBed.getZ(), 2);
+            pufferfishDistanceIgnoreY = Math.pow(nearestPufferfish.locX() - bukkitBed.getX(), 2) + Math.pow(nearestPufferfish.locZ() - bukkitBed.getZ(), 2);
         } catch (NullPointerException e) {
             pufferfishDistanceIgnoreY = Integer.MAX_VALUE;
         }
 
         if (pufferfishDistanceIgnoreY < monsterDistanceIgnoreY) { /* pufferfish also count as monsters to prevent sleeping */
-            closestMonster = closestPufferfish;
+            nearestMonster = nearestPufferfish;
             monsterDistanceIgnoreY = pufferfishDistanceIgnoreY;
         }
 
-        if (closestMonster != null) {
-            if (monsterDistanceIgnoreY <= 1024.0) { // player within 32 blocks horizontally of closestMonster
-                if (Math.pow(closestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(closestMonster.locY() - bukkitBed.getY(), 2) + Math.pow(closestMonster.locZ() - bukkitBed.getZ(), 2) <= 1024.0) { // player within 32 blocks including vertical distance of closestMonster
+        if (nearestMonster != null) {
+            if (monsterDistanceIgnoreY <= 1024.0) { // player within 32 blocks horizontally of nearestMonster
+                if (Math.pow(nearestMonster.locX() - bukkitBed.getX(), 2) + Math.pow(nearestMonster.locY() - bukkitBed.getY(), 2) + Math.pow(nearestMonster.locZ() - bukkitBed.getZ(), 2) <= 1024.0) { // player within 32 blocks including vertical distance of nearestMonster
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + nmsPlayer.getName() + " \"You may not sleep now, there are monsters nearby\"");
                     event.setCancelled(true);
-                } else if (closestMonster.locY() < bukkitBed.getY()){ // player not within 30 blocks if counting vertical distance and is above mobs
+                } else if (nearestMonster.locY() < bukkitBed.getY()){ // player not within 30 blocks if counting vertical distance and is above mobs
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + nmsPlayer.getName() + " \"You may not sleep now, there are monsters below you\"");
                     event.setCancelled(true);
                 } else { // player not within 30 blocks if counting vertical distance and is below mobs

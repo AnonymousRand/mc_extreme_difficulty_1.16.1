@@ -48,7 +48,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
         this.goalSelector.a(1, new CustomEntityZombieHusk.NewPathfinderGoalHuskSandStorm(this)); /* custom goal that does the sandstorm mechanism */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, false, false, EntityTurtle.bv));
     }
 
@@ -80,8 +80,10 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -95,8 +97,10 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;

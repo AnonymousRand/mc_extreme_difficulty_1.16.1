@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
@@ -16,7 +15,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     protected final double speedTowardsTarget;
     protected int attackCooldown;
     protected int remainingAttackCooldown;
-    protected int seeTime;
+    protected int targetSeenTicks;
 
     public CustomPathfinderGoalRangedAttack(T goalOwner, double speedTowardsTarget, int attackCooldown) {
         this.goalOwner = goalOwner;
@@ -34,13 +33,19 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
     @Override
     public boolean b() {
-        return this.a() || !this.goalOwner.getNavigation().m(); // todo what happens if we just do a()
+        return this.a();
+    }
+
+    @Override
+    public void c() {
+        this.goalOwner.setAggressive(true);
     }
 
     @Override
     public void d() {
-        this.seeTime = 0;
+        this.targetSeenTicks = 0;
         this.remainingAttackCooldown = -1;
+        this.goalOwner.setAggressive(false);
     }
 
     @Override
@@ -57,15 +62,14 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
         // determine whether to repath or to stand still (repaths if can't see and ignoreLOS is false)
         if (this.goalOwner.getEntitySenses().a(goalTarget) || this.goalOwner.ignoresLOS()) {
-            this.seeTime++;
+            this.targetSeenTicks++;
         } else {
-            this.seeTime = 0;
+            this.targetSeenTicks = 0;
         }
-        Bukkit.broadcastMessage("see time: " + this.seeTime);
-        if (this.seeTime >= 5) {
-            this.goalOwner.getNavigation().o();                                    // clearPath() todo stands still?
-        } else {
+        if (this.targetSeenTicks < 5) {
             this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget); // tryMoveTo()
+        } else {
+            this.goalOwner.getNavigation().o();                                    // clearPath() (stands still)
         }
 
         // attack

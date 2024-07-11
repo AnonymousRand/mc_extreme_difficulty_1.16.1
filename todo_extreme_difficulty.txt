@@ -101,6 +101,10 @@ make sure all hurtbytarget goals have priorirty 0
 
 line breaking complicated stuff with master level and and nested ors etc: indent accordingly like in custompathfindergoalhurtbytarget's callforhelp()
 
+try to line break on equals
+
+dying after certain number of ticks make a goal?
+
 line breaks parameters (only function delcarations): break on new item, indent up to start of first parameter (re: custompathfindergoalnearestattackabetarget). same with arithmetic, nested functions in params etc.
 rhs side of euqals red customentitycreeper explode()
 
@@ -274,6 +278,10 @@ surely crystal destruction is mini wither
 
 speed up dragon fireball projectile speeds
 
+add turtle?
+
+standarize line break to give first line as much as posisble?
+
 bug: exiting rejoining causes withers to still aggro other mobs
 
 standardize super in functions start/end
@@ -297,6 +305,9 @@ create full documentation of changes from all /* comments and that google doc?
 
 balance changes catalog:
 mobs teleport to the player that hurt them if they are outside range/do not have line of sight
+Mobs not ignoring line of sight now require 100 instead of 60 ticks of no sight to stop targeting
+todo list ignorelos and ignorey changes
+
 bats on first hit sumnmon 8-10 vanilla bats -> 6-8
 bats vertical flight speed 0.7 -> 1
 bats no longer can duplicate into a swarm of vanilla bats at a certain threshold
@@ -316,7 +327,7 @@ blazes melee now considers y-level
 creepers default fuse 15 ticks -> 20
 creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
 charged creepers health 200 -> 100
-drowned attack cooldown 6 ticks -> 7
+drowned attack cooldown 6 ticks -> 8
 ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
 ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super
 end fight vex spawner spawn count 42 -> 36

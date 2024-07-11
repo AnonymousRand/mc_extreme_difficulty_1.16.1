@@ -116,8 +116,10 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -131,8 +133,10 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;

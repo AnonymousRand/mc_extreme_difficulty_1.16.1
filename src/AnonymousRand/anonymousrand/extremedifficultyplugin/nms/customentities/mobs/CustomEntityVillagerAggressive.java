@@ -56,7 +56,7 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 3.0)); /* Aggressive villagers move 3 times as fast when chasing down a target */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
     public double getDetectionRange() { /* aggressive villagers have 40 block detection range */

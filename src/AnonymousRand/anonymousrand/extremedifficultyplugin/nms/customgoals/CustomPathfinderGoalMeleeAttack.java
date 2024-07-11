@@ -25,13 +25,11 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected double minAttackReach;
 
     public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
-
         // default minimum attack reach is 2.0 blocks to help baby zombies out
         this(goalOwner, speedTowardsTarget, goalOwner.ignoresLOS(), 20, 2.0);
     }
 
     public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget, boolean continuePathingIfNoLOS) {
-
         this(goalOwner, speedTowardsTarget, continuePathingIfNoLOS, 20, 2.0);
     }
 
@@ -59,7 +57,10 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
         }
 
         this.path = this.goalOwner.getNavigation().a(goalTarget, 0);
-        return this.path != null || this.getAttackReachSq(goalTarget) >= NMSUtil.distSq(this.goalOwner, goalTarget, true);
+        // melee attacks will never ignore y-level, even if the target goal does
+        // so hope/make sure that those mobs have some way to get closer to the target!
+        return this.path != null
+                || this.getAttackReachSq(goalTarget) >= NMSUtil.distSq(this.goalOwner, goalTarget, false);
     }
     
     @Override
@@ -82,16 +83,16 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
 
     @Override
     public void c() {
-        this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
-        this.goalOwner.setAggressive(true);
         this.repathCooldown = 0;
-
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
         if (goalTarget != null) {
             this.oldTargetX = Double.MAX_VALUE;
             this.oldTargetY = Double.MAX_VALUE;
             this.oldTargetZ = Double.MAX_VALUE;
         }
+
+        this.goalOwner.setAggressive(true);
+        this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
     }
     
     @Override
@@ -115,7 +116,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
         }
 
         this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F);
-        double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, false); // todo make sure no ignore y is fine; also comment on it?
+        double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, false);
 
         // repath to target
         this.repathCooldown = Math.max(this.repathCooldown - 1, 0);

@@ -66,8 +66,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -81,8 +83,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
@@ -156,7 +160,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, EntityRaider.class)); /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
-        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
         // todo test removing forget after 300 ticks
     }
 

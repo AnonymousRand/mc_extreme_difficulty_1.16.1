@@ -114,7 +114,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage */
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
     public void a(EntityLiving entityLiving, float f) { // shoot()s custom spit instead of vanilla

@@ -57,8 +57,7 @@ public class VanillaPathfinderGoalsAccess {
 
         // need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
         try {
-            goalsToRemove.addAll(getPathfinderGoals((Set<?>) goalSet.get(entity.getVanillaTargetSelector()), PathfinderGoalHurtByTarget.class));
-            goalsToRemove.addAll(getPathfinderGoals((Set<?>) goalSet.get(entity.getVanillaTargetSelector()), PathfinderGoalNearestAttackableTarget.class));
+            goalsToRemove.addAll(getPathfinderGoals((Set<?>) goalSet.get(entity.getVanillaTargetSelector()), PathfinderGoalTarget.class));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -66,7 +65,7 @@ public class VanillaPathfinderGoalsAccess {
         // but somehow removing vanilla goals from custom target selectors still works
         for (PathfinderGoal goal : goalsToRemove) {
             if (!(goal instanceof CustomPathfinderGoalHurtByTarget) && !(goal instanceof CustomPathfinderGoalNearestAttackableTarget)) {
-                entity.targetSelector.a(goal);      // removeGoal()
+                entity.targetSelector.a(goal); // removeGoal()
             }
         }
     }

@@ -47,7 +47,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         if (i == 99) {
             // todo can literally just use new setminattackreach thingy
             this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
-            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+            this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
             this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
             this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 2)); /* changing attributes don't work on rabbits so killer bunnies have speed 3 and jump boost 1 */
@@ -58,7 +58,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
-        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
+        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer && this.attacks >= 40) { /* after 40 attacks, killer bunnies duplicate when hit and not killed */
             new SpawnEntity(this.world, new CustomEntityRabbit(this.world), 1, null, null, this, false, true);
         }
 
@@ -85,8 +85,10 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -100,8 +102,10 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
@@ -168,7 +172,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         return this.vanillaTargetSelector;
     }
 
-    static class PathfinderGoalKillerRabbitMeleeAttack<T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalMeleeAttack<T> {
+    static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
+            extends CustomPathfinderGoalMeleeAttack<T> {
 
         public PathfinderGoalKillerRabbitMeleeAttack(
                 T entityRabbit,

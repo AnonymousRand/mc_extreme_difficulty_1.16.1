@@ -74,11 +74,14 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     // from Spigot forums again (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/)
-    private void registerGenericAttribute(org.bukkit.entity.Entity bukkitEntity, Attribute attribute) throws IllegalAccessException {
+    private void registerGenericAttribute(org.bukkit.entity.Entity bukkitEntity, Attribute attribute)
+            throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity) bukkitEntity).getHandle().getAttributeMap();
-        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>) this.attributeMap.get(attributeMapBase);
+        Map<AttributeBase, AttributeModifiable> map = (Map<AttributeBase, AttributeModifiable>)
+                this.attributeMap.get(attributeMapBase);
         AttributeBase attributeBase = CraftAttributeMap.toMinecraft(attribute);
-        AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase, AttributeModifiable::getAttribute);
+        AttributeModifiable attributeModifiable = new AttributeModifiable(attributeBase,
+                AttributeModifiable::getAttribute);
         map.put(attributeBase, attributeModifiable);
     }
 
@@ -112,8 +115,10 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -127,8 +132,10 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
@@ -156,7 +163,9 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void increaseAttacks(int increase) {
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0] || metThreshold == attackThresholds[3] || metThreshold == attackThresholds[4]) {
+            if (metThreshold == attackThresholds[0]
+                    || metThreshold == attackThresholds[3]
+                    || metThreshold == attackThresholds[4]) {
                 /* After 4 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /* After 28 attacks, all mobs within 64 block sphere shoot an arrow every 30 ticks and spawn a silverfish every 15 seconds */
                 /* After 40 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 20 ticks */
@@ -224,19 +233,21 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
-        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && this.firstDuplicate) {
+        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer
+                && this.firstDuplicate) {
             this.firstDuplicate = false;
             new SpawnEntity(this.world, new EntityBat(EntityTypes.BAT, this.world), random.nextInt(3) + 6,
                     CreatureSpawnEvent.SpawnReason.DROWNED, null, this, false, false);
 
-            /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player and not killed */
+            /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player
+               and not killed */
             if (this.getAttacks() >= this.getAttacksThresholds()[4]) {
                 new SpawnEntity(this.world, new CustomEntityBat(this.world), 1, null,
                         null, this, false, false);
@@ -256,7 +267,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 this.world.a((EntityHuman) null, 1025, this.getChunkCoordinates(), 0);
             }
         } else {
-            if (this.targetPosition != null && (!this.world.isEmpty(this.targetPosition) || this.targetPosition.getY() < 1)) {
+            if (this.targetPosition != null
+                    && (!this.world.isEmpty(this.targetPosition) || this.targetPosition.getY() < 1)) {
                 this.targetPosition = null;
             }
 
@@ -268,9 +280,12 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             if (this.targetPosition == null) {
                 /* Always flies towards goal target if possible */
                 if (this.getGoalTarget() != null) {
-                    this.targetPosition = new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());
+                    this.targetPosition =
+                            new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(),
+                            this.getGoalTarget().locZ());
                 } else { // default random movement if no target
-                    this.targetPosition = new BlockPosition(this.locX() + (double) random.nextInt(7) - (double) random.nextInt(7),
+                    this.targetPosition =
+                            new BlockPosition(this.locX() + (double) random.nextInt(7) - (double) random.nextInt(7),
                             this.locY() + (double) random.nextInt(6) - 2.0D,
                             this.locZ() + (double) random.nextInt(7) - (double) random.nextInt(7));
                 }
@@ -280,8 +295,10 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             double d1 = (double) this.targetPosition.getY() + 0.1D - this.locY();
             double d2 = (double) this.targetPosition.getZ() + 0.5D - this.locZ();
             Vec3D currentMotion = this.getMot();
-            Vec3D newMotion = currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D,
-                    (Math.signum(d1) * 1.0 - currentMotion.y) * 0.1D, (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
+            Vec3D newMotion =
+                    currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D,
+                    (Math.signum(d1) * 1.0 - currentMotion.y) * 0.1D,
+                    (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
 
             this.setMot(newMotion);
             float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;

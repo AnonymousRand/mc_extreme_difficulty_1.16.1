@@ -71,8 +71,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             EntityHuman nearestPlayer = this.world.findNearbyPlayer(this, -1.0);
 
             if (nearestPlayer != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
-                double distSqToNearestPlayer = Math.pow(nearestPlayer.getPositionVector().getX()- this.getPositionVector().getX(), 2)
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
+                double distSqToNearestPlayer =
+                        Math.pow(nearestPlayer.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(nearestPlayer.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int forceDespawnDist = this.getEntityType().e().f();
                 int forceDespawnDistSq = forceDespawnDist * forceDespawnDist;
@@ -86,8 +88,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                 int randomDespawnDist = this.getEntityType().e().g() + 8;
                 int randomDespawnDistSq = randomDespawnDist * randomDespawnDist;
 
-                if (this.ticksFarFromPlayer > 600 && random.nextInt(800) == 0 && distSqToNearestPlayer
-                        > (double) randomDespawnDistSq && this.isTypeNotPersistent(distSqToNearestPlayer)) {
+                if (this.ticksFarFromPlayer > 600
+                        && random.nextInt(800) == 0
+                        && distSqToNearestPlayer > (double) randomDespawnDistSq
+                        && this.isTypeNotPersistent(distSqToNearestPlayer)) {
                     this.die();
                 } else if (distSqToNearestPlayer < (double) randomDespawnDistSq) {
                     this.ticksFarFromPlayer = 0;
@@ -120,8 +124,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
                 double d3 = this.getGoalTarget().locZ() - this.locZ();
-                CustomEntityLargeFireball largeFireball = new CustomEntityLargeFireball(this.world,
-                        this, d1, d2, d3, 1);
+                CustomEntityLargeFireball largeFireball =
+                        new CustomEntityLargeFireball(this.world, this, d1, d2, d3, 1);
                 largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
                 this.world.addEntity(largeFireball);
             } else if (metThreshold == attackThresholds[1]) {
@@ -173,7 +177,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, new PathfinderGoalBlazeAttack(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
-        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the closest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
 
     @Override
@@ -242,31 +246,39 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                             this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
                         }
 
-                        float defaultInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToGoalTarget)) * 0.5F;
+                        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToGoalTarget)) * 0.5F;
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
+                        CustomEntitySmallFireball smallFireball;
                         if (this.blaze.isRapidFire()) {
                             this.rangedRemainingAttackCooldown = 4;
 
                             /* In rapid fire state, blazes shoot 2 fireballs at a time, with 250% of their vanilla inaccuracy */
-                            CustomEntitySmallFireball smallFireball;
                             for (int i = 0; i < 2; i++) {
-                                smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-                                        distToGoalTargetX + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 2.5,
+                                smallFireball =
+                                        new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
+                                        distToGoalTargetX + this.blaze.getRandom().nextGaussian()
+                                        * vanillaInaccuracy * 2.5,
                                         distToGoalTargetY,
-                                        distToGoalTargetZ + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 2.5);
-                                smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D, smallFireball.locZ());
+                                        distToGoalTargetZ + this.blaze.getRandom().nextGaussian()
+                                        * vanillaInaccuracy * 2.5);
+                                smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
+                                        smallFireball.locZ());
                                 this.nmsWorld.addEntity(smallFireball);
                             }
                         } else {
                             this.rangedRemainingAttackCooldown = 6;
 
                             /* In normal firing state, blazes have 20% of their vanilla inaccuracy */
-                            CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-                                    distToGoalTargetX + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 0.2,
+                            smallFireball =
+                                    new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
+                                    distToGoalTargetX + this.blaze.getRandom().nextGaussian()
+                                    * vanillaInaccuracy * 0.2,
                                     distToGoalTargetY,
-                                    distToGoalTargetZ + this.blaze.getRandom().nextGaussian() * defaultInaccuracy * 0.2);
-                            smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D, smallFireball.locZ());
+                                    distToGoalTargetZ + this.blaze.getRandom().nextGaussian()
+                                    * vanillaInaccuracy * 0.2);
+                            smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
+                                    smallFireball.locZ());
                             this.nmsWorld.addEntity(smallFireball);
                         }
                     }

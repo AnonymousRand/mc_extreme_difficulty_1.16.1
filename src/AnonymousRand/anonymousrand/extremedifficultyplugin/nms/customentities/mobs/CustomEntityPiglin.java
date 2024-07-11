@@ -85,7 +85,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the closest option */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmapPiglin() { /* buffs: after 20 attacks, all piglins within 40 block sphere get absorption 1, regen 2 and +5 attacks. After 40 attacks, all piglins within 40 block sphere get absorption 3, regen 3 and +5 attacks. */
@@ -135,7 +135,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
-        if (wasDamageTaken && damageSource.getEntity() instanceof EntityPlayer && this.isAlive() && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
+        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer && !this.isBaby()) {  /* adult piglins have q 7.5% chance to summon a baby piglin when it is hit by a player and not killed */
             if (random.nextDouble() < 0.075) {
                 CustomEntityPiglin newPiglin = new CustomEntityPiglin(this.world);
                 newPiglin.a(true);
@@ -213,7 +213,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             EntityHuman entityHuman = this.world.findNearbyPlayer(this, -1.0);
 
             if (entityHuman != null) {
-                /* Mobs only despawn along horizontal axes, so even at build height, mobs will spawn below you and prevent sleeping */
+                /* Mobs only despawn along horizontal axes, so even at build height,
+                   mobs will spawn below you and prevent sleeping */
                 double distToNearestPlayer = Math.pow(entityHuman.getPositionVector().getX() - this.getPositionVector().getX(), 2)
                         + Math.pow(entityHuman.getPositionVector().getZ() - this.getPositionVector().getZ(), 2);
                 int i = this.getEntityType().e().f();
