@@ -12,6 +12,10 @@ stopped after: customentityenderman
 consolidate all rangedattackgoals into one and just choose projectile?
     etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
 
+javadoc all attack goal classes? and revise multiline comments in initpathfinder()s
+
+rename all newpathfindergoal to custompathfindergoal
+
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
 increment attacks in attack method/goal instead of listener?
@@ -83,6 +87,8 @@ overridden functions and stuff organize alphabetiocal?
 
 nms, bukkit etc labels use underscore?
 
+is iattacklevelingmob == icustomhostile?
+
 add polar bear?
 
 better nametag names? like wtf is "insert name here"
@@ -106,6 +112,7 @@ try to line break on equals
 dying after certain number of ticks make a goal?
 
 line breaks parameters (only function delcarations): break on new item, indent up to start of first parameter (re: custompathfindergoalnearestattackabetarget). same with arithmetic, nested functions in params etc.
+    remove blank line after?
 rhs side of euqals red customentitycreeper explode()
 
 investigate why we need to remove goals, particularly nearestattackabletarget. e.g. zombie remoive vanilla villager aggro?

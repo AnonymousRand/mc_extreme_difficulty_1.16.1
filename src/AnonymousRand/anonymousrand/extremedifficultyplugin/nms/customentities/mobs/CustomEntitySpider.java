@@ -42,6 +42,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /* custom goal that allows spider to summon cobwebs on itself constantly */
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
         this.goalSelector.a(4, new CustomPathfinderGoalMeleeAttack<>(this));
+        this.goalSelector.a(4, new CustomPathfinderGoalMeleeMovement<>(this));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));

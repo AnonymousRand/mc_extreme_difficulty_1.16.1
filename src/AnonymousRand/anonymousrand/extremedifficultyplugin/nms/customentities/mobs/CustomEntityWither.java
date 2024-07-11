@@ -53,7 +53,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new PathfinderGoalWitherDoNothingWhileInvulnerable());
         this.goalSelector.a(1, new CustomEntityWither.PathfinderGoalWitherDashAttack(this)); /* custom goal that allows the wither to do a bedrock-like dash attack (50% chance to occur every 30 seconds) that breaks blocks around it and does 6 damage to all nearby players */
-        this.goalSelector.a(2, new CustomPathfinderGoalRangedAttack<>(this, 1.0, 5)); /* main head shoots a skull every 5 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(2, new CustomPathfinderGoalRangedAttack<>(this, 5)); /* main head shoots a skull every 5 ticks and uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attacking even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));

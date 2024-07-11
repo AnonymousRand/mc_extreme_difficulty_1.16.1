@@ -47,6 +47,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));

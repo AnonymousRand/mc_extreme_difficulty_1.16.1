@@ -233,6 +233,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
 

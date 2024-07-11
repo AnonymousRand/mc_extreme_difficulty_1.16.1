@@ -59,13 +59,13 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
-                    ((CustomPathfinderGoalRangedBowAttack<?>) goal).changeAttackInterval(random.nextInt(9) + 12);
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                    ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedBowAttack.class)) {
-                    ((CustomPathfinderGoalRangedBowAttack<?>) goal).changeAttackInterval(random.nextInt(4) + 5);
+                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                    ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
                 }
             }
         }
@@ -92,7 +92,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
-        this.goalSelector.a(6, new CustomPathfinderGoalRangedBowAttack<>(this, 0.5D, random.nextInt(11) + 20, 32.0F));
+        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonAttack<>(this, 0.5D, random.nextInt(11) + 20));
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));

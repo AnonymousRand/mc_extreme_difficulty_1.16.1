@@ -14,92 +14,44 @@ import java.util.Random;
 public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile> extends PathfinderGoal {
 
     protected final T goalOwner;
-    protected final double speedTowardsTarget;
-    protected final boolean continuePathingIfNoLOS;
-    protected PathEntity path;
-    protected double oldTargetX;
-    protected double oldTargetY;
-    protected double oldTargetZ;
-    protected int repathCooldown;
     protected int attackCooldown;
     protected int remainingAttackCooldown;
     protected double minAttackReach;
 
     public CustomPathfinderGoalMeleeAttack(T goalOwner) {
         // default minimum attack reach is 2.0 blocks to help baby zombies out
-        this(goalOwner, 1.0, goalOwner.ignoresLOS(), 20, 2.0);
-    }
-
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
-        this(goalOwner, speedTowardsTarget, goalOwner.ignoresLOS(), 20, 2.0);
+        this(goalOwner, 20, 2.0);
     }
 
     public CustomPathfinderGoalMeleeAttack(
             T goalOwner,
-            double speedTowardsTarget,
-            boolean continuePathingIfNoLOS,
             int attackCooldown,
             double minAttackReach) {
 
         this.goalOwner = goalOwner;
-        this.speedTowardsTarget = speedTowardsTarget;
-        this.continuePathingIfNoLOS = continuePathingIfNoLOS;
         this.attackCooldown = attackCooldown;
         this.remainingAttackCooldown = attackCooldown;
         this.minAttackReach = minAttackReach;
-        this.a(EnumSet.of(Type.MOVE, Type.LOOK));
     }
 
     @Override
     public boolean a() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (!EntityFilter.BASE.test(goalTarget)) {
-            return false;
-        }
-
-        this.path = this.goalOwner.getNavigation().a(goalTarget, 0);
-        // melee attacks will never ignore y-level, even if the target goal does
-        // so hope/make sure that those mobs have some way to get closer to the target!
-        return this.path != null
-                || this.getAttackReachSq(goalTarget) >= NMSUtil.distSq(this.goalOwner, goalTarget, false);
+        return EntityFilter.BASE.test(this.goalOwner.getGoalTarget());
     }
     
     @Override
     public boolean b() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (!EntityFilter.BASE.test(goalTarget)) {
-            return false;
-        }
-
-        if (!this.continuePathingIfNoLOS) {
-            return !this.goalOwner.getNavigation().m();
-        }
-
-        if (!this.goalOwner.a(goalTarget.getChunkCoordinates())) {
-            return false;
-        }
-
-        return true;
+        return this.a();
     }
 
     @Override
     public void c() {
-        this.repathCooldown = 0;
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget != null) {
-            this.oldTargetX = Double.MAX_VALUE;
-            this.oldTargetY = Double.MAX_VALUE;
-            this.oldTargetZ = Double.MAX_VALUE;
-        }
-
         this.goalOwner.setAggressive(true);
-        this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
     }
 
     @Override
     public void d() {
         this.goalOwner.setAggressive(false);
-        this.goalOwner.getNavigation().o(); // clearPath()
     }
 
     @Override
@@ -111,35 +63,8 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
             return;
         }
 
-        this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F);
-        double distSqToGoalTarget = NMSUtil.distSq(this.goalOwner, goalTarget, false);
-
-        // repath to target
-        this.repathCooldown = Math.max(this.repathCooldown - 1, 0);
-        boolean shouldRepathToTarget =
-                this.repathCooldown <= 0
-                && (this.continuePathingIfNoLOS ? true : this.goalOwner.getEntitySenses().a(goalTarget))
-                && (NMSUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(),
-                            this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
-                    || this.goalOwner.getRandom().nextFloat() < 0.075F); // chance to repath if stationary target increased from 0.05 to 0.075
-        if (shouldRepathToTarget) {
-            this.oldTargetX = goalTarget.locX();
-            this.oldTargetY = goalTarget.locY();
-            this.oldTargetZ = goalTarget.locZ();
-            this.repathCooldown = 4 + this.goalOwner.getRandom().nextInt(7);
-            if (distSqToGoalTarget > 1024.0) {
-                this.repathCooldown += 10;
-            } else if (distSqToGoalTarget > 256.0) {
-                this.repathCooldown += 5;
-            }
-
-            if (!this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget)) { // tryMoveTo()
-                this.repathCooldown += 15;
-            }
-        }
-
-        // attack
-        if (this.remainingAttackCooldown <= 0 && distSqToGoalTarget <= this.getAttackReachSq(goalTarget)) {
+        if (this.remainingAttackCooldown <= 0
+                && NMSUtil.distSq(this.goalOwner, goalTarget, false) <= this.getAttackReachSq(goalTarget)) {
             this.remainingAttackCooldown = this.attackCooldown;
             this.goalOwner.swingHand(EnumHand.MAIN_HAND);
             this.goalOwner.attackEntity(goalTarget);

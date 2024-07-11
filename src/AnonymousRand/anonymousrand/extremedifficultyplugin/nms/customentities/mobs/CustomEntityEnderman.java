@@ -165,6 +165,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));

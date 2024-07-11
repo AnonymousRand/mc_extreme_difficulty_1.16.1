@@ -7,7 +7,8 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-// not extending PathfinderGoalArrowAttack as I normally would due to unused private fields like the goal target (obfuscated as this.c)
+// Entire class rewritten instead of inherited from PathfinderGoalArrowAttack in order to apply our own logic
+// without being too hacky or needing too much reflection (everything's private :/)
 // todo uncomment once all have been converted
 public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends PathfinderGoal {
@@ -17,6 +18,10 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     protected int attackCooldown;
     protected int remainingAttackCooldown;
     protected int targetSeenTicks;
+
+    public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown) {
+        this(goalOwner, 1.0, attackCooldown);
+    }
 
     public CustomPathfinderGoalRangedAttack(T goalOwner, double speedTowardsTarget, int attackCooldown) {
         this.goalOwner = goalOwner;
@@ -78,7 +83,15 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
             // this.entity.increaseAttacks(1); // todo uncomment once all have been converted
             float distanceFactor = (float) MathHelper.a(
                     MathHelper.sqrt(distSqToGoalTarget) / this.goalOwner.getDetectionRange(), 0.1, 1.0);
-            this.goalOwner.a(goalTarget, distanceFactor); // shoot()
+            this.attack(goalTarget, distanceFactor);
         }
+    }
+
+    protected void attack(EntityLiving goalTarget, float distanceFactor) {
+        this.goalOwner.a(goalTarget, distanceFactor); // shoot()
+    }
+
+    public void setAttackCooldown(int attackCooldown) {
+        this.attackCooldown = attackCooldown;
     }
 }

@@ -46,7 +46,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
         if (i == 99) {
             // todo can literally just use new setminattackreach thingy
-            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
+            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this));
+            this.goalSelector.a(4, new CustomPathfinderGoalMeleeMovement<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
             this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
@@ -175,10 +176,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
             extends CustomPathfinderGoalMeleeAttack<T> {
 
-        public PathfinderGoalKillerRabbitMeleeAttack(
-                T entityRabbit,
-                double speedTowardsTarget) {
-            super(entityRabbit, speedTowardsTarget);
+        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit) {
+            super(entityRabbit);
         }
 
         @Override
