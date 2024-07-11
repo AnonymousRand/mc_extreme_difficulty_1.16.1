@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -27,8 +28,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
     @Override
     public boolean a() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        return goalTarget != null && !goalTarget.isSpectator() && !goalTarget.isInvulnerable() && goalTarget.isAlive();
+        return EntityFilter.BASE.test(this.goalOwner.getGoalTarget());
     }
 
     @Override

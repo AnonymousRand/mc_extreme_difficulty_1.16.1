@@ -240,7 +240,8 @@ reduce magma cube jump distance so they dont overshoot following range
 
 break blocks ruunnable instead of booleans to remove dluuids etc just pass in a static predicate to the constrcutor
 
-bug: slimes and magma blocks sometimes just run away?
+bug: slimes and magma blocks just run away, their targeting is mega f*cked
+    make sure to test new melee attack goal thoguh
 
 check balancing for slime/magma cube damage and melee attack radius
 

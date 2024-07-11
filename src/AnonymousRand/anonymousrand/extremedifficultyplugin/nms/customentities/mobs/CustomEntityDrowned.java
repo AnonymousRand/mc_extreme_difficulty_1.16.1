@@ -138,7 +138,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
         this.goalSelector.a(1, new CustomEntityDrowned.PathfinderGoalTridentAttack(this, 1.0, 8));             /* Drowned throw tridents every 8 ticks, and continue attacking regardless of line of sight and y-level (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));                              /* Drowned also attack in the day */
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));                              /* Drowned also attack in the day */
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0));
@@ -298,6 +298,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         }
     }
 
+    // Makes sure trident faces the right direction
     static class PathfinderGoalTridentAttack extends CustomPathfinderGoalRangedAttack<CustomEntityDrowned> {
 
         public PathfinderGoalTridentAttack(CustomEntityDrowned drowned, double speedTowardsTarget, int attackCooldown) {

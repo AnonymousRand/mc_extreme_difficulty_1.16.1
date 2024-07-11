@@ -52,9 +52,9 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
             /* todo: piglins attack 2 times faster when frenzied */
-            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack<>(this, 1.0)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack<>(this)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 

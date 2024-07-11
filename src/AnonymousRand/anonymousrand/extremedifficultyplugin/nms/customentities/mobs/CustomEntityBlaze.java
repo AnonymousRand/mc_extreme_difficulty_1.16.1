@@ -223,7 +223,8 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
             if (goalTarget != null) {
                 double distSqToGoalTarget = NMSUtil.distSq(this.blaze, goalTarget, false);
 
-                if (distSqToGoalTarget < 3.0D) { // melee attack
+                // melee attack
+                if (distSqToGoalTarget < 3.0D) {
                     if (this.meleeRemainingAttackCooldown <= 0) {
                         this.meleeRemainingAttackCooldown = 20;
 
@@ -234,6 +235,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                     }
 
                     this.blaze.getControllerMove().a(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), 1.0);
+                // ranged attack
                 } else {
                     double distToGoalTargetX = goalTarget.locX() - this.blaze.locX();
                     double distToGoalTargetY = goalTarget.e(0.5D) - this.blaze.e(0.5D);

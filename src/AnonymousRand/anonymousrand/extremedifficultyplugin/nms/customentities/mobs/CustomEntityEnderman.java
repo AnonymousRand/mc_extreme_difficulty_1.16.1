@@ -164,7 +164,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this, 1.0));
+        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
@@ -188,7 +188,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     // Overrides private g() (shouldAttackPlayer()); name change because not used elsewhere
     private boolean validPlayerIsLooking(EntityPlayer player) {
-        if (player.isSpectator() || player.abilities.isInvulnerable) {
+        if (!EntityFilter.BASE.test(player)) {
             return false;
         }
 

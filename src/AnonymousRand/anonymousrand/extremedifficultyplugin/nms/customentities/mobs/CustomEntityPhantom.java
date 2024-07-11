@@ -299,13 +299,11 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         public boolean b() {
             EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
 
-            if (entityLiving == null) {
+            if (!EntityFilter.BASE.test(entityLiving)) {
                 return false;
-            } else if (!entityLiving.isAlive()) {
-                return false;
-            } else if (entityLiving instanceof EntityHuman && (entityLiving.isSpectator() || ((EntityHuman) entityLiving).isCreative())) {
-                return false;
-            } else if (!this.a()) {
+            }
+
+            if (!this.a()) {
                 return false;
             } else { /* phantoms are no longer scared of cats and ocelots */
                 return true;

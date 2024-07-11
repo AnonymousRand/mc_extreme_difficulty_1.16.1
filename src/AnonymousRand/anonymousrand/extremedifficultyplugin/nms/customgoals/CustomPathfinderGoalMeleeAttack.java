@@ -1,6 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
@@ -24,13 +25,13 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected int remainingAttackCooldown;
     protected double minAttackReach;
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
+    public CustomPathfinderGoalMeleeAttack(T goalOwner) {
         // default minimum attack reach is 2.0 blocks to help baby zombies out
-        this(goalOwner, speedTowardsTarget, goalOwner.ignoresLOS(), 20, 2.0);
+        this(goalOwner, 1.0, goalOwner.ignoresLOS(), 20, 2.0);
     }
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget, boolean continuePathingIfNoLOS) {
-        this(goalOwner, speedTowardsTarget, continuePathingIfNoLOS, 20, 2.0);
+    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
+        this(goalOwner, speedTowardsTarget, goalOwner.ignoresLOS(), 20, 2.0);
     }
 
     public CustomPathfinderGoalMeleeAttack(
@@ -52,7 +53,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     @Override
     public boolean a() {
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null || goalTarget.isSpectator() || goalTarget.isInvulnerable() || !goalTarget.isAlive()) {
+        if (!EntityFilter.BASE.test(goalTarget)) {
             return false;
         }
 
@@ -66,7 +67,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     @Override
     public boolean b() {
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null || goalTarget.isSpectator() || goalTarget.isInvulnerable() || !goalTarget.isAlive()) {
+        if (!EntityFilter.BASE.test(goalTarget)) {
             return false;
         }
 
@@ -94,14 +95,9 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
         this.goalOwner.setAggressive(true);
         this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
     }
-    
+
     @Override
     public void d() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget != null && (goalTarget.isSpectator() || goalTarget.isInvulnerable())) {
-            this.goalOwner.setGoalTarget(null);
-        }
-
         this.goalOwner.setAggressive(false);
         this.goalOwner.getNavigation().o(); // clearPath()
     }
@@ -151,7 +147,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     }
 
     protected double getAttackReachSq(EntityLiving goalTarget) {
-        return Math.max(this.goalOwner.getWidth() * 2.0F * this.goalOwner.getWidth() * 2.0F + goalTarget.getWidth(),
+        return Math.max(Math.pow(2.0F * this.goalOwner.getWidth(), 2) + goalTarget.getWidth(),
                 this.minAttackReach);
     }
 
