@@ -14,6 +14,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected double minAttackReach;
     // movement
     protected PathEntity path;
+    protected int repathCooldown;
     protected double oldTargetX;
     protected double oldTargetY;
     protected double oldTargetZ;
@@ -49,8 +50,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
 
     @Override
     protected void startExecutingMovement() {
-        super.startExecutingMovement();
-
+        this.repathCooldown = 0;
         EntityLiving target = this.goalOwner.getGoalTarget();
         if (target != null) {
             this.oldTargetX = Double.MAX_VALUE;
@@ -62,15 +62,10 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     }
 
     @Override
-    protected void tickMovement() {
-        super.tickMovement();
+    protected void tickMovement(EntityLiving target) {
+        super.tickMovement(target);
 
-        EntityLiving target = this.goalOwner.getGoalTarget();
-        if (target == null) {
-            return;
-        }
-
-        this.goalOwner.getControllerLook().a(target, 30.0F, 30.0F);
+        this.repathCooldown--;
         double distSqToTarget = NMSUtil.distSq(this.goalOwner, target, false);
 
         // repath to target once repathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)

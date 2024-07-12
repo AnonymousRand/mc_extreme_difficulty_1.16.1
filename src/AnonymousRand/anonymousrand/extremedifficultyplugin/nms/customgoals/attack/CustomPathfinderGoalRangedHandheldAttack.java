@@ -33,7 +33,7 @@ public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient
     @Override
     public void c() {
         super.c();
-        this.goalOwner.c(EnumHand.MAIN_HAND); // todo test this is from drowned; surely it works with skeletons?
+        this.goalOwner.c(EnumHand.MAIN_HAND); // setActiveHand()
     }
 
     @Override

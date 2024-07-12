@@ -27,15 +27,8 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     }
 
     @Override
-    protected void tickMovement() {
-        super.tickMovement();
-
-        EntityLiving target = this.goalOwner.getGoalTarget();
-        if (target == null) {
-            return;
-        }
-
-        this.goalOwner.getControllerLook().a(target, 30.0F, 30.0F);
+    protected void tickMovement(EntityLiving target) {
+        super.tickMovement(target);
 
         // repath to target if it can't be seen but there is a way to get to the target
         if (!this.goalOwner.getEntitySenses().a(target)

@@ -13,6 +13,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     protected final T goalOwner;
     protected final EntityFilter targetCondition;
     protected final EntityFilter targetConditionIgnoreLOS;
+    protected final EntityFilter targetConditionNoIgnoreY;
     protected final boolean ignoreLOS;
     protected final boolean ignoreY;
     protected EntityLiving potentialTarget;
@@ -33,12 +34,14 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
 
         this.goalOwner = goalOwner;
         // EntityFilter with ignoreLOS and ignoreY affects INITIALLY finding a player target
-        // also note that this constructor is called in initPathfinder() in the super() constructor of a mob
-        // before we are able to change FOLLOW_RANGE, thus we have to use getDetectionRange() instead
+        // (also note that this constructor is called in initPathfinder() in the super() constructor of a mob
+        // before we are able to change FOLLOW_RANGE, thus we have to use getDetectionRange() instead)
         this.targetCondition =
                 new EntityFilter(this.getDetectionRange(), ignoreLOS, ignoreY, extraEntityPredicate);
         this.targetConditionIgnoreLOS =
                 new EntityFilter(this.getDetectionRange(), true, ignoreY, extraEntityPredicate);
+        this.targetConditionNoIgnoreY =
+                new EntityFilter(this.getDetectionRange(), ignoreLOS, false, extraEntityPredicate);
         // ignoreLOS and ignoreY affects CONTINUING to track a target in b()/shouldContinueExecuting()
         this.ignoreLOS = ignoreLOS;
         this.ignoreY = ignoreY;

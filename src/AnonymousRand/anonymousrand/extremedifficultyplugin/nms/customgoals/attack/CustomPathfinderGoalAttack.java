@@ -2,6 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.atta
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
+import com.sun.istack.internal.NotNull;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -20,7 +21,6 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     protected int remainingAttackCooldown;
     // movement
     protected double moveSpeed;
-    protected int repathCooldown;
 
     protected CustomPathfinderGoalAttack(T goalOwner, int attackCooldown, double moveSpeed) {
         this.goalOwner = goalOwner;
@@ -66,9 +66,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         this.goalOwner.setAggressive(true);
     }
 
-    protected void startExecutingMovement() {
-        this.repathCooldown = 0;
-    }
+    protected void startExecutingMovement() {}
 
     @Override
     public void d() {
@@ -86,17 +84,17 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
 
     @Override
     public void e() {
-        this.tickAttack();
-        this.tickMovement();
-    }
-
-    protected void tickAttack() {
-        this.remainingAttackCooldown--;
-
         EntityLiving target = this.goalOwner.getGoalTarget();
         if (target == null) {
             return;
         }
+
+        this.tickAttack(target);
+        this.tickMovement(target);
+    }
+
+    protected void tickAttack(@NotNull EntityLiving target) {
+        this.remainingAttackCooldown--;
 
         if (this.remainingAttackCooldown <= 0) {
             if (this.checkAttack(target)) {
@@ -107,8 +105,8 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         }
     }
 
-    protected void tickMovement() {
-        this.repathCooldown--;
+    protected void tickMovement(@NotNull EntityLiving target) {
+        this.goalOwner.getControllerLook().a(target, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
     }
 
     protected boolean checkAttack(EntityLiving target) {

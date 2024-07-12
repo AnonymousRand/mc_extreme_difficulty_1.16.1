@@ -39,6 +39,9 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
         this.attacks = 0;
         this.a20 = false;
         this.a90 = false;
+
+        /* Skeletons move five times as fast */
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1.25);
     }
 
     @Override
