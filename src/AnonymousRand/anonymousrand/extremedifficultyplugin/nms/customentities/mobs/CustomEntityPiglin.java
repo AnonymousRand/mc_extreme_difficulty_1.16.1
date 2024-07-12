@@ -3,6 +3,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedCrossbowAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
@@ -26,7 +29,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     private boolean a10, a20, a40, a55;
     private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
     private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
-    private static Field goalTarget;
+    private static Field target;
 
     // todo function for frenzy and unfrenzy
     public CustomEntityPiglin(World world) {
@@ -48,15 +51,13 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         ((LivingEntity) (this.getBukkitEntity())).setMaxHealth(50.0);
         this.setHealth(30.0F);
 
-        if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attacking while trading */
+        if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attack while trading */
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
             this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
             /* todo: piglins attack 2 times faster when frenzied */
             this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack<>(this)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(0, new CustomPathfinderGoalMeleeMovement<>(this));
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -74,8 +75,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     static {
         try {
-            goalTarget = EntityInsentient.class.getDeclaredField("goalTarget");
-            goalTarget.setAccessible(true);
+            target = EntityInsentient.class.getDeclaredField("target");
+            target.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -151,7 +152,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void setGoalTarget(EntityLiving entityLiving) {
         try {
-            goalTarget.set(this, entityLiving);
+            target.set(this, entityLiving);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -161,8 +162,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public EntityLiving getGoalTarget() { // uses normal EntityInsentient getGoalTarget() method that doesn't use the piglin's memory modules because they were removed along with its brain and behavior goals
         try {
-            if ((goalTarget.get(this)) != null) {
-                return (EntityLiving) goalTarget.get(this);
+            if ((target.get(this)) != null) {
+                return (EntityLiving) target.get(this);
             } else {
                 return null;
             }
@@ -395,8 +396,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         private final int attackIntervalNormal;
         private final int attackIntervalFrenzied;
 
-        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double speedTowardsTarget, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
-            super(piglin, speedTowardsTarget, attackIntervalNormal, maxDistance);
+        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double moveSpeed, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
+            super(piglin, moveSpeed, attackIntervalNormal, maxDistance);
             this.attackIntervalNormal = attackIntervalNormal;
             this.attackIntervalFrenzied = attackIntervalFrenzied;
         }

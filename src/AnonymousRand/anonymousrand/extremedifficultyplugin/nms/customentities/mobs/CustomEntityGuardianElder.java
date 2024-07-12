@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
@@ -143,7 +143,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         }
     }
 
-    static class PathfinderGoalGuardianAttack extends PathfinderGoal { /* guardian no longer stops attacking if player is too close */
+    static class PathfinderGoalGuardianAttack extends PathfinderGoal { /* guardian no longer stops attack if player is too close */
 
         private final CustomEntityGuardianElder entity;
         private int b;

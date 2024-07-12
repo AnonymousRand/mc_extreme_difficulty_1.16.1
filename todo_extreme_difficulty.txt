@@ -7,6 +7,7 @@ reorganize all custommobs to use new attacks thing and whatever (including blaze
 custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 private instead of protected where possible, dont target villagers
 standardize multiline comment indent
+conseuctive ghoal priorities
 stopped after: customentityenderman
 
 consolidate all rangedattackgoals into one and just choose projectile?
@@ -198,8 +199,6 @@ balancing and small nerfs like ghast or something, more consistent but less ende
 
 make lava spread fast in overworld if possible?
 
-swap grass and tall grass effects
-
 remove blank line before cobnstrcutors/fields
 
 why are we adding customhurtbytarget in vanillapthfindergoalsaccess? should we do it individually?
@@ -209,6 +208,8 @@ hoglin fire trails to custom goal?
 phantom more linear size increases?
 
 phantom check that die() override delay doesn't matter
+
+have a mob that increases CustomPathfinderGoalMovement move speed???
 
 lower magma cube spawn replacement chance? unless no spawn from blaze is enough of a nerf
 
@@ -313,7 +314,7 @@ create full documentation of changes from all /* comments and that google doc?
 
 balance changes catalog:
 mobs teleport to the player that hurt them if they are outside range/do not have line of sight
-Mobs not ignoring line of sight now require 100 instead of 60 ticks of no sight to stop targeting
+Mobs not ignoring line of sight will no longer stop targeting if they lose line of sight
 todo list ignorelos and ignorey changes
 
 bats on first hit sumnmon 8-10 vanilla bats -> 6-8

@@ -3,7 +3,13 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalSummonLightningRandomly;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedHandheldAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 
@@ -136,11 +142,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
-        this.goalSelector.a(1, new CustomPathfinderGoalHandheldRangedAttack<>(this, Items.TRIDENT, 8));        /* Drowned throw tridents every 8 ticks, and continue attacking regardless of line of sight and y-level (the old goal stopped the mob from attacking even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.goalSelector.a(2, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
+        this.goalSelector.a(1, new CustomPathfinderGoalRangedHandheldAttack<>(this, Items.TRIDENT, 8));        /* Drowned throw tridents every 8 ticks, and continue attack regardless of line of sight and y-level (the old goal stopped the mob from attack even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));                                   /* Drowned also attack in the day */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(3, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0, this.world.getSeaLevel()));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0));
@@ -190,12 +194,12 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         private double waterX;
         private double waterY;
         private double waterZ;
-        private final double speedTowardsTarget;
+        private final double moveSpeed;
         private final World world;
 
-        public PathfinderGoalGoToWater(CustomEntityDrowned drowned, double speedTowardsTarget) {
+        public PathfinderGoalGoToWater(CustomEntityDrowned drowned, double moveSpeed) {
             this.drowned = drowned;
-            this.speedTowardsTarget = speedTowardsTarget;
+            this.moveSpeed = moveSpeed;
             this.world = drowned.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
@@ -227,7 +231,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         @Override
         public void c() {
-            this.drowned.getNavigation().a(this.waterX, this.waterY, this.waterZ, this.speedTowardsTarget);
+            this.drowned.getNavigation().a(this.waterX, this.waterY, this.waterZ, this.moveSpeed);
         }
 
         @Nullable
@@ -251,13 +255,13 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     static class PathfinderGoalSwimUp extends PathfinderGoal {
 
         private final CustomEntityDrowned drowned;
-        private final double speedTowardsTarget;
+        private final double moveSpeed;
         private final int targetY;
         private boolean obstructed;
 
-        public PathfinderGoalSwimUp(CustomEntityDrowned drowned, double speedTowardsTarget, int targetY) {
+        public PathfinderGoalSwimUp(CustomEntityDrowned drowned, double moveSpeed, int targetY) {
             this.drowned = drowned;
-            this.speedTowardsTarget = speedTowardsTarget;
+            this.moveSpeed = moveSpeed;
             this.targetY = targetY;
         }
 
@@ -284,7 +288,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                     return;
                 }
 
-                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.speedTowardsTarget);
+                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.moveSpeed);
             }
         }
 

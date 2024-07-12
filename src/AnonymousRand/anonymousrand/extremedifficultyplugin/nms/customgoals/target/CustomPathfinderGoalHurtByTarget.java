@@ -1,7 +1,6 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;

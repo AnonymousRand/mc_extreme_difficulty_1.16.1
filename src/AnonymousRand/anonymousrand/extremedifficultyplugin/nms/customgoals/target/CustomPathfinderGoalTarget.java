@@ -1,9 +1,8 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -14,22 +13,19 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     protected final T goalOwner;
     protected final EntityFilter targetCondition;
     protected final EntityFilter targetConditionIgnoreLOS;
-    protected final EntityFilter targetConditionNoIgnoreY;
     protected final boolean ignoreLOS;
     protected final boolean ignoreY;
-    protected final int unseenTicksToForget;
     protected EntityLiving potentialTarget;
-    protected int targetUnseenTicks;
 
-    public CustomPathfinderGoalTarget(
+    protected CustomPathfinderGoalTarget(
             T goalOwner,
             boolean ignoreLOS,
             boolean ignoreY) {
         
         this(goalOwner, ignoreLOS, ignoreY, null);
     }
-    
-    public CustomPathfinderGoalTarget(
+
+    protected CustomPathfinderGoalTarget(
             T goalOwner,
             boolean ignoreLOS,
             boolean ignoreY,
@@ -39,18 +35,13 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
         // EntityFilter with ignoreLOS and ignoreY affects INITIALLY finding a player target
         // also note that this constructor is called in initPathfinder() in the super() constructor of a mob
         // before we are able to change FOLLOW_RANGE, thus we have to use getDetectionRange() instead
-        this.targetCondition = new EntityFilter(this.getDetectionRange(), ignoreLOS, ignoreY,
-                extraEntityPredicate);
-        this.targetConditionIgnoreLOS = new EntityFilter(this.getDetectionRange(), true, ignoreY, // todo cleaner?
-                extraEntityPredicate);
-        this.targetConditionNoIgnoreY = new EntityFilter(this.getDetectionRange(), ignoreLOS, false,
-                extraEntityPredicate);
+        this.targetCondition =
+                new EntityFilter(this.getDetectionRange(), ignoreLOS, ignoreY, extraEntityPredicate);
+        this.targetConditionIgnoreLOS =
+                new EntityFilter(this.getDetectionRange(), true, ignoreY, extraEntityPredicate);
         // ignoreLOS and ignoreY affects CONTINUING to track a target in b()/shouldContinueExecuting()
         this.ignoreLOS = ignoreLOS;
         this.ignoreY = ignoreY;
-
-        /* Mobs not ignoring line of sight now require 100 instead of 60 ticks of no sight to stop targeting */
-        this.unseenTicksToForget = 100;
     }
 
     @Override // shouldExecute()
@@ -61,28 +52,13 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
 
     @Override // shouldContinueExecuting()
     public boolean b() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-
-        if (this.targetCondition.test(this.goalOwner, goalTarget)) {
-            if (!this.ignoreLOS) {
-                this.targetUnseenTicks = 0;
-            }
-            return true;
-        }
-
-        // if breaking line of sight is the ONLY crime the target has committed (hence the
-        // this.targetConditionIgnoreLOS.test()), attempt to give leeway
-        if (!this.ignoreLOS && this.targetConditionIgnoreLOS.test(this.goalOwner, goalTarget)) {
-            this.targetUnseenTicks++;
-            return this.targetUnseenTicks < this.unseenTicksToForget;
-        }
-
-        return false;
+        /* Mobs, even those not ignoring line of sight, will no longer lose targets by breaking line of sight. Thus, the
+           only ways to shake off a mob without dying is to leave its range or have it retarget to a nearer option. */
+        return this.targetConditionIgnoreLOS.test(this.goalOwner, this.goalOwner.getGoalTarget());
     }
 
     @Override // startExecuting()
     public void c() {
-        this.targetUnseenTicks = 0;
         // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
         this.targetCondition.setDetectionRange(this.getDetectionRange());
     }

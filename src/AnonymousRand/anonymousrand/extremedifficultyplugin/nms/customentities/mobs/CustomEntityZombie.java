@@ -6,6 +6,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMeteorRain;
 import net.minecraft.server.v1_16_R1.*;
@@ -63,7 +66,6 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
         this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0)); /* Spawns lightning randomly */
         this.goalSelector.a(0, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.0015)); /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
         this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, false, false, EntityTurtle.bv));
@@ -71,52 +73,52 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        if (super.damageEntity(damageSource, damageAmount)) {
-            EntityLiving entityLiving = this.getGoalTarget();
+        if (!super.damageEntity(damageSource, damageAmount)) {
+            return false;
+        }
 
-            if (entityLiving == null) {
-                entityLiving = (EntityLiving) damageSource.getEntity();
-            }
+        EntityLiving entityLiving = this.getGoalTarget();
 
-            if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
-                return true;
-            }
+        if (entityLiving == null) {
+            entityLiving = (EntityLiving) damageSource.getEntity();
+        }
 
-            if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
-                this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
-            }
+        if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
+            return true;
+        }
 
-            if ((double) random.nextDouble() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */
-                int i = MathHelper.floor(this.locX());
-                int j = MathHelper.floor(this.locY());
-                int k = MathHelper.floor(this.locZ());
-                CustomEntityZombie newZombie = new CustomEntityZombie(this.world);
+        if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
+            this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
+        }
 
-                for (int l = 0; l < 50; ++l) {
-                    int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                    int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                    int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                    BlockPosition blockPosition = new BlockPosition(i1, j1, k1);
-                    EntityTypes<?> entityTypes = newZombie.getEntityType();
-                    EntityPositionTypes.Surface entityPositionTypes_Surface = EntityPositionTypes.a(entityTypes);
+        if ((double) random.nextDouble() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */
+            int i = MathHelper.floor(this.locX());
+            int j = MathHelper.floor(this.locY());
+            int k = MathHelper.floor(this.locZ());
+            CustomEntityZombie newZombie = new CustomEntityZombie(this.world);
 
-                    if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPosition, this.world.random)) {
-                        newZombie.setPosition(i1, j1, k1);
-                        if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
-                            this.world.addEntity(newZombie);
-                            newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
-                            this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
-                            newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.2, AttributeModifier.Operation.ADDITION));
-                            break;
-                        }
+            for (int l = 0; l < 50; ++l) {
+                int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
+                BlockPosition blockPosition = new BlockPosition(i1, j1, k1);
+                EntityTypes<?> entityTypes = newZombie.getEntityType();
+                EntityPositionTypes.Surface entityPositionTypes_Surface = EntityPositionTypes.a(entityTypes);
+
+                if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPosition, this.world.random)) {
+                    newZombie.setPosition(i1, j1, k1);
+                    if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
+                        this.world.addEntity(newZombie);
+                        newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
+                        this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */
+                        newZombie.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement callee charge", this.attacks < 7 ? -0.125 : -0.2, AttributeModifier.Operation.ADDITION));
+                        break;
                     }
                 }
             }
-
-            return true;
-        } else {
-            return false;
         }
+
+        return true;
     }
 
     public double getDetectionRange() { /* zombies have 40 block detection range */

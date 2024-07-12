@@ -1,6 +1,5 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.*;
 
 import javax.annotation.Nullable;
@@ -11,12 +10,34 @@ public class NMSUtil {
     /**
      * Calculate distance between <code>entityFrom</code> and <code>entityTo</code>.
      */
+    public static double dist(Entity entityFrom, Entity entityTo, boolean ignoreY) {
+        return dist(entityFrom.getPositionVector(), entityTo.getPositionVector(), ignoreY);
+    }
+
+    /**
+     * Calculate distance between <code>vec3DFrom</code> and <code>vec3DTo</code>.
+     */
+    public static double dist(Vec3D vec3DFrom, Vec3D vec3DTo, boolean ignoreY) {
+        return dist(vec3DFrom.getX(), vec3DFrom.getY(), vec3DFrom.getZ(),
+                vec3DTo.getX(), vec3DTo.getY(), vec3DTo.getZ(), ignoreY);
+    }
+
+    /**
+     * Calculate distance between the first set of three coordinates and the second set.
+     */
+    public static double dist(double x1, double y1, double z1, double x2, double y2, double z2, boolean ignoreY) {
+        return Math.sqrt(distSq(x1, y1, z1, x2, y2, z2, ignoreY));
+    }
+
+    /**
+     * Calculate distance squared between <code>entityFrom</code> and <code>entityTo</code>.
+     */
     public static double distSq(Entity entityFrom, Entity entityTo, boolean ignoreY) {
         return distSq(entityFrom.getPositionVector(), entityTo.getPositionVector(), ignoreY);
     }
 
     /**
-     * Calculate distance between <code>vec3DFrom</code> and <code>vec3DTo</code>.
+     * Calculate distance squared between <code>vec3DFrom</code> and <code>vec3DTo</code>.
      */
     public static double distSq(Vec3D vec3DFrom, Vec3D vec3DTo, boolean ignoreY) {
         return distSq(vec3DFrom.getX(), vec3DFrom.getY(), vec3DFrom.getZ(),
@@ -24,7 +45,7 @@ public class NMSUtil {
     }
 
     /**
-     * Calculate distance between the first set of three coordinates and the second set.
+     * Calculate distance squared between the first set of three coordinates and the second set.
      */
     public static double distSq(double x1, double y1, double z1, double x2, double y2, double z2, boolean ignoreY) {
         if (ignoreY) {

@@ -19,7 +19,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    public ArrayList<Entity> goalTargets = new ArrayList<>();
+    public ArrayList<Entity> targets = new ArrayList<>();
 
     public CustomEntityEnderDragon(World world, UUID uuid) {
         super(EntityTypes.ENDER_DRAGON, world);
@@ -128,8 +128,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         @Override
         public boolean a() {
-            if (this.enderDragon.goalTargets != null) {
-                return !this.enderDragon.goalTargets.isEmpty();
+            if (this.enderDragon.targets != null) {
+                return !this.enderDragon.targets.isEmpty();
             }
 
             return false;
@@ -171,7 +171,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
 
         @Override
         public void e() {
-            this.enderDragon.goalTargets = new ArrayList<>(this.enderDragon.getWorld().getEntities(this.enderDragon,
+            this.enderDragon.targets = new ArrayList<>(this.enderDragon.getWorld().getEntities(this.enderDragon,
                     this.enderDragon.getBoundingBox().g(this.enderDragon.getDetectionRange()),
                     this.targetClass::isInstance));
         }
@@ -193,7 +193,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double rand;
 
             /* Dragons shoot at every player within its detection range */
-            for (Entity entity : this.enderDragon.goalTargets) {
+            for (Entity entity : this.enderDragon.targets) {
                 if (!entity.isAlive() || entity.getWorld().getWorld().getEnvironment()
                         != org.bukkit.World.Environment.THE_END || ((EntityPlayer) entity).abilities.isInvulnerable) {
                     continue;

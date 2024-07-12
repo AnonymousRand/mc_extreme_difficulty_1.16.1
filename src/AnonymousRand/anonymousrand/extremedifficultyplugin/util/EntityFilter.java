@@ -1,6 +1,5 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
@@ -34,10 +33,6 @@ public class EntityFilter {
         this.extraEntityPredicate = extraEntityPredicate;
     }
 
-    public void setDetectionRange(double detectionRange) {
-        this.detectionRange = detectionRange;
-    }
-    
     public boolean test(@Nullable EntityLiving target) {
         return this.test(null, target);
     }
@@ -83,5 +78,9 @@ public class EntityFilter {
         }
 
         return true;
+    }
+
+    public void setDetectionRange(double detectionRange) {
+        this.detectionRange = detectionRange;
     }
 }

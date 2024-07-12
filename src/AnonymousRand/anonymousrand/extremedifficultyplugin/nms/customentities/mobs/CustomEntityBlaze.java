@@ -3,8 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntitySmallFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalHurtByTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalNearestAttackableTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
@@ -218,28 +218,28 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
         public void e() {
             --this.rangedRemainingAttackCooldown;
             --this.meleeRemainingAttackCooldown;
-            EntityLiving goalTarget = this.blaze.getGoalTarget();
+            EntityLiving target = this.blaze.getGoalTarget();
 
-            if (goalTarget != null) {
-                double distSqToGoalTarget = NMSUtil.distSq(this.blaze, goalTarget, false);
+            if (target != null) {
+                double distSqToTarget = NMSUtil.distSq(this.blaze, target, false);
 
                 // melee attack
-                if (distSqToGoalTarget < 3.0D) {
+                if (distSqToTarget < 3.0D) {
                     if (this.meleeRemainingAttackCooldown <= 0) {
                         this.meleeRemainingAttackCooldown = 20;
 
-                        this.blaze.attackEntity(goalTarget);
+                        this.blaze.attackEntity(target);
                         /* Blaze melee attack creates a power 0.5 explosion on the player's location */
-                        this.blaze.getWorld().createExplosion(this.blaze, goalTarget.locX(), goalTarget.locY(),
-                                goalTarget.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
+                        this.blaze.getWorld().createExplosion(this.blaze, target.locX(), target.locY(),
+                                target.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
                     }
 
-                    this.blaze.getControllerMove().a(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), 1.0);
+                    this.blaze.getControllerMove().a(target.locX(), target.locY(), target.locZ(), 1.0);
                 // ranged attack
                 } else {
-                    double distToGoalTargetX = goalTarget.locX() - this.blaze.locX();
-                    double distToGoalTargetY = goalTarget.e(0.5D) - this.blaze.e(0.5D);
-                    double distToGoalTargetZ = goalTarget.locZ() - this.blaze.locZ();
+                    double distToTargetX = target.locX() - this.blaze.locX();
+                    double distToTargetY = target.e(0.5D) - this.blaze.e(0.5D);
+                    double distToTargetZ = target.locZ() - this.blaze.locZ();
 
                     if (this.rangedRemainingAttackCooldown <= 0) {
                         this.blaze.increaseAttacks(1);
@@ -248,7 +248,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                             this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
                         }
 
-                        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToGoalTarget)) * 0.5F;
+                        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToTarget)) * 0.5F;
 
                         /* Blazes do not pause between each volley and instead shoots constantly */
                         CustomEntitySmallFireball smallFireball;
@@ -259,10 +259,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                             for (int i = 0; i < 2; i++) {
                                 smallFireball =
                                         new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-                                        distToGoalTargetX + this.blaze.getRandom().nextGaussian()
+                                        distToTargetX + this.blaze.getRandom().nextGaussian()
                                         * vanillaInaccuracy * 2.5,
-                                        distToGoalTargetY,
-                                        distToGoalTargetZ + this.blaze.getRandom().nextGaussian()
+                                        distToTargetY,
+                                        distToTargetZ + this.blaze.getRandom().nextGaussian()
                                         * vanillaInaccuracy * 2.5);
                                 smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
                                         smallFireball.locZ());
@@ -274,10 +274,10 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                             /* In normal firing state, blazes have 20% of their vanilla inaccuracy */
                             smallFireball =
                                     new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-                                    distToGoalTargetX + this.blaze.getRandom().nextGaussian()
+                                    distToTargetX + this.blaze.getRandom().nextGaussian()
                                     * vanillaInaccuracy * 0.2,
-                                    distToGoalTargetY,
-                                    distToGoalTargetZ + this.blaze.getRandom().nextGaussian()
+                                    distToTargetY,
+                                    distToTargetZ + this.blaze.getRandom().nextGaussian()
                                     * vanillaInaccuracy * 0.2);
                             smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
                                     smallFireball.locZ());
@@ -285,7 +285,7 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
                         }
                     }
 
-                    this.blaze.getControllerLook().a(goalTarget, 10.0F, 10.0F);
+                    this.blaze.getControllerLook().a(target, 10.0F, 10.0F);
                 }
 
                 super.e();

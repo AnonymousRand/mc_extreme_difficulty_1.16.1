@@ -1,4 +1,4 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
@@ -11,22 +11,18 @@ import net.minecraft.server.v1_16_R1.Item;
  * attack, and that the animations of the hand holding the weapon are played correctly.
  */
 // todo uncomment
-public class CustomPathfinderGoalHandheldRangedAttack<T extends EntityInsentient & IRangedEntity
+public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedAttack<T> {
 
-    protected final Item attackingItemInMainHand;
+    protected final Item weapon;
 
-    public CustomPathfinderGoalHandheldRangedAttack(T goalOwner, Item attackingItemInMainHand, int attackCooldown) {
-        this(goalOwner, attackingItemInMainHand, 1.0, attackCooldown);
+    public CustomPathfinderGoalRangedHandheldAttack(T goalOwner, Item weapon, int attackCooldown) {
+        this(goalOwner, weapon, attackCooldown, 1.0);
     }
 
-    public CustomPathfinderGoalHandheldRangedAttack(
-            T goalOwner,
-            Item attackingItemInMainHand,
-            double speedTowardsTarget,
-            int attackCooldown) {
-        super(goalOwner, speedTowardsTarget, attackCooldown);
-        this.attackingItemInMainHand = attackingItemInMainHand;
+    public CustomPathfinderGoalRangedHandheldAttack(T goalOwner, Item weapon, int attackCooldown, double moveSpeed) {
+        super(goalOwner, attackCooldown, moveSpeed);
+        this.weapon = weapon;
     }
 
     @Override
@@ -47,6 +43,6 @@ public class CustomPathfinderGoalHandheldRangedAttack<T extends EntityInsentient
     }
 
     protected boolean correctItemInMainHand() {
-        return this.goalOwner.getItemInMainHand().getItem() == this.attackingItemInMainHand;
+        return this.goalOwner.getItemInMainHand().getItem() == this.weapon;
     }
 }

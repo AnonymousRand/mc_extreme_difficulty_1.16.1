@@ -1,10 +1,9 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.util.EntityFilter;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -13,7 +12,7 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 // All the line of sight/y-level checking vanillaly in the melee/ranged attack goals has been moved here
-// so those goals only have to deal with, well, attacking
+// so those goals only have to deal with, well, attack
 public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalTarget<T> {
 
@@ -61,6 +60,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         this.a(EnumSet.of(PathfinderGoal.Type.TARGET));
     }
 
+    // todo test priority: make sure hurt by is not overriden by this goal
     @Override
     public boolean a() {
         if (this.goalOwner.getRandom().nextInt(this.targetChance) != 0) {
@@ -71,18 +71,18 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
 
     // Overridden to periodically change target to the nearest one (including y) to prevent strats like
     // one player leading mobs away from another at build height, taking advantage of ignoreY = true
-    // todo test with offline multimc 2 player?
+    // todo test with offline multimc 2 player? also test if this overrides hurtby/enderman look etc
     @Override
     public boolean b() {
         if (!super.b()) {
             return false;
         }
 
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (random.nextDouble() < 0.025 && goalTarget != null) {
+        EntityLiving target = this.goalOwner.getGoalTarget();
+        if (random.nextDouble() < 0.025 && target != null) {
             S nearestPotentialTarget = this.findNearestPotentialTarget(false);
             if (nearestPotentialTarget != null
-                    && nearestPotentialTarget.getUniqueID() != goalTarget.getUniqueID()) {
+                    && nearestPotentialTarget.getUniqueID() != target.getUniqueID()) {
                 this.goalOwner.setGoalTarget(nearestPotentialTarget);
             }
         }

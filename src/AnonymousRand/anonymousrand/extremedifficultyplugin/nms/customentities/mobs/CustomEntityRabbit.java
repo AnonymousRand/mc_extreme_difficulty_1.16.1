@@ -5,6 +5,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -46,8 +49,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
         if (i == 99) {
             // todo can literally just use new setminattackreach thingy
-            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this));
-            this.goalSelector.a(4, new CustomPathfinderGoalMeleeMovement<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
+            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
             this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
@@ -176,13 +178,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
             extends CustomPathfinderGoalMeleeAttack<T> {
 
-        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit) {
-            super(entityRabbit);
+        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit, double moveSpeed) {
+            super(entityRabbit, moveSpeed);
         }
 
         @Override
-        protected double getAttackReachSq(EntityLiving goalTarget) {
-            return (4.0F + goalTarget.getWidth());
+        protected double getAttackReachSq(EntityLiving target) {
+            return (4.0F + target.getWidth());
         }
     }
 }

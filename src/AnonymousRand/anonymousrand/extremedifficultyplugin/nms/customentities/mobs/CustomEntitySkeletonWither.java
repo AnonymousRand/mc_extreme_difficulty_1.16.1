@@ -5,6 +5,9 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -41,7 +44,6 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.SOUL_SOIL, 1, 1, 0, 1, -1.0, false)); /* custom goal that allows wither skeleton to summon soul sand in a 3 by 3 beneath itself constantly */
         this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.WITHER_ROSE, 1, 0, 0, 0, 0, false)); /* custom goal that allows wither skeleton to summon wither roses on itself constantly */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
@@ -112,7 +114,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     @Override
     public double g(double x, double y, double z) {
-        double d3 = this.locX() - x; /* for determining distance to entities, y-level does not matter for wither skeletons, e.g. mob follow range, attacking (can hit player no matter the y-level) */
+        double d3 = this.locX() - x; /* for determining distance to entities, y-level does not matter for wither skeletons, e.g. mob follow range, attack (can hit player no matter the y-level) */
         double d5 = this.locZ() - z;
 
         return d3 * d3 + d5 * d5;
@@ -120,7 +122,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
 
     @Override
     public double d(Vec3D vec3d) {
-        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y-level does not matter for wither skeletons, e.g. mob follow range, attacking (can hit player no matter the y-level) */
+        double d0 = this.locX() - vec3d.x; /* for determining distance to entities, y-level does not matter for wither skeletons, e.g. mob follow range, attack (can hit player no matter the y-level) */
         double d2 = this.locZ() - vec3d.z;
 
         return d0 * d0 + d2 * d2;
