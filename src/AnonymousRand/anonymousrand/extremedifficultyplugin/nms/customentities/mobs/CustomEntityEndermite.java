@@ -15,8 +15,6 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private AttackLevelingController attackLevelingController = null;
-    public PathfinderGoalSelector vanillaTargetSelector;
-
     public CustomEntityEndermite(World world) {
         super(EntityTypes.ENDERMITE, world);
         this.initCustom();
@@ -138,13 +136,16 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initGoalRemovingMob() {
-        this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
     }
 
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +158,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); // todo custom melee attack
         this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 1.0, random.nextDouble() * 3.0, 0.005)); /* Occasionally teleports to a spot closer in y-level to its target */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob

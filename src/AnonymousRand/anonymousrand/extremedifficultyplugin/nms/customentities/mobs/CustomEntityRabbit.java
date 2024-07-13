@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -16,13 +16,11 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = false;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a5, a15, a25, die;
 
     public CustomEntityRabbit(World world) {
         super(EntityTypes.RABBIT, world);
-        this.vanillaTargetSelector = super.targetSelector;
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -31,13 +29,13 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         this.a15 = false;
         this.a25 = false;
         this.die = false;
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         this.setRabbitType(99);
     }
 
     @Override
     public void initPathfinder() {
-        super.initPathfinder();
+        super.initPathfinder(); // todo custom melee
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
@@ -171,8 +169,12 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>

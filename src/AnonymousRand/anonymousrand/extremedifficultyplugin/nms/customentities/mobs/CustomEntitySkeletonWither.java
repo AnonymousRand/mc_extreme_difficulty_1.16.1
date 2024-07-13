@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -18,13 +18,11 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a12, a50;
 
     public CustomEntitySkeletonWither(World world) {
         super(EntityTypes.WITHER_SKELETON, world);
-        this.vanillaTargetSelector = super.targetSelector;
         this.a(PathType.DAMAGE_FIRE, 0.0F); /* no longer avoids fire */
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.STONE_SWORD)); // makes sure that it has a sword
         this.attacks = 0;
@@ -32,7 +30,7 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
         this.a50 = false;
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(4.0); /* wither skeletons twice as fast and have extra knockback */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -162,7 +160,11 @@ public class CustomEntitySkeletonWither extends EntitySkeletonWither implements 
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 }

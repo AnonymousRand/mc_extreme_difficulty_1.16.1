@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -22,13 +22,11 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a8, a20;
 
     public CustomEntityZombieHusk(World world) {
         super(EntityTypes.HUSK, world);
-        this.vanillaTargetSelector = super.targetSelector;
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -37,7 +35,7 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
         this.a20 = false;
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.575); /* husks move 2.5x faster and always have regen 4 */
         this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 3));
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     @Override
@@ -148,8 +146,12 @@ public class CustomEntityZombieHusk extends EntityZombieHusk implements ICustomH
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     static class NewPathfinderGoalHuskSandStorm extends PathfinderGoal {

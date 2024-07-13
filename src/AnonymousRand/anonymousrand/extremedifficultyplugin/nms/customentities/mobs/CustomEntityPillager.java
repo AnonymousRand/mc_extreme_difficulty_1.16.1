@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedCrossbowAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -10,7 +10,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.targe
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.entity.LivingEntity;
 
 import java.util.Arrays;
 
@@ -20,12 +19,10 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks, attackNum;
 
     public CustomEntityPillager(World world) {
         super(EntityTypes.PILLAGER, world);
-        this.vanillaTargetSelector = super.targetSelector;
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -33,9 +30,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         Arrays.fill(this.dropChanceArmor, 0.0f); /* pillagers can't drop any armor that it wears */
         this.attacks = 0;
         this.attackNum = 0;
-        this.setHealth(15.0F); /* pillagers only have 15 health */
-        ((LivingEntity) this.getBukkitEntity()).setMaxHealth(15.0);
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
 
         if (random.nextDouble() < 0.25) { /* pillagers have a 25% chance to spawn double and a 25% chance to spawn as an illusioner instead */
             new SpawnEntity(this.world, new CustomEntityPillager(this.world), 1, null, null, this, false, true);
@@ -51,7 +46,7 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new NewPathfinderGoalUpgradeArmor(this)); /* custom goal that allows this mob to upgrade its armor gradually as part of the attacks system */
-        this.goalSelector.a(2, new CustomPathfinderGoalRangedCrossbowAttack<>(this, 1.0, 4, 24.0F)); /* shoots every 4 ticks; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attack even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(2, new CustomPathfinderGoalRangedCrossbowAttack<>(this, 16)); /* shoots every 16 ticks; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attack even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
@@ -130,8 +125,12 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
 //    public int[] getAttacksThresholds() {

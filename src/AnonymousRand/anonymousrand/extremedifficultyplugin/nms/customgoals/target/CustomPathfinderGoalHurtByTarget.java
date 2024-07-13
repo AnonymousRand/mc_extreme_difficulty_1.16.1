@@ -15,7 +15,6 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
     private Class<?>[] reinforcementClasses;
 
     public CustomPathfinderGoalHurtByTarget(T goalOwner, Class<?>... reinforcementClasses) {
-
         this(goalOwner, goalOwner.ignoresLOS(), goalOwner.ignoresY(), reinforcementClasses);
     }
 
@@ -24,7 +23,6 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
             boolean ignoreLOS,
             boolean ignoreY,
             Class<?>... reinforcementClasses) {
-
         super(goalOwner, ignoreLOS, ignoreY);
         if (reinforcementClasses.length > 0) {
             this.doesEntityCallForHelp = true;
@@ -62,7 +60,6 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
     public void c() {
         super.c();
 
-        this.goalOwner.setGoalTarget(this.potentialTarget, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true);
         if (this.doesEntityCallForHelp && this.reinforcementClasses != null) {
             this.callForHelp();
         }
@@ -71,6 +68,11 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
     @Override
     protected EntityLiving findNearestPotentialTarget(boolean allowIgnoreY) {
         return this.goalOwner.getLastDamager();
+    }
+
+    @Override
+    protected EntityTargetEvent.TargetReason getTargetReason(EntityLiving target) {
+        return EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY;
     }
 
     // todo test eventually with like piglin or something

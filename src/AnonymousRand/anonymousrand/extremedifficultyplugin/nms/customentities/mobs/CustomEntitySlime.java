@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalBreakBlocksAround;
@@ -15,13 +15,11 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
 
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = false;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a12, a35, deathExplosion;
 
     public CustomEntitySlime(World world) {
         super(EntityTypes.SLIME, world);
-        this.vanillaTargetSelector = super.targetSelector;
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -29,7 +27,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
         this.a12 = false;
         this.a35 = false;
         this.deathExplosion = false;
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     public CustomEntitySlime(World world, int size) {
@@ -194,7 +192,11 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 }

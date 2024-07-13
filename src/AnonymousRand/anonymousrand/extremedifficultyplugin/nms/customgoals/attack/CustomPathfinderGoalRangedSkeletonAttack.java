@@ -24,6 +24,7 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
     @Override
     public void startExecutingMovement() {
         super.startExecutingMovement();
+
         this.strafingBackwards = false;
         this.strafingClockwise = false;
         /* Skeletons and illusioners start strafing immediately, and don't need line of sight to do so */

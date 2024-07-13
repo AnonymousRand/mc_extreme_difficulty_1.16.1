@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.listeners.ListenerLightningStrike;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
@@ -25,11 +25,8 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
        as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    public PathfinderGoalSelector vanillaTargetSelector;
-
     public CustomEntityZombieThor(World world) {
         super(EntityTypes.ZOMBIE, world);
-        this.vanillaTargetSelector = super.targetSelector;
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -42,7 +39,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         this.addEffect(new MobEffect(MobEffects.WEAKNESS, Integer.MAX_VALUE, 1)); /* this allows the zombie to only do ~2 damage at a time instead of 6 */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(55.0);
         this.setHealth(55.0F);
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
         new RunnableLightningEffectStorm(this, 20, true).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 2L); /* thor summons a vanilla lightning storm around it when first spawned for 2 seconds */
     }
 
@@ -139,8 +136,12 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     public static class PathfinderGoalThorSummonLightning extends PathfinderGoal {

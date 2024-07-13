@@ -3,7 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalBreakBlocksAround;
@@ -15,18 +15,16 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
 
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = false;
-    public PathfinderGoalSelector vanillaTargetSelector;
     private int attacks;
     private boolean a15, a40, deathExplosion;
 
     public CustomEntitySlimeMagmaCube(World world) {
         super(EntityTypes.MAGMA_CUBE, world);
-        this.vanillaTargetSelector = super.targetSelector;
         this.attacks = 0;
         this.a15 = false;
         this.a40 = false;
         this.deathExplosion = false;
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this); // remove vanilla HurtByTarget and NearestAttackableTarget goals and replace them with custom ones
     }
 
     public CustomEntitySlimeMagmaCube(World world, int size) {
@@ -163,8 +161,12 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
     }
 
     @Override
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
+    }
+
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     static class PathfinderGoalMagmaCubeFireAndLava extends PathfinderGoal {

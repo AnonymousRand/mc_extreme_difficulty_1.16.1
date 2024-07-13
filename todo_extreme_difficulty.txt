@@ -301,6 +301,8 @@ pufferfish on feet in water only in survival
 
 change eggs lottery to json or something/loot table
 
+should util classes be abstract? or unnecessary
+
 spawn entity nametag option. make sure mobs spawning other mobs should have nametag
 
 find better solution for bed destruction on respawn? see if possible to find bed respawned from, or maybe just set all bed blocks around spawn to air
@@ -353,6 +355,8 @@ evokers, illusioners forget players after 60 ticks instead of 300
 iron golem death silverfish 15 -> 10
 mooshroom death explosion power 15 -> 10
 killer rabbit move speed multiplier 1.4 -> 1.5
+pillager attack cooldown 4 ticks -> 16
+pillager health 15 -> 24
 sheep no longer seek players; they just spontaneously combust
 skeletons move 5 times faster and strafe in circles crazy fast
 skeletons start strafing immediately after seeing player instead of 20 to prevent los exploits

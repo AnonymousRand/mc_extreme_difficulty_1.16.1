@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.AttackLevelingController;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedSkeletonAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -62,12 +62,12 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
                 }
             }

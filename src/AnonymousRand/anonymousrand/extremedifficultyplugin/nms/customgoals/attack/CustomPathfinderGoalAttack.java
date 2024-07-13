@@ -2,7 +2,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.atta
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
-import com.sun.istack.internal.NotNull;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
@@ -15,22 +14,25 @@ import java.util.EnumSet;
 public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & ICustomHostile /* & IAttackLevelingMob*/>
         extends PathfinderGoal {
 
-    // attack
     protected final T goalOwner;
+    // attack
     protected int attackCooldown;
     protected int remainingAttackCooldown;
     // movement
     protected double moveSpeed;
+    protected int repathCooldown;
+    protected int remainingRepathCooldown;
 
     protected CustomPathfinderGoalAttack(T goalOwner, int attackCooldown, double moveSpeed) {
         this.goalOwner = goalOwner;
         this.attackCooldown = attackCooldown;
         this.moveSpeed = moveSpeed;
+        this.repathCooldown = 4 + this.goalOwner.getRandom().nextInt(7);
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
 
     @Override
-    public boolean a() {
+    public final boolean a() {
         return this.shouldExecuteAttack() && this.shouldExecuteMovement();
     }
 
@@ -43,7 +45,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     }
 
     @Override
-    public boolean b() {
+    public final boolean b() {
         return this.shouldContinueExecutingAttack() && this.shouldContinueExecutingMovement();
     }
 
@@ -56,7 +58,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     }
 
     @Override
-    public void c() {
+    public final void c() {
         this.startExecutingAttack();
         this.startExecutingMovement();
     }
@@ -66,10 +68,12 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         this.goalOwner.setAggressive(true);
     }
 
-    protected void startExecutingMovement() {}
+    protected void startExecutingMovement() {
+        this.remainingRepathCooldown = 0;
+    }
 
     @Override
-    public void d() {
+    public final void d() {
         this.stopExecutingAttack();
         this.stopExecutingMovement();
     }
@@ -83,19 +87,19 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     }
 
     @Override
-    public void e() {
+    public final void e() {
         EntityLiving target = this.goalOwner.getGoalTarget();
         if (target == null) {
             return;
         }
 
+        this.remainingAttackCooldown--;
+        this.remainingRepathCooldown--;
         this.tickAttack(target);
         this.tickMovement(target);
     }
 
-    protected void tickAttack(@NotNull EntityLiving target) {
-        this.remainingAttackCooldown--;
-
+    protected void tickAttack(EntityLiving target) {
         if (this.remainingAttackCooldown <= 0) {
             if (this.checkAttack(target)) {
                 this.remainingAttackCooldown = this.attackCooldown;
@@ -105,7 +109,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         }
     }
 
-    protected void tickMovement(@NotNull EntityLiving target) {
+    protected void tickMovement(EntityLiving target) {
         this.goalOwner.getControllerLook().a(target, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
     }
 

@@ -1,89 +1,52 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
-public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityMonster & IRangedEntity & ICrossbow> extends PathfinderGoalCrossbowAttack<T> {
+public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient & IRangedEntity & ICrossbow
+        & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedHandheldAttack<T> {
 
-    protected final T entity;
-    protected CustomPathfinderGoalRangedCrossbowAttack.State crossbowState;
-    protected final double moveSpeed;
-    protected int attackInterval;
-    protected float maxAttackDistSq;
-    protected int seeTime;
-    protected int updatePathDelay;
-
-    public CustomPathfinderGoalRangedCrossbowAttack(T t0, double moveSpeed, int attackInterval, float maxDistance) {
-        super(t0, moveSpeed, maxDistance);
-        this.crossbowState = State.UNCHARGED;
-        this.entity = t0;
-        this.moveSpeed = moveSpeed;
-        this.attackInterval = attackInterval;
-        this.maxAttackDistSq = maxDistance * maxDistance;
-        this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
+    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown) {
+        this(goalOwner, attackCooldown, 1.0);
     }
 
-    private boolean j() {
-        return this.crossbowState == State.UNCHARGED;
+    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown, double moveSpeed) {
+        super(goalOwner, Items.CROSSBOW, attackCooldown, moveSpeed);
     }
 
     @Override
-    public void e() {
-        EntityLiving target = this.entity.getGoalTarget();
-        if (target == null) {
-            return;
-        }
+    protected void stopExecutingAttack() {
+        super.stopExecutingAttack();
 
-        double distanceToSquared = NMSUtil.distSq(this.entity, target, true);
-        /* breaking line of sight does not stop the mob from attack */
-        ++this.seeTime;
-        boolean flag2 = (distanceToSquared > (double) this.maxAttackDistSq || this.seeTime < 5) && this.crossbowState == State.UNCHARGED;
-
-        if (flag2) {
-            --this.updatePathDelay;
-            if (this.updatePathDelay <= 0) {
-                this.entity.getNavigation().a(target, this.j() ? this.moveSpeed : this.moveSpeed * 0.5D);
-                this.updatePathDelay = CustomPathfinderGoalRangedCrossbowAttack.a.a(this.entity.getRandom());
-            }
-        } else {
-            this.updatePathDelay = 0;
-            this.entity.getNavigation().o();
-        }
-
-        this.entity.getControllerLook().a(target, 30.0F, 30.0F);
-        if (this.crossbowState == State.UNCHARGED) {
-            if (!flag2) {
-                this.entity.c(ProjectileHelper.a(this.entity, Items.CROSSBOW));
-                this.crossbowState = State.CHARGING;
-                (this.entity).b(true);
-            }
-        } else if (this.crossbowState == State.CHARGING) {
-            if (!this.entity.isHandRaised()) {
-                this.crossbowState = State.UNCHARGED;
-            }
-
-            int ticksUsingItem = this.entity.dZ();
-
-            if (ticksUsingItem >= this.attackInterval - 1) { // attack speed is now controllable with attribute instead of fixed
-                                                             // -1 since extra tick for READY_TO_ATTACK (and it's necessary for animation)
-                this.entity.releaseActiveItem();
-                this.crossbowState = State.READY_TO_ATTACK;
-                (this.entity).b(false);
-            }
-        } else if (this.crossbowState == State.READY_TO_ATTACK) {
-            // skip straight past CHARGED since that incurs extra delays
-            (this.entity).a(target, 1.0F); // shoot()
-            ItemStack itemstack1 = this.entity.b(ProjectileHelper.a(this.entity, Items.CROSSBOW));
-
-            ItemCrossbow.a(itemstack1, false);
-            this.crossbowState = State.UNCHARGED;
-        }
+        // uncharge crossbow
+        this.goalOwner.b(false);                               // setCharging()
+        ItemCrossbow.a(this.goalOwner.getActiveItem(), false); // setCrossbowCharged()
     }
 
-    enum State {
-        UNCHARGED, CHARGING, READY_TO_ATTACK;
-        State() {}
+    @Override
+    protected void tickAttack(EntityLiving target) {
+        // animate crossbow: uncharged -> charging, charging -> charged, and charged -> uncharged states respectively
+        if (this.remainingAttackCooldown == this.attackCooldown - 1) {
+            this.goalOwner.c(ProjectileHelper.a(this.goalOwner, Items.CROSSBOW)); // setActiveHand()
+            this.goalOwner.b(true);                                               // setCharging()
+        } else if (this.remainingAttackCooldown == 1) {
+            this.goalOwner.releaseActiveItem(); // todo test need?
+            this.goalOwner.b(false);                                              // setCharging()
+        } else if (this.remainingAttackCooldown == 0) {
+            // getActiveItem() still seems to work despite releaseActiveItem() and literally setting it to
+            // ItemStack.EMPTY; vanilla does this too in d() though so not that worried
+            ItemCrossbow.a(this.goalOwner.getActiveItem(), false);                // setCrossbowCharged()
+        }
+
+        super.tickAttack(target);
+    }
+
+    @Override
+    protected void attack(EntityLiving target) {
+        this.goalOwner.a(target, 1.0F); // shoot()
     }
 }

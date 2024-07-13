@@ -146,16 +146,17 @@ public class CustomEntityBlaze extends EntityBlaze implements ICustomHostile, IA
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public PathfinderGoalSelector vanillaTargetSelector;
-
     private void initGoalRemovingMob() {
-        this.vanillaTargetSelector = super.targetSelector;
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
     }
 
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

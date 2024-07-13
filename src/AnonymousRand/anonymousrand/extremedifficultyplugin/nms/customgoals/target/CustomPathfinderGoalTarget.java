@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.targ
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
@@ -10,6 +11,7 @@ import java.util.function.Predicate;
 
 public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & ICustomHostile> extends PathfinderGoal {
 
+    protected static final EntityTargetEvent.TargetReason TARGET_REASON = EntityTargetEvent.TargetReason.UNKNOWN;
     protected final T goalOwner;
     protected final EntityFilter targetCondition;
     protected final EntityFilter targetConditionIgnoreLOS;
@@ -62,6 +64,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
 
     @Override // startExecuting()
     public void c() {
+        this.goalOwner.setGoalTarget(this.potentialTarget, this.getTargetReason(this.potentialTarget), true);
         // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
         this.targetCondition.setDetectionRange(this.getDetectionRange());
     }
@@ -70,10 +73,12 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     public void d() {
         this.goalOwner.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
     }
+
+    protected abstract EntityLiving findNearestPotentialTarget(boolean allowIgnoreY);
+
+    protected abstract EntityTargetEvent.TargetReason getTargetReason(EntityLiving target);
     
     protected double getDetectionRange() {
         return this.goalOwner.getDetectionRange();
     }
-
-    protected abstract EntityLiving findNearestPotentialTarget(boolean allowIgnoreY);
 }

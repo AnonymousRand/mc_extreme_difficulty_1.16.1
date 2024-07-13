@@ -52,8 +52,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         this.setHealth(30.0F);
 
         if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attack while trading */
-            /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */
-            this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinRangedCrossbowAttack<>(this, 1.0, 30, 15, 40.0F)); /* uses the custom goal that attacks regardless of the y-level */
+            /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */ // todo
+            this.goalSelector.a(0, new CustomPathfinderGoalRangedCrossbowAttack<>(this, 30)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
             this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
             /* todo: piglins attack 2 times faster when frenzied */
@@ -391,27 +391,27 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-    static class PathfinderGoalPiglinRangedCrossbowAttack<T extends CustomEntityPiglin> extends CustomPathfinderGoalRangedCrossbowAttack<T> {
-
-        private final int attackIntervalNormal;
-        private final int attackIntervalFrenzied;
-
-        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double moveSpeed, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
-            super(piglin, moveSpeed, attackIntervalNormal, maxDistance);
-            this.attackIntervalNormal = attackIntervalNormal;
-            this.attackIntervalFrenzied = attackIntervalFrenzied;
-        }
-
-        @Override
-        public void e() {
-            // control frenzied vs. non-frenzied attack speeds with hopefully optimal short-circuit evals
-            if (this.attackInterval == this.attackIntervalFrenzied && this.entity.frenzyTicks <= 0) {
-                this.attackInterval = this.attackIntervalNormal;
-            } else if (this.entity.frenzyTicks > 0 && this.attackInterval == this.attackIntervalNormal) {
-                this.attackInterval = this.attackIntervalFrenzied;
-            }
-
-            super.e();
-        }
-    }
+//    static class PathfinderGoalPiglinRangedCrossbowAttack<T extends CustomEntityPiglin> extends CustomPathfinderGoalRangedCrossbowAttack<T> {
+//
+//        private final int attackIntervalNormal;
+//        private final int attackIntervalFrenzied;
+//
+//        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double moveSpeed, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
+//            super(piglin, moveSpeed, attackIntervalNormal, maxDistance);
+//            this.attackIntervalNormal = attackIntervalNormal;
+//            this.attackIntervalFrenzied = attackIntervalFrenzied;
+//        }
+//
+//        @Override
+//        public void e() {
+//            // control frenzied vs. non-frenzied attack speeds with hopefully optimal short-circuit evals
+//            if (this.attackInterval == this.attackIntervalFrenzied && this.entity.frenzyTicks <= 0) {
+//                this.attackInterval = this.attackIntervalNormal;
+//            } else if (this.entity.frenzyTicks > 0 && this.attackInterval == this.attackIntervalNormal) {
+//                this.attackInterval = this.attackIntervalFrenzied;
+//            }
+//
+//            super.e();
+//        }
+//    }
 }

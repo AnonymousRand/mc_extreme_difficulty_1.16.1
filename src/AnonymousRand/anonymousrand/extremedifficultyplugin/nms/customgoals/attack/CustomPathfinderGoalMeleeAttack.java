@@ -14,7 +14,6 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected double minAttackReach;
     // movement
     protected PathEntity path;
-    protected int repathCooldown;
     protected double oldTargetX;
     protected double oldTargetY;
     protected double oldTargetZ;
@@ -50,7 +49,8 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
 
     @Override
     protected void startExecutingMovement() {
-        this.repathCooldown = 0;
+        super.startExecutingMovement();
+
         EntityLiving target = this.goalOwner.getGoalTarget();
         if (target != null) {
             this.oldTargetX = Double.MAX_VALUE;
@@ -65,12 +65,12 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected void tickMovement(EntityLiving target) {
         super.tickMovement(target);
 
-        this.repathCooldown--;
+        this.remainingRepathCooldown--;
         double distSqToTarget = NMSUtil.distSq(this.goalOwner, target, false);
 
-        // repath to target once repathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)
+        // repath to target once remainingRepathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)
         boolean shouldRepathToTarget =
-                this.repathCooldown <= 0
+                this.remainingRepathCooldown <= 0
                         && (NMSUtil.distSq(target.locX(), target.locY(), target.locZ(),
                         this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
                         || this.goalOwner.getRandom().nextFloat() < 0.1F); // increased from vanilla 0.05 to 0.1
@@ -78,15 +78,15 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
             this.oldTargetX = target.locX();
             this.oldTargetY = target.locY();
             this.oldTargetZ = target.locZ();
-            this.repathCooldown = 4 + this.goalOwner.getRandom().nextInt(7);
+            this.remainingRepathCooldown = this.repathCooldown;
             if (distSqToTarget > 1024.0) {
-                this.repathCooldown += 10;
+                this.remainingRepathCooldown += 10;
             } else if (distSqToTarget > 256.0) {
-                this.repathCooldown += 5;
+                this.remainingRepathCooldown += 5;
             }
 
             if (!this.goalOwner.getNavigation().a(target, this.moveSpeed)) { // tryMoveTo()
-                this.repathCooldown += 15;
+                this.remainingRepathCooldown += 15;
             }
         }
     }

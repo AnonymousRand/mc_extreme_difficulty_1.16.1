@@ -91,17 +91,6 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
     }
 
     @Override
-    public void c() {
-        super.c();
-
-        if (this.potentialTarget != null) {
-            this.goalOwner.setGoalTarget(this.potentialTarget, this.potentialTarget instanceof EntityPlayer
-                    ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
-                    true);
-        }
-    }
-
-    @Override
     protected S findNearestPotentialTarget(boolean allowIgnoreY) {
         EntityFilter targetCondition; // I'm sure there's a cleaner way but I can't think of it at the moment
         if (allowIgnoreY) {
@@ -117,5 +106,11 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
             return NMSUtil.getNearestEntityWithinRange(this.targetClass, targetCondition, this.goalOwner,
                     this.getDetectionRange(), 4.0D, this.getDetectionRange());
         }
+    }
+
+    @Override
+    protected EntityTargetEvent.TargetReason getTargetReason(EntityLiving target) {
+        return target instanceof EntityPlayer
+                ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY;
     }
 }

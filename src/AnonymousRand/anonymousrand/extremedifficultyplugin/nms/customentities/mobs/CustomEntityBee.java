@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -63,15 +63,16 @@ public class CustomEntityBee extends EntityBee implements ICustomHostile, IGoalR
     //                                     IGoalRemovingMob                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public PathfinderGoalSelector vanillaTargetSelector;
-
     private void initGoalRemovingMob() {
-        this.vanillaTargetSelector = super.targetSelector;
-        VanillaPathfinderGoalsAccess.removePathfinderGoals(this);
+        VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
+    }
+
+    public PathfinderGoalSelector getVanillaGoalSelector() {
+        return super.goalSelector;
     }
 
     public PathfinderGoalSelector getVanillaTargetSelector() {
-        return this.vanillaTargetSelector;
+        return super.targetSelector;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

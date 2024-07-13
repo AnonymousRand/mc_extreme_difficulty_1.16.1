@@ -2,7 +2,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsAccess;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityShulkerBullet;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.misc.CustomEntityAreaEffectCloud;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
@@ -148,7 +148,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
             CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 3.0F,20, 0);
             areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
-            for (PathfinderGoal goal : VanillaPathfinderGoalsAccess.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
+            for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
                 ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
             }
         }
