@@ -31,9 +31,9 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     protected void tickMovement(EntityLiving target) {
         super.tickMovement(target);
 
-        // repath to target if it can't be seen but there is a way to get to the target
-        if (this.remainingRepathCooldown <= 0 && !this.goalOwner.getEntitySenses().a(target)
-                && this.goalOwner.getNavigation().a(this.goalOwner.getGoalTarget(), 0) != null) {
+        // repath to target if it can't be seen
+        // Note: checking if there is a way to get to the target doesn't seem to work
+        if (this.remainingRepathCooldown <= 0 && !this.goalOwner.getEntitySenses().a(target)) {
             this.remainingRepathCooldown = this.repathCooldown;
             this.targetSeenTicks = 0;
         } else {

@@ -65,9 +65,6 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected void tickMovement(EntityLiving target) {
         super.tickMovement(target);
 
-        this.remainingRepathCooldown--;
-        double distSqToTarget = NMSUtil.distSq(this.goalOwner, target, false);
-
         // repath to target once remainingRepathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)
         boolean shouldRepathToTarget =
                 this.remainingRepathCooldown <= 0
@@ -79,6 +76,8 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
             this.oldTargetY = target.locY();
             this.oldTargetZ = target.locZ();
             this.remainingRepathCooldown = this.repathCooldown;
+
+            double distSqToTarget = NMSUtil.distSq(this.goalOwner, target, false);
             if (distSqToTarget > 1024.0) {
                 this.remainingRepathCooldown += 10;
             } else if (distSqToTarget > 256.0) {
