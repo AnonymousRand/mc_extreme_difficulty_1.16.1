@@ -174,7 +174,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
         // todo endermen still losing target that looked if they hit the enderman
         this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(1, new CustomEntityEnderman.PathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, ignores invis/skulls to initially find a target or maintain it as the target, and periodically retargets the nearest option */
         this.targetSelector.a(3, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
@@ -350,10 +350,10 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
     }
 
-    static class PathfinderGoalNearestAttackableTarget<S extends EntityLiving,
-            T extends CustomEntityEnderman & ICustomHostile> extends CustomPathfinderGoalNearestAttackableTarget<S, T> {
+    static class PathfinderGoalNearestAttackableTarget<S extends EntityLiving>
+            extends CustomPathfinderGoalNearestAttackableTarget<S, CustomEntityEnderman> {
 
-        public PathfinderGoalNearestAttackableTarget(T enderman, Class<S> targetClass) {
+        public PathfinderGoalNearestAttackableTarget(CustomEntityEnderman enderman, Class<S> targetClass) {
             super(enderman, targetClass);
         }
 
@@ -366,12 +366,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
     }
 
-    static class PathfinderGoalHurtByTarget<T extends CustomEntityEnderman & ICustomHostile>
-            extends CustomPathfinderGoalHurtByTarget<T> {
+    static class PathfinderGoalHurtByTarget extends CustomPathfinderGoalHurtByTarget<CustomEntityEnderman> {
 
-        public PathfinderGoalHurtByTarget(
-                T enderman,
-                Class<?>... reinforcementClasses) {
+        public PathfinderGoalHurtByTarget(CustomEntityEnderman enderman, Class<?>... reinforcementClasses) {
             super(enderman, enderman.ignoresLOS(), enderman.ignoresY(), reinforcementClasses);
         }
 

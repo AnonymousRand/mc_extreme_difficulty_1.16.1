@@ -103,6 +103,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     protected void tickAttack(EntityLiving target) {
         if (this.remainingAttackCooldown <= 0) {
             if (this.checkAttack(target)) {
+                // only reset cooldown if attack was successful
                 this.remainingAttackCooldown = this.attackCooldown;
                 // this.goalOwner.increaseAttacks(1); // todo uncomment eventually
                 this.attack(target);
