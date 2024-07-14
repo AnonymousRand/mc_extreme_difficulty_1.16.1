@@ -8,9 +8,9 @@ import net.minecraft.server.v1_16_R1.Item;
 
 /**
  * A subclass of <code>CustomPathfinderGoalRangedAttack</code> that makes sure the correct item is in the main hand to
- * attack, and that the animations of the hand holding the weapon are played correctly.
+ * attack, and that the animations of the hand holding the weapon are played correctly. Note that this class has no
+ * vanilla analog, but its logic is based off of drowned's trident attack goal (its nested class <code>f</code>).
  */
-// todo uncomment
 public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedAttack<T> {
 

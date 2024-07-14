@@ -8,8 +8,10 @@ import org.bukkit.Bukkit;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-// Entire class rewritten instead of inherited from PathfinderTargetCondition in order to apply our own logic
-// without being too hacky or needing too much reflection (everything's private :/)
+/**
+ * My rewrite of vanilla's <code>PathfinderTargetCondition</code>. Use <code>EntityFilter.BASE</code> to
+ * test for the basic conditions: not null, not spectator/creative, and alive.
+ */
 public class EntityFilter {
 
     public static final EntityFilter BASE = new EntityFilter(-1.0);
@@ -33,11 +35,16 @@ public class EntityFilter {
         this.extraEntityPredicate = extraEntityPredicate;
     }
 
+    /**
+     * Apply filter to target, ignoring invis/skulls, and supporting ignoring y-level and line of sight.
+     */
     public boolean test(@Nullable EntityLiving target) {
         return this.test(null, target);
     }
 
-    // Logic heavily simplified to ignore invis/skulls and support ignoring y-level and line of sight
+    /**
+     * Apply filter to target, ignoring invis/skulls, and supporting ignoring y-level and line of sight.
+     */
     public boolean test(@Nullable EntityLiving from, @Nullable EntityLiving target) {
         // BASE checks
         if (target == null) {

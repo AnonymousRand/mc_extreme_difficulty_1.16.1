@@ -322,14 +322,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer, CustomEntityEnderman> {
 
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
-            super(enderman, EntityPlayer.class, enderman.ignoresLOS(), enderman.ignoresY(), 1, (entityLiving) ->
+            super(enderman, EntityPlayer.class, enderman.ignoresLOS(), enderman.ignoresY(), 2, (entityLiving) ->
                     enderman.validPlayerIsLooking((EntityPlayer) entityLiving));
         }
 
-        // Doesn't retarget or any of that
+        /* Endermen will never forget a player who looked at them */ // todo test if logging off affects targeting stuff. also test in vanilla
         @Override
         public boolean b() {
-            return EntityFilter.BASE.test(this.potentialTarget);
+            return EntityFilter.BASE.test(this.goalOwner, this.potentialTarget);
         }
 
         @Override
@@ -357,9 +357,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             super(enderman, targetClass);
         }
 
+        /* Endermen will not deaggro a player who looked at them if they go out of range */
         @Override
         public void d() {
-            /* Endermen will not deaggro a player who looked at them if they go out of range */
             if (!this.goalOwner.hasBeenLookedAt()) {
                 super.d();
             }
@@ -375,10 +375,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             super(enderman, enderman.ignoresLOS(), enderman.ignoresY(), reinforcementClasses);
         }
 
+        /* Endermen will not deaggro a player who looked at them if they hit the enderman and then went out of range */
         @Override
         public void d() {
-            /* Endermen will not deaggro a player who looked at them if they hit the enderman
-               and then went out of range */
             if (!this.goalOwner.hasBeenLookedAt()) {
                 super.d();
             }
@@ -393,8 +392,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             this.enderman = enderman;
         }
 
-        @Override
         /* Endermen pick up blocks 5 times as frequently */
+        @Override
         public boolean a() {
             return this.enderman.getCarried() == null
                     && this.enderman.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)

@@ -6,6 +6,10 @@ import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 
 // originally PathfinderGoalBowShoot
+/**
+ * A subclass of <code>CustomPathfinderGoalRangedHandheldAttack</code> that handles skeleton strafing movement,
+ * analogous to <code>PathfinderGoalBowShoot</code>.
+ */
 public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedHandheldAttack<T> {
 
@@ -36,9 +40,11 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
         super.tickMovement(target);
         this.strafingTime++;
 
-        // if kinda far from the target, stop strafing backwards, and if too close to target, strafe backwards
+        /* Skeletons and illusioners try to maintain a distance from their targets equal to 50% of their detection
+           range */
         this.strafingBackwards = !(NMSUtil.distSq(this.goalOwner, target, true) > this.getDetectionRangeSq() * 0.5);
-        // every 10 ticks of strafing, have a 50% chance to switch the rotation of strafing
+        /* Skeletons and illusioners have an increased frequency of switching strafe rotation: every 10 ticks of
+           strafing, they have a 50% chance to switch the rotation direction */
         if (this.strafingTime % 10 == 0) {
             if (this.goalOwner.getRandom().nextDouble() < 0.5) {
                 this.strafingClockwise = !this.strafingClockwise;

@@ -6,12 +6,13 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.EnumSet;
 
-// Entire class rewritten instead of inherited from PathfinderGoalMeleeAttack in order to apply our own logic
-// without being too hacky or needing too much reflection (everything's private :/)
-// Attack and movement also split up more clearly; you should never have to override a(), b(), c(), d(), or e() directly
-// (the only reason they are not separate goals is that they must execute together/meet the same conditions to execute)
 // todo uncomment once all have been converted
-public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & ICustomHostile /* & IAttackLevelingMob*/>
+/**
+ * The base attack goal in my rewrite of vanilla's attack goals. Some (imo) unnecessary details have been simplified for the sake of
+ * consistency and clean code. Attack and movement have also been split up more clearly; the only reason they are not
+ * separate goals is that they must meet the same conditions to execute.
+ */
+public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends PathfinderGoal {
 
     protected final T goalOwner;

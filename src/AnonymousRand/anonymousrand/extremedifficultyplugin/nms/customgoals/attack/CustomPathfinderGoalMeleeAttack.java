@@ -5,9 +5,12 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 
-// Note that melee attacks will never ignore y-level, even if the target goal does,
-// so hope/make sure that those mobs have some way to get closer to the target!
-public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile>
+/**
+ * The base melee attack goal in my rewrite of vanilla's attack goals, analogous to
+ * <code>PathfinderGoalMeleeAttack</code>. Note that melee attacks don't ignore y-level even if the targeting goal
+ * does, so make sure those mobs can change their y-level to get within melee range of their targets.
+ */
+public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends CustomPathfinderGoalAttack<T> {
 
     // attack

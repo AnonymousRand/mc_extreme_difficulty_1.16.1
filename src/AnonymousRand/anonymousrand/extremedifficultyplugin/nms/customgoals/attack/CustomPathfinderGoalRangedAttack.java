@@ -4,11 +4,12 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 
-// Entire class rewritten instead of inherited from PathfinderGoalArrowAttack in order to apply our own logic
-// without being too hacky or needing too much reflection (everything's private :/)
-// todo uncomment once all have been converted
+/**
+ * The base ranged attack goal in my rewrite of vanilla's attack goals, analogous to
+ * <code>PathfinderGoalArrowAttack</code>.
+ */
 public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity
-        & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttack<T> {
+        & ICustomHostile/* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttack<T> {
 
     // movement
     protected int targetSeenTicks;

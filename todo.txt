@@ -13,7 +13,9 @@ stopped after: customentityenderman
 consolidate all rangedattackgoals into one and just choose projectile?
     etiehr way, try to make blaze fireball goal more like the other ones, and separate melee attack goal?
 
-javadoc all attack goal classes? and revise multiline comments in initpathfinder()s
+revise multiline comments in initpathfinder()s
+
+javadoc all util stuff?
 
 rename all newpathfindergoal to custompathfindergoal
 
