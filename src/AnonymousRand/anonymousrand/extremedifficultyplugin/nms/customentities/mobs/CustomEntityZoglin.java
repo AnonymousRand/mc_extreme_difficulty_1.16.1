@@ -51,20 +51,20 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+        boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
 
         if (this.world.isClientSide) {
             return false;
-        } else if (wasDamageTaken && damageSource.getEntity() instanceof EntityLiving) {
+        } else if (damageSuccess && damageSource.getEntity() instanceof EntityLiving) {
             EntityLiving entityLiving = (EntityLiving) damageSource.getEntity();
 
             if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0D)) { /* only retaliate against players */
                 this.k(entityLiving);
             }
 
-            return wasDamageTaken;
+            return damageSuccess;
         } else {
-            return wasDamageTaken;
+            return damageSuccess;
         }
     }
 

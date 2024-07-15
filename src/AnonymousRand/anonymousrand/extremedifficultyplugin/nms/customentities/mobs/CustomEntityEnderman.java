@@ -216,11 +216,16 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             double y = this.locY() + random.nextInt(10);
             double z = this.locZ() + (random.nextDouble() - 0.5D) * 20.0D;
 
-            boolean success = this.teleportTo(x, y, z);
-            return success;
+            boolean teleportSuccess = this.teleportTo(x, y, z);
+            return teleportSuccess;
         } else {
             return false;
         }
+    }
+
+    // Overload
+    private boolean teleportTo(Entity target) {
+        return this.teleportTo(target.locX(), target.locY(), target.locZ());
     }
 
     // Overrides private o() (teleportTo())
@@ -283,8 +288,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 return false;
             }
 
-            boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
-            if (wasDamageTaken && this.isAlive()) {
+            boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
+            if (damageSuccess && this.isAlive()) {
                 /* After 40 attacks, endermen summon an endermite when hit and not killed */
                 if (this.getAttacks() >= 40) {
                     new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 1, null, null, this, false,
@@ -292,14 +297,14 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 }
             }
 
-            return wasDamageTaken;
+            return damageSuccess;
         }
     }
 
     @Override
     public void tick() {
         super.tick();
-
+        
         if (this.getGoalTarget() != null) {
             EntityLiving target = this.getGoalTarget();
 
@@ -309,7 +314,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
                     || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
                         < 0.05 / Math.max(NMSUtil.distSq(this, target, true), 0.05))) {
-                this.teleportTo(target.locX(), target.locY(), target.locZ());
+                this.teleportTo(target);
             }
         }
     }
@@ -336,6 +341,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         public void c() {
             super.c();
             this.goalOwner.setLookedAt(true);
+
+            /* Endermen have a 15% chance of teleporting to its target the instant it is looked at, hopefully for a
+             * jumpscare-ish effect */ // todo test
+            if (this.goalOwner.getGoalTarget() != null && this.goalOwner.getRandom().nextDouble() < 0.15) {
+                this.goalOwner.teleportTo(this.goalOwner.getGoalTarget());
+            }
         }
 
         @Override
@@ -409,11 +420,13 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             IBlockData targetBlockData = world.getType(targetBlockPosition);
             Block targetBlock = targetBlockData.getBlock();
 
-            Vec3D idk1 = new Vec3D((double) MathHelper.floor(this.enderman.locX()) + 0.5D, (double) y + 0.5D,
+            Vec3D idk1 =
+                    new Vec3D((double) MathHelper.floor(this.enderman.locX()) + 0.5D, (double) y + 0.5D,
                     (double) MathHelper.floor(this.enderman.locZ()) + 0.5D);
             Vec3D idk2 = new Vec3D((double) x + 0.5D, (double) y + 0.5D, (double) z + 0.5D);
-            MovingObjectPositionBlock movingObjectPositionBlock = world.rayTrace(new RayTrace(idk1, idk2,
-                    RayTrace.BlockCollisionOption.OUTLINE, RayTrace.FluidCollisionOption.NONE, this.enderman));
+            MovingObjectPositionBlock movingObjectPositionBlock =
+                    world.rayTrace(new RayTrace(idk1, idk2, RayTrace.BlockCollisionOption.OUTLINE,
+                    RayTrace.FluidCollisionOption.NONE, this.enderman));
 
             if (movingObjectPositionBlock.getBlockPosition().equals(targetBlockPosition)
                     && targetBlock.a(TagsBlock.ENDERMAN_HOLDABLE)) {

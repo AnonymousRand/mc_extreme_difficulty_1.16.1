@@ -50,12 +50,12 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
-        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
+        boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
+        if (damageSuccess && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer && random.nextDouble() < 0.75) { /* vexes have a 75% chance to duplicate when hit by player and not killed */
             new SpawnEntity(this.world, new CustomEntityVex(this.world), 1, null, null, this, false, false);
         }
 
-        return wasDamageTaken;
+        return damageSuccess;
     }
 
     public double getDetectionRange() { /* vexes have 32 bock detection range */

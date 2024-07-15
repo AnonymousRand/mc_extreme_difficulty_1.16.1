@@ -239,9 +239,9 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+        boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
         /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
-        if (wasDamageTaken && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer
+        if (damageSuccess && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer
                 && this.firstDuplicate) {
             this.firstDuplicate = false;
             new SpawnEntity(this.world, new EntityBat(EntityTypes.BAT, this.world), random.nextInt(3) + 6,
@@ -255,7 +255,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             }
         }
 
-        return wasDamageTaken;
+        return damageSuccess;
     }
 
     // Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out)

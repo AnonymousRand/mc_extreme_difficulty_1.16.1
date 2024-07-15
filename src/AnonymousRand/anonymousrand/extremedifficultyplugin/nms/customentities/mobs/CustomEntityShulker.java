@@ -48,13 +48,13 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        boolean wasDamageTaken = super.damageEntity(damageSource, damageAmount);
+        boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
 
-        if (wasDamageTaken && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
+        if (damageSuccess && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
-        return wasDamageTaken;
+        return damageSuccess;
     }
 
     @Override

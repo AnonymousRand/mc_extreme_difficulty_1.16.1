@@ -24,6 +24,8 @@ make buffmobs goal and possibly getbuffs less janky? such as not requiring manua
 
 things in terms of getattackthresholds instead of hardcoded
 
+stadnardize comment location outside/inside method (inside if possible?)
+
 remove checkdespawn for mobs with follow distance <= 32
 
 
@@ -350,6 +352,7 @@ endermen look aggro distance 128 -> 64
 endermen randomteleportonhit vertical range -32 to 32 -> 0 to 10
 endermen pick up blocks chance per check 1/20 -> 1/4 (5 times as frequent)
 endermen put down blocks chance per check 1/2000 -> 1/400 (5 times as frequent)
+endermen have a 15% chance to teleport to you if you looked at it
 evokers, illusioners forget players after 60 ticks instead of 300
 iron golem death silverfish 15 -> 10
 mooshroom death explosion power 15 -> 10
