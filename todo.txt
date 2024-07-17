@@ -149,6 +149,8 @@ make thor lightning storm less constant and anIgnoreYing
 
 thor general refactoring (sketchy ListenerLightningStrike.storm?)
 
+taming a cat or ocelot sumkins creepers nearby?
+
 all tickslived == 5 to spawn listener?
     but also try to move stuff from listeners like listenermobdeath to the mobs themselves. or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
 
