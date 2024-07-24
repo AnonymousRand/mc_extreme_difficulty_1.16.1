@@ -177,7 +177,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
                 double extraRadius =
                         Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
                 float explosionRadius =
-                        (float) ((this.isPowered() ? 75.0 : this.explosionRadius) + Math.max(extraRadius, 0.0));
+                        (float) ((this.isPowered() ? 50.0 : this.explosionRadius) + Math.max(extraRadius, 0.0));
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, false);
                 this.world.getServer().getPluginManager().callEvent(event);
 

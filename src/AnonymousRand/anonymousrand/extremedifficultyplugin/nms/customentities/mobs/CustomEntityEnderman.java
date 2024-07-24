@@ -11,9 +11,13 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class CustomEntityEnderman extends EntityEnderman implements ICustomHostile, IAttackLevelingMob {
 
@@ -172,7 +176,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
-        // todo endermen still losing target that looked if they hit the enderman
         this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
         this.targetSelector.a(1, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, ignores invis/skulls to initially find a target or maintain it as the target, and periodically retargets the nearest option */
@@ -326,12 +329,34 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     static class PathfinderGoalPlayerWhoLookedAtTarget
             extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer, CustomEntityEnderman> {
 
+        private final ArrayList<UUID> previousTargetUUIDs;
+        private final EntityFilter targetAgainCondition;
+
         public PathfinderGoalPlayerWhoLookedAtTarget(CustomEntityEnderman enderman) {
             super(enderman, EntityPlayer.class, enderman.ignoresLOS(), enderman.ignoresY(), 2, (entityLiving) ->
                     enderman.validPlayerIsLooking((EntityPlayer) entityLiving));
+            this.previousTargetUUIDs = new ArrayList<>();
+            this.targetAgainCondition = new EntityFilter(this.getDetectionRange());
         }
 
-        /* Endermen will never forget a player who looked at them */ // todo test if logging off affects targeting stuff. also test in vanilla
+        @Override
+        public boolean a() {
+            /* Endermen remember players that looked at them even after relogging or otherwise being deaggroed */
+            if (this.goalOwner.getRandom().nextDouble() < 0.1
+                    && this.goalOwner.getMinecraftServer().getPlayerList() != null) {
+                for (UUID targetUUID : this.previousTargetUUIDs) {
+                    EntityPlayer target = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
+                    if (this.targetAgainCondition.test(this.goalOwner, target)) {
+                        this.potentialTarget = target;
+                        return true;
+                    }
+                }
+            }
+
+            return super.a();
+        }
+
+        /* Endermen will never forget a player who looked at them */
         @Override
         public boolean b() {
             return EntityFilter.BASE.test(this.goalOwner, this.potentialTarget);
@@ -342,10 +367,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             super.c();
             this.goalOwner.setLookedAt(true);
 
-            /* Endermen have a 15% chance of teleporting to its target the instant it is looked at, hopefully for a
-             * jumpscare-ish effect */ // todo test
-            if (this.goalOwner.getGoalTarget() != null && this.goalOwner.getRandom().nextDouble() < 0.15) {
-                this.goalOwner.teleportTo(this.goalOwner.getGoalTarget());
+            if (this.goalOwner.getGoalTarget() != null) {
+                /* Endermen have a 15% chance of teleporting to its target the instant it is looked at, hopefully for a
+                 * jumpscare-ish effect */
+                if (this.goalOwner.getRandom().nextDouble() < 0.15) {
+                    this.goalOwner.teleportTo(this.goalOwner.getGoalTarget());
+                }
+
+                // remember player
+                this.previousTargetUUIDs.add(this.goalOwner.getGoalTarget().getUniqueID());
             }
         }
 

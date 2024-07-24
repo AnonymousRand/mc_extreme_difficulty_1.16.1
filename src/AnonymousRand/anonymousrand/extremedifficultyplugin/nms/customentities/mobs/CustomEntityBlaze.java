@@ -43,7 +43,6 @@ public class CustomEntityBlaze extends EntityBlaze
         this.a(PathType.WATER, 0.0F);
 
         this.rapidFire = false;
-        this.fireballAttackPathfinderGoal = new CustomPathfinderGoalRangedAttack<>(this, 6);
     }
 
     private void initAttributes() {
@@ -115,7 +114,7 @@ public class CustomEntityBlaze extends EntityBlaze
     private AttackLevelingController attackLevelingController = null;
 
     private void initAttackLevelingMob() {
-        this.attackLevelingController = new AttackLevelingController(100, 200, 300);
+        this.attackLevelingController = new AttackLevelingController(75, 150, 250);
     }
 
     public int getAttacks() {
@@ -126,7 +125,7 @@ public class CustomEntityBlaze extends EntityBlaze
         for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
-                /* After 100 attacks, blazes shoot an exploding fireball with power 1 */
+                /* After 75 attacks, blazes shoot an exploding fireball with power 1 */
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
                 double d3 = this.getGoalTarget().locZ() - this.locZ();
@@ -135,10 +134,10 @@ public class CustomEntityBlaze extends EntityBlaze
                 largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
                 this.world.addEntity(largeFireball);
             } else if (metThreshold == attackThresholds[1]) {
-                /* After 200 attacks, blazes shoot out a ring of fireballs */
+                /* After 150 attacks, blazes shoot out a ring of fireballs */
                 new RunnableRingOfFireballs(this, 0.5, 1).run();
             } else if (metThreshold == attackThresholds[2]) {
-                /* After 300 attacks, blazes enter rapid fire state, which reduces attack cooldown to 4 ticks */
+                /* After 250 attacks, blazes enter rapid fire state, which reduces attack cooldown to 4 ticks */
                 this.fireballAttackPathfinderGoal.setAttackCooldown(4);
                 this.rapidFire = true;
             }
@@ -206,10 +205,12 @@ public class CustomEntityBlaze extends EntityBlaze
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
+        this.fireballAttackPathfinderGoal = new CustomPathfinderGoalRangedAttack<>(this, 6);
+
         this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, this.fireballAttackPathfinderGoal);                                             /* Blazes do not pause between each volley and instead shoots constantly every 6 ticks */
-        this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this, 20)); // todo test new ranged and melee goals
+        this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this, 20));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
@@ -269,107 +270,4 @@ public class CustomEntityBlaze extends EntityBlaze
             }
         }
     }
-
-//    static class PathfinderGoalBlazeAttack extends PathfinderGoal {
-//        private final CustomEntityBlaze blaze;
-//        private final World nmsWorld;
-//        private int rangedRemainingAttackCooldown;
-//        private int meleeRemainingAttackCooldown;
-//
-//        public PathfinderGoalBlazeAttack(CustomEntityBlaze entityBlaze) {
-//            this.blaze = entityBlaze;
-//            this.nmsWorld = entityBlaze.getWorld();
-//            this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
-//        }
-//
-//        @Override // shouldExecute()
-//        public boolean a() {
-//            EntityLiving entityLiving = this.blaze.getGoalTarget();
-//            return entityLiving != null && entityLiving.isAlive() && this.blaze.d(entityLiving);
-//        }
-//
-//        @Override // startExecuting()
-//        public void c() {
-//            this.rangedRemainingAttackCooldown = 0;
-//            this.meleeRemainingAttackCooldown = 0;
-//        }
-//
-//        @Override // tick()
-//        public void e() {
-//            --this.rangedRemainingAttackCooldown;
-//            --this.meleeRemainingAttackCooldown;
-//            EntityLiving target = this.blaze.getGoalTarget();
-//
-//            if (target != null) {
-//                double distSqToTarget = NMSUtil.distSq(this.blaze, target, false);
-//
-//                // melee attack
-//                if (distSqToTarget < 3.0D) {
-//                    if (this.meleeRemainingAttackCooldown <= 0) {
-//                        this.meleeRemainingAttackCooldown = 20;
-//
-//                        this.blaze.attackEntity(target);
-//                        /* Blaze melee attack creates a power 0.5 explosion on the player's location */
-//                        this.blaze.getWorld().createExplosion(this.blaze, target.locX(), target.locY(),
-//                                target.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
-//                    }
-//
-//                    this.blaze.getControllerMove().a(target.locX(), target.locY(), target.locZ(), 1.0);
-//                // ranged attack
-//                } else {
-//                    double distToTargetX = target.locX() - this.blaze.locX();
-//                    double distToTargetY = target.e(0.5D) - this.blaze.e(0.5D);
-//                    double distToTargetZ = target.locZ() - this.blaze.locZ();
-//
-//                    if (this.rangedRemainingAttackCooldown <= 0) {
-//                        this.blaze.increaseAttacks(1);
-//
-//                        if (!this.blaze.isSilent()) {
-//                            this.nmsWorld.a(null, 1018, this.blaze.getChunkCoordinates(), 0);
-//                        }
-//
-//                        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(distSqToTarget)) * 0.5F;
-//
-//                        /* Blazes do not pause between each volley and instead shoots constantly */
-//                        CustomEntitySmallFireball smallFireball;
-//                        if (this.blaze.isRapidFire()) {
-//                            this.rangedRemainingAttackCooldown = 4;
-//
-//                            /* In rapid fire state, blazes shoot 2 fireballs at a time, with 250% of their vanilla inaccuracy */
-//                            for (int i = 0; i < 2; i++) {
-//                                smallFireball =
-//                                        new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-//                                        distToTargetX + this.blaze.getRandom().nextGaussian()
-//                                        * vanillaInaccuracy * 2.5,
-//                                        distToTargetY,
-//                                        distToTargetZ + this.blaze.getRandom().nextGaussian()
-//                                        * vanillaInaccuracy * 2.5);
-//                                smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
-//                                        smallFireball.locZ());
-//                                this.nmsWorld.addEntity(smallFireball);
-//                            }
-//                        } else {
-//                            this.rangedRemainingAttackCooldown = 6;
-//
-//                            /* In normal firing state, blazes have 20% of their vanilla inaccuracy */
-//                            smallFireball =
-//                                    new CustomEntitySmallFireball(this.nmsWorld, this.blaze,
-//                                    distToTargetX + this.blaze.getRandom().nextGaussian()
-//                                    * vanillaInaccuracy * 0.2,
-//                                    distToTargetY,
-//                                    distToTargetZ + this.blaze.getRandom().nextGaussian()
-//                                    * vanillaInaccuracy * 0.2);
-//                            smallFireball.setPosition(smallFireball.locX(), this.blaze.e(0.5D) + 0.5D,
-//                                    smallFireball.locZ());
-//                            this.nmsWorld.addEntity(smallFireball);
-//                        }
-//                    }
-//
-//                    this.blaze.getControllerLook().a(target, 10.0F, 10.0F);
-//                }
-//
-//                super.e();
-//            }
-//        }
-//    }
 }

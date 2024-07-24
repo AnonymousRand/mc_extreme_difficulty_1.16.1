@@ -80,6 +80,10 @@ all static initializer blocks before constructors?
 
 listeners group by event?
 
+charged creeper power nerf?
+
+check high chance for stone etc block to have silverfish
+
 util function/wrapper for find entity with default predicate (nmsworld.a(), and getentities() too? difference?)
     also find entity with predicate? to give meaning to the obfuscated function names
 
@@ -333,7 +337,7 @@ bats buff arrow shoot cooldown 20/14/8 ticks -> 40/30/20
 bats buff silverfish spawn cooldown 12 seconds -> 15
 bees speed multiplier when angry 1.4 -> 1.5
 elder guardians random despawn distance increased from 60 to 64 blocks (why did i ever make it 60???)
-blazes attack thresholds 50, 125, 250 -> 100, 200, 300
+blazes attack thresholds 50, 125, 250 -> 75, 150, 250
 blazes inaccuracy non rapidfire 0% -> 20% vanilla
 blazes inaccuracy rapidfire 35% -> 250% vanilla
 blazes normal attack cooldown 4 ticks -> 6; no pause between volleys remains unchanged
@@ -343,6 +347,7 @@ blazes melee now considers y-level
 creepers default fuse 15 ticks -> 20
 creepers explosion radius changed: base + (distance - 3) / 0.577 -> base + 1.5^(distance - 2) - 1
 charged creepers health 200 -> 100
+charged creepers explosion radius 75 -> 50
 drowned attack cooldown 6 ticks -> 8
 ender dragon does not shoot fireballs faster the less players there are and scaling based on crystals changed from 9 ticks per crystal to 10
 ender dragon fireball chances tweaked from 65% normal, 22.5% power 2, 8.5% arrow barrage, 4% super -> 68% normal, 20% power 2, 8% arrow barrage, 4% super

@@ -5,6 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
     }
 
     @Override
+    @Nullable
     protected EntityLiving findNearestPotentialTarget(boolean allowIgnoreY) {
         return this.goalOwner.getLastDamager();
     }

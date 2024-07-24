@@ -74,6 +74,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
         this.goalOwner.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
     }
 
+    @Nullable
     protected abstract EntityLiving findNearestPotentialTarget(boolean allowIgnoreY);
 
     protected abstract EntityTargetEvent.TargetReason getTargetReason(EntityLiving target);

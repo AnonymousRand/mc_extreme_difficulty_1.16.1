@@ -40,7 +40,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
             this.goalOwner.c(ProjectileHelper.a(this.goalOwner, Items.CROSSBOW)); // setActiveHand()
             this.goalOwner.b(true);                                               // setCharging()
         } else if (this.remainingAttackCooldown == 1) {
-            this.goalOwner.releaseActiveItem(); // todo test need?
+            this.goalOwner.releaseActiveItem();                                   // stopActiveHand(); doesn't seem to do anything, but it's from vanilla so I'll keep it in case
             this.goalOwner.b(false);                                              // setCharging()
         } else if (this.remainingAttackCooldown == 0) {
             // getActiveItem() still seems to work despite releaseActiveItem() and literally setting it to
