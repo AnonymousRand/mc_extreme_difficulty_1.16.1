@@ -37,7 +37,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* ghasts have 80 block detection range */
@@ -92,7 +92,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -119,7 +119,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

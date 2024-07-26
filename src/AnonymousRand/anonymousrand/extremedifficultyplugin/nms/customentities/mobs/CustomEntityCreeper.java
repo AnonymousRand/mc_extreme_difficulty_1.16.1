@@ -53,7 +53,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Creepers have 24 block detection range (40 if charged) */
@@ -114,7 +114,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                  Other custom functions                                   //
+    // Other custom functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setFuseTicks(int fuseTicks) {
@@ -134,7 +134,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

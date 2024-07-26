@@ -28,7 +28,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Ender dragons have 128 block detection range for new constant fireball attack */
@@ -45,7 +45,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -115,7 +115,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                Mob-specific goals/classes                                 //
+    // Mob-specific goals/classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalFireball extends PathfinderGoal {

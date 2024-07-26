@@ -38,7 +38,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* guardians have 24 block detection range (32 after 8 attacks) */
@@ -93,7 +93,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -125,7 +125,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

@@ -42,7 +42,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* iron golems have 24 block detection range */
@@ -98,7 +98,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -120,7 +120,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                  Other custom functions                                   //
+    // Other custom functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void increaseStatsAdd(double healthIncrease, double damageIncrease, double speedIncrease) {
@@ -147,7 +147,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

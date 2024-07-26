@@ -47,7 +47,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* illusioners have 32 block detection range */
@@ -107,7 +107,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -135,7 +135,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

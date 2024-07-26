@@ -40,7 +40,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Drowned have 40 block detection range */
@@ -101,7 +101,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -133,7 +133,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -154,7 +154,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                Mob-specific goals/classes                                 //
+    // Mob-specific goals/classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalGoToBeach extends PathfinderGoalGotoTarget {

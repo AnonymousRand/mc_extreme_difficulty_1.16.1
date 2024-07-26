@@ -45,7 +45,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* evokers have 28 block detection range */
@@ -105,7 +105,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -138,7 +138,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

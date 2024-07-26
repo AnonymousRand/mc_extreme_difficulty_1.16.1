@@ -51,7 +51,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
@@ -113,7 +113,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -150,7 +150,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                  Other custom functions                                   //
+    // Other custom functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public boolean hasBeenLookedAt() {
@@ -162,7 +162,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -323,7 +323,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                Mob-specific goals/classes                                 //
+    // Mob-specific goals/classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalPlayerWhoLookedAtTarget

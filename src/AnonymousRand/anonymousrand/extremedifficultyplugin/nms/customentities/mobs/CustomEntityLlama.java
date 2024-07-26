@@ -52,7 +52,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* llamas have 24 block detection range */
@@ -68,7 +68,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -95,7 +95,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

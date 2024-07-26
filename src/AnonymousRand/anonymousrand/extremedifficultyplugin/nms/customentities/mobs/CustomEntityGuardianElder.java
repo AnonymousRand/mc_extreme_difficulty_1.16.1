@@ -35,7 +35,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* elder guardians have 40 block detection range */
@@ -90,7 +90,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

@@ -38,7 +38,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* hoglins have 40 block detection range (64 after 10 attacks) */
@@ -98,7 +98,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -138,7 +138,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     IGoalRemovingMob                                      //
+    // IGoalRemovingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initGoalRemovingMob() {
@@ -155,7 +155,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

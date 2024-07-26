@@ -41,7 +41,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* endmites have 20 block detection range */
@@ -101,7 +101,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -132,7 +132,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     IGoalRemovingMob                                      //
+    // IGoalRemovingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initGoalRemovingMob() {
@@ -149,7 +149,7 @@ public class CustomEntityEndermite extends EntityEndermite implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

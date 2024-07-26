@@ -53,7 +53,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* trader llamas have 24 block detection range */
@@ -69,7 +69,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -96,7 +96,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

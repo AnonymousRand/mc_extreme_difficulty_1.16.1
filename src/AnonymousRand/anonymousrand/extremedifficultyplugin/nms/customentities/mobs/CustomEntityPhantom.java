@@ -70,7 +70,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* phantoms have 64 block detection range */
@@ -125,7 +125,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -151,7 +151,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

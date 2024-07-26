@@ -87,7 +87,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                      ICustomHostile                                       //
+    // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Bats have 16 block detection range (24 after 8 attacks, 32 after 15 attacks) */
@@ -148,7 +148,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    IAttackLevelingMob                                     //
+    // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -198,7 +198,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                  Other custom functions                                   //
+    // Other custom functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
@@ -226,7 +226,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                               Overridden vanilla functions                                //
+    // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
