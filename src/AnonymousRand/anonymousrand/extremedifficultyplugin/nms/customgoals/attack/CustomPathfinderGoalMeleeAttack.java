@@ -7,8 +7,11 @@ import org.bukkit.Bukkit;
 
 /**
  * The base melee attack goal in my rewrite of vanilla's attack goals, analogous to
- * <code>PathfinderGoalMeleeAttack</code>. Note that melee attacks don't ignore y-level even if the targeting goal
- * does, so make sure those mobs can change their y-level to get within melee range of their targets.
+ * <code>PathfinderGoalMeleeAttack</code>.
+ * <p></p>
+ *
+ * Melee attacks don't ignore y-level even if the targeting goal does, so make sure those mobs can change
+ * their y-level to get within melee range of their targets.
  */
 public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends CustomPathfinderGoalAttack<T> {

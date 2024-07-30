@@ -3,8 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
 
 /**
- * For mobs that use <code>super.initPathfinder()</code>: allows removal of vanilla <code>PathfinderGoalHurtByTarget</code>
- * and <code>PathfinderGoalNearestAttackableTarget</code> goals in order to replace them with custom ones.
+ * Allows removal of vanilla <code>PathfinderGoalHurtByTarget</code> for mobs that use
+ * <code>super.initPathfinder()</code> and <code>PathfinderGoalNearestAttackableTarget</code> goals in order to replace them with custom ones.
  */
 public interface IGoalRemovingMob {
     PathfinderGoalSelector getVanillaGoalSelector();

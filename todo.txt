@@ -160,6 +160,11 @@ all tickslived == 5 to spawn listener?
 
 allow only one lightning effect storm and one tornado at a time with static variables or something
 
+convert num* to *count
+    convert max* to *countmax?
+
+comment formatting: top-level (outside methods): multiline too. javadoc in the case of utils
+
 merge lightningeffectstorm and lightningstorm runnable with config for percentage actual lightning
 
 try to copy spider code for moving fast in cobwebs?
@@ -187,6 +192,8 @@ remove unnecessary casts???
 util function for Bukkit.getServer().getOnlinePlayers().size()?
 
 isntead of teleporting near y, creepers teleport onto player if cant see after a while, like enderman? make this a goal with customizable chances? (cant see, diff y level)
+
+make sure soul speed boots dont drop.
 
 breakblocksaround goals make sure never remove blocks underneath unless intentional?
 

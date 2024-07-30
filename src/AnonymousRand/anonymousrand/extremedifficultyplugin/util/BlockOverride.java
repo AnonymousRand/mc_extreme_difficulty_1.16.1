@@ -24,7 +24,7 @@ public class BlockOverride {
     }
 
     /**
-     * Update the given field with a new value.
+     * Updates the given field with a new value.
      *
      * @param  fieldName                name of field
      * @param  value                    new value

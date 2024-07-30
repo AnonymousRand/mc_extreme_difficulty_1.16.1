@@ -13,7 +13,7 @@ public class AttackLevelingController {
     }
 
     /**
-     * Increase <code>attacks</code>.
+     * Increases <code>attacks</code>.
      *
      * @return all newly met or exceeded thresholds
      */

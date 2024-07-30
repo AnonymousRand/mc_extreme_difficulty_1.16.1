@@ -47,7 +47,7 @@ public abstract class VanillaPathfinderGoalsRemove {
     }
 
     /**
-     * Remove these vanilla goals as they are always replaced by custom ones:
+     * Removes these vanilla goals as they are always replaced by custom ones:
      * <ul>
      *     <li><code>PathfinderGoalMeleeAttack</code></li>
      *     <li><code>PathfinderGoalArrowAttack</code></li>
@@ -57,6 +57,7 @@ public abstract class VanillaPathfinderGoalsRemove {
      *     <li><code>PathfinderGoalHurtByTarget</code></li>
      * </ul>
      * <p></p>
+     *
      * This prevents deadlocks with mutexes if the goals happen to be of the same priority, or have
      * <code>shouldExecute()</code> etc. clashes.
      *

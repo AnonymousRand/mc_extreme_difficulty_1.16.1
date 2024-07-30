@@ -9,9 +9,11 @@ import java.util.EnumSet;
 
 /**
  * A subclass of <code>CustomPathfinderGoalRangedHandheldAttack</code> that animates crossbow charging, analogous to
- * <code>PathfinderGoalRangedCrossbowAttack</code>. Note that movement behavior is not copied from its vanilla
- * analog, but rather left unchanged from <code>CustomPathfinderGoalRangedAttack</code>: move closer if there's no line
- * of sight, and stand still otherwise.
+ * <code>PathfinderGoalRangedCrossbowAttack</code>.
+ * <p></p>
+ *
+ * Movement behavior is not copied from its vanilla analog, but rather left unchanged from
+ * <code>CustomPathfinderGoalRangedAttack</code>: move closer if there's no line of sight, and stand still otherwise.
  */
 public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient & IRangedEntity & ICrossbow
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedHandheldAttack<T> {

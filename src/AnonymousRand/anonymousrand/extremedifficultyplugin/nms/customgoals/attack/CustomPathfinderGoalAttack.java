@@ -8,9 +8,12 @@ import java.util.EnumSet;
 
 // todo uncomment once all have been converted
 /**
- * The base attack goal in my rewrite of vanilla's attack goals. Some (imo) unnecessary details have been simplified for the sake of
- * consistency and clean code. Attack and movement have also been split up more clearly; the only reason they are not
- * separate goals is that they must meet the same conditions to execute.
+ * The base attack goal in my rewrite of vanilla's attack goals.
+ * <p></p>
+ *
+ * Some (imo) unnecessary details have been simplified for the sake of consistency and clean code. Attack and movement
+ * have also been split up more clearly; the only reason they are not separate goals is that they must meet the same
+ * conditions to execute.
  */
 public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends PathfinderGoal {

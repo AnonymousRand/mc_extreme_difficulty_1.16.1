@@ -9,8 +9,10 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 /**
- * My rewrite of vanilla's <code>PathfinderTargetCondition</code>. Use <code>EntityFilter.BASE</code> to
- * test for the basic conditions: not null, not spectator/creative, and alive.
+ * My rewrite of vanilla's <code>PathfinderTargetCondition</code>.
+ * <p></p>
+ *
+ * Use <code>EntityFilter.BASE</code> to test for the basic conditions: not null, not spectator/creative, and alive.
  */
 public class EntityFilter {
 
@@ -36,14 +38,20 @@ public class EntityFilter {
     }
 
     /**
-     * Apply filter to target, ignoring invis/skulls, and supporting ignoring y-level and line of sight.
+     * Applies filter to <code>target</code>.
+     * <p></p>
+     *
+     * Ignores invis/skulls, and supports ignoring y-level and line of sight.
      */
     public boolean test(@Nullable EntityLiving target) {
         return this.test(null, target);
     }
 
     /**
-     * Apply filter to target, ignoring invis/skulls, and supporting ignoring y-level and line of sight.
+     * Applies filter to <code>target</code> with respect to <code>from</code>.
+     * <p></p>
+     *
+     * Ignores invis/skulls, and supports ignoring y-level and line of sight.
      */
     public boolean test(@Nullable EntityLiving from, @Nullable EntityLiving target) {
         // BASE checks
