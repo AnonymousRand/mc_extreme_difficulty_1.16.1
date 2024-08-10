@@ -19,9 +19,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
     protected final Class<S> targetClass;
     protected final int targetChance;
 
-    public CustomPathfinderGoalNearestAttackableTarget(
-            T goalOwner,
-            Class<S> targetClass) {
+    public CustomPathfinderGoalNearestAttackableTarget(T goalOwner, Class<S> targetClass) {
         this(goalOwner, targetClass, goalOwner.ignoresLOS(), goalOwner.ignoresY(), 10, null);
     }
 

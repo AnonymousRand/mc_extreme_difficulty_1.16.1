@@ -15,7 +15,7 @@ import java.util.Map;
 public class CustomEntityVillagerAggressive extends EntityVillager implements ICustomHostile {
 
     /* Ignores line of sight and y-level for initially finding a player target and maintaining it as the target,
-       as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
+     * as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private static Field attributeMap;

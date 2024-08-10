@@ -21,7 +21,7 @@ public class CustomEntityBlaze extends EntityBlaze
         implements IRangedEntity, ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
 
     /* Ignores y-level for initially finding a player target and maintaining it as the target,
-       as well as for retaliating against players */
+     * as well as for retaliating against players */
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = true;
     private boolean rapidFire;

@@ -35,7 +35,7 @@ registerGenericAttribute() into util with static? pass in this. pulling attribut
 
 should reflection fields be static? in line with this: reflection util to hide try catch and stuff?
 
-hoglins either have insane reach. also golems too?
+hoglins either have insane reach. also golems too? OR for golem: copy in enderman block steal goal, except steal blocks around player and place underneath self. test if it can hit while suffocated
 
 mobs when hit by a player further than detection range/cant see: they teleport to player. teleport util?
 
@@ -65,6 +65,15 @@ better documentation for removing y-level/los requirements for finding targets
 change this.entity in goals to this.goalowner?
 
 personalize all doc comments with mob name?
+
+FINAL line continutation indents:
+    align to equals sign/operator
+        equals try to fill first line and align to equals; if not possible then newline after equals and two tabs
+    multiline function param dec and call:
+        two tabs
+        avoid any parems on first line unless its another multiline construct and its the only param and param token (besides kw)
+        closing paren on same line as last arg unless to remove ambiguiity for nested func call in the middle of param list (app/blog/blogpage/util.py end). in latter case one tab indent
+    two tabs otherwise
 
 pink sheep and stuff dont do the fling into the air to avoid knockback thing?
 
