@@ -6,7 +6,7 @@ import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import org.bukkit.Material;
 
-public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
+public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
 
     protected final EntityInsentient entity;
     protected Material material;
@@ -15,7 +15,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
     protected double offsetY;
     protected boolean terraform;
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = null;
@@ -27,7 +27,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.terraform = false;
     }
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = null;
@@ -39,7 +39,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.terraform = terraform;
     }
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer) {
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer) {
         this.entity = entity;
         this.material = null;
         this.firstEntityToSpawn = entityToBeSpawned;
@@ -51,7 +51,7 @@ public class NewPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
         this.terraform = false;
     }
 
-    public NewPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY) {
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY) {
         this.entity = entity;
         this.material = null;
         this.firstEntityToSpawn = entityToBeSpawned;

@@ -52,7 +52,7 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
         this.setHealth(125.0F);
     }
 
-    // registers new attributes via reflection
+    /* Registers new attributes via reflection */
     static {
         try {
             attributeMap = net.minecraft.server.v1_16_R1.AttributeMapBase.class.getDeclaredField("b");
@@ -73,9 +73,9 @@ public class CustomEntitySheepAggressive extends EntitySheep implements ICustomH
     @Override
     protected void initPathfinder() { /* sheep can't panic/breed/follow parent/be tempted with seeds/eat grass if they are attack (higher goal priority) */
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /* Breaks most blocks around the mob periodically */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 20, 2, 0, 2, 1, true)); /* Breaks most blocks around the mob periodically */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }

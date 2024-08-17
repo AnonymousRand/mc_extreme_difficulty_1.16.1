@@ -16,7 +16,7 @@ import net.minecraft.server.v1_16_R1.Item;
 public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedAttack<T> {
 
-    // attack
+    /* Attack */
     protected final Item weapon;
 
     public CustomPathfinderGoalRangedHandheldAttack(T goalOwner, Item weapon, int attackCooldown) {

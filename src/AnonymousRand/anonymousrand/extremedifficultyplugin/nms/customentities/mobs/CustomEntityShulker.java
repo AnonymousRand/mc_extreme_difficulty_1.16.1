@@ -36,8 +36,8 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
     @Override
     public void initPathfinder() {
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(4, new CustomEntityShulker.PathfinderGoalShulkerBulletAttack());
         this.goalSelector.a(7, new CustomEntityShulker.PathfinderGoalShulkerPeek());
@@ -140,7 +140,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
             this.a21 = true;
             CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 2.0F, 20, 0);
             areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 160));
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
+            this.goalSelector.a(1, new CustomPathfinderGoalSpawnBlocksEntitiesOnMob(this, areaEffectCloud, 19));
         }
 
         if (this.attacks == 40 && !this.a40) { /* after 40 attacks, shulkers get 20 armor points and their area effect clouds' radius is increased to 3 and they are changed to give levitation 50 for 6 ticks */
@@ -148,8 +148,8 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
             this.getAttributeInstance(GenericAttributes.ARMOR).setValue(20.0);
             CustomEntityAreaEffectCloud areaEffectCloud = new CustomEntityAreaEffectCloud(this.world, 3.0F,20, 0);
             areaEffectCloud.addEffect(new MobEffect(MobEffects.LEVITATION, 6, 49));
-            for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), NewPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
-                ((NewPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
+            for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalSpawnBlocksEntitiesOnMob.class)) {
+                ((CustomPathfinderGoalSpawnBlocksEntitiesOnMob) goal).changeSpawnedEntity(areaEffectCloud);
             }
         }
     }

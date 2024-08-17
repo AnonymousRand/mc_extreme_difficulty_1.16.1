@@ -62,8 +62,8 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         return super.a();
     }
 
-    // Overridden to periodically change target to the nearest one (including y) to prevent strats like
-    // one player leading mobs away from another at build height, taking advantage of ignoreY = true
+    /* Overridden to periodically change target to the nearest one (including y) to prevent strats like
+     * one player leading mobs away from another at build height, taking advantage of `ignoreY = true` */
     // todo test with offline multimc 2 player? also test if this overrides hurtby/enderman look etc
     @Override
     public boolean b() {

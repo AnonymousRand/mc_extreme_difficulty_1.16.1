@@ -6,7 +6,7 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.*;
 
-public class NewPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevelingMob> extends PathfinderGoal {
+public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevelingMob> extends PathfinderGoal {
 
     public T entity;
     private final Class<? extends EntityLiving> targetClass;
@@ -15,7 +15,7 @@ public class NewPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevel
     private final int attacksThreshold, ticksDelayMin, ticksDelayRandBound;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThreshold, int ticksDelayMin, int ticksDelayRandBound) {
+    public CustomPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThreshold, int ticksDelayMin, int ticksDelayRandBound) {
         this.entity = entity;
         this.targetClass = targetClass;
         this.attacksAndEffects = attacksAndEffects;

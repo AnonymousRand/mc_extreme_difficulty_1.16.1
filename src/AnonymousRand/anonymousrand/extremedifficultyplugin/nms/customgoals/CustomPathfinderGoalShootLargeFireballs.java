@@ -7,13 +7,13 @@ import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import net.minecraft.server.v1_16_R1.Vec3D;
 import org.bukkit.util.Vector;
 
-public class NewPathfinderGoalShootLargeFireballs extends PathfinderGoal {
+public class CustomPathfinderGoalShootLargeFireballs extends PathfinderGoal {
 
     private final EntityInsentient entity;
     private final int attackCooldown, intYield;
     private final boolean summonLightning;
 
-    public NewPathfinderGoalShootLargeFireballs(EntityInsentient entity, int attackCooldown, int intYield, boolean summonLightning) {
+    public CustomPathfinderGoalShootLargeFireballs(EntityInsentient entity, int attackCooldown, int intYield, boolean summonLightning) {
         this.entity = entity;
         this.attackCooldown = attackCooldown;
         this.intYield = intYield;

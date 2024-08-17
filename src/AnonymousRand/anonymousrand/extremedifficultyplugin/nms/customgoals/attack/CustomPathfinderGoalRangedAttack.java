@@ -11,7 +11,7 @@ import net.minecraft.server.v1_16_R1.*;
 public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile/* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttack<T> {
 
-    // movement
+    /* Movement */
     protected int targetSeenTicks;
 
     public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown) {

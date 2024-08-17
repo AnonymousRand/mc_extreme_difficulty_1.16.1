@@ -4,8 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
@@ -133,9 +133,9 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         PathfinderGoalMoveTowardsRestriction pathfindergoalmovetowardsrestriction = new PathfinderGoalMoveTowardsRestriction(this, 1.0);
         this.goalRandomStroll = new PathfinderGoalRandomStroll(this, 1.0, 80);
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(4, new CustomEntityGuardian.PathfinderGoalGuardianAttack(this));
         this.goalSelector.a(5, pathfindergoalmovetowardsrestriction);
         this.goalSelector.a(7, this.goalRandomStroll);

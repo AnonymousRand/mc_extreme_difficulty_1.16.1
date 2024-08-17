@@ -6,13 +6,13 @@ import net.minecraft.server.v1_16_R1.*;
 
 import java.util.Random;
 
-public class NewPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
+public class CustomPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal {
 
     public EntityInsentient entity;
     private final double yLevelDifferenceToActivate, initialRange, chancePerTick;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalTeleportNearTargetYLevel(EntityInsentient entity, double yLevelDifferenceToActivate, double initialRange, double chancePerTick) {
+    public CustomPathfinderGoalTeleportNearTargetYLevel(EntityInsentient entity, double yLevelDifferenceToActivate, double initialRange, double chancePerTick) {
         this.entity = entity;
         this.yLevelDifferenceToActivate = yLevelDifferenceToActivate;
         this.initialRange = initialRange;

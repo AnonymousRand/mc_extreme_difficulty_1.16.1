@@ -16,9 +16,9 @@ import org.bukkit.Bukkit;
 public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends CustomPathfinderGoalAttack<T> {
 
-    // attack
+    /* Attack */
     protected double minAttackReach;
-    // movement
+    /* Movement */
     protected PathEntity path;
     protected double oldTargetX;
     protected double oldTargetY;

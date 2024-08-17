@@ -39,8 +39,8 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0)); // instead of using behavior-controlled idle actions
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
@@ -148,7 +148,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         if (this.attacks == 8 && !this.a8) { /* after 8 attacks, zoglins gain regen 2 and shoot a power 1 ghast fireball every 5 seconds */
             this.a8 = true;
             this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            this.goalSelector.a(1, new NewPathfinderGoalShootLargeFireballs(this, 100, 1, false));
+            this.goalSelector.a(1, new CustomPathfinderGoalShootLargeFireballs(this, 100, 1, false));
         }
 
         if (this.attacks == 30 &&!this.a30) { /* after 30 attacks, zoglins gain speed 5 */

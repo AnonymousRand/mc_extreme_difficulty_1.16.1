@@ -7,10 +7,10 @@ import net.minecraft.server.v1_16_R1.EntitySlime;
 import net.minecraft.server.v1_16_R1.MathHelper;
 
 // todo test this rewriting works
-public class NewPathfinderGoalSlimeMeleeAttack<T extends EntitySlime & ICustomHostile>
+public class CustomPathfinderGoalSlimeMeleeAttack<T extends EntitySlime & ICustomHostile>
         extends CustomPathfinderGoalMeleeAttack<T> {
 
-    public NewPathfinderGoalSlimeMeleeAttack(T slime) {
+    public CustomPathfinderGoalSlimeMeleeAttack(T slime) {
         super(slime);
     }
 

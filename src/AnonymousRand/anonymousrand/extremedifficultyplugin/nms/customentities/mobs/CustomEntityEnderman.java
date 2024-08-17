@@ -11,10 +11,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
@@ -54,8 +52,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
     public double getDetectionRange() {
+        /* Endermen have 16 block detection range (24 after 12 attacks, 32 after 25 attacks) */
         return (this.attackLevelingController == null || this.getAttacks() < 12)
                 ? 16.0 : this.getAttacks() < 25 ? 24.0 : 32.0;
     }
@@ -168,8 +166,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     @Override
     protected void initPathfinder() {
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                   /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                                             /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                                /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
@@ -177,7 +175,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.goalSelector.a(10, new PathfinderGoalPlaceBlock(this));
         this.goalSelector.a(11, new PathfinderGoalPickUpBlock(this));
         this.targetSelector.a(0, new CustomEntityEnderman.PathfinderGoalPlayerWhoLookedAtTarget(this));
-        this.targetSelector.a(1, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(1, new CustomEntityEnderman.PathfinderGoalHurtByTarget(this));                                  /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(2, new CustomEntityEnderman.PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Always aggros instead of only when angry, ignores invis/skulls to initially find a target or maintain it as the target, and periodically retargets the nearest option */
         this.targetSelector.a(3, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
@@ -192,7 +190,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     /* Endermen no longer burn and teleport away from lava */
     protected void burnFromLava() {}
 
-    // Overrides private g() (shouldAttackPlayer()); name change because not used elsewhere
+    /* Overrides private g() (shouldAttackPlayer()); name change because not used elsewhere */
     private boolean validPlayerIsLooking(EntityPlayer player) {
         if (!EntityFilter.BASE.test(player)) {
             return false;
@@ -226,12 +224,12 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         }
     }
 
-    // Overload
+    /* Overload */
     private boolean teleportTo(Entity target) {
         return this.teleportTo(target.locX(), target.locY(), target.locZ());
     }
 
-    // Overrides private o() (teleportTo())
+    /* Overrides private o() (teleportTo()) */
     private boolean teleportTo(double x, double y, double z) {
         // code merged from a() (attemptTeleport())
         BlockPosition targetBlockPosition = new BlockPosition(x, y, z);

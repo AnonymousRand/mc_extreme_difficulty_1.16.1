@@ -4,27 +4,24 @@ overriden functions like checkdespawn try to use descriptive variable names
 comment syntax update, line lengths, space after cast, standard multiline comment for changes docs,
 plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 reorganize all custommobs to use new attacks thing and whatever (including blaze).
-custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 private instead of protected where possible, dont target villagers
 standardize multiline comment indent
-conseuctive ghoal priorities
-stopped after: customentityenderman
+conseuctive goal priorities
+stopped after: endermite
 
 revise multiline comments in initpathfinder()s
 
-javadoc all util stuff?
-
-rename all newpathfindergoal to custompathfindergoal
+custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
-increment attacks in attack method/goal instead of listener?
+increment attacks in attack method/goal instead of listener
 
 make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
 things in terms of getattackthresholds instead of hardcoded
 
-stadnardize comment location outside/inside method (inside if possible?)
+stadnardize comment location outside/inside method
 
 remove checkdespawn for mobs with follow distance <= 32
 
@@ -56,6 +53,8 @@ wrap spawnentity in util function that creates runnable instance so we dont need
     wrap all runnables in util function that simply calls run/runtasktimer appropriately without ugly `new` starting the line?
 
 all utils should be static
+
+
 
 
 
@@ -334,7 +333,7 @@ remove all abilities to attack regardless of y level and just have more ways to 
 
 create full documentation of changes from all /* comments and that google doc?
 
-
+optimize imports; ordering too?
 
 
 

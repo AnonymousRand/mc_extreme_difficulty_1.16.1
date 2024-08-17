@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.Random;
 
-public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
+public class CustomPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
 
     public EntityInsentient entity;
     private boolean hunger, unluck;
@@ -18,7 +18,7 @@ public class NewPathfinderGoalGetBuffedByMobs extends PathfinderGoal {
     private final World nmsWorld;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalGetBuffedByMobs(EntityInsentient entity) {
+    public CustomPathfinderGoalGetBuffedByMobs(EntityInsentient entity) {
         this.entity = entity;
         this.hunger = false;
         this.unluck = false;

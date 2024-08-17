@@ -75,8 +75,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Aggressive chickens have 16 block detection range */
     public double getDetectionRange() {
+        /* Aggressive chickens have 16 block detection range */
         return 16.0;
     }
 
@@ -135,8 +135,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
     protected void initPathfinder() {
         /* Aggressive chickens won't panic/breed/follow parent/be tempted with seeds */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));

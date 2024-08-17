@@ -6,14 +6,14 @@ import net.minecraft.server.v1_16_R1.PathfinderGoal;
 
 import java.util.Random;
 
-public class NewPathfinderGoalBreakBlocksAround extends PathfinderGoal { // custom goal to break blocks around a mob
+public class CustomPathfinderGoalBreakBlocksAround extends PathfinderGoal { // custom goal to break blocks around a mob
 
     public EntityInsentient entity;
     protected final int delayTimer, radX, radY, radZ, offsetY;
     private final boolean removeFluids;
     protected static final Random random = new Random();
 
-    public NewPathfinderGoalBreakBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
+    public CustomPathfinderGoalBreakBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
         this.entity = entity;
         this.delayTimer = delayTimer;
         this.radX = radX;

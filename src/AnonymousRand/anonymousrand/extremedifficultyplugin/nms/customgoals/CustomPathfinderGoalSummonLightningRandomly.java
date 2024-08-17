@@ -8,7 +8,7 @@ import org.bukkit.Location;
 
 import java.util.Random;
 
-public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
+public class CustomPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
 
     private final EntityInsentient entity;
     private final World nmsWorld;
@@ -16,7 +16,7 @@ public class NewPathfinderGoalSummonLightningRandomly extends PathfinderGoal {
     private final double chanceMultiplier;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalSummonLightningRandomly(EntityInsentient entity, double chanceMultiplier) {
+    public CustomPathfinderGoalSummonLightningRandomly(EntityInsentient entity, double chanceMultiplier) {
         this.entity = entity;
         this.nmsWorld = entity.getWorld();
         this.bukkitWorld = this.nmsWorld.getWorld();

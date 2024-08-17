@@ -19,10 +19,10 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         extends PathfinderGoal {
 
     protected final T goalOwner;
-    // attack
+    /* Attack */
     protected int attackCooldown;
     protected int remainingAttackCooldown;
-    // movement
+    /* Movement */
     protected double moveSpeed;
     protected int repathCooldown;
     protected int remainingRepathCooldown;

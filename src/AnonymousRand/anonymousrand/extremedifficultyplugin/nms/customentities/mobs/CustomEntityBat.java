@@ -25,7 +25,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
      * as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
-    private NewPathfinderGoalBuffMobs buffMobs;
+    private CustomPathfinderGoalBuffMobs buffMobs;
     private BlockPosition targetPosition;
     private boolean firstDuplicate;
     private Field attributeMap;
@@ -46,7 +46,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
         this.firstDuplicate = true;
         // custom goal that provides the buffing mechanism
-        this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
+        this.buffMobs = new CustomPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
                 32, 4, 200, 101);
     }
 
@@ -74,7 +74,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
     }
 
-    // from Spigot forums again (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/)
+    /* From Spigot forums again
+     * (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/) */
     private void registerGenericAttribute(org.bukkit.entity.Entity bukkitEntity, Attribute attribute)
             throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity) bukkitEntity).getHandle().getAttributeMap();
@@ -90,8 +91,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Bats have 16 block detection range (24 after 8 attacks, 32 after 15 attacks) */
     public double getDetectionRange() {
+        /* Bats have 16 block detection range (24 after 8 attacks, 32 after 15 attacks) */
         // null check since getDetectionRange() is called in CustomPathfinderGoalTarget
         // which is called in CustomPathfinderGoalNearestAttackableTarget
         // which is called in initPathfinder() which is called in some EntityInsentient's constructor
@@ -185,7 +186,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 this.setHealth(15.0F);
 
                 this.goalSelector.a(this.buffMobs); // remove goal and replace // todo if not un-jankified: why? whats the diff between these and the first threshold's buff? why no replace after this?
-                this.buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
+                this.buffMobs = new CustomPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
                         64, attackThresholds[2], 200, 101);
                 this.goalSelector.a(0, this.buffMobs);
                 this.buffMobs.e();
@@ -232,7 +233,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     @Override
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
         this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
@@ -240,7 +241,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
-        /* Summons 6-8 vanilla bats when hit by player and not killed for the first time */
+        /* Bats summon 6-8 vanilla bats when hit by player and not killed for the first time */
         if (damageSuccess && this.isAlive() && damageSource.getEntity() instanceof EntityPlayer
                 && this.firstDuplicate) {
             this.firstDuplicate = false;
@@ -258,7 +259,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         return damageSuccess;
     }
 
-    // Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out)
+    /* Override pathfinding (it doesn't use a goal for some reason; yes that took me hours to figure out) */
     @Override
     protected void mobTick() {
         if (this.isAsleep()) {
@@ -279,7 +280,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             }
 
             if (this.targetPosition == null) {
-                /* Always flies towards goal target if possible */
+                // always flies towards goal target if possible
                 if (this.getGoalTarget() != null) {
                     this.targetPosition =
                             new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(),

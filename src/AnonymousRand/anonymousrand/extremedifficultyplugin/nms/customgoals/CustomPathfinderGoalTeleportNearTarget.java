@@ -9,14 +9,14 @@ import org.bukkit.block.Block;
 
 import java.util.Random;
 
-public class NewPathfinderGoalTeleportNearTarget extends PathfinderGoal {
+public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
 
     public EntityInsentient entity;
     private final double detectionRange, delayBeforeStarting, chancePerTick;
     private int teleportToPlayer;
     private static final Random random = new Random();
 
-    public NewPathfinderGoalTeleportNearTarget(EntityInsentient entity, double initialDetectionRange, double delayBeforeStarting, double chancePerTick) {
+    public CustomPathfinderGoalTeleportNearTarget(EntityInsentient entity, double initialDetectionRange, double delayBeforeStarting, double chancePerTick) {
         this.entity = entity;
         this.detectionRange = initialDetectionRange;
         this.delayBeforeStarting = delayBeforeStarting;

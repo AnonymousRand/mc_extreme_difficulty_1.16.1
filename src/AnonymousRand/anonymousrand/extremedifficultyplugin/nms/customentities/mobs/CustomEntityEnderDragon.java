@@ -31,8 +31,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Ender dragons have 128 block detection range for new constant fireball attack */
     public double getDetectionRange() {
+        /* Ender dragons have 128 block detection range for new constant fireball attack */
         return 128.0;
     }
 
@@ -64,7 +64,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             this.heal(10.0F);
         }
 
-        /* When a crystal is destroyed, dragons shoot a super fireball, then rapid fire 10 normal custom fireballs, then shoot another super fireball */
+        /* When a crystal is destroyed, dragons shoot a super fireball, then rapid fire 10 normal custom fireballs, then
+         * shoot another super fireball */
         if (damageSource.getEntity() != null) {
             Entity damageSourceEntity = damageSource.getEntity();
             new RunnableDragonRapidShootFireballs(this, damageSourceEntity, 12).runTaskTimer(

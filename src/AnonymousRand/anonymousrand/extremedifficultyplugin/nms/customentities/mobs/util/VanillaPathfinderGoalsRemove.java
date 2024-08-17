@@ -1,7 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util;
 
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -11,32 +10,33 @@ public abstract class VanillaPathfinderGoalsRemove {
 
     private static Field goals;
 
+    /* Get list of goals from original entity (not just running/active goals from `targetSelector.d()`) */
     static {
         try {
-            goals = PathfinderGoalSelector.class.getDeclaredField("d"); // get list of goals from original entity (not just running/active goals which is obtained with targetSelector.d())
+            goals = PathfinderGoalSelector.class.getDeclaredField("d");
             goals.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
 
-    private VanillaPathfinderGoalsRemove() {} // private constructor = protect against accidental instantiation
+    private VanillaPathfinderGoalsRemove() {}
 
-    public static ArrayList<PathfinderGoal> getPathfinderGoals(
+    public static ArrayList<PathfinderGoal> getGoals(
             Set<PathfinderGoalWrapped> pathfinderGoalsWrapped,
             Class<? extends PathfinderGoal> pathfinderGoalClass) {
         ArrayList<PathfinderGoal> goalsFound = new ArrayList<>();
-        Field pathfinderGoalField;
-        PathfinderGoal pathfinderGoal;
+        Field goalField;
+        PathfinderGoal goal;
 
         for (Object pathfinderGoalWrapped : pathfinderGoalsWrapped) {
             try {
-                pathfinderGoalField = pathfinderGoalWrapped.getClass().getDeclaredField("a"); // a is the field that contains the pathfinder goal in the wrapped pathfinder goal object
-                pathfinderGoalField.setAccessible(true);
-                pathfinderGoal = (PathfinderGoal) pathfinderGoalField.get(pathfinderGoalWrapped);
+                goalField = pathfinderGoalWrapped.getClass().getDeclaredField("a");
+                goalField.setAccessible(true);
+                goal = (PathfinderGoal) goalField.get(pathfinderGoalWrapped);
 
-                if (pathfinderGoalClass.isInstance(pathfinderGoal)) {
-                    goalsFound.add(pathfinderGoal);
+                if (pathfinderGoalClass.isInstance(goal)) {
+                    goalsFound.add(goal);
                 }
             } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
                 e.printStackTrace();
@@ -63,33 +63,35 @@ public abstract class VanillaPathfinderGoalsRemove {
      *
      * @param entity the entity to remove the goal from
      */
-    public static <T extends EntityInsentient & ICustomHostile & IGoalRemovingMob> void removePathfinderGoals(T entity) {
-        ArrayList<PathfinderGoal> goalsToRemoveGoalSelector = new ArrayList<>();
-        ArrayList<PathfinderGoal> goalsToRemoveTargetSelector = new ArrayList<>();
-        Set<PathfinderGoalWrapped> allPathfinderGoalsWrapped;
+    public static <T extends EntityInsentient & ICustomHostile & IGoalRemovingMob> void removePathfinderGoals(
+            T entity) {
+        ArrayList<PathfinderGoal> goalsToRemoveFromGoalSelector = new ArrayList<>();
+        ArrayList<PathfinderGoal> goalsToRemoveFromTargetSelector = new ArrayList<>();
+        Set<PathfinderGoalWrapped> allGoalsWrapped;
 
-        // need to do this instead of just taking the goals out of the custom entity's target selector because for some reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones
+        // need to do this instead of just taking the goals out of the custom entity's target selector because for some
+        // reason the custom entity's target selector's Field d doesn't have the super (vanilla) ones // todo test what?
         try {
-            allPathfinderGoalsWrapped = (Set<PathfinderGoalWrapped>) goals.get(entity.getVanillaGoalSelector());
-            allPathfinderGoalsWrapped.addAll((Set<PathfinderGoalWrapped>) goals.get(entity.getVanillaTargetSelector()));
+            allGoalsWrapped = (Set<PathfinderGoalWrapped>) goals.get(entity.getVanillaGoalSelector());
+            allGoalsWrapped.addAll((Set<PathfinderGoalWrapped>) goals.get(entity.getVanillaTargetSelector()));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return;
         }
 
-        goalsToRemoveGoalSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalMeleeAttack.class));
-        goalsToRemoveGoalSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalArrowAttack.class));
-        goalsToRemoveGoalSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalBowShoot.class));
-        goalsToRemoveGoalSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalCrossbowAttack.class));
-        goalsToRemoveTargetSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalNearestAttackableTarget.class));
-        goalsToRemoveTargetSelector.addAll(getPathfinderGoals(allPathfinderGoalsWrapped, PathfinderGoalHurtByTarget.class));
+        goalsToRemoveFromGoalSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalMeleeAttack.class));
+        goalsToRemoveFromGoalSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalArrowAttack.class));
+        goalsToRemoveFromGoalSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalBowShoot.class));
+        goalsToRemoveFromGoalSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalCrossbowAttack.class));
+        goalsToRemoveFromTargetSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalNearestAttackableTarget.class));
+        goalsToRemoveFromTargetSelector.addAll(getGoals(allGoalsWrapped, PathfinderGoalHurtByTarget.class));
 
         // but somehow removing vanilla goals from custom target selectors still works
-        for (PathfinderGoal goal : goalsToRemoveGoalSelector) {
+        for (PathfinderGoal goal : goalsToRemoveFromGoalSelector) {
             entity.goalSelector.a(goal); // removeGoal()
         }
 
-        for (PathfinderGoal goal : goalsToRemoveTargetSelector) {
+        for (PathfinderGoal goal : goalsToRemoveFromTargetSelector) {
             entity.targetSelector.a(goal);
         }
     }

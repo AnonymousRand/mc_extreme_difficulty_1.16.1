@@ -3,9 +3,9 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalSummonLightningRandomly;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalSummonLightningRandomly;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedHandheldAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
@@ -43,8 +43,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Drowned have 40 block detection range */
     public double getDetectionRange() {
+        /* Drowned have 40 block detection range */
         return 40.0;
     }
 
@@ -139,9 +139,9 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     @Override
     public void m() {
         /* No longer targets iron golems and villagers */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 3.0));                       /* Spawns lightning randomly */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalSummonLightningRandomly(this, 3.0));                    /* Spawns lightning randomly */
         this.goalSelector.a(1, new CustomPathfinderGoalRangedHandheldAttack<>(this, Items.TRIDENT, 8));        /* Drowned throw tridents every 8 ticks, and continue attack regardless of line of sight and y-level (the old goal stopped the mob from attack even if it had already recognized a target via CustomNearestAttackableTarget) */
         this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));                                   /* Drowned also attack in the day */
         this.goalSelector.a(3, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));

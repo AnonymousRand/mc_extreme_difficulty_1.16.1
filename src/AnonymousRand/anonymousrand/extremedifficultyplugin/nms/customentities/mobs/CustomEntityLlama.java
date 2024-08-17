@@ -101,9 +101,9 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     @Override
     protected void initPathfinder() { /* llamas won't panic anymore, are always aggro towards players, don't stop attack after spitting once, and no longer defend wolves */
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
         this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 40, 1.25));

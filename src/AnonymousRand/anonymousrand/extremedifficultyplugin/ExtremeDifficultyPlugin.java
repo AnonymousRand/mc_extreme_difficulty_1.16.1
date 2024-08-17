@@ -33,12 +33,10 @@ public class ExtremeDifficultyPlugin extends JavaPlugin {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Initialize static plugin field
     private void initializeStaticPlugin() {
         plugin = this;
     }
 
-    // Register listeners
     private void initializeListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         

@@ -27,8 +27,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     private int attacks;
     public int frenzyTicks;
     private boolean a10, a20, a40, a55;
-    private final NewPathfinderGoalBuffMobs buffPiglins = new NewPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
-    private final NewPathfinderGoalBuffMobs buffMobs = new NewPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
+    private final CustomPathfinderGoalBuffMobs buffPiglins = new CustomPathfinderGoalBuffMobs(this, CustomEntityPiglin.class, this.buildBuffsHashmapPiglin(), 40, 20, Integer.MAX_VALUE, 1);
+    private final CustomPathfinderGoalBuffMobs buffMobs = new CustomPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmapInsentient(), 40, 50, Integer.MAX_VALUE, 1);
     private static Field target;
 
     // todo function for frenzy and unfrenzy
@@ -85,8 +85,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     @Override
     public void initPathfinder() {
         super.initPathfinder();
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }

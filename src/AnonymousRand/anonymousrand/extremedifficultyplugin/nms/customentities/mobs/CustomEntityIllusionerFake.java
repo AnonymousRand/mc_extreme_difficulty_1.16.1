@@ -27,7 +27,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.parentIllusioner = parentIllusioner;
     }
 
-    // this will be called on super() constructor // todo make sure
+    /* This will be called on super() constructor // todo make sure */
     private void initCustom() {
         this.initAttributes();
 
@@ -62,12 +62,12 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
             int[] attackThresholds = this.getAttacksThresholds();
             if (metThreshold == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
             } else if (metThreshold == attackThresholds[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getPathfinderGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
                 }
             }
@@ -89,10 +89,10 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(5, new CustomEntityIllusioner.c(this));
         this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonAttack<>(this, random.nextInt(11) + 20));

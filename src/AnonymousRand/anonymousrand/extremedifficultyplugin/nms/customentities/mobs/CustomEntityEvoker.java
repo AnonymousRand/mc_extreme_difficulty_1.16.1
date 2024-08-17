@@ -148,10 +148,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(5, new c(this));
         this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
         /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
+        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0));

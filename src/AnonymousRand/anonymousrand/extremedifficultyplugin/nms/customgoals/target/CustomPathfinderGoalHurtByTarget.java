@@ -33,7 +33,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
         this.a(EnumSet.of(Type.TARGET));
     }
 
-    // Mobs only retaliate against players
+    /* Mobs only retaliate against players */
     @Override
     public boolean a() {
         if (!super.a()) {

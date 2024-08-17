@@ -40,9 +40,9 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
     @Override
     protected void initPathfinder() {
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new NewPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /* Breaks most blocks around the mob periodically */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /* custom goal that allows cave spider to summon cobwebs on itself constantly */
+        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 80, 1, 0, 1, 0, true)); /* Breaks most blocks around the mob periodically */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(1, new CustomPathfinderGoalSpawnBlocksEntitiesOnMob(this, org.bukkit.Material.COBWEB, 1)); /* custom goal that allows cave spider to summon cobwebs on itself constantly */
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
         this.goalSelector.a(4, new CustomPathfinderGoalMeleeAttack<>(this));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
@@ -139,7 +139,7 @@ public class CustomEntitySpiderCave extends EntityCaveSpider implements ICustomH
 
         if (this.attacks == 60 && !this.a60) { /* after 60 attacks, cave spiders summon area effect clouds wherever it goes in addition to cobwebs */
             this.a60 = true;
-            this.goalSelector.a(1, new NewPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 4));
+            this.goalSelector.a(1, new CustomPathfinderGoalSpawnBlocksEntitiesOnMob(this, this.newAEC, 4));
         }
 
         if (this.isClimbing()) { /* cave spiders move vertically 2 times as fast (for some reason this still applies to jumping) */

@@ -56,8 +56,8 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Creepers have 24 block detection range (40 if charged) */
     public double getDetectionRange() {
+        /* Creepers have 24 block detection range (40 if charged) */
         return this.isPowered() ? 40.0 : 24.0;
     }
 
@@ -140,18 +140,18 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     @Override
     protected void initPathfinder() {
         /* Creepers are no longer scared of cats and ocelots */
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                                     /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                                        /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new NewPathfinderGoalSummonLightningRandomly(this, 1.0));                                           /* Spawns lightning randomly */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* Occasionally teleports to a spot closer in y-level to its target */
-        this.goalSelector.a(1, new NewPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001));             /* Occasionally teleports to a spot near its target */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                                                     /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                                        /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalSummonLightningRandomly(this, 1.0));                                           /* Spawns lightning randomly */
+        this.goalSelector.a(1, new CustomPathfinderGoalTeleportNearTargetYLevel(this, 2.5, random.nextDouble() * 5 + 10.0, 0.00045)); /* Occasionally teleports to a spot closer in y-level to its target */
+        this.goalSelector.a(1, new CustomPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001));             /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
-        this.goalSelector.a(2, new PathfinderGoalSwell(this));                                                                     // this includes moving to target
+        this.goalSelector.a(2, new PathfinderGoalSwell(this));                                                                        // this includes moving to target
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                     /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
-        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget<>(this));                                                    /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                        /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
+        this.targetSelector.a(1, new CustomPathfinderGoalHurtByTarget<>(this));                                                       /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
     }
 
     @Override
@@ -220,7 +220,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         areaEffectCloud.setDuration(areaEffectCloud.getDuration() / 2);
         areaEffectCloud.setRadiusPerTick(-areaEffectCloud.getRadius() / (float) areaEffectCloud.getDuration());
 
-        /* creepers only create area effect clouds of negative effects */
+        /* Creepers only create area effect clouds of negative effects */
         for (MobEffect mobeffect : collection) {
             MobEffectList effect = mobeffect.getMobEffect();
 

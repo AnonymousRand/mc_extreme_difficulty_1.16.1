@@ -5,11 +5,11 @@ import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.PathfinderGoal;
 import org.bukkit.entity.LivingEntity;
 
-public class NewPathfinderGoalBreakBlockLookingAt extends PathfinderGoal {
+public class CustomPathfinderGoalBreakBlockLookingAt extends PathfinderGoal {
 
     private final EntityInsentient entity;
 
-    public NewPathfinderGoalBreakBlockLookingAt(EntityInsentient entity) {
+    public CustomPathfinderGoalBreakBlockLookingAt(EntityInsentient entity) {
         this.entity = entity;
     }
 

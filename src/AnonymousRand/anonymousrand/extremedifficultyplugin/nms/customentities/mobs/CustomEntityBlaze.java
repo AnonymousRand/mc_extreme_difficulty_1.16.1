@@ -3,19 +3,16 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntitySmallFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalMoveFasterInCobweb;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.NewPathfinderGoalGetBuffedByMobs;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
-
-import java.util.EnumSet;
 
 public class CustomEntityBlaze extends EntityBlaze
         implements IRangedEntity, ICustomHostile, IAttackLevelingMob, IGoalRemovingMob {
@@ -55,8 +52,8 @@ public class CustomEntityBlaze extends EntityBlaze
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Blazes have 40 block detection range */
     public double getDetectionRange() {
+        /* Blazes have 40 block detection range */
         return 40.0;
     }
 
@@ -169,7 +166,7 @@ public class CustomEntityBlaze extends EntityBlaze
     // Overridden vanilla functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // for IRangedEntity
+    /* For IRangedEntity */
     @Override // shoot()
     public void a(EntityLiving target, float distanceFactor) {
         if (!this.isSilent()) {
@@ -206,9 +203,8 @@ public class CustomEntityBlaze extends EntityBlaze
     protected void initPathfinder() {
         super.initPathfinder();
         this.fireballAttackPathfinderGoal = new CustomPathfinderGoalRangedAttack<>(this, 6);
-
-        this.goalSelector.a(0, new NewPathfinderGoalMoveFasterInCobweb(this));                                 /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new NewPathfinderGoalGetBuffedByMobs(this));                                    /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(3, this.fireballAttackPathfinderGoal);                                             /* Blazes do not pause between each volley and instead shoots constantly every 6 ticks */
         this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this, 20));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
@@ -225,8 +221,8 @@ public class CustomEntityBlaze extends EntityBlaze
     // Mob-specific goals/classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Not extending CustomPathfinderGoalAttack due to mutex clash with ranged attack; this doesn't need movement mutex
-    // flags to be set which CustomPathfinderGoalAttack sets
+    /* Not extending CustomPathfinderGoalAttack due to mutex clash with ranged attack; this doesn't need movement mutex
+     * flags to be set which CustomPathfinderGoalAttack sets */
     static class PathfinderGoalMeleeAttack extends PathfinderGoal {
 
         private final CustomEntityBlaze blaze;

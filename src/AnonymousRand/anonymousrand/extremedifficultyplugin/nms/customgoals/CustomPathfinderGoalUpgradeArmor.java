@@ -11,14 +11,14 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class NewPathfinderGoalUpgradeArmor extends PathfinderGoal {
+public class CustomPathfinderGoalUpgradeArmor extends PathfinderGoal {
 
     private final EntityInsentient nmsEntity;
     private final LivingEntity bukkitEntity;
     private final HashMap<Integer, Boolean> attackBooleans = new HashMap<>();
     private Field attacks;
 
-    public NewPathfinderGoalUpgradeArmor(EntityInsentient nmsEntity) {
+    public CustomPathfinderGoalUpgradeArmor(EntityInsentient nmsEntity) {
         this.nmsEntity = nmsEntity;
         this.bukkitEntity = ((LivingEntity) this.nmsEntity.getBukkitEntity());
         this.attackBooleans.put(4, false);
