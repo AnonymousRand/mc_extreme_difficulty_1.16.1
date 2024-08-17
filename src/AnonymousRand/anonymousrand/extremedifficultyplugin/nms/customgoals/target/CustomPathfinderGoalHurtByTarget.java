@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
@@ -20,10 +20,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
     }
 
     public CustomPathfinderGoalHurtByTarget(
-            T goalOwner,
-            boolean ignoreLOS,
-            boolean ignoreY,
-            Class<?>... reinforcementClasses) {
+            T goalOwner, boolean ignoreLOS, boolean ignoreY, Class<?>... reinforcementClasses) {
         super(goalOwner, ignoreLOS, ignoreY);
         if (reinforcementClasses.length > 0) {
             this.doesEntityCallForHelp = true;
@@ -42,7 +39,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
 
         // teleport to target if outside detection range/has no line of sight
         double detectionRange = this.getDetectionRange();
-        if (NMSUtil.distSq(this.goalOwner, this.potentialTarget, this.ignoreY) > detectionRange * detectionRange
+        if (NmsUtil.distSq(this.goalOwner, this.potentialTarget, this.ignoreY) > detectionRange * detectionRange
                 || !this.goalOwner.getEntitySenses().a(this.potentialTarget)) {
             if (!this.goalOwner.isSilent()) {
                 this.goalOwner.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);

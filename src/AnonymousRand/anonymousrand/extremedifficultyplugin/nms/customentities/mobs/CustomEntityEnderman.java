@@ -8,7 +8,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attac
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -208,7 +208,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         return dotProd > 1.0 - 0.025D / directionToPlayerMagnitude;
     }
 
-    @Override // teleportRandomly()
+    @Override /* `teleportRandomly()` */
     protected boolean eM() {
         if (!this.world.isClientSide && this.isAlive()) {
             /* Random teleportation range decreased to 10 blocks in each direction so that
@@ -307,15 +307,15 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         super.tick();
         
         if (this.getGoalTarget() != null) {
-            EntityLiving target = this.getGoalTarget();
+            EntityLiving goalTarget = this.getGoalTarget();
 
             /* Endermen have a chance to teleport to target if target do not have line of sight or is on a different
                y-level. In the latter case, there is a higher chance the closer horizontally the player is (and thus
                the more likely they are towering). */
-            if ((!this.getEntitySenses().a(target) && this.random.nextDouble() < 0.01)
-                    || (Math.abs(this.locY() - target.locY()) >= 2.0 && this.random.nextDouble()
-                        < 0.05 / Math.max(NMSUtil.distSq(this, target, true), 0.05))) {
-                this.teleportTo(target);
+            if ((!this.getEntitySenses().a(goalTarget) && this.random.nextDouble() < 0.01)
+                    || (Math.abs(this.locY() - goalTarget.locY()) >= 2.0 && this.random.nextDouble()
+                        < 0.05 / Math.max(NmsUtil.distSq(this, goalTarget, true), 0.05))) {
+                this.teleportTo(goalTarget);
             }
         }
     }
@@ -326,7 +326,6 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     static class PathfinderGoalPlayerWhoLookedAtTarget
             extends CustomPathfinderGoalNearestAttackableTarget<EntityPlayer, CustomEntityEnderman> {
-
         private final ArrayList<UUID> previousTargetUUIDs;
         private final EntityFilter targetAgainCondition;
 
@@ -343,9 +342,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if (this.goalOwner.getRandom().nextDouble() < 0.1
                     && this.goalOwner.getMinecraftServer().getPlayerList() != null) {
                 for (UUID targetUUID : this.previousTargetUUIDs) {
-                    EntityPlayer target = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
-                    if (this.targetAgainCondition.test(this.goalOwner, target)) {
-                        this.potentialTarget = target;
+                    EntityPlayer goalTarget = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
+                    if (this.targetAgainCondition.test(this.goalOwner, goalTarget)) {
+                        this.potentialTarget = goalTarget;
                         return true;
                     }
                 }

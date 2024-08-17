@@ -32,12 +32,12 @@ public class CustomPathfinderGoalMoveFasterInCobweb extends PathfinderGoal {
                         this.entity.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6, 10)); /* non-player mobs gain Speed 11 while in a cobweb (approx original speed) */
 
                         if (this.entity.getGoalTarget() != null) { /* mobs also move faster vertically and horizontally through cobwebs if their goal target is on a different y-level by 1 or more */
-                            EntityLiving target = this.entity.getGoalTarget();
+                            EntityLiving goalTarget = this.entity.getGoalTarget();
 
-                            if (this.entity.locY() - target.locY() > 1) {
-                                this.entity.setMot((target.locX() - this.entity.locX()) / 2.0, -40.0, (target.locZ() - this.entity.locZ()) / 2.0);
-                            } else if (this.entity.locY() - target.locY() < -1) {
-                                this.entity.setMot((target.locX() - this.entity.locX()) / 2.0, 40.0, (target.locZ() - this.entity.locZ()) / 2.0);
+                            if (this.entity.locY() - goalTarget.locY() > 1) {
+                                this.entity.setMot((goalTarget.locX() - this.entity.locX()) / 2.0, -40.0, (goalTarget.locZ() - this.entity.locZ()) / 2.0);
+                            } else if (this.entity.locY() - goalTarget.locY() < -1) {
+                                this.entity.setMot((goalTarget.locX() - this.entity.locX()) / 2.0, 40.0, (goalTarget.locZ() - this.entity.locZ()) / 2.0);
                             }
                         }
 

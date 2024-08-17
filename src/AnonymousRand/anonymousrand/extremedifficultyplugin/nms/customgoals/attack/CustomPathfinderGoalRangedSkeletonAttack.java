@@ -1,9 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 // originally PathfinderGoalBowShoot
 /**
@@ -42,7 +41,7 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
 
         /* Skeletons and illusioners try to maintain a distance from their targets equal to 50% of their detection
            range */
-        this.strafingBackwards = !(NMSUtil.distSq(this.goalOwner, target, true) > this.getDetectionRangeSq() * 0.5);
+        this.strafingBackwards = !(NmsUtil.distSq(this.goalOwner, target, true) > this.getDetectionRangeSq() * 0.5);
         /* Skeletons and illusioners have an increased frequency of switching strafe rotation: every 10 ticks of
            strafing, they have a 50% chance to switch the rotation direction */
         if (this.strafingTime % 10 == 0) {

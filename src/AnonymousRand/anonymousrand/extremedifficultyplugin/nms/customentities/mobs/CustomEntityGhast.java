@@ -9,7 +9,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.targe
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -188,7 +188,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             EntityLiving entityLiving = this.ghast.getGoalTarget();
 
-            if (NMSUtil.distSq(this.ghast, entityLiving, true) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
+            if (NmsUtil.distSq(this.ghast, entityLiving, true) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
                 World world = this.ghast.getWorld();
 
                 ++this.chargeTime;
@@ -269,7 +269,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
             } else {
                 EntityLiving entityLiving = this.a.getGoalTarget();
 
-                if (NMSUtil.distSq(this.a, entityLiving, true) < 4096.0D) {
+                if (NmsUtil.distSq(this.a, entityLiving, true) < 4096.0D) {
                     double d1 = entityLiving.locX() - this.a.locX();
                     double d2 = entityLiving.locZ() - this.a.locZ();
 

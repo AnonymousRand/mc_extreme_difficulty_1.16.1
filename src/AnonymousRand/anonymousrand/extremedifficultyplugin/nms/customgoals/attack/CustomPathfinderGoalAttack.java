@@ -92,15 +92,15 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
 
     @Override
     public final void e() {
-        EntityLiving target = this.goalOwner.getGoalTarget();
-        if (target == null) {
+        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
+        if (goalTarget == null) {
             return;
         }
 
         this.remainingAttackCooldown--;
         this.remainingRepathCooldown--;
-        this.tickAttack(target);
-        this.tickMovement(target);
+        this.tickAttack(goalTarget);
+        this.tickMovement(goalTarget);
     }
 
     protected void tickAttack(EntityLiving target) {

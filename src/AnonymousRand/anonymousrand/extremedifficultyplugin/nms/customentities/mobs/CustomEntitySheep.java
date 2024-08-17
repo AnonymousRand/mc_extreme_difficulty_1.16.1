@@ -1,6 +1,6 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
 
@@ -22,8 +22,8 @@ public class CustomEntitySheep extends EntitySheep {
 
         /* Sheep explode when they are less than 2.5 blocks away from nearest player */
         if (this.random.nextDouble() < 0.2) {
-            EntityHuman nearestPlayer = NMSUtil.getNearestEntityFromList(this.getWorld().getPlayers(), null, this);
-            if (nearestPlayer != null && NMSUtil.distSq(this, nearestPlayer, false) <= 6.25) {
+            EntityHuman nearestPlayer = NmsUtil.getNearestEntityFromList(this.getWorld().getPlayers(), null, this);
+            if (nearestPlayer != null && NmsUtil.distSq(this, nearestPlayer, false) <= 6.25) {
                 this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 2.0F, true, Explosion.Effect.DESTROY);
                 this.die();
             }

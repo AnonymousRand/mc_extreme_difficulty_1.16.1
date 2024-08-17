@@ -8,7 +8,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mi
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -187,7 +187,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 EntityLiving target = CustomEntityShulker.this.getGoalTarget();
 
                 CustomEntityShulker.this.getControllerLook().a(target, 180.0F, 180.0F);
-                double distSqToTarget = NMSUtil.distSq(CustomEntityShulker.this, target, true);
+                double distSqToTarget = NmsUtil.distSq(CustomEntityShulker.this, target, true);
 
                 if (distSqToTarget < 400.0D) { // todo getfollowrange?
                     if (this.b <= 0) {

@@ -20,20 +20,12 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     protected final boolean ignoreY;
     protected EntityLiving potentialTarget;
 
-    protected CustomPathfinderGoalTarget(
-            T goalOwner,
-            boolean ignoreLOS,
-            boolean ignoreY) {
-        
+    protected CustomPathfinderGoalTarget(T goalOwner, boolean ignoreLOS, boolean ignoreY) {
         this(goalOwner, ignoreLOS, ignoreY, null);
     }
 
     protected CustomPathfinderGoalTarget(
-            T goalOwner,
-            boolean ignoreLOS,
-            boolean ignoreY,
-            @Nullable Predicate<EntityLiving> extraEntityPredicate) {
-
+            T goalOwner, boolean ignoreLOS, boolean ignoreY, @Nullable Predicate<EntityLiving> extraEntityPredicate) {
         this.goalOwner = goalOwner;
         // EntityFilter with ignoreLOS and ignoreY affects INITIALLY finding a player target
         // (also note that this constructor is called in initPathfinder() in the super() constructor of a mob
@@ -49,27 +41,27 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
         this.ignoreY = ignoreY;
     }
 
-    @Override // shouldExecute()
+    @Override /* `shouldExecute()` */
     public boolean a() {
         this.potentialTarget = this.findNearestPotentialTarget(true);
         return this.targetCondition.test(this.goalOwner, this.potentialTarget);
     }
 
-    @Override // shouldContinueExecuting()
+    @Override /* `shouldContinueExecuting()` */
     public boolean b() {
         /* Mobs, even those not ignoring line of sight, will no longer lose targets by breaking line of sight. Thus, the
            only ways to shake off a mob without dying is to leave its range or have it retarget to a nearer option. */
         return this.targetConditionIgnoreLOS.test(this.goalOwner, this.goalOwner.getGoalTarget());
     }
 
-    @Override // startExecuting()
+    @Override /* `startExecuting()` */
     public void c() {
         this.goalOwner.setGoalTarget(this.potentialTarget, this.getTargetReason(this.potentialTarget), true);
         // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
         this.targetCondition.setDetectionRange(this.getDetectionRange());
     }
 
-    @Override // resetTask()
+    @Override /* `resetTask()` */
     public void d() {
         this.goalOwner.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
     }

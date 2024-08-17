@@ -7,7 +7,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedSkeletonAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
@@ -165,7 +165,7 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
             if (this.getGoalTarget() != null) {
                 EntityLiving target = this.getGoalTarget();
 
-                if (NMSUtil.distSq(this, target, false) > Math.pow(this.getDetectionRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons // todo if not revamping y-level attack globally: how about just not ignore y level and use vanilla nearestattackabletarget?
+                if (NmsUtil.distSq(this, target, false) > Math.pow(this.getDetectionRange(), 2)) { // deaggro if player out of y-level-included sphere for performance reasons // todo if not revamping y-level attack globally: how about just not ignore y level and use vanilla nearestattackabletarget?
                     this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
             }

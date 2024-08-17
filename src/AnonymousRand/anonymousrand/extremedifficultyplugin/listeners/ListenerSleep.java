@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.listeners;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.CustomEntityPufferfish;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -39,8 +39,8 @@ public class ListenerSleep implements Listener {
             return;
         }
 
-        EntityLiving nearestMonster = NMSUtil.getNearestEntityWithinRange(EntityMonster.class, null, nmsPlayer, 50.0, 128.0, 50.0);
-        CustomEntityPufferfish nearestPufferfish = NMSUtil.getNearestEntityWithinRange(CustomEntityPufferfish.class, null, nmsPlayer, 50.0, 128.0, 50.0);
+        EntityLiving nearestMonster = NmsUtil.getNearestEntityInRange(EntityMonster.class, null, nmsPlayer, 50.0, 128.0, 50.0);
+        CustomEntityPufferfish nearestPufferfish = NmsUtil.getNearestEntityInRange(CustomEntityPufferfish.class, null, nmsPlayer, 50.0, 128.0, 50.0);
         double monsterDistanceIgnoreY;
         double pufferfishDistanceIgnoreY;
 

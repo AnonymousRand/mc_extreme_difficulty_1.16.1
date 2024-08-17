@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 /**
@@ -50,7 +50,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
 
     @Override
     protected void attack(EntityLiving target) {
-        float distanceFactor = (float) MathHelper.a(NMSUtil.dist(this.goalOwner, target, false)
+        float distanceFactor = (float) MathHelper.a(NmsUtil.dist(this.goalOwner, target, false)
                                        / this.goalOwner.getDetectionRange(), 0.1, 1.0);
         this.goalOwner.a(target, distanceFactor); // shoot()
     }

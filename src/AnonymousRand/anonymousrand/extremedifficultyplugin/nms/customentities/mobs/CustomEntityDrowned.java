@@ -172,7 +172,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                     && this.drowned.locY() >= (double) (this.drowned.getWorld().getSeaLevel() - 3);
         }
 
-        @Override // shouldMoveTo()
+        @Override /* `shouldMoveTo()` */
         protected boolean a(IWorldReader iWorldReader, BlockPosition blockPosition) {
             BlockPosition blockPosition1 = blockPosition.up();
 
@@ -239,7 +239,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             Random random = this.drowned.getRandom();
             BlockPosition currentPosition = this.drowned.getChunkCoordinates();
 
-            for (int i = 0; i < 10; ++i) {
+            for (int i = 0; i < 10; i++) {
                 BlockPosition blockPosition =
                         currentPosition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
 

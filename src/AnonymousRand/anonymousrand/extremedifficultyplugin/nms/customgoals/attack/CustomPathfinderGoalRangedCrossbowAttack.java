@@ -1,11 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-
-import java.util.EnumSet;
 
 /**
  * A subclass of <code>CustomPathfinderGoalRangedHandheldAttack</code> that animates crossbow charging, analogous to

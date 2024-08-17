@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -260,7 +260,7 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSq(this.a, entityLiving, true) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NmsUtil.distSq(this.a, entityLiving, true) > 9.0D;
         }
     }
 }

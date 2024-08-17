@@ -4,7 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -175,7 +175,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
             /* The explosion power is given by $base + max(1.5^{dist - 2} - 1, 0)$ */
             if (!this.world.isClientSide) {
                 double extraRadius =
-                        Math.pow(1.5, Math.sqrt(NMSUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
+                        Math.pow(1.5, Math.sqrt(NmsUtil.distSq(this, this.getGoalTarget(), false)) - 2.0) - 1.0;
                 float explosionRadius =
                         (float) ((this.isPowered() ? 50.0 : this.explosionRadius) + Math.max(extraRadius, 0.0));
                 ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, false);

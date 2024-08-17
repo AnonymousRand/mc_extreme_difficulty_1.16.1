@@ -7,7 +7,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
@@ -150,7 +150,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
             this.setInvul(i);
         } else {
-            for (i = 1; i < 3; ++i) { // main head: 0, right head: 1, left head: 2
+            for (i = 1; i < 3; i++) { // main head: 0, right head: 1, left head: 2
                 if (this.getGoalTarget() instanceof EntityPlayer) {
                     this.setHeadTarget(i, this.getGoalTarget().getId());
 
@@ -293,7 +293,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
             }
 
             // stop dash one we are within 2 blocks of player
-            if (NMSUtil.distSq(this.wither, this.wither.getGoalTarget(), false) <= 4.0) {
+            if (NmsUtil.distSq(this.wither, this.wither.getGoalTarget(), false) <= 4.0) {
                 this.wither.dash = false;
                 this.cancel();
             }

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 
 import java.util.*;
@@ -45,7 +45,7 @@ public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLe
     public void e() {
         int attacksLocal = this.entity.getAttacks();
         this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
-            if (entity instanceof EntityPlayer || NMSUtil.distSq(this.entity, entity, false) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
+            if (entity instanceof EntityPlayer || NmsUtil.distSq(this.entity, entity, false) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
                 return;
             }
 

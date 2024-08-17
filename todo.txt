@@ -6,7 +6,6 @@ plural reference to mob changes, big comment separator for inner classes. move i
 reorganize all custommobs to use new attacks thing and whatever (including blaze).
 private instead of protected where possible, dont target villagers
 standardize multiline comment indent
-conseuctive goal priorities
 stopped after: endermite
 
 revise multiline comments in initpathfinder()s
@@ -16,6 +15,10 @@ custom inner goals extending melee/ranged attack etc. dont need field for parent
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
 increment attacks in attack method/goal instead of listener
+
+entity_ to just _
+
+convert classes with a lot of constructor args (e.g. spawnentity, target goals, entityfilter) to builder pattern
 
 make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
@@ -37,6 +40,8 @@ hoglins either have insane reach. also golems too? OR for golem: copy in enderma
 mobs when hit by a player further than detection range/cant see: they teleport to player. teleport util?
 
 is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
+
+hurtbytarget rename to hurtbyplayer? otherwise target class must be passed in
 
 piglin frenzy when you open chest; make frenzy have explosive effects and set goal target if possible
 
@@ -66,13 +71,14 @@ change this.entity in goals to this.goalowner?
 personalize all doc comments with mob name?
 
 FINAL line continutation indents:
-    align to equals sign/operator
-        equals try to fill first line and align to equals; if not possible then newline after equals and two tabs
     multiline function param dec and call:
         two tabs
         avoid any parems on first line unless its another multiline construct and its the only param and param token (besides kw)
         closing paren on same line as last arg unless to remove ambiguiity for nested func call in the middle of param list (app/blog/blogpage/util.py end). in latter case one tab indent
+        don't force new line per arg unless mroe than 1 line
     two tabs otherwise
+
+`` all code in comments
 
 pink sheep and stuff dont do the fling into the air to avoid knockback thing?
 
@@ -376,6 +382,10 @@ endermen pick up blocks chance per check 1/20 -> 1/4 (5 times as frequent)
 endermen put down blocks chance per check 1/2000 -> 1/400 (5 times as frequent)
 endermen have a 15% chance to teleport to you if you looked at it
 evokers, illusioners forget players after 60 ticks instead of 300
+evoker max vex count nearby 24 -> 10
+evoker summons 6 vexes at a time -> 5
+evoker wololo target range 32 blocks -> detection range
+evokers wololo nearest sheep instead of random one now
 iron golem death silverfish 15 -> 10
 mooshroom death explosion power 15 -> 10
 killer rabbit move speed multiplier 1.4 -> 1.5

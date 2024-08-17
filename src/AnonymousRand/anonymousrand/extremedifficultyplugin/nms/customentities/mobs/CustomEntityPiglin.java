@@ -6,7 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedCrossbowAttack;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
@@ -368,7 +368,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         public boolean a() {
             if (this.piglin.frenzyTicks > 0 && --this.cooldown <= 0 && this.piglin.getGoalTarget() instanceof EntityPlayer) {
                 if (!((EntityPlayer) this.piglin.getGoalTarget()).abilities.isInvulnerable ) {
-                    return NMSUtil.distSq(this.piglin, this.piglin.getGoalTarget(), false) <= 4.0;
+                    return NmsUtil.distSq(this.piglin, this.piglin.getGoalTarget(), false) <= 4.0;
                 }
             }
 

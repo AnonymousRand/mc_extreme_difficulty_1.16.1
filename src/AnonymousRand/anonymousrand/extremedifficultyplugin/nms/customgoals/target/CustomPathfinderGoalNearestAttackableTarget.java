@@ -2,13 +2,12 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.targ
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Random;
 import java.util.function.Predicate;
 
 // All the line of sight/y-level checking vanillaly in the melee/ranged attack goals has been moved here
@@ -24,10 +23,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
     }
 
     public CustomPathfinderGoalNearestAttackableTarget(
-            T goalOwner,
-            Class<S> targetClass,
-            boolean ignoreLOS,
-            boolean ignoreY) {
+            T goalOwner, Class<S> targetClass, boolean ignoreLOS, boolean ignoreY) {
         this(goalOwner, targetClass, ignoreLOS, ignoreY, 10, null);
     }
 
@@ -59,6 +55,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         if (this.goalOwner.getRandom().nextInt(this.targetChance) != 0) {
             return false;
         }
+
         return super.a();
     }
 
@@ -71,11 +68,11 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
             return false;
         }
 
-        EntityLiving target = this.goalOwner.getGoalTarget();
-        if (this.goalOwner.getRandom().nextDouble() < 0.025 && target != null) {
+        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
+        if (this.goalOwner.getRandom().nextDouble() < 0.025 && goalTarget != null) {
             S nearestPotentialTarget = this.findNearestPotentialTarget(false);
             if (nearestPotentialTarget != null
-                    && nearestPotentialTarget.getUniqueID() != target.getUniqueID()) {
+                    && nearestPotentialTarget.getUniqueID() != goalTarget.getUniqueID()) {
                 this.goalOwner.setGoalTarget(nearestPotentialTarget);
             }
         }
@@ -94,10 +91,10 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         }
 
         if (this.targetClass == EntityHuman.class || this.targetClass == EntityPlayer.class) {
-            return (S) NMSUtil.getNearestEntityFromList(this.goalOwner.getWorld().getPlayers(), targetCondition,
+            return (S) NmsUtil.getNearestEntityFromList(this.goalOwner.getWorld().getPlayers(), targetCondition,
                     this.goalOwner);
         } else {
-            return NMSUtil.getNearestEntityWithinRange(this.targetClass, targetCondition, this.goalOwner,
+            return NmsUtil.getNearestEntityInRange(this.targetClass, targetCondition, this.goalOwner,
                     this.getDetectionRange(), 4.0D, this.getDetectionRange());
         }
     }

@@ -35,7 +35,9 @@ public class AttackLevelingController {
                     metThresholds.add(attackThreshold);
                 }
             }
-            return metThresholds.stream().mapToInt(Integer::intValue).toArray(); // dankly convert ArrayList<Integer> to int[]
+
+            // dankly convert ArrayList<Integer> to int[]
+            return metThresholds.stream().mapToInt(Integer::intValue).toArray();
         }
 
         return new int[]{};

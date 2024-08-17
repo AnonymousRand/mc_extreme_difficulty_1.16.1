@@ -7,7 +7,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
 import com.google.common.collect.Lists;
@@ -30,7 +31,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = true;
     private EntitySheep wololoTarget;
-    private AttackLevelingController attackLevelingController = null;
 
     public CustomEntityEvoker(World world) {
         super(EntityTypes.EVOKER, world);
@@ -48,7 +48,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     // ICustomHostile
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public double getDetectionRange() { /* evokers have 28 block detection range */
+    public double getDetectionRange() {
+        /* Evokers have 28 block detection range */
         return 28.0;
     }
 
@@ -108,6 +109,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     // IAttackLevelingMob
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    private AttackLevelingController attackLevelingController = null;
+
     private void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(25, 35, 60);
     }
@@ -142,85 +145,96 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    protected void initPathfinder() { /* no longer targets iron golems and villagers */
+    protected void initPathfinder() {
+        /* Evokers no longer target iron golems and villagers */
+        // from `EntityRaider`
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
+        this.goalSelector.a(4, new d(this, 1.05, 1));
         this.goalSelector.a(5, new c(this));
-        this.goalSelector.a(4, new d(this, 1.0499999523162842D, 1));
-        /* Still moves fast in cobwebs */
-        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
-        /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
-        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true)); /* Breaks most blocks around the mob periodically */
+        // from `EntityMonsterPatrolling`
+        this.goalSelector.a(4, new EntityMonsterPatrolling.a(this, 0.7D, 0.595D));
+        // other
+        this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                                /* Still moves fast in cobwebs */
+        this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                   /* Takes buffs from bats, piglins, etc. */
+        this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true));           /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalEvokerCastSpell());
+        this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalCastSpell());
         this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0));
-        this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalEvokerSummonVexSpell());
-        this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalEvokerFangSpell());
-        this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalEvokerWololoSpell());
+        this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalSummonVexSpell());
+        this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalFangSpell());
+        this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalWololoSpell());
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, EntityRaider.class)); /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
+        this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, EntityRaider.class));              /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(1, (new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class))); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
-        // todo test removing forget after 300 ticks
     }
 
     @Override
     public void die() {
         super.die();
 
-        if (this.getAttacks() >= 60) { /* after 60 attacks, evokers summon 7 vexes when killed */
+        /* After 60 attacks, evokers summon 7 vexes when killed */
+        if (this.getAttacks() >= 60) {
             new SpawnEntity(this.world, new CustomEntityVex(this.world), 7, null, null, this, false, false);
         }
     }
 
-    private void a(@Nullable EntitySheep entitySheep) { // private setWololoTarget()
-        this.wololoTarget = entitySheep;
-    }
-
     @Nullable
-    private EntitySheep fh() { // private getWololoTarget()
+    private EntitySheep getWololoTarget() {
         return this.wololoTarget;
     }
 
-    class PathfinderGoalEvokerSummonVexSpell extends EntityIllagerWizard.c {
+    private void setWololoTarget(@Nullable EntitySheep sheep) {
+        this.wololoTarget = sheep;
+    }
 
-        private PathfinderGoalEvokerSummonVexSpell() {
-            super();
-        }
-
+    class PathfinderGoalSummonVexSpell extends EntityIllagerWizard.c {
         @Override
         public boolean a() {
             if (!super.a()) {
                 return false;
-            } else {
-                int numVexesNearby = CustomEntityEvoker.this.getWorld().a(EntityVex.class, CustomEntityEvoker.this.getBoundingBox().g(28.0D)).size();
-
-                return 25 > numVexesNearby; // evoker can have up to 25 vexes in its vicinity (28 blocks)
             }
+
+            int vexNearbyCount = CustomEntityEvoker.this.getWorld().a(
+                    EntityVex.class,
+                    CustomEntityEvoker.this.getBoundingBox().g(getDetectionRange())).size();
+            /* Evokers can summon vexes when there are less than or equal to 10 vexes in their follow range */
+            return vexNearbyCount <= 10;
         }
 
+        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
         @Override
-        protected int g() { // attack delay for any spell
-            return 0; /* does not increase global attack cooldown */
+        protected int g() {
+            return 100;
         }
 
+        /* `getSpellCooldown()` */
         @Override
-        protected int h() { // attack delay between each vex summon spell
-            return 500; /* delay between each vex spawn increased to 25 seconds */
+        protected int h() {
+            /* Evokers summon vexes every 25 seconds instead of 17 */
+            return 500;
         }
 
+        /* `castSpell()` */
         @Override
         protected void j() {
             CustomEntityEvoker.this.increaseAttacks(6);
 
-            for (int i = 0; i < 6; ++i) { /* summons 6 vexes at a time instead of 3 */
-                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(-2 + random.nextInt(5), 1, -2 + random.nextInt(5));
+            /* Evokers summon 5 vexes at a time instead of 3 */
+            for (int i = 0; i < 5; i++) {
+                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(
+                        random.nextInt(5) - 2, 1, random.nextInt(5) - 2);
                 CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
                 newVex.setPositionRotation(blockPosition, 0.0F, 0.0F);
-                newVex.prepare(CustomEntityEvoker.this.getWorld(), CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition), EnumMobSpawn.MOB_SUMMONED, null, null);
+                newVex.prepare(
+                        CustomEntityEvoker.this.getWorld(),
+                        CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition),
+                        EnumMobSpawn.MOB_SUMMONED,
+                        null,
+                        null);
                 newVex.a(CustomEntityEvoker.this);
                 newVex.g(blockPosition);
                 newVex.a(20 * (30 + random.nextInt(90)));
@@ -228,114 +242,162 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
+        /* `getSpellPrepareSound()` */
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_SUMMON;
         }
 
+        /* `getSpellType()` */
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.SUMMON_VEX;
         }
     }
 
-    class PathfinderGoalEvokerFangSpell extends EntityIllagerWizard.c {
+    class PathfinderGoalFangSpell extends EntityIllagerWizard.c {
 
-        private PathfinderGoalEvokerFangSpell() {
-            super();
-        }
-
+        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
         @Override
         protected int g() {
-            return 0; /* does not increase global attack cooldown */
+            return 100;
         }
 
+        /* `getSpellCooldown()` */
         @Override
-        protected int h() { /* summons fangs every 85 ticks instead of 100 */
+        protected int h() {
+            /* Evokers summon fangs every 85 ticks instead of 100 */
             return 85;
         }
 
+        /* `castSpell()` */
         @Override
         protected void j() {
-            EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
-            double d0 = Math.min(entityLiving.locY(), CustomEntityEvoker.this.locY());
-            double d1 = Math.max(entityLiving.locY(), CustomEntityEvoker.this.locY()) + 1.0;
-            float f = (float) MathHelper.d(entityLiving.locZ() - CustomEntityEvoker.this.locZ(), entityLiving.locX() - CustomEntityEvoker.this.locX());
-            int i;
+            EntityLiving goalTarget = CustomEntityEvoker.this.getGoalTarget();
+            double lowerEntityY = Math.min(goalTarget.locY(), CustomEntityEvoker.this.locY());
+            double higherEntityY = Math.max(goalTarget.locY(), CustomEntityEvoker.this.locY()) + 1.0;
+            float angleToGoalTarget = (float) MathHelper.d(
+                    goalTarget.locZ() - CustomEntityEvoker.this.locZ(),
+                    goalTarget.locX() - CustomEntityEvoker.this.locX());
 
-            if (NMSUtil.distSq(CustomEntityEvoker.this, entityLiving, true) < 9.0) {
-                float f1;
+            if (NmsUtil.distSq(CustomEntityEvoker.this, goalTarget, true) < 9.0) {
+                // if target is within 3 blocks away, summon fangs in 2 circles
+                float yaw;
 
-                for (i = 0; i < 5; ++i) {
-                    f1 = f + (float) i * 3.1415927F * 0.4F;
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 1.5, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 1.5, d0, d1, f1, 0);
+                for (int i = 0; i < 5; i++) {
+                    yaw = angleToGoalTarget + (float) (i * 3.1415927 * 0.4);
+                    this.spawnFangs(
+                            CustomEntityEvoker.this.locX() + MathHelper.cos(yaw) * 1.5,
+                            CustomEntityEvoker.this.locZ() + MathHelper.sin(yaw) * 1.5,
+                            lowerEntityY,
+                            higherEntityY,
+                            yaw,
+                            0);
                 }
 
-                for (i = 0; i < 8; ++i) {
-                    f1 = f + (float) i * 3.1415927F * 2.0F / 8.0F + 1.2566371F;
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f1) * 2.5D, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f1) * 2.5D, d0, d1, f1, 3);
+                for (int i = 0; i < 8; i++) {
+                    yaw = angleToGoalTarget + (float) (i * 3.1415927 * 2.0 / 8.0 + 1.2566371);
+                    this.spawnFangs(
+                            CustomEntityEvoker.this.locX() + MathHelper.cos(yaw) * 2.5,
+                            CustomEntityEvoker.this.locZ() + MathHelper.sin(yaw) * 2.5,
+                            lowerEntityY,
+                            higherEntityY,
+                            yaw,
+                            3);
                 }
             } else {
-                for (i = 0; i < CustomEntityEvoker.this.getDetectionRange(); ++i) { // fang range increased to the same as follow range
-                    double d2 = 1.25D * (double) (i + 1);
-                    int j = 1 * i;
-
-                    this.spawnFangs(CustomEntityEvoker.this.locX() + (double) MathHelper.cos(f) * d2, CustomEntityEvoker.this.locZ() + (double) MathHelper.sin(f) * d2, d0, d1, f, j);
+                // else, summon fangs in straight line
+                // evoker fang range synced to detection range */
+                for (int i = 0; i < CustomEntityEvoker.this.getDetectionRange(); i++) {
+                    double distMultiplier = 1.25 * (double) (i + 1);
+                    this.spawnFangs(
+                            CustomEntityEvoker.this.locX() + MathHelper.cos(angleToGoalTarget) * distMultiplier,
+                            CustomEntityEvoker.this.locZ() + MathHelper.sin(angleToGoalTarget) * distMultiplier,
+                            lowerEntityY,
+                            higherEntityY,
+                            angleToGoalTarget,
+                            i);
                 }
             }
 
-            new RunnableEvokerStopPlayer(entityLiving, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L); /* every time the fangs attack, the player is slowed for 1.2 seconds */
+            /* Every time the fangs attack, the target player is slowed for 1.2 seconds
+             * (regardless of if the fangs were dodged) */
+            new RunnableEvokerStopPlayer(goalTarget, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L);
         }
 
-        public void spawnFangs(double d0, double d1, double d2, double d3, float f, int i) {
-            EntityLiving entityLiving = CustomEntityEvoker.this.getGoalTarget();
-            BlockPosition blockPosition = new BlockPosition(d0, d3, d1);
-            boolean flag = false;
-            double d4 = 0.0D;
+        public void spawnFangs(
+                double x, double z, double lowerEntityY, double higherEntityY, float yaw, int spawnDelay) {
+            EntityLiving goalTarget = CustomEntityEvoker.this.getGoalTarget();
+            BlockPosition blockPosition = new BlockPosition(x, higherEntityY, z);
+            boolean suitableYFound = false;
+            double yAddition = 0.0;
 
+            // find suitable y-level to spawn fangs on
             do {
-                BlockPosition blockPosition1 = blockPosition.down();
-                IBlockData iblockdata = CustomEntityEvoker.this.getWorld().getType(blockPosition1);
+                BlockPosition blockPositionDown = blockPosition.down();
+                IBlockData blockDataDown = CustomEntityEvoker.this.getWorld().getType(blockPositionDown);
 
-                if (iblockdata.d(CustomEntityEvoker.this.getWorld(), blockPosition1, EnumDirection.UP)) {
+                if (blockDataDown.d(CustomEntityEvoker.this.getWorld(), blockPositionDown, EnumDirection.UP)) {
                     if (!CustomEntityEvoker.this.getWorld().isEmpty(blockPosition)) {
-                        IBlockData iblockdata1 = CustomEntityEvoker.this.getWorld().getType(blockPosition);
-                        VoxelShape voxelshape = iblockdata1.getCollisionShape(CustomEntityEvoker.this.getWorld(), blockPosition);
+                        IBlockData blockData = CustomEntityEvoker.this.getWorld().getType(blockPosition);
+                        VoxelShape voxelShape = blockData.getCollisionShape(
+                                CustomEntityEvoker.this.getWorld(), blockPosition);
 
-                        if (!voxelshape.isEmpty()) {
-                            d4 = voxelshape.c(EnumDirection.EnumAxis.Y);
+                        if (!voxelShape.isEmpty()) {
+                            yAddition = voxelShape.c(EnumDirection.EnumAxis.Y);
                         }
                     }
 
-                    flag = true;
+                    suitableYFound = true;
                     break;
                 }
 
                 blockPosition = blockPosition.down();
-            } while (blockPosition.getY() >= MathHelper.floor(d2) - 1);
+            } while (blockPosition.getY() >= MathHelper.floor(lowerEntityY) - 1);
 
-            if (flag) {
+            if (suitableYFound) {
                 CustomEntityEvoker.this.increaseAttacks(2);
-                Location bukkitLocBase, bukkitLoc;
+                org.bukkit.World bukkitWorld = CustomEntityEvoker.this.getWorld().getWorld();
+                Location bukkitLoc;
+                Location bukkitLocBase;
                 Block bukkitBlock;
                 org.bukkit.Material bukkitMaterial;
 
-                BlockIterator iterator = new BlockIterator(CustomEntityEvoker.this.getWorld().getWorld(), new Vector(CustomEntityEvoker.this.locX(), CustomEntityEvoker.this.locY(), CustomEntityEvoker.this.locZ()), new Vector(entityLiving.locX() - CustomEntityEvoker.this.locX(), entityLiving.locY() - CustomEntityEvoker.this.locY(), entityLiving.locZ() - CustomEntityEvoker.this.locZ()), 1.0, (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
-                while (iterator.hasNext()) { /* every time fangs are used, the evoker breaks all blocks within follow distance of itself towards the target, drilling a 3 by 3 hole through any blocks */
-                    bukkitLocBase = iterator.next().getLocation();
-                    Random random = new Random();
+                BlockIterator blockIterator = new BlockIterator(
+                        bukkitWorld,
+                        new Vector(
+                                CustomEntityEvoker.this.locX(),
+                                CustomEntityEvoker.this.locY(),
+                                CustomEntityEvoker.this.locZ()),
+                        new Vector(
+                                goalTarget.locX() - CustomEntityEvoker.this.locX(),
+                                goalTarget.locY() - CustomEntityEvoker.this.locY(),
+                                goalTarget.locZ() - CustomEntityEvoker.this.locZ()),
+                        1.0,
+                        (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
+                /* Every time fangs are summoned, evokers breaks all blocks within follow distance of itself towards the
+                 * target, drilling a 3 by 3 hole through any blocks */ // todo runnable?
+                while (blockIterator.hasNext()) {
+                    bukkitLocBase = blockIterator.next().getLocation();
 
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            for (int z = -1; z <= 1; z++) {
-                                bukkitLoc = new Location(CustomEntityEvoker.this.getWorld().getWorld(), bukkitLocBase.getX() + x, bukkitLocBase.getY() + y, bukkitLocBase.getZ() + z);
+                    for (int x2 = -1; x2 <= 1; x2++) {
+                        for (int y2 = -1; y2 <= 1; y2++) {
+                            for (int z2 = -1; z2 <= 1; z2++) {
+                                bukkitLoc = new Location(
+                                        bukkitWorld,
+                                        bukkitLocBase.getX() + x2,
+                                        bukkitLocBase.getY() + y2,
+                                        bukkitLocBase.getZ() + z2);
                                 bukkitBlock = bukkitLoc.getBlock();
                                 bukkitMaterial = bukkitBlock.getType();
 
-                                if (Predicates.blockBreakableDefault.test(bukkitMaterial) && Predicates.notBedrock.test(bukkitMaterial) && Predicates.notHardBlocks.test(bukkitMaterial)) { // as long as it isn't one of these blocks
+                                if (Predicates.blockBreakableDefault.test(bukkitMaterial)
+                                        && Predicates.notBedrock.test(bukkitMaterial)
+                                        && Predicates.notHardBlocks.test(bukkitMaterial)) {
                                     bukkitBlock.setType(org.bukkit.Material.AIR);
-                                } else if (!Predicates.notHardBlocks.test(bukkitMaterial)) { // 50% chance to break these blocks
-                                    if (random.nextDouble() < 0.5) {
+                                } else if (!Predicates.notHardBlocks.test(bukkitMaterial)) {
+                                    // 50% chance to break these blocks
+                                    if (CustomEntityEvoker.this.getRandom().nextDouble() < 0.5) {
                                         bukkitBlock.setType(org.bukkit.Material.AIR);
                                     }
                                 }
@@ -344,117 +406,145 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     }
                 }
 
-                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(CustomEntityEvoker.this.getWorld(), d0, (double) blockPosition.getY() + d4, d1, f, i, CustomEntityEvoker.this));
+                CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(
+                        CustomEntityEvoker.this.getWorld(),
+                        x,
+                        (double) blockPosition.getY() + yAddition,
+                        z,
+                        yaw,
+                        spawnDelay,
+                        CustomEntityEvoker.this));
             }
         }
 
+        /* `getSpellPrepareSound()` */
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_ATTACK;
         }
 
+        /* `getSpellType()` */
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.FANGS;
         }
     }
 
-    class PathfinderGoalEvokerWololoSpell extends EntityIllagerWizard.c {
-
-        private final PathfinderTargetCondition e = (new PathfinderTargetCondition()).a(32.0D).a().a((entityLiving)-> {
-            return !((EntitySheep)entityLiving).getColor().equals(EnumColor.PINK); /* can target all non-pink sheep now within 32 blocks and with line of sight */
-        });
-
-        public PathfinderGoalEvokerWololoSpell() {
-            super();
-        }
+    class PathfinderGoalWololoSpell extends EntityIllagerWizard.c {
+        /* Evokers can target all non-pink sheep within detection range */
+        private final EntityFilter targetCondition = new EntityFilter(
+                CustomEntityEvoker.this.getDetectionRange(),
+                CustomEntityEvoker.this.ignoresLOS(),
+                CustomEntityEvoker.this.ignoresY(),
+                (entityLiving) -> !((EntitySheep) entityLiving).getColor().equals(EnumColor.PINK));
 
         @Override
         public boolean a() {
-            if (CustomEntityEvoker.this.getGoalTarget() != null) {
+            boolean passedBasicChecks =
+                    CustomEntityEvoker.this.getGoalTarget() == null
+                    && !CustomEntityEvoker.this.eX()
+                    && CustomEntityEvoker.this.ticksLived >= this.c
+                    && CustomEntityEvoker.this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+            if (!passedBasicChecks) {
                 return false;
-            } else if (CustomEntityEvoker.this.eX()) {
-                return false;
-            } else if (CustomEntityEvoker.this.ticksLived < this.c) {
-                return false;
-            } else if (!CustomEntityEvoker.this.getWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
-                return false;
-            } else {
-                List<EntitySheep> list = CustomEntityEvoker.this.getWorld().a(EntitySheep.class, this.e, CustomEntityEvoker.this, CustomEntityEvoker.this.getBoundingBox().grow(32.0D, 128.0D, 32.0D));
-
-                if (list.isEmpty()) {
-                    return false;
-                } else {
-                    CustomEntityEvoker.this.a(list.get(random.nextInt(list.size())));
-                    return true;
-                }
             }
+
+            // todo entityfilter try builder pattern
+            /* Evokers wololo the nearest sheep instead of a random one now */
+            EntitySheep potentialTarget = NmsUtil.getNearestEntityInRange(
+                    EntitySheep.class,
+                    this.targetCondition,
+                    CustomEntityEvoker.this,
+                    CustomEntityEvoker.this.getDetectionRange());
+
+            if (potentialTarget != null) {
+                CustomEntityEvoker.this.setWololoTarget(potentialTarget);
+                return true;
+            }
+
+            return false;
         }
 
         @Override
         public boolean b() {
-            return CustomEntityEvoker.this.fh() != null && this.b > 0;
+            return CustomEntityEvoker.this.getWololoTarget() != null && this.b > 0;
         }
 
         @Override
         public void d() {
             super.d();
-            CustomEntityEvoker.this.a((EntitySheep)null);
+            CustomEntityEvoker.this.setWololoTarget(null);
         }
 
+        /* `castSpell()` */
         @Override
         protected void j() {
-            CustomEntityEvoker.this.increaseAttacks(1);
-            EntitySheep entitySheep = CustomEntityEvoker.this.fh();
+            EntitySheep wololoTarget = CustomEntityEvoker.this.getWololoTarget();
 
-            if (entitySheep != null && entitySheep.isAlive()) { /* instead of turning sheep red, the evoker summons a hyper-aggressive pink sheep */
-                new SpawnEntity(entitySheep.getWorld(), new CustomEntitySheepAggressive(entitySheep.getWorld()), 1, null, null, entitySheep, true, true);
+            /* Instead of turning sheep red, evokers replace them with aggressive pink sheep */
+            if (EntityFilter.BASE.test(wololoTarget)) {
+                new SpawnEntity(
+                        wololoTarget.getWorld(),
+                        new CustomEntitySheepAggressive(wololoTarget.getWorld()),
+                        1,
+                        null,
+                        null,
+                        wololoTarget,
+                        true,
+                        true);
             }
         }
 
+        /* `getSpellWarmupTime()` */
         @Override
         protected int m() {
             return 40;
         }
 
+        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
         @Override
         protected int g() {
             return 60;
         }
 
+        /* `getSpellCooldown()` */
         @Override
         protected int h() {
             return 140;
         }
 
+        /* `getSpellPrepareSound()` */
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_WOLOLO;
         }
 
+        /* `getSpellType()` */
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.WOLOLO;
         }
     }
 
-    class PathfinderGoalEvokerCastSpell extends EntityIllagerWizard.b {
-
-        private PathfinderGoalEvokerCastSpell() {
-            super();
-        }
-
+    class PathfinderGoalCastSpell extends EntityIllagerWizard.b {
         @Override
         public void e() {
             if (CustomEntityEvoker.this.getGoalTarget() != null) {
-                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.getGoalTarget(), (float) CustomEntityEvoker.this.ep(), (float) CustomEntityEvoker.this.eo());
-            } else if (CustomEntityEvoker.this.fh() != null) {
-                CustomEntityEvoker.this.getControllerLook().a(CustomEntityEvoker.this.fh(), (float) CustomEntityEvoker.this.ep(), (float) CustomEntityEvoker.this.eo());
+                CustomEntityEvoker.this.getControllerLook().a(
+                        CustomEntityEvoker.this.getGoalTarget(),
+                        (float) CustomEntityEvoker.this.ep(),
+                        (float) CustomEntityEvoker.this.eo());
+            } else if (CustomEntityEvoker.this.getWololoTarget() != null) {
+                CustomEntityEvoker.this.getControllerLook().a(
+                        CustomEntityEvoker.this.getWololoTarget(),
+                        (float) CustomEntityEvoker.this.ep(),
+                        (float) CustomEntityEvoker.this.eo());
             }
         }
     }
 
-    public class c extends PathfinderGoal { // from EntityRaider.java
+    // todo finish
+    public class c extends PathfinderGoal {
 
         private final CustomEntityEvoker evoker;
 

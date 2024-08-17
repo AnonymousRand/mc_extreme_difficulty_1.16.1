@@ -4,7 +4,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableBreakBlocks;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -133,7 +133,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         if ((this.ticksLived  + this.getId()) % 40 == 0) { /* applies mining fatigue every 2 seconds, but effect duration decreased to 1 minute */
             MobEffectList mobeffectlist = MobEffects.SLOWER_DIG;
-            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> NMSUtil.distSq(this, entityPlayer, true) < 2500.0D && entityPlayer.playerInteractManager.d());
+            List<EntityPlayer> list = ((WorldServer)this.world).a((entityPlayer) -> NmsUtil.distSq(this, entityPlayer, true) < 2500.0D && entityPlayer.playerInteractManager.d());
 
             for (EntityPlayer entityPlayer : list) {
                 // plays the animation every time mining fatigue happens (every second)
@@ -207,7 +207,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                     entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 } else if (this.b + 40 == this.entity.eL()) { /* 2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player */ // todo test
-                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(NMSUtil.distSq(this.entity, entityLiving, false), 0.5) + 1);
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(NmsUtil.distSq(this.entity, entityLiving, false), 0.5) + 1);
 
                     while (iterator.hasNext()) {
                         new RunnableBreakBlocks(iterator.next().getLocation(), this.entity.getWorld().getWorld(), 1, 1, 1, 0, false).run();
@@ -233,7 +233,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
         }
 
         public boolean test(@Nullable EntityLiving entityLiving) {
-            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NMSUtil.distSq(this.a, entityLiving, true) > 9.0D;
+            return (entityLiving instanceof EntityHuman || entityLiving instanceof EntitySquid) && NmsUtil.distSq(this.a, entityLiving, true) > 9.0D;
         }
     }
 }

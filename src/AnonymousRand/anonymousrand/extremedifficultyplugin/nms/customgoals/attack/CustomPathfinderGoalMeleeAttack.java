@@ -1,9 +1,8 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 
 /**
  * The base melee attack goal in my rewrite of vanilla's attack goals, analogous to
@@ -57,8 +56,8 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     protected void startExecutingMovement() {
         super.startExecutingMovement();
 
-        EntityLiving target = this.goalOwner.getGoalTarget();
-        if (target != null) {
+        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
+        if (goalTarget != null) {
             this.oldTargetX = Double.MAX_VALUE;
             this.oldTargetY = Double.MAX_VALUE;
             this.oldTargetZ = Double.MAX_VALUE;
@@ -74,7 +73,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
         // repath to target once remainingRepathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)
         boolean shouldRepathToTarget =
                 this.remainingRepathCooldown <= 0
-                        && (NMSUtil.distSq(target.locX(), target.locY(), target.locZ(),
+                        && (NmsUtil.distSq(target.locX(), target.locY(), target.locZ(),
                         this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
                         || this.goalOwner.getRandom().nextFloat() < 0.1F); // increased from vanilla 0.05 to 0.1
         if (shouldRepathToTarget) {
@@ -83,7 +82,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
             this.oldTargetZ = target.locZ();
             this.remainingRepathCooldown = this.repathCooldown;
 
-            double distSqToTarget = NMSUtil.distSq(this.goalOwner, target, false);
+            double distSqToTarget = NmsUtil.distSq(this.goalOwner, target, false);
             if (distSqToTarget > 1024.0) {
                 this.remainingRepathCooldown += 10;
             } else if (distSqToTarget > 256.0) {
@@ -98,7 +97,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
 
     @Override
     protected boolean checkAttack(EntityLiving target) {
-        return NMSUtil.distSq(this.goalOwner, target, false) <= this.getAttackReachSq(target);
+        return NmsUtil.distSq(this.goalOwner, target, false) <= this.getAttackReachSq(target);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.CustomMathHelper;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
@@ -49,7 +49,7 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleport(double hypo) {
-        EntityHuman human = NMSUtil.getNearestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
+        EntityHuman human = NmsUtil.getNearestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
 
         if (human != null) {
             BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(human.locX(), human.locY(), human.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)

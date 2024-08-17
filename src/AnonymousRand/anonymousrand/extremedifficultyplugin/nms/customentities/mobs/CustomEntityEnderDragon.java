@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityDragonFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityDragonFireballSuper;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntitySmallFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableMobShootArrows;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,7 +55,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Ignores y-level, line of sight, and invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
     }
 
-    @Override // onCrystalDestroyed()
+    @Override /* `onCrystalDestroyed()` */
     public void a(EntityEnderCrystal enderCrystal, BlockPosition blockPosition, DamageSource damageSource) {
         super.a(enderCrystal, blockPosition, damageSource);
 
@@ -103,7 +103,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double distToNearestCrystal = Double.MAX_VALUE;
 
             for (EntityEnderCrystal enderCrystal : enderCrystals) {
-                double distToCrystal = NMSUtil.distSq(this, enderCrystal, false);
+                double distToCrystal = NmsUtil.distSq(this, enderCrystal, false);
 
                 if (distToCrystal < distToNearestCrystal) {
                     distToNearestCrystal = distToCrystal;

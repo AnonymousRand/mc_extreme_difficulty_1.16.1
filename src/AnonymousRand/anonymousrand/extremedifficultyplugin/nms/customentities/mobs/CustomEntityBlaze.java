@@ -9,7 +9,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.targe
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NMSUtil;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.entity.LivingEntity;
@@ -21,8 +21,8 @@ public class CustomEntityBlaze extends EntityBlaze
      * as well as for retaliating against players */
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = true;
-    private boolean rapidFire;
     private CustomPathfinderGoalRangedAttack fireballAttackPathfinderGoal;
+    private boolean rapidFire;
 
     public CustomEntityBlaze(World world) {
         super(EntityTypes.BLAZE, world);
@@ -167,13 +167,13 @@ public class CustomEntityBlaze extends EntityBlaze
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* For IRangedEntity */
-    @Override // shoot()
+    @Override /* `shoot()` */
     public void a(EntityLiving target, float distanceFactor) {
         if (!this.isSilent()) {
             this.world.a(null, 1018, this.getChunkCoordinates(), 0);
         }
 
-        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(NMSUtil.distSq(this, target, false))) * 0.5F;
+        float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(NmsUtil.distSq(this, target, false))) * 0.5F;
         double distToTargetX = target.locX() - this.locX();
         double distToTargetY = target.e(0.5D) - this.e(0.5D); // e() is getEyeLevel()
         double distToTargetZ = target.locZ() - this.locZ();
@@ -205,8 +205,8 @@ public class CustomEntityBlaze extends EntityBlaze
         this.fireballAttackPathfinderGoal = new CustomPathfinderGoalRangedAttack<>(this, 6);
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(3, this.fireballAttackPathfinderGoal);                                             /* Blazes do not pause between each volley and instead shoots constantly every 6 ticks */
-        this.goalSelector.a(3, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this, 20));
+        this.goalSelector.a(4, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this, 20));
+        this.goalSelector.a(5, this.fireballAttackPathfinderGoal);                                             /* Blazes do not pause between each volley and instead shoots constantly every 6 ticks */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
@@ -251,18 +251,18 @@ public class CustomEntityBlaze extends EntityBlaze
 
         @Override
         public void e() {
-            EntityLiving target = this.blaze.getGoalTarget();
-            if (target == null) {
+            EntityLiving goalTarget = this.blaze.getGoalTarget();
+            if (goalTarget == null) {
                 return;
             }
 
             this.remainingAttackCooldown--;
-            if (this.remainingAttackCooldown <= 0 && NMSUtil.distSq(this.blaze, target, false) <= 3.0) {
+            if (this.remainingAttackCooldown <= 0 && NmsUtil.distSq(this.blaze, goalTarget, false) <= 3.0) {
                 this.remainingAttackCooldown = this.attackCooldown;
-                this.blaze.attackEntity(target);
+                this.blaze.attackEntity(goalTarget);
                 /* Blaze melee attack creates a power 0.5 explosion on the player's location */
-                this.blaze.getWorld().createExplosion(this.blaze, target.locX(), target.locY(),
-                        target.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
+                this.blaze.getWorld().createExplosion(this.blaze, goalTarget.locX(), goalTarget.locY(),
+                        goalTarget.locZ(), 0.5F, false, Explosion.Effect.DESTROY);
             }
         }
     }

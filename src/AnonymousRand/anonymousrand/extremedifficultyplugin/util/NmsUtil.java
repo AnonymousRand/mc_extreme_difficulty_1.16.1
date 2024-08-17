@@ -5,7 +5,7 @@ import net.minecraft.server.v1_16_R1.*;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NMSUtil {
+public class NmsUtil {
 
     /**
      * Calculates distance between <code>entityFrom</code> and <code>entityTo</code>.
@@ -62,49 +62,60 @@ public class NMSUtil {
 
     /**
      * Finds the nearest entity within an AABB (rectangular) area (considers y-level).
-     * Essentially the same as the ones defined in World.java, but using <code>EntityFilter</code> as a parameter instead of <code>PathfinderTargetCondition</code>.
      *
      * @param targetClass  the entity class to search for (racism)
      * @param entityFilter conditions that the target entity must satisfy (use <code>null</code> for no conditions)
-     * @param fromEntity   the entity that is in the center of the search area
-     * @param rangeX       the x-distance from <code>fromEntity</code> to the area boundary
-     * @param rangeY       the y-distance from <code>fromEntity</code> to the area boundary
-     * @param rangeZ       the z-distance from <code>fromEntity</code> to the area boundary
+     * @param from         the entity that is in the center of the search area
+     * @param range        the distance from <code>from</code> to the area boundary, equal in all 3 dimensions
      */
     @Nullable
-    public static <T extends EntityLiving> T getNearestEntityWithinRange(
+    public static <T extends EntityLiving> T getNearestEntityInRange(
             Class<? extends T> targetClass,
             @Nullable EntityFilter entityFilter,
-            EntityLiving fromEntity,
-            double rangeX,
-            double rangeY,
-            double rangeZ) {
-
-        List<T> candidates = fromEntity.getWorld().a(targetClass, fromEntity.getBoundingBox().grow(rangeX, rangeY, rangeZ));
-        return getNearestEntityFromList(candidates, entityFilter, fromEntity);
+            EntityLiving from,
+            double range) {
+        return getNearestEntityInRange(targetClass, entityFilter, from, range, range, range);
     }
 
     /**
      * Finds the nearest entity within an AABB (rectangular) area (considers y-level).
-     * Essentially the same as the ones defined in World.java, but using <code>EntityFilter</code> as a parameter instead of <code>PathfinderTargetCondition</code>.
+     *
+     * @param targetClass  the entity class to search for (racism)
+     * @param entityFilter conditions that the target entity must satisfy (use <code>null</code> for no conditions)
+     * @param from         the entity that is in the center of the search area
+     * @param rangeX       the x-distance from <code>from</code> to the area boundary
+     * @param rangeY       the y-distance from <code>from</code> to the area boundary
+     * @param rangeZ       the z-distance from <code>from</code> to the area boundary
+     */
+    @Nullable
+    public static <T extends EntityLiving> T getNearestEntityInRange(
+            Class<? extends T> targetClass,
+            @Nullable EntityFilter entityFilter,
+            EntityLiving from,
+            double rangeX,
+            double rangeY,
+            double rangeZ) {
+        List<T> candidates = from.getWorld().a(targetClass, from.getBoundingBox().grow(rangeX, rangeY, rangeZ));
+        return getNearestEntityFromList(candidates, entityFilter, from);
+    }
+
+    /**
+     * Finds the nearest entity within an AABB (rectangular) area (considers y-level).
      *
      * @param candidates   the candidate entities
      * @param entityFilter conditions that the target entity must satisfy (use <code>null</code> for no conditions)
-     * @param fromEntity   the entity that is performing the search (used for <code>entityFilter.test()</code>)
+     * @param from         the entity that is performing the search (used for <code>entityFilter.test()</code>)
      */
     @Nullable
     public static <T extends EntityLiving> T getNearestEntityFromList(
-            List<T> candidates,
-            @Nullable EntityFilter entityFilter,
-            EntityLiving fromEntity) {
-
+            List<T> candidates, @Nullable EntityFilter entityFilter, EntityLiving from) {
         double minDistSq = Double.MAX_VALUE;
         T nearestCandidate = null;
 
         for (T candidate : candidates) {
-            if (entityFilter == null || entityFilter.test(fromEntity, candidate)) {
-                double distSq;
-                distSq = NMSUtil.distSq(fromEntity, candidate, false); // doesn't matter here if we're not ignoring Y; that's entityFilter's job
+            if (entityFilter == null || entityFilter.test(from, candidate)) {
+                // doesn't matter if we're not ignoring y-level here; that's `entityFilter`'s job
+                double distSq = NmsUtil.distSq(from, candidate, false);
 
                 if (distSq < minDistSq) {
                     minDistSq = distSq;
