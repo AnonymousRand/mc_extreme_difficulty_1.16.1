@@ -99,11 +99,11 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
                 int i1 = i + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                 int j1 = j + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
                 int k1 = k + MathHelper.nextInt(random, 7, 40) * MathHelper.nextInt(random, -1, 1);
-                BlockPosition blockPosition = new BlockPosition(i1, j1, k1);
+                BlockPosition blockPos = new BlockPosition(i1, j1, k1);
                 EntityTypes<?> entityTypes = newZombie.getEntityType();
                 EntityPositionTypes.Surface entityPositionTypes_Surface = EntityPositionTypes.a(entityTypes);
 
-                if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPosition, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPosition, this.world.random)) {
+                if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPos, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPos, this.world.random)) {
                     newZombie.setPosition(i1, j1, k1);
                     if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
                         this.world.addEntity(newZombie);

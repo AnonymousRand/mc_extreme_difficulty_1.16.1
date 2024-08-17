@@ -23,14 +23,14 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     protected int attackCooldown;
     protected int remainingAttackCooldown;
     /* Movement */
-    protected double moveSpeed;
+    protected double speedTowardsTarget;
     protected int repathCooldown;
     protected int remainingRepathCooldown;
 
-    protected CustomPathfinderGoalAttack(T goalOwner, int attackCooldown, double moveSpeed) {
+    protected CustomPathfinderGoalAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
         this.goalOwner = goalOwner;
         this.attackCooldown = attackCooldown;
-        this.moveSpeed = moveSpeed;
+        this.speedTowardsTarget = speedTowardsTarget;
         this.repathCooldown = 4 + this.goalOwner.getRandom().nextInt(7);
         this.a(EnumSet.of(PathfinderGoal.Type.MOVE, PathfinderGoal.Type.LOOK));
     }
@@ -128,7 +128,7 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         this.attackCooldown = attackCooldown;
     }
 
-    public void setMoveSpeed(double moveSpeed) {
-        this.moveSpeed = moveSpeed;
+    public void setspeedTowardsTarget(double speedTowardsTarget) {
+        this.speedTowardsTarget = speedTowardsTarget;
     }
 }

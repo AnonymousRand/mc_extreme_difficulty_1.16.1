@@ -348,8 +348,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         private boolean h() {
             WorldServer worldserver = (WorldServer) this.entity.getWorld();
-            BlockPosition blockPosition = this.entity.getChunkCoordinates();
-            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.entity.getRandom());
+            BlockPosition blockPos = this.entity.getChunkCoordinates();
+            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPos, 48, this.entity.getRandom());
 
             if (!optional.isPresent()) {
                 return false;
@@ -398,18 +398,18 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
             }
         }
 
-        private boolean a(BlockPosition blockPosition) {
+        private boolean a(BlockPosition blockPos) {
             Iterator iterator = this.d.iterator();
 
-            BlockPosition blockPosition1;
+            BlockPosition blockPos1;
 
             do {
                 if (!iterator.hasNext()) {
                     return true;
                 }
 
-                blockPosition1 = (BlockPosition) iterator.next();
-            } while (!Objects.equals(blockPosition, blockPosition1));
+                blockPos1 = (BlockPosition) iterator.next();
+            } while (!Objects.equals(blockPos, blockPos1));
 
             return false;
         }

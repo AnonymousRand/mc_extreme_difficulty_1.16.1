@@ -32,12 +32,13 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
         this(goalOwner, attackCooldown, 1.0, 2.0);
     }
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, double moveSpeed) {
-        this(goalOwner, 20, moveSpeed, 2.0);
+    public CustomPathfinderGoalMeleeAttack(T goalOwner, double speedTowardsTarget) {
+        this(goalOwner, 20, speedTowardsTarget, 2.0);
     }
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, int attackCooldown, double moveSpeed, double minAttackReach) {
-        super(goalOwner, attackCooldown, moveSpeed);
+    public CustomPathfinderGoalMeleeAttack(
+            T goalOwner, int attackCooldown, double speedTowardsTarget, double minAttackReach) {
+        super(goalOwner, attackCooldown, speedTowardsTarget);
         this.minAttackReach = minAttackReach;
     }
 
@@ -63,7 +64,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
             this.oldTargetZ = Double.MAX_VALUE;
         }
 
-        this.goalOwner.getNavigation().a(this.path, this.moveSpeed);
+        this.goalOwner.getNavigation().a(this.path, this.speedTowardsTarget);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
                 this.remainingRepathCooldown += 5;
             }
 
-            if (!this.goalOwner.getNavigation().a(target, this.moveSpeed)) { // tryMoveTo()
+            if (!this.goalOwner.getNavigation().a(target, this.speedTowardsTarget)) { // tryMoveTo()
                 this.remainingRepathCooldown += 15;
             }
         }

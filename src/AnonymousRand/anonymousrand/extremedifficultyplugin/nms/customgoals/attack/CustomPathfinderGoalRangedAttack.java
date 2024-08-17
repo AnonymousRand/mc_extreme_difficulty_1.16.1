@@ -18,8 +18,8 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         this(goalOwner, attackCooldown, 1.0);
     }
 
-    public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown, double moveSpeed) {
-        super(goalOwner, attackCooldown, moveSpeed);
+    public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
+        super(goalOwner, attackCooldown, speedTowardsTarget);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         }
 
         if (this.targetSeenTicks < 5) {
-            this.goalOwner.getNavigation().a(target, this.moveSpeed); // tryMoveTo()
+            this.goalOwner.getNavigation().a(target, this.speedTowardsTarget); // tryMoveTo()
         } else {
             this.goalOwner.getNavigation().o();                       // clearPath() (stands still)
         }

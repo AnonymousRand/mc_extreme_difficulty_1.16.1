@@ -18,8 +18,8 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
         this(goalOwner, attackCooldown, 1.0);
     }
 
-    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown, double moveSpeed) {
-        super(goalOwner, Items.CROSSBOW, attackCooldown, moveSpeed);
+    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
+        super(goalOwner, Items.CROSSBOW, attackCooldown, speedTowardsTarget);
     }
 
     @Override

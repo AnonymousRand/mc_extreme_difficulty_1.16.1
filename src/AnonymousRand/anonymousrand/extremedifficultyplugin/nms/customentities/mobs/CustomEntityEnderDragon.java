@@ -56,8 +56,8 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     @Override /* `onCrystalDestroyed()` */
-    public void a(EntityEnderCrystal enderCrystal, BlockPosition blockPosition, DamageSource damageSource) {
-        super.a(enderCrystal, blockPosition, damageSource);
+    public void a(EntityEnderCrystal enderCrystal, BlockPosition blockPos, DamageSource damageSource) {
+        super.a(enderCrystal, blockPos, damageSource);
 
         /* Blowing up the end crystal that the ender dragon is currently healing from does not damage the dragon */
         if (enderCrystal == this.currentEnderCrystal) {
@@ -116,7 +116,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Mob-specific goals/classes
+    // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalFireball extends PathfinderGoal {

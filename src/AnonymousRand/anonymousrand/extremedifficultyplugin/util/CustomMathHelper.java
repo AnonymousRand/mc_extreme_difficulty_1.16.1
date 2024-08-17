@@ -9,7 +9,7 @@ import java.util.Random;
 
 import static java.lang.Math.PI;
 
-public class CustomMathHelper {
+public abstract class CustomMathHelper {
 
     private static final double[] trigTableSin = new double[720]; // approximate values of trig functions to avoid lag when large amounts of Math.sin/cos is called while running
     private static final double[] trigTableCos = new double[720];

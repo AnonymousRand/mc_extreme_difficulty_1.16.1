@@ -1,16 +1,22 @@
 todo:
 
-overriden functions like checkdespawn try to use descriptive variable names
-comment syntax update, line lengths, space after cast, standard multiline comment for changes docs,
-plural reference to mob changes, big comment separator for inner classes. move instance variables to appropriate interface sections.
 reorganize all custommobs to use new attacks thing and whatever (including blaze).
-private instead of protected where possible, dont target villagers
-standardize multiline comment indent
-stopped after: endermite
+comment syntax update
+line lengths
+space after cast
+plural reference to mob changes
+big comment separator for inner classes
+move instance variables to appropriate interface sections
+private instead of protected where possible
+overriden functions like checkdespawn try to use descriptive variable names
+dont target villagers
+standardize customentity.this vs this.customentity in inner goal classes: always this. with statuc class? (if possible)
+all classes have blank line following declaration
+custom inner goals extending melee/ranged attack/targeting etc. dont need field for parent; just inherit this.goalowner
+stopped after: evoker
+
 
 revise multiline comments in initpathfinder()s
-
-custom inner goals extending melee/ranged attack etc. dont need field for parent? just inherited this.entity?
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
 
@@ -158,8 +164,6 @@ investigate why some mobs dont need bl() (maxfallheight) or checkdespawn()
 all util classes not abstract, but include private constryuctor
 
 optimize predicates (not bedrock into base? etc)
-
-standardize customentity.this vs this.customentity in inner goal classes
 
 optimize fall damage algo further? check what happens in cobweb, sweet bush, scaffold
 

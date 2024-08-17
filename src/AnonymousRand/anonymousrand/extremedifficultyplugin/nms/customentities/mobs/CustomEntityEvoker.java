@@ -11,7 +11,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.Predicates;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
-import com.google.common.collect.Lists;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -150,8 +149,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         // from `EntityRaider`
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
-        this.goalSelector.a(4, new d(this, 1.05, 1));
-        this.goalSelector.a(5, new c(this));
+        this.goalSelector.a(4, new PathfinderGoalInvadeHome(this, 1.05, 1));
+        this.goalSelector.a(5, new PathfinderGoalCelebrateRaidLoss(this));
         // from `EntityMonsterPatrolling`
         this.goalSelector.a(4, new EntityMonsterPatrolling.a(this, 0.7D, 0.595D));
         // other
@@ -181,16 +180,24 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         }
     }
 
+    /* Overrides private `fh()` */
     @Nullable
-    private EntitySheep getWololoTarget() {
+    public EntitySheep getWololoTarget() {
         return this.wololoTarget;
     }
 
-    private void setWololoTarget(@Nullable EntitySheep sheep) {
+    /* Overrides private `a()` */
+    public void setWololoTarget(@Nullable EntitySheep sheep) {
         this.wololoTarget = sheep;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Nested classes
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* If this is static it goes "waaaah but but no enclosing instance :(" like i hate you */
     class PathfinderGoalSummonVexSpell extends EntityIllagerWizard.c {
+
         @Override
         public boolean a() {
             if (!super.a()) {
@@ -224,19 +231,19 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             /* Evokers summon 5 vexes at a time instead of 3 */
             for (int i = 0; i < 5; i++) {
-                BlockPosition blockPosition = CustomEntityEvoker.this.getChunkCoordinates().b(
+                BlockPosition blockPos = CustomEntityEvoker.this.getChunkCoordinates().b(
                         random.nextInt(5) - 2, 1, random.nextInt(5) - 2);
                 CustomEntityVex newVex = new CustomEntityVex(CustomEntityEvoker.this.getWorld());
 
-                newVex.setPositionRotation(blockPosition, 0.0F, 0.0F);
+                newVex.setPositionRotation(blockPos, 0.0F, 0.0F);
                 newVex.prepare(
                         CustomEntityEvoker.this.getWorld(),
-                        CustomEntityEvoker.this.getWorld().getDamageScaler(blockPosition),
+                        CustomEntityEvoker.this.getWorld().getDamageScaler(blockPos),
                         EnumMobSpawn.MOB_SUMMONED,
                         null,
                         null);
                 newVex.a(CustomEntityEvoker.this);
-                newVex.g(blockPosition);
+                newVex.g(blockPos);
                 newVex.a(20 * (30 + random.nextInt(90)));
                 CustomEntityEvoker.this.getWorld().addEntity(newVex, CreatureSpawnEvent.SpawnReason.NATURAL);
             }
@@ -328,20 +335,20 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         public void spawnFangs(
                 double x, double z, double lowerEntityY, double higherEntityY, float yaw, int spawnDelay) {
             EntityLiving goalTarget = CustomEntityEvoker.this.getGoalTarget();
-            BlockPosition blockPosition = new BlockPosition(x, higherEntityY, z);
+            BlockPosition blockPos = new BlockPosition(x, higherEntityY, z);
             boolean suitableYFound = false;
             double yAddition = 0.0;
 
             // find suitable y-level to spawn fangs on
             do {
-                BlockPosition blockPositionDown = blockPosition.down();
-                IBlockData blockDataDown = CustomEntityEvoker.this.getWorld().getType(blockPositionDown);
+                BlockPosition blockPosDown = blockPos.down();
+                IBlockData blockDataDown = CustomEntityEvoker.this.getWorld().getType(blockPosDown);
 
-                if (blockDataDown.d(CustomEntityEvoker.this.getWorld(), blockPositionDown, EnumDirection.UP)) {
-                    if (!CustomEntityEvoker.this.getWorld().isEmpty(blockPosition)) {
-                        IBlockData blockData = CustomEntityEvoker.this.getWorld().getType(blockPosition);
+                if (blockDataDown.d(CustomEntityEvoker.this.getWorld(), blockPosDown, EnumDirection.UP)) {
+                    if (!CustomEntityEvoker.this.getWorld().isEmpty(blockPos)) {
+                        IBlockData blockData = CustomEntityEvoker.this.getWorld().getType(blockPos);
                         VoxelShape voxelShape = blockData.getCollisionShape(
-                                CustomEntityEvoker.this.getWorld(), blockPosition);
+                                CustomEntityEvoker.this.getWorld(), blockPos);
 
                         if (!voxelShape.isEmpty()) {
                             yAddition = voxelShape.c(EnumDirection.EnumAxis.Y);
@@ -352,8 +359,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     break;
                 }
 
-                blockPosition = blockPosition.down();
-            } while (blockPosition.getY() >= MathHelper.floor(lowerEntityY) - 1);
+                blockPos = blockPos.down();
+            } while (blockPos.getY() >= MathHelper.floor(lowerEntityY) - 1);
 
             if (suitableYFound) {
                 CustomEntityEvoker.this.increaseAttacks(2);
@@ -409,7 +416,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 CustomEntityEvoker.this.getWorld().addEntity(new EntityEvokerFangs(
                         CustomEntityEvoker.this.getWorld(),
                         x,
-                        (double) blockPosition.getY() + yAddition,
+                        (double) blockPos.getY() + yAddition,
                         z,
                         yaw,
                         spawnDelay,
@@ -431,6 +438,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     class PathfinderGoalWololoSpell extends EntityIllagerWizard.c {
+        
         /* Evokers can target all non-pink sheep within detection range */
         private final EntityFilter targetCondition = new EntityFilter(
                 CustomEntityEvoker.this.getDetectionRange(),
@@ -451,14 +459,14 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             // todo entityfilter try builder pattern
             /* Evokers wololo the nearest sheep instead of a random one now */
-            EntitySheep potentialTarget = NmsUtil.getNearestEntityInRange(
+            EntitySheep candidateTarget = NmsUtil.getNearestEntityInRange(
                     EntitySheep.class,
                     this.targetCondition,
                     CustomEntityEvoker.this,
                     CustomEntityEvoker.this.getDetectionRange());
 
-            if (potentialTarget != null) {
-                CustomEntityEvoker.this.setWololoTarget(potentialTarget);
+            if (candidateTarget != null) {
+                CustomEntityEvoker.this.setWololoTarget(candidateTarget);
                 return true;
             }
 
@@ -543,12 +551,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         }
     }
 
-    // todo finish
-    public class c extends PathfinderGoal {
+    /* From `EntityRaider` */
+    static class PathfinderGoalCelebrateRaidLoss extends PathfinderGoal {
 
         private final CustomEntityEvoker evoker;
 
-        public c(CustomEntityEvoker entityRaider) {
+        public PathfinderGoalCelebrateRaidLoss(CustomEntityEvoker entityRaider) {
             this.evoker = entityRaider;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
@@ -556,7 +564,6 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         @Override
         public boolean a() {
             Raid raid = this.evoker.fb();
-
             return this.evoker.isAlive() && this.evoker.getGoalTarget() == null && raid != null && raid.isLoss();
         }
 
@@ -575,7 +582,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         @Override
         public void e() {
             if (!this.evoker.isSilent() && this.evoker.getRandom().nextInt(100) == 0) {
-                CustomEntityEvoker.this.playSound(CustomEntityEvoker.this.eM(), CustomEntityEvoker.this.getSoundVolume(), CustomEntityEvoker.this.dG());
+                this.evoker.playSound(this.evoker.eM(), this.evoker.getSoundVolume(), this.evoker.dG());
             }
 
             if (!this.evoker.isPassenger() && this.evoker.getRandom().nextInt(50) == 0) {
@@ -586,104 +593,117 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         }
     }
 
-    static class d extends PathfinderGoal { // from EntityRaider.java
+    /* From `EntityRaider` */
+    static class PathfinderGoalInvadeHome extends PathfinderGoal {
 
-        private final EntityRaider raider;
-        private final double b;
-        private BlockPosition c;
-        private final List<BlockPosition> d = Lists.newArrayList();
-        private final int e;
-        private boolean f;
+        private final CustomEntityEvoker evoker;
+        private final double speedTowardsTarget;
+        private BlockPosition blockPosTarget;
+        private final ArrayList<BlockPosition> blockPosPreviousTargets = new ArrayList<>();
+        private final int distRememberTarget;
+        private boolean noPathToTarget;
 
-        public d(EntityRaider entityRaider, double d0, int i) {
-            this.raider = entityRaider;
-            this.b = d0;
-            this.e = i;
+        public PathfinderGoalInvadeHome(CustomEntityEvoker evoker, double speedTowardsTarget, int distRememberTarget) {
+            this.evoker = evoker;
+            this.speedTowardsTarget = speedTowardsTarget;
+            this.distRememberTarget = distRememberTarget;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 
         @Override
         public boolean a() {
-            this.j();
-            return this.g() && this.h() && this.raider.getGoalTarget() == null;
-        }
-
-        private boolean g() {
-            return this.raider.fc() && !this.raider.fb().a();
-        }
-
-        private boolean h() {
-            WorldServer worldserver = (WorldServer) this.raider.getWorld();
-            BlockPosition blockPosition = this.raider.getChunkCoordinates();
-            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPosition, 48, this.raider.getRandom());
-
-            if (!optional.isPresent()) {
-                return false;
-            } else {
-                this.c = (optional.get()).immutableCopy();
-                return true;
-            }
+            this.forgetReallyOldTargets();
+            return this.isRaidOngoing() && this.findTarget() && this.evoker.getGoalTarget() == null;
         }
 
         @Override
         public boolean b() {
-            return this.raider.getNavigation().m() ? false : this.raider.getGoalTarget() == null && !this.c.a(this.raider.getPositionVector(), this.raider.getWidth() + (float) this.e) && !this.f;
-        }
-
-        @Override
-        public void d() {
-            if (this.c.a(this.raider.getPositionVector(), this.e)) {
-                this.d.add(this.c);
+            if (this.evoker.getNavigation().m()) {
+                return false;
             }
+
+            return this.evoker.getGoalTarget() == null
+                    && !this.blockPosTarget.a( // `withinDistance()`; idk why it's negated but `this.distRememberTarget = 1` anyway so ¯\_(ツ)_/¯
+                            this.evoker.getPositionVector(), this.evoker.getWidth() + (float) this.distRememberTarget)
+                    && !this.noPathToTarget;
         }
 
         @Override
         public void c() {
             super.c();
-            this.raider.n(0);
-            this.raider.getNavigation().a(this.c.getX(), this.c.getY(), this.c.getZ(), this.b);
-            this.f = false;
+
+            this.evoker.n(0);              // `setIdleTime()`
+            this.evoker.getNavigation().a( // `tryMoveToTarget()`
+                    this.blockPosTarget.getX(),
+                    this.blockPosTarget.getY(),
+                    this.blockPosTarget.getZ(),
+                    this.speedTowardsTarget);
+            this.noPathToTarget = false;
+        }
+
+        @Override
+        public void d() {
+            if (this.blockPosTarget.a(this.evoker.getPositionVector(), this.distRememberTarget)) { // `withinDistance()`
+                this.blockPosPreviousTargets.add(this.blockPosTarget);
+            }
         }
 
         @Override
         public void e() {
-            if (this.raider.getNavigation().m()) {
-                Vec3D vec3d = Vec3D.c(this.c);
-                Vec3D vec3d1 = RandomPositionGenerator.a(this.raider, 16, 7, vec3d, 0.3141592741012573D);
+            if (this.evoker.getNavigation().m()) {                                                    // `noPath()`
+                Vec3D vec3d = Vec3D.c(this.blockPosTarget);
+                Vec3D vec3d1 = RandomPositionGenerator.a(this.evoker, 16, 7, vec3d, 0.31415927);
 
                 if (vec3d1 == null) {
-                    vec3d1 = RandomPositionGenerator.b(this.raider, 8, 7, vec3d);
+                    vec3d1 = RandomPositionGenerator.b(this.evoker, 8, 7, vec3d);
                 }
 
                 if (vec3d1 == null) {
-                    this.f = true;
+                    this.noPathToTarget = true;
                     return;
                 }
 
-                this.raider.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
+                this.evoker.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.speedTowardsTarget); // `tryMoveTo()`
             }
         }
 
-        private boolean a(BlockPosition blockPosition) {
-            Iterator iterator = this.d.iterator();
+        private boolean findTarget() {
+            WorldServer worldServer = (WorldServer) this.evoker.getWorld();
+            BlockPosition blockPosEvoker = this.evoker.getChunkCoordinates();
+            Optional<BlockPosition> blockPosCandidateTarget = worldServer.x().a(
+                    (villagePlaceType) -> villagePlaceType == VillagePlaceType.r,
+                    this::isNotAPreviousTarget,
+                    VillagePlace.Occupancy.ANY,
+                    blockPosEvoker,
+                    48,
+                    this.evoker.getRandom());
 
-            BlockPosition blockPosition1;
+            if (!blockPosCandidateTarget.isPresent()) {
+                return false;
+            }
 
-            do {
-                if (!iterator.hasNext()) {
-                    return true;
+            this.blockPosTarget = blockPosCandidateTarget.get().immutableCopy();
+            return true;
+        }
+
+        private void forgetReallyOldTargets() {
+            while (this.blockPosPreviousTargets.size() > 2) {
+                this.blockPosPreviousTargets.remove(0);
+            }
+        }
+
+        private boolean isNotAPreviousTarget(BlockPosition blockPosCandidateTarget) {
+            for (BlockPosition blockPos : this.blockPosPreviousTargets) {
+                if (Objects.equals(blockPosCandidateTarget, blockPos)) {
+                    return false;
                 }
+            }
 
-                blockPosition1 = (BlockPosition) iterator.next();
-            } while (!Objects.equals(blockPosition, blockPosition1));
-
-            return false;
+            return true;
         }
 
-        private void j() {
-            if (this.d.size() > 2) {
-                this.d.remove(0);
-            }
+        private boolean isRaidOngoing() {
+            return this.evoker.fc() && !this.evoker.fb().a();
         }
     }
 

@@ -78,12 +78,12 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
         float f1 = 1.0F;
 
         if (this.world instanceof WorldServer && this.world.T() && EnchantmentManager.h(this.trident)) {
-            BlockPosition blockPosition = entity.getChunkCoordinates();
+            BlockPosition blockPos = entity.getChunkCoordinates();
 
-            if (this.world.f(blockPosition)) {
+            if (this.world.f(blockPos)) {
                 EntityLightning entityLightning = EntityTypes.LIGHTNING_BOLT.a(this.world);
 
-                entityLightning.c(Vec3D.c(blockPosition));
+                entityLightning.c(Vec3D.c(blockPos));
                 entityLightning.d(entity1 instanceof EntityPlayer ? (EntityPlayer) entity1 : null);
                 this.world.addEntity(entityLightning);
                 soundeffect = SoundEffects.ITEM_TRIDENT_THUNDER;

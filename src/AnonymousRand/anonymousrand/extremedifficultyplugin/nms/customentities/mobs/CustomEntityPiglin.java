@@ -396,8 +396,8 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 //        private final int attackIntervalNormal;
 //        private final int attackIntervalFrenzied;
 //
-//        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double moveSpeed, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
-//            super(piglin, moveSpeed, attackIntervalNormal, maxDistance);
+//        public PathfinderGoalPiglinRangedCrossbowAttack(T piglin, double speedTowardsTarget, int attackIntervalNormal, int attackIntervalFrenzied, float maxDistance) {
+//            super(piglin, speedTowardsTarget, attackIntervalNormal, maxDistance);
 //            this.attackIntervalNormal = attackIntervalNormal;
 //            this.attackIntervalFrenzied = attackIntervalFrenzied;
 //        }

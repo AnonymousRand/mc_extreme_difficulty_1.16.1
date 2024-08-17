@@ -190,7 +190,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     /* Endermen no longer burn and teleport away from lava */
     protected void burnFromLava() {}
 
-    /* Overrides private g() (shouldAttackPlayer()); name change because not used elsewhere */
+    /* Overrides private `g()`; name change because not used elsewhere */
     private boolean validPlayerIsLooking(EntityPlayer player) {
         if (!EntityFilter.BASE.test(player)) {
             return false;
@@ -321,7 +321,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Mob-specific goals/classes
+    // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalPlayerWhoLookedAtTarget
@@ -344,7 +344,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
                 for (UUID targetUUID : this.previousTargetUUIDs) {
                     EntityPlayer goalTarget = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
                     if (this.targetAgainCondition.test(this.goalOwner, goalTarget)) {
-                        this.potentialTarget = goalTarget;
+                        this.candidateTarget = goalTarget;
                         return true;
                     }
                 }
@@ -356,7 +356,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen will never forget a player who looked at them */
         @Override
         public boolean b() {
-            return EntityFilter.BASE.test(this.goalOwner, this.potentialTarget);
+            return EntityFilter.BASE.test(this.goalOwner, this.candidateTarget);
         }
 
         @Override

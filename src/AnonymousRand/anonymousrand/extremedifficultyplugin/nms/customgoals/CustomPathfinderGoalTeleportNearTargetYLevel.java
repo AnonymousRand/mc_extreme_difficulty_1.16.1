@@ -84,13 +84,13 @@ public class CustomPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal
     }
 
     protected void teleportTo(BlockPosition pos) {
-        BlockPosition.MutableBlockPosition blockPosition_mutableblockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+        BlockPosition.MutableBlockPosition blockPos_mutableblockPos = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockPosition_mutableblockPosition.getY() > 0 && !this.entity.getWorld().getType(blockPosition_mutableblockPosition).getMaterial().isSolid()) {
-            blockPosition_mutableblockPosition.c(EnumDirection.DOWN);
+        while (blockPos_mutableblockPos.getY() > 0 && !this.entity.getWorld().getType(blockPos_mutableblockPos).getMaterial().isSolid()) {
+            blockPos_mutableblockPos.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.getWorld().getType(blockPosition_mutableblockPosition);
+        IBlockData iblockdata = this.entity.getWorld().getType(blockPos_mutableblockPos);
 
         if (iblockdata.getMaterial().isSolid()) {
             if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
@@ -106,21 +106,21 @@ public class CustomPathfinderGoalTeleportNearTargetYLevel extends PathfinderGoal
         double d5 = this.entity.locZ();
         double d6 = d1;
         boolean flag1 = false;
-        BlockPosition blockPosition = new BlockPosition(d0, d1, d2);
+        BlockPosition blockPos = new BlockPosition(d0, d1, d2);
         World world = this.entity.getWorld();
 
-        if (world.isLoaded(blockPosition)) {
+        if (world.isLoaded(blockPos)) {
             boolean flag2 = false;
 
-            while (!flag2 && blockPosition.getY() > 0) {
-                BlockPosition blockPosition1 = blockPosition.down();
-                IBlockData iblockdata = world.getType(blockPosition1);
+            while (!flag2 && blockPos.getY() > 0) {
+                BlockPosition blockPos1 = blockPos.down();
+                IBlockData iblockdata = world.getType(blockPos1);
 
                 if (iblockdata.getMaterial().isSolid()) {
                     flag2 = true;
                 } else {
                     --d6;
-                    blockPosition = blockPosition1;
+                    blockPos = blockPos1;
                 }
             }
 

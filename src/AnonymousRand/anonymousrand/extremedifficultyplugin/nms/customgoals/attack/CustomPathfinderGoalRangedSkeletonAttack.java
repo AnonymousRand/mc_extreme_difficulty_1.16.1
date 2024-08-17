@@ -20,8 +20,8 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
         this(goalOwner, attackCooldown, 1.0);
     }
 
-    public CustomPathfinderGoalRangedSkeletonAttack(T goalOwner, int attackCooldown, double moveSpeed) {
-        super(goalOwner, Items.BOW, attackCooldown, moveSpeed);
+    public CustomPathfinderGoalRangedSkeletonAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
+        super(goalOwner, Items.BOW, attackCooldown, speedTowardsTarget);
     }
 
     @Override

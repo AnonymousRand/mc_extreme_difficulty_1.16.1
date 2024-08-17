@@ -18,7 +18,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     protected final EntityFilter targetConditionNoIgnoreY;
     protected final boolean ignoreLOS;
     protected final boolean ignoreY;
-    protected EntityLiving potentialTarget;
+    protected EntityLiving candidateTarget;
 
     protected CustomPathfinderGoalTarget(T goalOwner, boolean ignoreLOS, boolean ignoreY) {
         this(goalOwner, ignoreLOS, ignoreY, null);
@@ -43,8 +43,8 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
 
     @Override /* `shouldExecute()` */
     public boolean a() {
-        this.potentialTarget = this.findNearestPotentialTarget(true);
-        return this.targetCondition.test(this.goalOwner, this.potentialTarget);
+        this.candidateTarget = this.findNearestCandidateTarget(true);
+        return this.targetCondition.test(this.goalOwner, this.candidateTarget);
     }
 
     @Override /* `shouldContinueExecuting()` */
@@ -56,7 +56,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
 
     @Override /* `startExecuting()` */
     public void c() {
-        this.goalOwner.setGoalTarget(this.potentialTarget, this.getTargetReason(this.potentialTarget), true);
+        this.goalOwner.setGoalTarget(this.candidateTarget, this.getTargetReason(this.candidateTarget), true);
         // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
         this.targetCondition.setDetectionRange(this.getDetectionRange());
     }
@@ -67,7 +67,7 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
     }
 
     @Nullable
-    protected abstract EntityLiving findNearestPotentialTarget(boolean allowIgnoreY);
+    protected abstract EntityLiving findNearestCandidateTarget(boolean allowIgnoreY);
 
     protected abstract EntityTargetEvent.TargetReason getTargetReason(EntityLiving target);
     

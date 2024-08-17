@@ -154,7 +154,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Mob-specific goals/classes
+    // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalGoToBeach extends PathfinderGoalGotoTarget {
@@ -173,11 +173,11 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         }
 
         @Override /* `shouldMoveTo()` */
-        protected boolean a(IWorldReader iWorldReader, BlockPosition blockPosition) {
-            BlockPosition blockPosition1 = blockPosition.up();
+        protected boolean a(IWorldReader iWorldReader, BlockPosition blockPos) {
+            BlockPosition blockPos1 = blockPos.up();
 
-            return (iWorldReader.isEmpty(blockPosition1) && iWorldReader.isEmpty(blockPosition1.up()))
-                    ? iWorldReader.getType(blockPosition).a(iWorldReader, blockPosition, this.drowned) : false;
+            return (iWorldReader.isEmpty(blockPos1) && iWorldReader.isEmpty(blockPos1.up()))
+                    ? iWorldReader.getType(blockPos).a(iWorldReader, blockPos, this.drowned) : false;
         }
 
         @Override
@@ -194,12 +194,12 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         private double waterX;
         private double waterY;
         private double waterZ;
-        private final double moveSpeed;
+        private final double speedTowardsTarget;
         private final World world;
 
-        public PathfinderGoalGoToWater(CustomEntityDrowned drowned, double moveSpeed) {
+        public PathfinderGoalGoToWater(CustomEntityDrowned drowned, double speedTowardsTarget) {
             this.drowned = drowned;
-            this.moveSpeed = moveSpeed;
+            this.speedTowardsTarget = speedTowardsTarget;
             this.world = drowned.getWorld();
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
@@ -231,7 +231,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
         @Override
         public void c() {
-            this.drowned.getNavigation().a(this.waterX, this.waterY, this.waterZ, this.moveSpeed);
+            this.drowned.getNavigation().a(this.waterX, this.waterY, this.waterZ, this.speedTowardsTarget);
         }
 
         @Nullable
@@ -240,11 +240,11 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
             BlockPosition currentPosition = this.drowned.getChunkCoordinates();
 
             for (int i = 0; i < 10; i++) {
-                BlockPosition blockPosition =
+                BlockPosition blockPos =
                         currentPosition.b(random.nextInt(20) - 10, 2 - random.nextInt(8), random.nextInt(20) - 10);
 
-                if (this.world.getType(blockPosition).a(Blocks.WATER)) {
-                    return Vec3D.c(blockPosition);
+                if (this.world.getType(blockPos).a(Blocks.WATER)) {
+                    return Vec3D.c(blockPos);
                 }
             }
 
@@ -255,13 +255,13 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     static class PathfinderGoalSwimUp extends PathfinderGoal {
 
         private final CustomEntityDrowned drowned;
-        private final double moveSpeed;
+        private final double speedTowardsTarget;
         private final int targetY;
         private boolean obstructed;
 
-        public PathfinderGoalSwimUp(CustomEntityDrowned drowned, double moveSpeed, int targetY) {
+        public PathfinderGoalSwimUp(CustomEntityDrowned drowned, double speedTowardsTarget, int targetY) {
             this.drowned = drowned;
-            this.moveSpeed = moveSpeed;
+            this.speedTowardsTarget = speedTowardsTarget;
             this.targetY = targetY;
         }
 
@@ -288,7 +288,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                     return;
                 }
 
-                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.moveSpeed);
+                this.drowned.getNavigation().a(vec3d.x, vec3d.y, vec3d.z, this.speedTowardsTarget);
             }
         }
 

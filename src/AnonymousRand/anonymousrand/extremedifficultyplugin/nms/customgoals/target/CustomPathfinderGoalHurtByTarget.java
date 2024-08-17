@@ -39,13 +39,13 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
 
         // teleport to target if outside detection range/has no line of sight
         double detectionRange = this.getDetectionRange();
-        if (NmsUtil.distSq(this.goalOwner, this.potentialTarget, this.ignoreY) > detectionRange * detectionRange
-                || !this.goalOwner.getEntitySenses().a(this.potentialTarget)) {
+        if (NmsUtil.distSq(this.goalOwner, this.candidateTarget, this.ignoreY) > detectionRange * detectionRange
+                || !this.goalOwner.getEntitySenses().a(this.candidateTarget)) {
             if (!this.goalOwner.isSilent()) {
                 this.goalOwner.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
-            this.goalOwner.enderTeleportTo(this.potentialTarget.locX(), this.potentialTarget.locY(),
-                    this.potentialTarget.locZ());
+            this.goalOwner.enderTeleportTo(this.candidateTarget.locX(), this.candidateTarget.locY(),
+                    this.candidateTarget.locZ());
             if (!this.goalOwner.isSilent()) {
                 this.goalOwner.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
@@ -65,7 +65,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
 
     @Override
     @Nullable
-    protected EntityLiving findNearestPotentialTarget(boolean allowIgnoreY) {
+    protected EntityLiving findNearestCandidateTarget(boolean allowIgnoreY) {
         return this.goalOwner.getLastDamager();
     }
 
@@ -86,7 +86,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
             boolean passedBaseChecks =
                     this.goalOwner != candidate
                     && candidate.getGoalTarget() == null
-                    && !candidate.r(this.potentialTarget);
+                    && !candidate.r(this.candidateTarget);
             if (!passedBaseChecks) {
                 continue;
             }
@@ -107,7 +107,7 @@ public class CustomPathfinderGoalHurtByTarget<T extends EntityInsentient & ICust
             }
 
             if (isValidReinforcementClass) {
-                candidate.setGoalTarget(this.potentialTarget, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY,
+                candidate.setGoalTarget(this.candidateTarget, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY,
                         true);
             }
         }

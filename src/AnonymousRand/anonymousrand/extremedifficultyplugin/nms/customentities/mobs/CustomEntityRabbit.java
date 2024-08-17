@@ -180,8 +180,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
             extends CustomPathfinderGoalMeleeAttack<T> {
 
-        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit, double moveSpeed) {
-            super(entityRabbit, moveSpeed);
+        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit, double speedTowardsTarget) {
+            super(entityRabbit, speedTowardsTarget);
         }
 
         @Override

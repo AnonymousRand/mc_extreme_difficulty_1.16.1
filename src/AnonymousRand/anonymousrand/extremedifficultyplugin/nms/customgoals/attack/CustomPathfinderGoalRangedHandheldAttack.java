@@ -23,8 +23,9 @@ public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient
         this(goalOwner, weapon, attackCooldown, 1.0);
     }
 
-    public CustomPathfinderGoalRangedHandheldAttack(T goalOwner, Item weapon, int attackCooldown, double moveSpeed) {
-        super(goalOwner, attackCooldown, moveSpeed);
+    public CustomPathfinderGoalRangedHandheldAttack(
+            T goalOwner, Item weapon, int attackCooldown, double speedTowardsTarget) {
+        super(goalOwner, attackCooldown, speedTowardsTarget);
         this.weapon = weapon;
     }
 

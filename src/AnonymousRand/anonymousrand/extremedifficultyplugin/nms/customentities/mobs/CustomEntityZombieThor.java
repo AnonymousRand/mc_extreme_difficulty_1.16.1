@@ -148,14 +148,14 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
 
         public final CustomEntityZombieThor thor;
         public final org.bukkit.World bukkitWorld;
-        private final BlockPosition blockPosition;
+        private final BlockPosition blockPos;
         public boolean storm, tornado;
         private static final Random random = new Random();
 
         public PathfinderGoalThorSummonLightning(CustomEntityZombieThor thor) {
             this.thor = thor;
             this.bukkitWorld = thor.getWorld().getWorld();
-            this.blockPosition = new BlockPosition(thor.locX(), thor.locY(), thor.locZ());
+            this.blockPos = new BlockPosition(thor.locX(), thor.locY(), thor.locZ());
             this.storm = false;
             this.tornado = true; // todo should this be false?
         }
@@ -173,7 +173,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
         @Override
         public void e() {
             if (random.nextDouble() < 0.05) {
-                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, this.blockPosition, 20.0, this.bukkitWorld.getHighestBlockYAt(new Location(this.bukkitWorld, this.blockPosition.getX(), this.blockPosition.getY(), this.blockPosition.getZ())), 361.0);
+                Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, this.blockPos, 20.0, this.bukkitWorld.getHighestBlockYAt(new Location(this.bukkitWorld, this.blockPos.getX(), this.blockPos.getY(), this.blockPos.getZ())), 361.0);
                 if (random.nextDouble() < 0.25) {
                     this.bukkitWorld.strikeLightning(bukkitLoc2);
                 } else {
@@ -187,7 +187,7 @@ public class CustomEntityZombieThor extends EntityZombie implements ICustomHosti
 
             if (random.nextDouble() < 0.002 && !this.storm && !this.tornado) {
                 this.tornado = true;
-                new RunnableTornado(this.thor.getWorld(), this.blockPosition, 30.0, 120).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
+                new RunnableTornado(this.thor.getWorld(), this.blockPos, 30.0, 120).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L);
             }
         }
     }

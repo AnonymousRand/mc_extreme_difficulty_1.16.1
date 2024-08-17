@@ -5,7 +5,7 @@ import net.minecraft.server.v1_16_R1.*;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NmsUtil {
+public abstract class NmsUtil {
 
     /**
      * Calculates distance between <code>entityFrom</code> and <code>entityTo</code>.

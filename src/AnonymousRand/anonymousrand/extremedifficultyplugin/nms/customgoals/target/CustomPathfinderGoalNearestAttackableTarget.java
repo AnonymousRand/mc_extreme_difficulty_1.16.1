@@ -70,10 +70,10 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
 
         EntityLiving goalTarget = this.goalOwner.getGoalTarget();
         if (this.goalOwner.getRandom().nextDouble() < 0.025 && goalTarget != null) {
-            S nearestPotentialTarget = this.findNearestPotentialTarget(false);
-            if (nearestPotentialTarget != null
-                    && nearestPotentialTarget.getUniqueID() != goalTarget.getUniqueID()) {
-                this.goalOwner.setGoalTarget(nearestPotentialTarget);
+            S nearestCandidateTarget = this.findNearestCandidateTarget(false);
+            if (nearestCandidateTarget != null
+                    && nearestCandidateTarget.getUniqueID() != goalTarget.getUniqueID()) {
+                this.goalOwner.setGoalTarget(nearestCandidateTarget);
             }
         }
 
@@ -82,7 +82,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
 
     @Override
     @Nullable
-    protected S findNearestPotentialTarget(boolean allowIgnoreY) {
+    protected S findNearestCandidateTarget(boolean allowIgnoreY) {
         EntityFilter targetCondition; // I'm sure there's a cleaner way but I can't think of it at the moment
         if (allowIgnoreY) {
             targetCondition = this.targetCondition;
