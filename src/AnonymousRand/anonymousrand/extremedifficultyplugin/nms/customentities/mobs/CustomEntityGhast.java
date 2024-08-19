@@ -127,7 +127,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     // `IRangedEntity`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Override
+    @Override /* `shoot()` */
     public void a(EntityLiving goalTarget, float distFactor) {
         if (!this.isSilent()) {
             world.a(null, 1016, this.getChunkCoordinates(), 0);
@@ -231,7 +231,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         }
     }
 
-    // todo finish
     static class PathfinderGoalLook extends PathfinderGoal {
 
         private final CustomEntityGhast ghast;
@@ -250,19 +249,19 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         public void e() {
             if (this.ghast.getGoalTarget() == null) {
                 // if there's no goal target, look around randomly
-                Vec3D vec3d = this.ghast.getMot();
+                Vec3D motGhast = this.ghast.getMot();
 
-                this.ghast.yaw = -((float) MathHelper.d(vec3d.x, vec3d.z)) * 57.295776F;
-                this.ghast.aH = this.ghast.yaw;
+                this.ghast.yaw = (float) (-MathHelper.d(motGhast.getX(), motGhast.getZ()) * 57.295776F);
+                this.ghast.aH = this.ghast.yaw; // `renderYawOffset`
             } else {
                 // else, look at goal target
                 EntityLiving goalTarget = this.ghast.getGoalTarget();
 
                 if (NmsUtil.distSq(this.ghast, goalTarget, true) < this.getDetectionRangeSq()) {
-                    double d1 = goalTarget.locX() - this.ghast.locX();
-                    double d2 = goalTarget.locZ() - this.ghast.locZ();
+                    double distX = goalTarget.locX() - this.ghast.locX();
+                    double distZ = goalTarget.locZ() - this.ghast.locZ();
 
-                    this.ghast.yaw = -((float) MathHelper.d(d1, d2)) * 57.295776F;
+                    this.ghast.yaw = (float) (-(MathHelper.d(distX, distZ)) * 57.295776F);
                     this.ghast.aH = this.ghast.yaw;
                 }
             }
@@ -276,26 +275,26 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     static class PathfinderGoalIdleMove extends PathfinderGoal {
 
-        private final EntityGhast a;
+        private final CustomEntityGhast ghast;
 
-        public PathfinderGoalIdleMove(EntityGhast entityGhast) {
-            this.a = entityGhast;
+        public PathfinderGoalIdleMove(CustomEntityGhast ghast) {
+            this.ghast = ghast;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 
         @Override
         public boolean a() {
-            ControllerMove controllermove = this.a.getControllerMove();
+            ControllerMove controllerMove = this.ghast.getControllerMove();
 
-            if (!controllermove.b()) {
+            if (!controllerMove.b()) {
                 return true;
             } else {
-                double d0 = controllermove.d() - this.a.locX();
-                double d1 = controllermove.e() - this.a.locY();
-                double d2 = controllermove.f() - this.a.locZ();
-                double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+                double distX = controllerMove.d() - this.ghast.locX();
+                double distY = controllerMove.e() - this.ghast.locY();
+                double distZ = controllerMove.f() - this.ghast.locZ();
+                double distSq = distX * distX + distY * distY + distZ * distZ;
 
-                return d3 < 1.0 || d3 > 3600.0D;
+                return distSq < 1.0 || distSq > 3600.0;
             }
         }
 
@@ -306,12 +305,12 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
         @Override
         public void c() {
-            Random random = this.a.getRandom();
-            double d0 = this.a.locX() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
-            double d1 = this.a.locY() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
-            double d2 = this.a.locZ() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
+            Random random = this.ghast.getRandom();
+            double x = this.ghast.locX() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
+            double y = this.ghast.locY() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
+            double z = this.ghast.locZ() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
 
-            this.a.getControllerMove().a(d0, d1, d2, 1.0);
+            this.ghast.getControllerMove().a(x, y, z, 1.0); // `setMoveTo()`
         }
     }
 }

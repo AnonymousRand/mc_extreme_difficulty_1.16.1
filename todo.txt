@@ -13,7 +13,7 @@ dont target villagers
 standardize customentity.this vs this.customentity in inner goal classes: always this. with statuc class? (if possible)
 all classes have blank line following declaration
 custom inner goals extending melee/ranged attack/targeting etc. dont need field for parent; just inherit this.goalowner
-stopped after: evoker
+stopped after: ghast
 
 
 revise multiline comments in initpathfinder()s
