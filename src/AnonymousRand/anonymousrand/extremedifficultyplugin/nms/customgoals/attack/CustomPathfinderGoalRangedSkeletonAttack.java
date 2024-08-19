@@ -35,13 +35,13 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
     }
 
     @Override
-    public void tickMovement(EntityLiving target) {
-        super.tickMovement(target);
+    public void tickMovement(EntityLiving goalTarget) {
+        super.tickMovement(goalTarget);
         this.strafingTime++;
 
         /* Skeletons and illusioners try to maintain a distance from their targets equal to 50% of their detection
            range */
-        this.strafingBackwards = !(NmsUtil.distSq(this.goalOwner, target, true) > this.getDetectionRangeSq() * 0.5);
+        this.strafingBackwards = !(NmsUtil.distSq(this.goalOwner, goalTarget, true) > this.getDetectionRangeSq() * 0.5);
         /* Skeletons and illusioners have an increased frequency of switching strafe rotation: every 10 ticks of
            strafing, they have a 50% chance to switch the rotation direction */
         if (this.strafingTime % 10 == 0) {
@@ -54,19 +54,19 @@ public class CustomPathfinderGoalRangedSkeletonAttack<T extends EntityInsentient
         /* Skeletons and illusioners strafe in circles much faster than they do forward/backward */
         this.goalOwner.getControllerMove().a(this.strafingBackwards ? -0.2F : 0.2F, // strafe(); largely idempotent
                 this.strafingClockwise ? 200F : -200F);
-        this.goalOwner.a(target, 30.0F, 30.0F); // faceEntity(); this.goalOwner.getControllerLook().a() doesn't work
+        this.goalOwner.a(goalTarget, 30.0F, 30.0F); // faceEntity(); this.goalOwner.getControllerLook().a() doesn't work
     }
 
     @Override
-    protected boolean checkAttack(EntityLiving target) {
+    protected boolean checkAttack(EntityLiving goalTarget) {
         return this.goalOwner.isHandRaised();
     }
 
     @Override
-    protected void attack(EntityLiving target) {
+    protected void attack(EntityLiving goalTarget) {
         // ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (we are manually setting it
         // to the normal 20 here to allow rapid fire, to mimic having charged the bow for the full 20 ticks already)
-        this.goalOwner.a(target, ItemBow.a(20)); // shoot()
+        this.goalOwner.a(goalTarget, ItemBow.a(20)); // shoot()
     }
 
     protected double getDetectionRangeSq() {

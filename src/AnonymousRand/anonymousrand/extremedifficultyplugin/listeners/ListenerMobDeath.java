@@ -143,19 +143,19 @@ public class ListenerMobDeath implements Listener {
 
         private final CustomEntityWither wither;
         private final World nmsWorld;
-        private int cycles;
-        private final int maxCycles;
+        private int cycleCount;
+        private final int cycleCountMax;
 
-        public RunnableWitherDeathSkulls(CustomEntityWither wither, int maxCycles) {
+        public RunnableWitherDeathSkulls(CustomEntityWither wither, int cycleCountMax) {
             this.wither = wither;
             this.nmsWorld = wither.getWorld();
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
+            this.cycleCount = 0;
+            this.cycleCountMax = cycleCountMax;
         }
 
         @Override
         public void run() {
-            if (++this.cycles > this.maxCycles) {
+            if (++this.cycleCount > this.cycleCountMax) {
                 this.cancel();
                 return;
             }

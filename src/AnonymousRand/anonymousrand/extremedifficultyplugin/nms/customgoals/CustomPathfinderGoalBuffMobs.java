@@ -12,15 +12,15 @@ public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLe
     private final Class<? extends EntityLiving> targetClass;
     private final HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects;
     private final double rangeRadius;
-    private final int attacksThreshold, ticksDelayMin, ticksDelayRandBound;
+    private final int attacksThresh, ticksDelayMin, ticksDelayRandBound;
     private static final Random random = new Random();
 
-    public CustomPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThreshold, int ticksDelayMin, int ticksDelayRandBound) {
+    public CustomPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThresh, int ticksDelayMin, int ticksDelayRandBound) {
         this.entity = entity;
         this.targetClass = targetClass;
         this.attacksAndEffects = attacksAndEffects;
         this.rangeRadius = rangeRadius;
-        this.attacksThreshold = attacksThreshold;
+        this.attacksThresh = attacksThresh;
         this.ticksDelayMin = ticksDelayMin;
         this.ticksDelayRandBound = ticksDelayRandBound;
     }
@@ -28,7 +28,7 @@ public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLe
     @Override
     public boolean a() {
         if (this.entity.ticksLived % (random.nextInt(this.ticksDelayRandBound) + this.ticksDelayMin) == 0) {
-            if (this.entity.getAttacks() >= this.attacksThreshold) {
+            if (this.entity.getAttacks() >= this.attacksThresh) {
                 return true;
             }
         }

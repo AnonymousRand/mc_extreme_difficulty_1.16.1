@@ -23,8 +23,8 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
     private final double offsetY;
     private final boolean terraform;
     private final World nmsWorld;
-    protected int cycles;
-    protected final int maxCycles;
+    protected int cycleCount;
+    protected final int cycleCountMax;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
 
@@ -38,11 +38,11 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
         this.offsetY = offsetY;
         this.terraform = terraform;
         this.nmsWorld = entity.getWorld();
-        this.cycles = 0;
-        this.maxCycles = 1;
+        this.cycleCount = 0;
+        this.cycleCountMax = 1;
     }
 
-    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform, int maxCycles) {
+    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform, int cycleCountMax) {
         this.entity = entity;
         this.material = material;
         this.firstEntityToSpawn = firstEntityToSpawn;
@@ -52,14 +52,14 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
         this.offsetY = offsetY;
         this.terraform = terraform;
         this.nmsWorld = entity.getWorld();
-        this.cycles = 0;
-        this.maxCycles = maxCycles;
+        this.cycleCount = 0;
+        this.cycleCountMax = cycleCountMax;
     }
 
     @Override
     public void run() {
-        this.cycles++;
-        if (this.cycles > this.maxCycles) {
+        this.cycleCount++;
+        if (this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }

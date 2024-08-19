@@ -21,8 +21,8 @@ public class RunnableMobRain extends BukkitRunnable {
     private final org.bukkit.World bukkitWorld;
     private final double radius;
     private final int wave;
-    private int cycles;
-    private final int maxCycles;
+    private int cycleCount;
+    private final int cycleCountMax;
     public HashMap<Integer, ArrayList<EntityLiving>> entitiesToSpawn = new HashMap<>();
     private final BlockPosition originPos;
     private static final Random random = new Random();
@@ -34,8 +34,8 @@ public class RunnableMobRain extends BukkitRunnable {
         this.bukkitWorld = nmsWorld.getWorld();
         this.radius = radius;
         this.wave = wave;
-        this.cycles = 0;
-        this.maxCycles = wave == 1 ? 100 : 12;
+        this.cycleCount = 0;
+        this.cycleCountMax = wave == 1 ? 100 : 12;
         this.originPos = new BlockPosition(entity.locX(), entity.locY(), entity.locZ());
         this.initMobRainArrayLists(this.nmsWorld);
     }
@@ -48,19 +48,19 @@ public class RunnableMobRain extends BukkitRunnable {
         this.originPos = originPos;
         this.radius = radius;
         this.wave = wave;
-        this.cycles = 0;
-        this.maxCycles = wave == 1 ? 100 : 12;
+        this.cycleCount = 0;
+        this.cycleCountMax = wave == 1 ? 100 : 12;
         this.initMobRainArrayLists(this.nmsWorld);
     }
 
     @Override
     public void run() {
-        if (++this.cycles > this.maxCycles) {
+        if (++this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }
 
-        if (this.cycles == 1) { /* to reduce lag */
+        if (this.cycleCount == 1) { /* to reduce lag */
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill @e[type=enderman]");
         }
 

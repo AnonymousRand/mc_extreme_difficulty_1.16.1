@@ -38,7 +38,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* hoglins have 40 block detection range (64 after 10 attacks) */
@@ -98,7 +98,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -110,23 +110,23 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 10 attacks, hoglins get regen 2 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 20 attacks, hoglins get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (thresholdMet == attackThresholds[2]) {
+            } else if (threshMet == attackThreshs[2]) {
                 /* After 40 attacks, hoglins summon a baby hoglin */
                 CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.world);
                 newHoglin.a(true);
                 new SpawnEntity(this.world, newHoglin, 1, null, null, this, false, true);
-            } else if (thresholdMet == attackThresholds[3]) {
+            } else if (threshMet == attackThreshs[3]) {
                 /* After 75 attacks, hoglins summon another baby hoglin */
                 CustomEntityHoglin newHoglin = new CustomEntityHoglin(this.world);
                 newHoglin.a(true);
@@ -135,12 +135,12 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IGoalRemovingMob
+    // `IGoalRemovingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initGoalRemovingMob() {

@@ -59,30 +59,30 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile, IG
     }
 
     @Override
-    public void a(EntityLiving entityLiving, float f) { // shoot()
+    public void a(EntityLiving goalTarget, float distFactor) { // shoot()
         if (++this.attackNum % 6 == 0) { // attacks only count every 1.5 seconds, or 6 shots
             this.attacks++;
         }
 
         if (!this.m()) {
-            Vec3D vec3d = entityLiving.getMot();
-            double d0 = entityLiving.locX() + vec3d.x - this.locX();
-            double d1 = entityLiving.getHeadY() - 1.100000023841858D - this.locY();
-            double d2 = entityLiving.locZ() + vec3d.z - this.locZ();
+            Vec3D vec3d = goalTarget.getMot();
+            double d0 = goalTarget.locX() + vec3d.x - this.locX();
+            double d1 = goalTarget.getHeadY() - 1.100000023841858D - this.locY();
+            double d2 = goalTarget.locZ() + vec3d.z - this.locZ();
             float f1 = MathHelper.sqrt(d0 * d0 + d2 * d2);
             PotionRegistry potionregistry = this.attacks < 45 ? Potions.HARMING : Potions.STRONG_HARMING; /* after 45 attacks, witches throw harming 2 instead of 1 */
 
-            if (entityLiving instanceof EntityRaider) {
-                if (entityLiving.getHealth() <= 10.0F) { /* gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
+            if (goalTarget instanceof EntityRaider) {
+                if (goalTarget.getHealth() <= 10.0F) { /* gives fellow raiders instant health 2 instead of instant health 1 below 5 hearts */
                     potionregistry = Potions.STRONG_HEALING;
                 } else {
                     potionregistry = Potions.STRONG_REGENERATION;
                 }
 
                 this.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
-            } else if (f1 >= 6.0F && !entityLiving.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /* gives slowness 2 up to 6 blocks away */
+            } else if (f1 >= 6.0F && !goalTarget.hasEffect(MobEffects.SLOWER_MOVEMENT)) { /* gives slowness 2 up to 6 blocks away */
                 potionregistry = Potions.STRONG_SLOWNESS;
-            } else if (f1 < 6.0F && !entityLiving.hasEffect(MobEffects.WEAKNESS)) { /* 100% to give weakness when player within 6 blocks */
+            } else if (f1 < 6.0F && !goalTarget.hasEffect(MobEffects.WEAKNESS)) { /* 100% to give weakness when player within 6 blocks */
                 potionregistry = Potions.WEAKNESS;
             } else if (f1 >= 5.0F) { /* gives poison 2 instead of 1 but poison range increased to anything beyond 5 blocks; within 5 blocks witches start spamming harming */
                 potionregistry = Potions.STRONG_POISON;
@@ -195,8 +195,8 @@ public class CustomEntityWitch extends EntityWitch implements ICustomHostile, IG
         this.attacks += increase;
     }
 
-//    public int[] getAttacksThresholds() {
-//        return this.attackLevelingController.getAttacksThresholds();
+//    public int[] getAttacksThreshs() {
+//        return this.attackLevelingController.getAttacksThreshs();
 //    }
 
     @Override

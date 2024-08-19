@@ -40,7 +40,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() {
@@ -101,7 +101,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -115,14 +115,14 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardian(this.world), 1, null, null, this, false, true);
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 350 attacks, drowned summon an elder guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false,
                         true);
@@ -130,8 +130,8 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

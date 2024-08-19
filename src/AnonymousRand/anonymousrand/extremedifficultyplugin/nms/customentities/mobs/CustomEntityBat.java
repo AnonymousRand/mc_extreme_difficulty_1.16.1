@@ -89,7 +89,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() {
@@ -98,8 +98,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         // which is called in CustomPathfinderGoalNearestAttackableTarget
         // which is called in initPathfinder() which is called in some EntityInsentient's constructor
         // which is before this.attackController can be initialized
-        return (this.attackLevelingController == null || this.getAttacks() < this.getAttacksThresholds()[1]) ? 16.0
-                : this.getAttacks() < this.getAttacksThresholds()[2] ? 24 : 32;
+        return (this.attackLevelingController == null || this.getAttacks() < this.getAttacksThreshs()[1]) ? 16.0
+                : this.getAttacks() < this.getAttacksThreshs()[2] ? 24 : 32;
     }
 
     public boolean ignoresLOS() {
@@ -150,7 +150,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -164,41 +164,41 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]
-                    || thresholdMet == attackThresholds[3]
-                    || thresholdMet == attackThresholds[4]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]
+                    || threshMet == attackThreshs[3]
+                    || threshMet == attackThreshs[4]) {
                 /* After 4 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /* After 28 attacks, all mobs within 64 block sphere shoot an arrow every 30 ticks and spawn a silverfish every 15 seconds */
                 /* After 40 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 20 ticks */
                 buffMobs.e(); // immediately apply buffs
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 8 attacks, bats gain regen 2, speed 1, and 12 max health and health */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.0);
                 this.setHealth(12.0F);
-            } else if (thresholdMet == attackThresholds[2]) {
+            } else if (threshMet == attackThreshs[2]) {
                 /* After 15 attacks, bats gain speed 2 and 15 max health and health */
                 /* After 15 attacks, all mobs within 64 block sphere shoot an arrow every 40 ticks */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(15.0);
                 this.setHealth(15.0F);
 
-                this.goalSelector.a(this.buffMobs); // remove goal and replace // todo if not un-jankified: why? whats the diff between these and the first threshold's buff? why no replace after this?
+                this.goalSelector.a(this.buffMobs); // remove goal and replace // todo if not un-jankified: why? whats the diff between these and the first thresh's buff? why no replace after this?
                 this.buffMobs = new CustomPathfinderGoalBuffMobs(this, EntityInsentient.class, this.buildBuffsHashmap(),
-                        64, attackThresholds[2], 200, 101);
+                        64, attackThreshs[2], 200, 101);
                 this.goalSelector.a(0, this.buffMobs);
                 this.buffMobs.e();
             }
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
             /* After 32 attacks, an additional aggressive bat is summoned every time bat is hit by player
                and not killed */
-            if (this.getAttacks() >= this.getAttacksThresholds()[4]) {
+            if (this.getAttacks() >= this.getAttacksThreshs()[4]) {
                 new SpawnEntity(this.world, new CustomEntityBat(this.world), 1, null,
                         null, this, false, false);
             }

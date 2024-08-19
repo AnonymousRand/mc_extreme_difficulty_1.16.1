@@ -3,6 +3,7 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.atta
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
@@ -15,6 +16,7 @@ import java.util.EnumSet;
  * have also been split up more clearly; the only reason they are not separate goals is that they must meet the same
  * conditions to execute.
  */
+// todo split up attack and movement with mutexes going to movement; and test primilarily?
 public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends PathfinderGoal {
 
@@ -41,6 +43,9 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
     }
 
     protected boolean shouldExecuteAttack() {
+        if (EntityFilter.BASE.test(this.goalOwner, this.goalOwner.getGoalTarget())) {
+            Bukkit.broadcastMessage("should execute attack");
+        }
         return EntityFilter.BASE.test(this.goalOwner, this.goalOwner.getGoalTarget());
     }
 
@@ -103,32 +108,32 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
         this.tickMovement(goalTarget);
     }
 
-    protected void tickAttack(EntityLiving target) {
+    protected void tickAttack(EntityLiving goalTarget) {
         if (this.remainingAttackCooldown <= 0) {
-            if (this.checkAttack(target)) {
+            if (this.checkAttack(goalTarget)) {
                 // only reset cooldown if attack was successful
                 this.remainingAttackCooldown = this.attackCooldown;
                 // this.goalOwner.increaseAttacks(1); // todo uncomment eventually
-                this.attack(target);
+                this.attack(goalTarget);
             }
         }
     }
 
-    protected void tickMovement(EntityLiving target) {
-        this.goalOwner.getControllerLook().a(target, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
+    protected void tickMovement(EntityLiving goalTarget) {
+        this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
     }
 
-    protected boolean checkAttack(EntityLiving target) {
+    protected boolean checkAttack(EntityLiving goalTarget) {
         return true;
     }
 
-    protected abstract void attack(EntityLiving target);
+    protected abstract void attack(EntityLiving goalTarget);
 
     public void setAttackCooldown(int attackCooldown) {
         this.attackCooldown = attackCooldown;
     }
 
-    public void setspeedTowardsTarget(double speedTowardsTarget) {
+    public void setSpeedTowardsTarget(double speedTowardsTarget) {
         this.speedTowardsTarget = speedTowardsTarget;
     }
 }

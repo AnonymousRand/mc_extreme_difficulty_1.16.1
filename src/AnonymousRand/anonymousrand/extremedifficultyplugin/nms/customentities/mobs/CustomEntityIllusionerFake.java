@@ -46,7 +46,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -58,16 +58,16 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
@@ -76,8 +76,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

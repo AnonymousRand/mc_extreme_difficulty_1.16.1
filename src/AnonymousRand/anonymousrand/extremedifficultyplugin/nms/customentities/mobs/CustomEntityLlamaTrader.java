@@ -53,7 +53,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* trader llamas have 24 block detection range */
@@ -69,7 +69,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -81,11 +81,11 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 15 attacks, trader llamas get 50 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);
@@ -93,8 +93,8 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,16 +119,16 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
-    public void a(EntityLiving entityLiving, float f) { // shoot()s custom spit instead of vanilla
+    public void a(EntityLiving goalTarget, float distFactor) { // shoot()s custom spit instead of vanilla
         this.increaseAttacks(1);
 
         CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.world, this, this.getAttacks() < 6 ? 12.0 : 18.0); /* after 6 attacks, trader llamas do 18 damage */
-        double d0 = entityLiving.locX() - this.locX();
-        double d1 = entityLiving.e(0.3333333333333333D) - entityLlamaspit.locY();
-        double d2 = entityLiving.locZ() - this.locZ();
-        f = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
+        double d0 = goalTarget.locX() - this.locX();
+        double d1 = goalTarget.e(0.3333333333333333D) - entityLlamaspit.locY();
+        double d2 = goalTarget.locZ() - this.locZ();
+        distFactor = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
 
-        entityLlamaspit.shoot(d0, d1 + (double) f, d2, 1.5F, 10.0F);
+        entityLlamaspit.shoot(d0, d1 + (double) distFactor, d2, 1.5F, 10.0F);
         if (!this.isSilent()) {
             this.world.playSound(null, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_LLAMA_SPIT, this.getSoundCategory(), 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F);
         }

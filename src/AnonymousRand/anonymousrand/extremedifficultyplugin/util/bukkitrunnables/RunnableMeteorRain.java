@@ -23,28 +23,28 @@ public class RunnableMeteorRain extends BukkitRunnable {
     private final double maxRadius;
     private final org.bukkit.World bukkitWorld;
     private final World nmsWorld;
-    private int cycles;
-    private final int maxCycles;
+    private int cycleCount;
+    private final int cycleCountMax;
     private Location playerLoc;
     private final Vector vec;
     private static final Random random = new Random();
 
-    public RunnableMeteorRain(Player player, int type, double maxRadius, int maxCycles) {
+    public RunnableMeteorRain(Player player, int type, double maxRadius, int cycleCountMax) {
         this.bukkitShooter = player;
         this.playerLoc = player.getLocation();
         this.type = type;
         this.maxRadius = maxRadius;
-        this.maxCycles = maxCycles;
+        this.cycleCountMax = cycleCountMax;
         this.bukkitWorld = player.getWorld();
         this.nmsWorld = ((CraftWorld)player.getWorld()).getHandle();
         this.vec = new Vector(0.0, -1.0, 0.0);
     }
 
-    public RunnableMeteorRain(Entity nmsEntity, int type, double maxRadius, int maxCycles) {
+    public RunnableMeteorRain(Entity nmsEntity, int type, double maxRadius, int cycleCountMax) {
         this.bukkitShooter = nmsEntity.getBukkitEntity();
         this.type = type;
         this.maxRadius = maxRadius;
-        this.maxCycles = maxCycles;
+        this.cycleCountMax = cycleCountMax;
         this.nmsWorld = nmsEntity.getWorld();
         this.bukkitWorld = this.nmsWorld.getWorld();
         this.playerLoc = new Location(this.bukkitWorld, nmsEntity.locX(), nmsEntity.locY(), nmsEntity.locZ());
@@ -53,8 +53,8 @@ public class RunnableMeteorRain extends BukkitRunnable {
 
     @Override
     public void run() {
-        this.cycles++;
-        if (this.cycles > this.maxCycles) {
+        this.cycleCount++;
+        if (this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }

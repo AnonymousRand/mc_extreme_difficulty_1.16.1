@@ -32,7 +32,7 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
     }
 
     @Override
-    protected void tickAttack(EntityLiving target) {
+    protected void tickAttack(EntityLiving goalTarget) {
         // animate crossbow: uncharged -> charging, charging -> charged, and charged -> uncharged states respectively
         if (this.remainingAttackCooldown == this.attackCooldown - 1) {
             this.goalOwner.c(ProjectileHelper.a(this.goalOwner, Items.CROSSBOW)); // setActiveHand()
@@ -46,11 +46,11 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
             ItemCrossbow.a(this.goalOwner.getActiveItem(), false);                // setCrossbowCharged()
         }
 
-        super.tickAttack(target);
+        super.tickAttack(goalTarget);
     }
 
     @Override
-    protected void attack(EntityLiving target) {
-        this.goalOwner.a(target, 1.0F); // shoot()
+    protected void attack(EntityLiving goalTarget) {
+        this.goalOwner.a(goalTarget, 1.0F); // shoot()
     }
 }

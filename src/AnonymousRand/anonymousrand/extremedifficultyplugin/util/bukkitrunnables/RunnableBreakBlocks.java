@@ -19,8 +19,8 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected Location bukkitLoc;
     protected final int radX, radY, radZ, offsetY;
     protected final boolean removeFluids, immuneBlocks;
-    protected int cycles;
-    protected final int maxCycles;
+    protected int cycleCount;
+    protected final int cycleCountMax;
     protected int baseX, baseY, baseZ;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
@@ -40,11 +40,11 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
-        this.cycles = 0;
-        this.maxCycles = 1;
+        this.cycleCount = 0;
+        this.cycleCountMax = 1;
     }
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int maxCycles) {
+    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int cycleCountMax) {
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.radX = radX;
@@ -53,8 +53,8 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = immuneBlocks;
-        this.cycles = 0;
-        this.maxCycles = maxCycles;
+        this.cycleCount = 0;
+        this.cycleCountMax = cycleCountMax;
     }
 
     public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
@@ -67,14 +67,14 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.offsetY = offsetY;
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
-        this.cycles = 0;
-        this.maxCycles = 1;
+        this.cycleCount = 0;
+        this.cycleCountMax = 1;
     }
 
     @Override
     public void run() {
-        this.cycles++;
-        if (this.cycles > this.maxCycles) {
+        this.cycleCount++;
+        if (this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }

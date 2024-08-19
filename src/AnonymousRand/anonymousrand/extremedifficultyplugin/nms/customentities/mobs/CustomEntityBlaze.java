@@ -49,7 +49,7 @@ public class CustomEntityBlaze extends EntityBlaze
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() {
@@ -105,7 +105,7 @@ public class CustomEntityBlaze extends EntityBlaze
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -119,11 +119,11 @@ public class CustomEntityBlaze extends EntityBlaze
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 75 attacks, blazes shoot an exploding fireball with power 1 */
                 double d1 = this.getGoalTarget().locX() - this.locX();
                 double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
@@ -132,10 +132,10 @@ public class CustomEntityBlaze extends EntityBlaze
                         new CustomEntityLargeFireball(this.world, this, d1, d2, d3, 1);
                 largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
                 this.world.addEntity(largeFireball);
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 150 attacks, blazes shoot out a ring of fireballs */
                 new RunnableRingOfFireballs(this, 0.5, 1).run();
-            } else if (thresholdMet == attackThresholds[2]) {
+            } else if (threshMet == attackThreshs[2]) {
                 /* After 250 attacks, blazes enter rapid fire state, which reduces attack cooldown to 4 ticks */
                 this.fireballAttackPathfinderGoal.setAttackCooldown(4);
                 this.rapidFire = true;
@@ -143,12 +143,12 @@ public class CustomEntityBlaze extends EntityBlaze
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IGoalRemovingMob
+    // `IGoalRemovingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initGoalRemovingMob() {

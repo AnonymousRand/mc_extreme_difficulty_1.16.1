@@ -65,8 +65,8 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     @Override
-    public void a(EntityLiving entityLiving, float f) { // shoot() for main head
-        this.shootSkullToEntity(0, entityLiving);
+    public void a(EntityLiving goalTarget, float distFactor) { // shoot() for main head
+        this.shootSkullToEntity(0, goalTarget);
     }
 
     protected void shootSkullToEntity(int i, EntityLiving entityLiving) {
@@ -311,7 +311,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
 
         @Override
         public void run() {
-            this.cycles = 0;
+            this.cycleCount = 0;
             this.entity.getWorld().createExplosion(this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), 0.0F, false, Explosion.Effect.NONE); // constant explosion noises
             super.run();
         }

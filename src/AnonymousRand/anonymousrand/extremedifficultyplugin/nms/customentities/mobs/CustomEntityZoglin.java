@@ -132,8 +132,8 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         this.attacks += increase;
     }
 
-//    public int[] getAttacksThresholds() {
-//        return this.attackLevelingController.getAttacksThresholds();
+//    public int[] getAttacksThreshs() {
+//        return this.attackLevelingController.getAttacksThreshs();
 //    }
 
     @Override

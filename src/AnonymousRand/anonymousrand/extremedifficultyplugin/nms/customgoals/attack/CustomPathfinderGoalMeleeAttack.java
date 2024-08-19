@@ -68,43 +68,43 @@ public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICusto
     }
 
     @Override
-    protected void tickMovement(EntityLiving target) {
-        super.tickMovement(target);
+    protected void tickMovement(EntityLiving goalTarget) {
+        super.tickMovement(goalTarget);
 
         // repath to target once remainingRepathCooldown is up if it's more than 1 block away from the target (or 10% random chance if it is)
         boolean shouldRepathToTarget =
                 this.remainingRepathCooldown <= 0
-                        && (NmsUtil.distSq(target.locX(), target.locY(), target.locZ(),
+                        && (NmsUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(),
                         this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
                         || this.goalOwner.getRandom().nextFloat() < 0.1F); // increased from vanilla 0.05 to 0.1
         if (shouldRepathToTarget) {
-            this.oldTargetX = target.locX();
-            this.oldTargetY = target.locY();
-            this.oldTargetZ = target.locZ();
+            this.oldTargetX = goalTarget.locX();
+            this.oldTargetY = goalTarget.locY();
+            this.oldTargetZ = goalTarget.locZ();
             this.remainingRepathCooldown = this.repathCooldown;
 
-            double distSqToTarget = NmsUtil.distSq(this.goalOwner, target, false);
+            double distSqToTarget = NmsUtil.distSq(this.goalOwner, goalTarget, false);
             if (distSqToTarget > 1024.0) {
                 this.remainingRepathCooldown += 10;
             } else if (distSqToTarget > 256.0) {
                 this.remainingRepathCooldown += 5;
             }
 
-            if (!this.goalOwner.getNavigation().a(target, this.speedTowardsTarget)) { // tryMoveTo()
+            if (!this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget)) { // tryMoveTo()
                 this.remainingRepathCooldown += 15;
             }
         }
     }
 
     @Override
-    protected boolean checkAttack(EntityLiving target) {
-        return NmsUtil.distSq(this.goalOwner, target, false) <= this.getAttackReachSq(target);
+    protected boolean checkAttack(EntityLiving goalTarget) {
+        return NmsUtil.distSq(this.goalOwner, goalTarget, false) <= this.getAttackReachSq(goalTarget);
     }
 
     @Override
-    protected void attack(EntityLiving target) {
+    protected void attack(EntityLiving goalTarget) {
         this.goalOwner.swingHand(EnumHand.MAIN_HAND);
-        this.goalOwner.attackEntity(target);
+        this.goalOwner.attackEntity(goalTarget);
     }
 
     protected double getAttackReachSq(EntityLiving target) {

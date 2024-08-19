@@ -5,39 +5,39 @@ import java.util.ArrayList;
 public class AttackLevelingController {
 
     private int attacks;
-    private int[] attacksThresholds;
+    private int[] attacksThreshs;
 
-    public AttackLevelingController(int... attacksThresholds) {
-        this.attacksThresholds = attacksThresholds;
+    public AttackLevelingController(int... attacksThreshs) {
+        this.attacksThreshs = attacksThreshs;
         this.attacks = 0;
     }
 
     /**
      * Increases <code>attacks</code>.
      *
-     * @return all newly met or exceeded thresholds
+     * @return all newly met or exceeded threshs
      */
     public int[] increaseAttacks(int increment) {
         if (increment == 1) {
             this.attacks += increment;
-            for (int attackThreshold : this.attacksThresholds) {
-                if (this.attacks == attackThreshold) {
+            for (int attackThresh : this.attacksThreshs) {
+                if (this.attacks == attackThresh) {
                     return new int[]{this.attacks};
                 }
             }
         } else {
-            // check for multiple crossed thresholds if incrementing by multiple
-            ArrayList<Integer> thresholdMets = new ArrayList<>();
+            // check for multiple crossed threshs if incrementing by multiple
+            ArrayList<Integer> threshMets = new ArrayList<>();
             int attacksBefore = this.attacks;
             this.attacks += increment;
-            for (int attackThreshold : this.attacksThresholds) {
-                if (attacksBefore < attackThreshold && this.attacks >= attackThreshold) {
-                    thresholdMets.add(attackThreshold);
+            for (int attackThresh : this.attacksThreshs) {
+                if (attacksBefore < attackThresh && this.attacks >= attackThresh) {
+                    threshMets.add(attackThresh);
                 }
             }
 
             // dankly convert ArrayList<Integer> to int[]
-            return thresholdMets.stream().mapToInt(Integer::intValue).toArray();
+            return threshMets.stream().mapToInt(Integer::intValue).toArray();
         }
 
         return new int[]{};
@@ -47,7 +47,7 @@ public class AttackLevelingController {
         return this.attacks;
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attacksThresholds;
+    public int[] getAttacksThreshs() {
+        return this.attacksThreshs;
     }
 }

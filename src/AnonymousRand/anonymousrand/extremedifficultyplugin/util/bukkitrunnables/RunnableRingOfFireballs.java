@@ -11,31 +11,31 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
     private final EntityInsentient entity;
     private final World nmsWorld;
     private final double spacing;
-    private int cycles;
-    private final int maxCycles, type;
+    private int cycleCount;
+    private final int cycleCountMax, type;
 
-    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int maxCycles) {
+    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int cycleCountMax) {
         this.entity = entity;
         this.nmsWorld = entity.getWorld();
         this.spacing = spacing;
         this.type = 1;
-        this.cycles = 0;
-        this.maxCycles = maxCycles;
+        this.cycleCount = 0;
+        this.cycleCountMax = cycleCountMax;
     }
 
-    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int type, int maxCycles) {
+    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int type, int cycleCountMax) {
         this.entity = entity;
         this.nmsWorld = entity.getWorld();
         this.spacing = spacing;
         this.type = type;
-        this.cycles = 0;
-        this.maxCycles = maxCycles;
+        this.cycleCount = 0;
+        this.cycleCountMax = cycleCountMax;
     }
 
     @Override
     public void run() {
-        this.cycles++;
-        if (this.cycles > this.maxCycles) {
+        this.cycleCount++;
+        if (this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }

@@ -124,8 +124,8 @@ public class CustomEntitySlimeMagmaCube extends EntityMagmaCube implements ICust
         this.attacks += increase;
     }
 
-//    public int[] getAttacksThresholds() {
-//        return this.attackLevelingController.getAttacksThresholds();
+//    public int[] getAttacksThreshs() {
+//        return this.attackLevelingController.getAttacksThreshs();
 //    }
 
     @Override

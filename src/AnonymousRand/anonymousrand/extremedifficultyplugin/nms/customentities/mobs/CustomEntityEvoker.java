@@ -44,7 +44,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() {
@@ -105,7 +105,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private AttackLevelingController attackLevelingController = null;
@@ -119,26 +119,26 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.world, new CustomEntityVex(this.world), 3, null, null, this, false, false);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            } else if (thresholdMet == attackThresholds[1]) {
+            } else if (threshMet == attackThreshs[1]) {
                 /* After 35 attacks, evokers gain regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (thresholdMet == attackThresholds[2]) {
+            } else if (threshMet == attackThreshs[2]) {
                 /* After 60 attacks, evokers gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             }
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -712,18 +712,18 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     static class RunnableEvokerStopPlayer extends BukkitRunnable {
 
         private final EntityLiving target;
-        private int cycles;
-        private final int maxCycles;
+        private int cycleCount;
+        private final int cycleCountMax;
 
-        public RunnableEvokerStopPlayer(EntityLiving target, int maxCycles) {
+        public RunnableEvokerStopPlayer(EntityLiving target, int cycleCountMax) {
             this.target = target;
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
+            this.cycleCount = 0;
+            this.cycleCountMax = cycleCountMax;
         }
 
         @Override
         public void run() {
-            if (++this.cycles > this.maxCycles) {
+            if (++this.cycleCount > this.cycleCountMax) {
                 this.cancel();
                 return;
             }

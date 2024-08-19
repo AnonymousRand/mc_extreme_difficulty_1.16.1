@@ -29,12 +29,12 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
     }
 
     @Override
-    protected void tickMovement(EntityLiving target) {
-        super.tickMovement(target);
+    protected void tickMovement(EntityLiving goalTarget) {
+        super.tickMovement(goalTarget);
 
         // repath to target if it can't be seen
         // Note: checking if there is a way to get to the target doesn't seem to work
-        if (this.remainingRepathCooldown <= 0 && !this.goalOwner.getEntitySenses().a(target)) {
+        if (this.remainingRepathCooldown <= 0 && !this.goalOwner.getEntitySenses().a(goalTarget)) {
             this.remainingRepathCooldown = this.repathCooldown;
             this.targetSeenTicks = 0;
         } else {
@@ -42,16 +42,16 @@ public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRang
         }
 
         if (this.targetSeenTicks < 5) {
-            this.goalOwner.getNavigation().a(target, this.speedTowardsTarget); // tryMoveTo()
+            this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget); // tryMoveTo()
         } else {
             this.goalOwner.getNavigation().o();                       // clearPath() (stands still)
         }
     }
 
     @Override
-    protected void attack(EntityLiving target) {
-        float distanceFactor = (float) MathHelper.a(NmsUtil.dist(this.goalOwner, target, false)
-                                       / this.goalOwner.getDetectionRange(), 0.1, 1.0);
-        this.goalOwner.a(target, distanceFactor); // shoot()
+    protected void attack(EntityLiving goalTarget) {
+        float distFactor = (float) MathHelper.a(NmsUtil.dist(this.goalOwner, goalTarget, false)
+                / this.goalOwner.getDetectionRange(), 0.1, 1.0);
+        this.goalOwner.a(goalTarget, distFactor); // `shoot()`
     }
 }

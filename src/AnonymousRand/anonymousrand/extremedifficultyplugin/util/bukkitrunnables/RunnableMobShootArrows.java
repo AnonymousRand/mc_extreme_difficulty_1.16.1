@@ -15,8 +15,8 @@ public class RunnableMobShootArrows extends BukkitRunnable {
     private final double inaccuracy;
     private final boolean onFire, noGravity;
     private final World nmsWorld;
-    private int cycles;
-    private final int maxCycles;
+    private int cycleCount;
+    private final int cycleCountMax;
     private static final Random random = new Random();
 
     public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
@@ -29,11 +29,11 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.onFire = onFire;
         this.noGravity = noGravity;
         this.nmsWorld = entity.getWorld();
-        this.cycles = 0;
-        this.maxCycles = 1;
+        this.cycleCount = 0;
+        this.cycleCountMax = 1;
     }
 
-    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int maxCycles) {
+    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int cycleCountMax) {
         this.entity = entity;
         this.target = target;
         this.numOfArrows = numOfArrows;
@@ -43,14 +43,14 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.onFire = onFire;
         this.noGravity = noGravity;
         this.nmsWorld = entity.getWorld();
-        this.cycles = 0;
-        this.maxCycles = maxCycles;
+        this.cycleCount = 0;
+        this.cycleCountMax = cycleCountMax;
     }
 
     @Override
     public void run() {
-        this.cycles++;
-        if (this.cycles > this.maxCycles) {
+        this.cycleCount++;
+        if (this.cycleCount > this.cycleCountMax) {
             this.cancel();
             return;
         }

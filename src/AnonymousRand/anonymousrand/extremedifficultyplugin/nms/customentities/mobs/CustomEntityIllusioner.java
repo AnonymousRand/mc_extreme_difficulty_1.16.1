@@ -47,7 +47,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* illusioners have 32 block detection range */
@@ -107,7 +107,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -119,11 +119,11 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     public void increaseAttacks(int increase) {
-        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] attackThreshs = this.getAttacksThreshs();
+        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int thresholdMet : thresholdsMet) {
-            int[] attackThresholds = this.getAttacksThresholds();
-            if (thresholdMet == attackThresholds[0]) {
+        for (int threshMet : threshsMet) {
+            if (threshMet == attackThreshs[0]) {
                 /* After 40 attacks, illusioners get 50 max health and health, and regen 4 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);
@@ -132,8 +132,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         }
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,14 +165,14 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     @Override
-    public void a(EntityLiving entityLiving, float f) {
+    public void a(EntityLiving goalTarget, float distFactor) {
         this.increaseAttacks(1);
 
         ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
-        EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, f);
-        double d0 = entityLiving.locX() - this.locX();
-        double d1 = entityLiving.e(0.3333333333333333D) - entityArrow.locY();
-        double d2 = entityLiving.locZ() - this.locZ();
+        EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, distFactor);
+        double d0 = goalTarget.locX() - this.locX();
+        double d1 = goalTarget.e(0.3333333333333333D) - entityArrow.locY();
+        double d2 = goalTarget.locZ() - this.locZ();
         double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 
         entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /* arrows have no inaccuracy */

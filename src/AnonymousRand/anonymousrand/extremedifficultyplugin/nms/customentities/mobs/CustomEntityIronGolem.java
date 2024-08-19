@@ -42,7 +42,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() { /* iron golems have 24 block detection range */
@@ -98,7 +98,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initAttackLevelingMob() {
@@ -115,8 +115,8 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.increaseStatsAdd(2.0, 0.5, 0.025);
     }
 
-    public int[] getAttacksThresholds() {
-        return this.attackLevelingController.getAttacksThresholds();
+    public int[] getAttacksThreshs() {
+        return this.attackLevelingController.getAttacksThreshs();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

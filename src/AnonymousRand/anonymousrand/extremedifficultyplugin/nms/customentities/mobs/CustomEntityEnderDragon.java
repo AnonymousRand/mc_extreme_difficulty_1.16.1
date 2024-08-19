@@ -28,7 +28,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ICustomHostile
+    // `ICustomHostile`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public double getDetectionRange() {
@@ -45,7 +45,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // IAttackLevelingMob
+    // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -235,21 +235,21 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         private final CustomEntityEnderDragon enderDragon;
         private final World nmsWorld;
         private final Entity targetEntity;
-        private int cycles;
-        private final int maxCycles;
+        private int cycleCount;
+        private final int cycleCountMax;
 
-        public RunnableDragonRapidShootFireballs(CustomEntityEnderDragon enderDragon, Entity target, int maxCycles) {
+        public RunnableDragonRapidShootFireballs(CustomEntityEnderDragon enderDragon, Entity target, int cycleCountMax) {
             this.enderDragon = enderDragon;
             this.nmsWorld = enderDragon.getWorld();
             this.targetEntity = target;
-            this.cycles = 0;
-            this.maxCycles = maxCycles;
+            this.cycleCount = 0;
+            this.cycleCountMax = cycleCountMax;
         }
 
         @Override
         public void run() {
-            this.cycles++;
-            if (this.cycles > this.maxCycles) {
+            this.cycleCount++;
+            if (this.cycleCount > this.cycleCountMax) {
                 this.cancel();
                 return;
             }
@@ -258,7 +258,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
             double y = this.targetEntity.e(0.5D) - this.enderDragon.e(0.5D);
             double z = this.targetEntity.locZ() - this.enderDragon.locZ();
 
-            if (this.cycles == 1 || this.cycles == this.maxCycles) {
+            if (this.cycleCount == 1 || this.cycleCount == this.cycleCountMax) {
                 CustomEntityDragonFireballSuper newFireballSuper =
                         new CustomEntityDragonFireballSuper(this.nmsWorld, this.enderDragon, x, y, z, false);
                 newFireballSuper.setPosition(this.enderDragon.locX(), this.enderDragon.locY(), this.enderDragon.locZ());
