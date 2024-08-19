@@ -5,9 +5,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLlamaSpit;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalRangedMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRanged;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtRanged;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -31,7 +30,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         try {
@@ -48,7 +47,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.setStrength(1); /* makes sure wolves etc. don't run away from llamas; also makes their inventory smaller */
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /* llamas have 30 health */
         this.setHealth(30.0F);
     }
@@ -73,7 +72,7 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(15);
     }
 
@@ -110,8 +109,8 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new CustomPathfinderGoalRangedAttack<>(this, 40));
-        this.goalSelector.a(3, new CustomPathfinderGoalRangedMovement<>(this, 1.25));
+        this.goalSelector.a(3, new CustomPathfinderGoalAttackRanged<>(this, 40));
+        this.goalSelector.a(3, new CustomPathfinderGoalAttackMvmtRanged<>(this, 1.25));
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));

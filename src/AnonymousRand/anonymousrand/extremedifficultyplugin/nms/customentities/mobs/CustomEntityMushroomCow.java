@@ -11,7 +11,7 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
         this.initCustom();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);

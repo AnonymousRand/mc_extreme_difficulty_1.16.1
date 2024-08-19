@@ -4,9 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedSkeletonAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalRangedSkeletonMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRangedSkeleton;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtRangedSkeleton;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import com.google.common.collect.Lists;
@@ -32,7 +31,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -42,7 +41,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.setSlot(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW)); // makes sure that it has a bow
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0); /* illusioners have 40 health */
         this.setHealth(40.0F);
         this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2)); /* illusioners and fake illusioners have regen 3 */
@@ -112,7 +111,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(40);
     }
 
@@ -157,8 +156,8 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(4, new PathfinderGoalIllusionerDuplicationSpell());
         this.goalSelector.a(5, new PathfinderGoalIllusionerBlindnessSpell());
-        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonAttack<>(this, 25)); /* illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attack even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
-        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonMovement<>(this));
+        this.goalSelector.a(6, new CustomPathfinderGoalAttackRangedSkeleton<>(this, 25)); /* illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attack even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
+        this.goalSelector.a(6, new CustomPathfinderGoalAttackMvmtRangedSkeleton<>(this));
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));

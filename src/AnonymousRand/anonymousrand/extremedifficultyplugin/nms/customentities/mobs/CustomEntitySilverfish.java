@@ -38,7 +38,7 @@ public class CustomEntitySilverfish extends EntitySilverfish implements ICustomH
 
     @Override
     public void initPathfinder() {
-        super.initPathfinder(); // todo custom melee, movement
+        super.initPathfinder(); // todo custom melee, attackmvmt
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */

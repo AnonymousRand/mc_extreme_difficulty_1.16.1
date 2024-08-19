@@ -1,17 +1,17 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt;
 
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 
-public class CustomPathfinderGoalRangedMovement<T extends EntityInsentient> extends CustomPathfinderGoalMovement<T> {
+public class CustomPathfinderGoalAttackMvmtRanged<T extends EntityInsentient> extends CustomPathfinderGoalAttackMvmt<T> {
 
     protected int targetSeenTicks;
 
-    public CustomPathfinderGoalRangedMovement(T goalOwner) {
+    public CustomPathfinderGoalAttackMvmtRanged(T goalOwner) {
         this(goalOwner, 1.0);
     }
 
-    public CustomPathfinderGoalRangedMovement(T goalOwner, double speedTowardsTarget) {
+    public CustomPathfinderGoalAttackMvmtRanged(T goalOwner, double speedTowardsTarget) {
         super(goalOwner, speedTowardsTarget);
     }
 

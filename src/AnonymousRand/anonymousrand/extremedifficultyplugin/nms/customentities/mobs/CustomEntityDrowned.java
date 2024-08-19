@@ -6,10 +6,10 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalGetBuffedByMobs;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalSummonLightningRandomly;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedHandheldAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalRangedHandheldMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRangedHandheld;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtRangedHandheld;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -32,7 +32,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         /* No longer avoids fire and lava */
         this.a(PathType.DAMAGE_FIRE, 0.0F);
         this.a(PathType.LAVA, 0.0F);
@@ -108,7 +108,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(150, 350);
     }
 
@@ -146,10 +146,10 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalSummonLightningRandomly(this, 3.0));                    /* Spawns lightning randomly */
-        this.goalSelector.a(1, new CustomPathfinderGoalRangedHandheldAttack<>(this, Items.TRIDENT, 8));        /* Drowned throw tridents every 8 ticks, and continue attack regardless of line of sight and y-level (the old goal stopped the mob from attack even if it had already recognized a target via CustomNearestAttackableTarget) */
-        this.goalSelector.a(1, new CustomPathfinderGoalRangedHandheldMovement<>(this, Items.TRIDENT));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));                                   /* Drowned also attack in the day */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackRangedHandheld<>(this, Items.TRIDENT, 8));        /* Drowned throw tridents every 8 ticks, and continue attack regardless of line of sight and y-level (the old goal stopped the mob from attack even if it had already recognized a target via CustomNearestAttackableTarget) */
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtRangedHandheld<>(this, Items.TRIDENT));
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMelee<>(this));                                   /* Drowned also attack in the day */
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.goalSelector.a(3, new CustomEntityDrowned.PathfinderGoalGoToWater(this, 1.0));
         this.goalSelector.a(5, new CustomEntityDrowned.PathfinderGoalGoToBeach(this, 1.0));
         this.goalSelector.a(6, new CustomEntityDrowned.PathfinderGoalSwimUp(this, 1.0, this.world.getSeaLevel()));

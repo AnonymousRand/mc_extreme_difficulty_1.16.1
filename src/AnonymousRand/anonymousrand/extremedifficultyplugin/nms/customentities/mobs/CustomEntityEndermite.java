@@ -2,8 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -25,7 +25,7 @@ public class CustomEntityEndermite extends EntityEndermite
         this.initGoalRemovingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -36,7 +36,7 @@ public class CustomEntityEndermite extends EntityEndermite
         this.getBukkitEntity().setCustomName("Insert name here");
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Endermites move 60% faster and have 12 health, but only do 1 damage */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(1.0);
@@ -72,7 +72,7 @@ public class CustomEntityEndermite extends EntityEndermite
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(35, 60);
     }
 
@@ -104,7 +104,7 @@ public class CustomEntityEndermite extends EntityEndermite
     // `IGoalRemovingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initGoalRemovingMob() {
+    protected void initGoalRemovingMob() {
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
     }
@@ -128,8 +128,8 @@ public class CustomEntityEndermite extends EntityEndermite
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                                 /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 100, 1, 0, 1, 0, true));                        /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(1, new CustomPathfinderGoalTeleportNearTargetYLevel(this, 1.0, random.nextDouble() * 3.0, 0.005)); /* Occasionally teleports to a spot closer in y-level to its target */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMelee<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                 /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }

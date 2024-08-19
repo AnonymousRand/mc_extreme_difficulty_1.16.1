@@ -30,7 +30,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         try {
@@ -47,7 +47,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.setStrength(1); /* makes sure wolves etc. don't run away from llamas; also makes their inventory smaller */
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(30.0); /* Trader llamas have 30 health */
         this.setHealth(30.0F);
     }
@@ -72,7 +72,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(15);
     }
 
@@ -109,7 +109,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); // todo custom, movement too
+        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); // todo custom, attackmvmt too
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));

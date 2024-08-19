@@ -4,17 +4,17 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import net.minecraft.server.v1_16_R1.*;
 
 /**
- * A subclass of <code>CustomPathfinderGoalRangedHandheldAttack</code> that animates crossbow charging, analogous to
+ * A subclass of <code>CustomPathfinderGoalAttackRangedHandheld</code> that animates crossbow charging, analogous to
  * <code>PathfinderGoalRangedCrossbowAttack</code>.
  * <p></p>
  *
  * Movement behavior is not copied from its vanilla analog, but rather left unchanged from
- * <code>CustomPathfinderGoalRangedAttack</code>: move closer if there's no line of sight, and stand still otherwise.
+ * <code>CustomPathfinderGoalAttackRanged</code>: move closer if there's no line of sight, and stand still otherwise.
  */
-public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient & IRangedEntity & ICrossbow
-        & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedHandheldAttack<T> {
+public class CustomPathfinderGoalAttackRangedCrossbow<T extends EntityInsentient & IRangedEntity & ICrossbow
+        & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttackRangedHandheld<T> {
 
-    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown) {
+    public CustomPathfinderGoalAttackRangedCrossbow(T goalOwner, int attackCooldown) {
         super(goalOwner, Items.CROSSBOW, attackCooldown);
     }
 

@@ -13,7 +13,7 @@ public class CustomEntityCow extends EntityCow {
         this.initCustom();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* Cows have a 5% chance to spawn as a mooshroom instead */ // todo why not listener?
@@ -27,7 +27,7 @@ public class CustomEntityCow extends EntityCow {
         this.a(PathType.LAVA, 0.0F);
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Cows move twice as fast and have 20 health */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4);
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);

@@ -12,21 +12,21 @@ import net.minecraft.server.v1_16_R1.*;
  * Melee attacks don't ignore y-level even if the targeting goal does, so make sure those mobs can change
  * their y-level to get within melee range of their targets.
  */
-public class CustomPathfinderGoalMeleeAttack<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
+public class CustomPathfinderGoalAttackMelee<T extends EntityInsentient & ICustomHostile/* & IAttackLevelingMob*/>
         extends CustomPathfinderGoalAttack<T> {
 
     protected double minAttackReach;
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner) {
+    public CustomPathfinderGoalAttackMelee(T goalOwner) {
         this(goalOwner, 20);
     }
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, int attackCooldown) {
+    public CustomPathfinderGoalAttackMelee(T goalOwner, int attackCooldown) {
         /* Default minimum attack reach is 2.0 blocks to help baby zombies out */
         this(goalOwner, attackCooldown, 2.0);
     }
 
-    public CustomPathfinderGoalMeleeAttack(T goalOwner, int attackCooldown, double minAttackReach) {
+    public CustomPathfinderGoalAttackMelee(T goalOwner, int attackCooldown, double minAttackReach) {
         super(goalOwner, attackCooldown);
         this.minAttackReach = minAttackReach;
     }

@@ -44,7 +44,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         try {
             this.orbitPosition = EntityPhantom.class.getDeclaredField("d");
             this.orbitPosition.setAccessible(true);
@@ -128,7 +128,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(30);
     }
 

@@ -2,8 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.attribute.Attribute;
@@ -58,8 +58,8 @@ public class CustomEntityVillagerAggressive extends EntityVillager implements IC
         super.initPathfinder(); /* will still panic and flee if hit */
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this, 3.0)); /* Aggressive villagers move 3 times as fast when chasing down a target */
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this, 3.0)); /* Aggressive villagers move 3 times as fast when chasing down a target */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 

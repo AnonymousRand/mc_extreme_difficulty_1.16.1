@@ -15,11 +15,11 @@ public class CustomEntityChicken extends EntityChicken {
         this.initCustom();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Chickens move twice as fast */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5);
     }

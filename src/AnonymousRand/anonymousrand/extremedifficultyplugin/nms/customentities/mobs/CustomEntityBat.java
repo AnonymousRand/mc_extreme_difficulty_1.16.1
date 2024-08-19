@@ -4,8 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -39,7 +39,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava (as if bats did in the first place) */
@@ -52,7 +52,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 32, 4, 200, 101);
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         // pull attributeMap using reflection
         // code from Spigot forums (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/)
         try {
@@ -156,7 +156,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(4, 8, 15, 28, 40);
     }
 
@@ -238,8 +238,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     public void initPathfinder() {
         //this.goalSelector.a(0, this.buffMobs); // todo if un-janking of buffMobs means this needs to be an actual goal: uncomment
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
     }
@@ -291,7 +291,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                     this.targetPosition =
                             new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(),
                             this.getGoalTarget().locZ());
-                } else { // default random movement if no target
+                } else { // default random attackmvmt if no target
                     this.targetPosition =
                             new BlockPosition(this.locX() + (double) random.nextInt(7) - (double) random.nextInt(7),
                             this.locY() + (double) random.nextInt(6) - 2.0D,

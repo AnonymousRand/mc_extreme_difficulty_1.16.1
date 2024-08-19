@@ -1,22 +1,22 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.PathEntity;
 
-public class CustomPathfinderGoalMeleeMovement<T extends EntityInsentient> extends CustomPathfinderGoalMovement<T> {
+public class CustomPathfinderGoalAttackMvmtMelee<T extends EntityInsentient> extends CustomPathfinderGoalAttackMvmt<T> {
 
     protected PathEntity path;
     protected double oldTargetX;
     protected double oldTargetY;
     protected double oldTargetZ;
 
-    public CustomPathfinderGoalMeleeMovement(T goalOwner) {
+    public CustomPathfinderGoalAttackMvmtMelee(T goalOwner) {
         this(goalOwner, 1.0);
     }
 
-    public CustomPathfinderGoalMeleeMovement(T goalOwner, double speedTowardsTarget) {
+    public CustomPathfinderGoalAttackMvmtMelee(T goalOwner, double speedTowardsTarget) {
         super(goalOwner, speedTowardsTarget);
     }
 

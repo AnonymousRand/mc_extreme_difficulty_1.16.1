@@ -3,9 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.AttackLevelingController;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedSkeletonAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalRangedSkeletonMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRangedSkeleton;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtRangedSkeleton;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -31,7 +30,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
     /* This will be called on super() constructor // todo make sure */
     // todo or just user super() and have protected. override annotation
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -42,7 +41,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.deathExplosion = false;
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         float health = (float) (random.nextDouble() * 12.0 + 20.0); /* fake illusioners have anywhere between 20 and 32 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(health);
         this.setHealth(health);
@@ -53,7 +52,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     // todo can get rid of getters
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(20, 40);
     }
 
@@ -68,13 +67,13 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         for (int threshMet : threshsMet) {
             if (threshMet == attackThreshs[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
-                    ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalAttackRangedSkeleton.class)) {
+                    ((CustomPathfinderGoalAttackRangedSkeleton<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
             } else if (threshMet == attackThreshs[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
-                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
-                    ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
+                for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalAttackRangedSkeleton.class)) {
+                    ((CustomPathfinderGoalAttackRangedSkeleton<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
                 }
             }
         }
@@ -102,8 +101,8 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlockLookingAt(this)); /* custom goal that allows the mob to break the block it is looking at every 4 seconds as long as it has a target, it breaks the block that it is looking at up to 40 blocks away */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
-        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonAttack<>(this, random.nextInt(11) + 20));
-        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonMovement<>(this));
+        this.goalSelector.a(6, new CustomPathfinderGoalAttackRangedSkeleton<>(this, random.nextInt(11) + 20));
+        this.goalSelector.a(6, new CustomPathfinderGoalAttackMvmtRangedSkeleton<>(this));
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));

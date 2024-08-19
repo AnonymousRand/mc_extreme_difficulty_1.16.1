@@ -4,8 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
@@ -32,7 +32,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire, lava, and water */
@@ -43,7 +43,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         this.lookedAt = false;
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Endermen only have 20 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(20.0);
         this.setHealth(20.0F);
@@ -117,7 +117,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(12, 25, 40);
     }
 
@@ -171,8 +171,8 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         /* Endermen no longer target endermites, avoid water, or stop if stared at */
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                                             /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                                /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeAttack<>(this));
-        this.goalSelector.a(2, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMelee<>(this));
+        this.goalSelector.a(2, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.goalSelector.a(3, new PathfinderGoalFloat(this));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));

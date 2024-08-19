@@ -2,8 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -30,7 +30,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.initCustom();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -38,7 +38,7 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.a(PathType.LAVA, 0.0F);
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         // pull attributeMap using reflection
         try {
             this.attributeMap = AttributeMapBase.class.getDeclaredField("b");
@@ -138,8 +138,8 @@ public class CustomEntityChickenAggressive extends EntityChicken implements ICus
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this));
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));

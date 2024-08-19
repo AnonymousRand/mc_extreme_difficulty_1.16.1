@@ -5,7 +5,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLargeFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRanged;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalBreakBlocksAround;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
@@ -13,7 +13,6 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.Custo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.bukkitrunnables.RunnableRingOfFireballs;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.EnumSet;
@@ -33,7 +32,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.hasSpawnDeathFireballs = false;
     }
 
@@ -99,7 +98,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(120, 180, 300);
     }
 
@@ -202,7 +201,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    static class PathfinderGoalGhastFireball extends CustomPathfinderGoalRangedAttack<CustomEntityGhast> {
+    static class PathfinderGoalGhastFireball extends CustomPathfinderGoalAttackRanged<CustomEntityGhast> {
 
         public PathfinderGoalGhastFireball(CustomEntityGhast ghast, int attackCooldown) {
             super(ghast, attackCooldown);
@@ -232,6 +231,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         }
     }
 
+    // todo finish
     static class PathfinderGoalLook extends PathfinderGoal {
 
         private final CustomEntityGhast ghast;
@@ -307,9 +307,9 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         @Override
         public void c() {
             Random random = this.a.getRandom();
-            double d0 = this.a.locX() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
-            double d1 = this.a.locY() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
-            double d2 = this.a.locZ() + (double) ((random.nextDouble() * 2.0F - 1.0F) * 16.0F);
+            double d0 = this.a.locX() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
+            double d1 = this.a.locY() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
+            double d2 = this.a.locZ() + (random.nextDouble() * 2.0 - 1.0) * 16.0;
 
             this.a.getControllerMove().a(d0, d1, d2, 1.0);
         }

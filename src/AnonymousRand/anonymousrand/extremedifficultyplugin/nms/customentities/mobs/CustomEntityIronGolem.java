@@ -4,8 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -27,7 +27,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.initAttackLevelingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -37,7 +37,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.detectionRangeMultipler = 1.0;
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.5); /* iron golems move twice as fast but do half as much damage */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(7.5);
     }
@@ -102,7 +102,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController();
     }
 
@@ -158,8 +158,8 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
         this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
         this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));

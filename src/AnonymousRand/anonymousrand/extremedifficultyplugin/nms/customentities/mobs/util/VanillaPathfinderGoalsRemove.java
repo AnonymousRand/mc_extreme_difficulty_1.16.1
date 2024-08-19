@@ -20,8 +20,6 @@ public abstract class VanillaPathfinderGoalsRemove {
         }
     }
 
-    private VanillaPathfinderGoalsRemove() {}
-
     public static ArrayList<PathfinderGoal> getGoals(
             Set<PathfinderGoalWrapped> pathfinderGoalsWrapped,
             Class<? extends PathfinderGoal> pathfinderGoalClass) {

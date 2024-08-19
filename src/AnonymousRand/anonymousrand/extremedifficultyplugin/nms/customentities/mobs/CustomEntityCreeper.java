@@ -32,7 +32,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.initCustom();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         try {
@@ -47,7 +47,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.a(PathType.LAVA, 0.0F);
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Creepers move 75% faster */
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.4375);
     }

@@ -1,6 +1,5 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt;
 
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
@@ -8,14 +7,14 @@ import net.minecraft.server.v1_16_R1.PathfinderGoal;
 
 import java.util.EnumSet;
 
-public abstract class CustomPathfinderGoalMovement<T extends EntityInsentient> extends PathfinderGoal {
+public abstract class CustomPathfinderGoalAttackMvmt<T extends EntityInsentient> extends PathfinderGoal {
 
     protected final T goalOwner;
     protected double speedTowardsTarget;
     protected int repathCooldown;
     protected int remainingCooldownRepath;
 
-    protected CustomPathfinderGoalMovement(T goalOwner, double speedTowardsTarget) {
+    protected CustomPathfinderGoalAttackMvmt(T goalOwner, double speedTowardsTarget) {
         this.goalOwner = goalOwner;
         this.speedTowardsTarget = speedTowardsTarget;
         this.repathCooldown = 4 + this.goalOwner.getRandom().nextInt(7);

@@ -2,8 +2,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -24,7 +24,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.initGoalRemovingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire and lava */
@@ -32,7 +32,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.a(PathType.LAVA, 0.0F);
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.isBaby() ? 0.9 : 0.7); /* hoglins move 75% faster (125% faster for babies), do 5 damage (8 for babies), and have extra knockback */
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(this.isBaby() ? 8.0 : 5.0);
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(3.0);
@@ -102,7 +102,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(10, 20, 40, 75);
     }
 
@@ -144,7 +144,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
     // `IGoalRemovingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initGoalRemovingMob() {
+    protected void initGoalRemovingMob() {
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
     }
@@ -170,8 +170,8 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 40, 1, 1, 1, 1, false)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new CustomPathfinderGoalHoglinBreakRepellentBlocksAround(this, 20, 5, 1, 5, 1, false)); /* custom goal that breaks repellant blocks around the mob periodically */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
-        this.goalSelector.a(1, new CustomPathfinderGoalMeleeMovement<>(this));
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+        this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }

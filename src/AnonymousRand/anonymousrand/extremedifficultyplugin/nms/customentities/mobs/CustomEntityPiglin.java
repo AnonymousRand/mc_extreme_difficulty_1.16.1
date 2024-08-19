@@ -3,8 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IAttackLevelingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedCrossbowAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRangedCrossbow;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -53,11 +53,11 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
         if (this.getItemInMainHand().getItem() == Items.CROSSBOW) { /* piglins continue attack while trading */
             /* Crossbow piglins shoot once every 1.5 seconds, twice as fast when frenzied */ // todo
-            this.goalSelector.a(0, new CustomPathfinderGoalRangedCrossbowAttack<>(this, 30)); /* uses the custom goal that attacks regardless of the y-level */
+            this.goalSelector.a(0, new CustomPathfinderGoalAttackRangedCrossbow<>(this, 30)); /* uses the custom goal that attacks regardless of the y-level */
         } else {
-            this.goalSelector.a(1, new CustomPathfinderGoalMeleeAttack<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
             /* todo: piglins attack 2 times faster when frenzied */
-            this.goalSelector.a(0, new CustomPathfinderGoalMeleeAttack<>(this)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
+            this.goalSelector.a(0, new CustomPathfinderGoalAttackMelee<>(this)); /* for frenzied phase; uses the custom melee attack goal that attacks regardless of the y-level */
             this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinExplode(this)); /* for frenzied phase; custom goal that allows sword piglins to explode instantly when close enough to player */
         }
 
@@ -84,7 +84,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     @Override
     public void initPathfinder() {
-        super.initPathfinder(); // todo custom melee, movement
+        super.initPathfinder(); // todo custom melee, attackmvmt
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */
@@ -391,7 +391,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
         }
     }
 
-//    static class PathfinderGoalPiglinRangedCrossbowAttack<T extends CustomEntityPiglin> extends CustomPathfinderGoalRangedCrossbowAttack<T> {
+//    static class PathfinderGoalPiglinRangedCrossbowAttack<T extends CustomEntityPiglin> extends CustomPathfinderGoalAttackRangedCrossbow<T> {
 //
 //        private final int attackIntervalNormal;
 //        private final int attackIntervalFrenzied;

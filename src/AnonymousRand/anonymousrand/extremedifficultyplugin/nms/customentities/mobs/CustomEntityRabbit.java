@@ -5,8 +5,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.IGoalRemovingMob;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt.CustomPathfinderGoalAttackMvmtMelee;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -49,7 +49,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         if (i == 99) {
             // todo can literally just change min attack range instead of using custom melee goal
             this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this));
-            this.goalSelector.a(4, new CustomPathfinderGoalMeleeMovement<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
+            this.goalSelector.a(4, new CustomPathfinderGoalAttackMvmtMelee<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
             this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
@@ -180,7 +180,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     }
 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
-            extends CustomPathfinderGoalMeleeAttack<T> {
+            extends CustomPathfinderGoalAttackMelee<T> {
 
         public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit) {
             super(entityRabbit);

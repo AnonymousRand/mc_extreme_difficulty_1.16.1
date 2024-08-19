@@ -8,10 +8,10 @@ import net.minecraft.server.v1_16_R1.*;
  * The base ranged attack goal in my rewrite of vanilla's attack goals, analogous to
  * <code>PathfinderGoalArrowAttack</code>.
  */
-public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity
+public class CustomPathfinderGoalAttackRanged<T extends EntityInsentient & IRangedEntity
         & ICustomHostile/* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttack<T> {
 
-    public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown) {
+    public CustomPathfinderGoalAttackRanged(T goalOwner, int attackCooldown) {
         super(goalOwner, attackCooldown);
     }
 

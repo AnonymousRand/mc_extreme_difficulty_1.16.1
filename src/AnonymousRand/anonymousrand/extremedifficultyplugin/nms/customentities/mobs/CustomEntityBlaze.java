@@ -3,8 +3,8 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.m
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntityLargeFireball;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.projectiles.CustomEntitySmallFireball;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackRanged;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.CustomPathfinderGoalMoveFasterInCobweb;
@@ -21,7 +21,7 @@ public class CustomEntityBlaze extends EntityBlaze
      * as well as for retaliating against players */
     private static final boolean IGNORE_LOS = false;
     private static final boolean IGNORE_Y = true;
-    private CustomPathfinderGoalRangedAttack<CustomEntityBlaze> pathfinderGoalFireballAttack;
+    private CustomPathfinderGoalAttackRanged<CustomEntityBlaze> pathfinderGoalFireballAttack;
     private boolean rapidFire;
 
     public CustomEntityBlaze(World world) {
@@ -31,7 +31,7 @@ public class CustomEntityBlaze extends EntityBlaze
         initGoalRemovingMob();
     }
 
-    private void initCustom() {
+    protected void initCustom() {
         this.initAttributes();
 
         /* No longer avoids fire, lava, and water */
@@ -42,7 +42,7 @@ public class CustomEntityBlaze extends EntityBlaze
         this.rapidFire = false;
     }
 
-    private void initAttributes() {
+    protected void initAttributes() {
         /* Blazes only have 12.5 health */
         ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.5);
         this.setHealth(12.5F);
@@ -110,7 +110,7 @@ public class CustomEntityBlaze extends EntityBlaze
 
     private AttackLevelingController attackLevelingController = null;
 
-    private void initAttackLevelingMob() {
+    protected void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(75, 150, 250);
     }
 
@@ -151,7 +151,7 @@ public class CustomEntityBlaze extends EntityBlaze
     // `IGoalRemovingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initGoalRemovingMob() {
+    protected void initGoalRemovingMob() {
         // remove vanilla HurtByTarget and NearestAttackableTarget goals to replace them with custom ones
         VanillaPathfinderGoalsRemove.removePathfinderGoals(this);
     }
@@ -204,10 +204,10 @@ public class CustomEntityBlaze extends EntityBlaze
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.pathfinderGoalFireballAttack = new CustomPathfinderGoalRangedAttack<>(this, 6);
+        this.pathfinderGoalFireballAttack = new CustomPathfinderGoalAttackRanged<>(this, 6);
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                              /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
-        this.goalSelector.a(4, new CustomEntityBlaze.PathfinderGoalMeleeAttack(this));
+        this.goalSelector.a(4, new PathfinderGoalAttackMelee(this));
         this.goalSelector.a(5, this.pathfinderGoalFireballAttack);                                             /* Blazes do not pause between each volley and instead shoots constantly every 6 ticks */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets to the nearest option */
@@ -223,9 +223,9 @@ public class CustomEntityBlaze extends EntityBlaze
     // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    static class PathfinderGoalMeleeAttack extends CustomPathfinderGoalMeleeAttack<CustomEntityBlaze> {
+    static class PathfinderGoalAttackMelee extends CustomPathfinderGoalAttackMelee<CustomEntityBlaze> {
 
-        public PathfinderGoalMeleeAttack(CustomEntityBlaze blaze) {
+        public PathfinderGoalAttackMelee(CustomEntityBlaze blaze) {
             super(blaze);
         }
 

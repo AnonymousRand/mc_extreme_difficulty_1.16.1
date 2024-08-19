@@ -1,16 +1,16 @@
 package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
-import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalAttackMelee;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.EntitySlime;
 import net.minecraft.server.v1_16_R1.MathHelper;
 
 // todo test this rewriting works
-public class CustomPathfinderGoalSlimeMeleeAttack<T extends EntitySlime & ICustomHostile>
-        extends CustomPathfinderGoalMeleeAttack<T> {
+public class CustomPathfinderGoalAttackMeleeSlime<T extends EntitySlime & ICustomHostile>
+        extends CustomPathfinderGoalAttackMelee<T> {
 
-    public CustomPathfinderGoalSlimeMeleeAttack(T slime) {
+    public CustomPathfinderGoalAttackMeleeSlime(T slime) {
         super(slime);
     }
 

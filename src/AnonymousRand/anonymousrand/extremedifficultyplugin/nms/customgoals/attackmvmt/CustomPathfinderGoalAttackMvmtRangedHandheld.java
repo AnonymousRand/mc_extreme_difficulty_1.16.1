@@ -1,18 +1,18 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt;
 
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.Item;
 
-public class CustomPathfinderGoalRangedHandheldMovement<T extends EntityInsentient>
-        extends CustomPathfinderGoalRangedMovement<T> {
+public class CustomPathfinderGoalAttackMvmtRangedHandheld<T extends EntityInsentient>
+        extends CustomPathfinderGoalAttackMvmtRanged<T> {
 
     protected final Item weapon;
 
-    public CustomPathfinderGoalRangedHandheldMovement(T goalOwner, Item weapon) {
+    public CustomPathfinderGoalAttackMvmtRangedHandheld(T goalOwner, Item weapon) {
         this(goalOwner, weapon, 1.0);
     }
 
-    public CustomPathfinderGoalRangedHandheldMovement(T goalOwner, Item weapon, double speedTowardsTarget) {
+    public CustomPathfinderGoalAttackMvmtRangedHandheld(T goalOwner, Item weapon, double speedTowardsTarget) {
         super(goalOwner, speedTowardsTarget);
         this.weapon = weapon;
     }

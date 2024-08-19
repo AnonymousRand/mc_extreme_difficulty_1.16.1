@@ -1,4 +1,4 @@
-package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement;
+package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attackmvmt;
 
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.NmsUtil;
@@ -6,18 +6,18 @@ import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
 import net.minecraft.server.v1_16_R1.Items;
 
-public class CustomPathfinderGoalRangedSkeletonMovement<T extends EntityInsentient & ICustomHostile>
-        extends CustomPathfinderGoalRangedHandheldMovement<T> {
+public class CustomPathfinderGoalAttackMvmtRangedSkeleton<T extends EntityInsentient & ICustomHostile>
+        extends CustomPathfinderGoalAttackMvmtRangedHandheld<T> {
 
     protected boolean strafingBackwards;
     protected boolean strafingClockwise;
     protected int strafingTime;
 
-    public CustomPathfinderGoalRangedSkeletonMovement(T goalOwner) {
+    public CustomPathfinderGoalAttackMvmtRangedSkeleton(T goalOwner) {
         this(goalOwner, 1.0);
     }
 
-    public CustomPathfinderGoalRangedSkeletonMovement(T goalOwner, double speedTowardsTarget) {
+    public CustomPathfinderGoalAttackMvmtRangedSkeleton(T goalOwner, double speedTowardsTarget) {
         super(goalOwner, Items.BOW, speedTowardsTarget);
     }
 
