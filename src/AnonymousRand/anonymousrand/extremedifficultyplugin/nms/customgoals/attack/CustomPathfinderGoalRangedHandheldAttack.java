@@ -16,33 +16,27 @@ import net.minecraft.server.v1_16_R1.Item;
 public class CustomPathfinderGoalRangedHandheldAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedAttack<T> {
 
-    /* Attack */
     protected final Item weapon;
 
     public CustomPathfinderGoalRangedHandheldAttack(T goalOwner, Item weapon, int attackCooldown) {
-        this(goalOwner, weapon, attackCooldown, 1.0);
-    }
-
-    public CustomPathfinderGoalRangedHandheldAttack(
-            T goalOwner, Item weapon, int attackCooldown, double speedTowardsTarget) {
-        super(goalOwner, attackCooldown, speedTowardsTarget);
+        super(goalOwner, attackCooldown);
         this.weapon = weapon;
     }
 
     @Override
-    protected boolean shouldExecuteAttack() {
-        return super.shouldExecuteAttack() && this.correctItemInMainHand();
+    public boolean a() {
+        return super.a() && this.correctItemInMainHand();
     }
 
     @Override
-    protected void startExecutingAttack() {
-        super.startExecutingAttack();
+    public void c() {
+        super.c();
         this.goalOwner.c(EnumHand.MAIN_HAND); // setActiveHand()
     }
 
     @Override
-    protected void stopExecutingAttack() {
-        super.stopExecutingAttack();
+    public void d() {
+        super.d();
         this.goalOwner.clearActiveItem();
     }
 

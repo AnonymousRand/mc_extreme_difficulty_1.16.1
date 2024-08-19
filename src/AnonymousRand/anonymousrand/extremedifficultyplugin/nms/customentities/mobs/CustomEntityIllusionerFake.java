@@ -4,6 +4,8 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalRangedSkeletonAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalRangedSkeletonMovement;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import net.minecraft.server.v1_16_R1.*;
@@ -28,6 +30,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     /* This will be called on super() constructor // todo make sure */
+    // todo or just user super() and have protected. override annotation
     private void initCustom() {
         this.initAttributes();
 
@@ -49,6 +52,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     // `IAttackLevelingMob`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    // todo can get rid of getters
     private void initAttackLevelingMob() {
         this.attackLevelingController = new AttackLevelingController(20, 40);
     }
@@ -85,6 +89,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
+    // todo can just super()?
     public void initPathfinder() { /* no longer target iron golems or villagers, and only shoots arrows (can't apply spells) */
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
@@ -98,6 +103,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonAttack<>(this, random.nextInt(11) + 20));
+        this.goalSelector.a(6, new CustomPathfinderGoalRangedSkeletonMovement<>(this));
         this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));

@@ -109,7 +109,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); // todo custom
+        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); // todo custom, movement too
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
         this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));

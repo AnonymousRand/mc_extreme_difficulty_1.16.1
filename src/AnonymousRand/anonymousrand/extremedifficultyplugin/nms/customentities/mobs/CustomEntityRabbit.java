@@ -6,6 +6,7 @@ import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mo
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.VanillaPathfinderGoalsRemove;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.*;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.attack.CustomPathfinderGoalMeleeAttack;
+import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.movement.CustomPathfinderGoalMeleeMovement;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalHurtByTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.target.CustomPathfinderGoalNearestAttackableTarget;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.SpawnEntity;
@@ -35,7 +36,7 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
 
     @Override
     public void initPathfinder() {
-        super.initPathfinder(); // todo custom melee
+        super.initPathfinder();
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));                                /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */ // todo does the listener actually not work sometimes? also if this is no longer needed, don't remove old goal in igoalremovingmob
@@ -46,8 +47,9 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
         super.setRabbitType(i);
 
         if (i == 99) {
-            // todo can literally just use new setminattackreach thingy
-            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
+            // todo can literally just change min attack range instead of using custom melee goal
+            this.goalSelector.a(4, new CustomEntityRabbit.PathfinderGoalKillerRabbitMeleeAttack<>(this));
+            this.goalSelector.a(4, new CustomPathfinderGoalMeleeMovement<>(this, 1.5)); /* Killer rabbits move speed multiplier when angry 1.4 -> 1.5 */
             this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
             this.targetSelector.a(2, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityWolf.class, false, false));
 
@@ -180,8 +182,8 @@ public class CustomEntityRabbit extends EntityRabbit implements ICustomHostile, 
     static class PathfinderGoalKillerRabbitMeleeAttack<T extends CustomEntityRabbit & ICustomHostile>
             extends CustomPathfinderGoalMeleeAttack<T> {
 
-        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit, double speedTowardsTarget) {
-            super(entityRabbit, speedTowardsTarget);
+        public PathfinderGoalKillerRabbitMeleeAttack(T entityRabbit) {
+            super(entityRabbit);
         }
 
         @Override

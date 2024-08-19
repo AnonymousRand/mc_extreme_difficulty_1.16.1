@@ -11,41 +11,8 @@ import net.minecraft.server.v1_16_R1.*;
 public class CustomPathfinderGoalRangedAttack<T extends EntityInsentient & IRangedEntity
         & ICustomHostile/* & IAttackLevelingMob*/> extends CustomPathfinderGoalAttack<T> {
 
-    /* Movement */
-    protected int targetSeenTicks;
-
     public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown) {
-        this(goalOwner, attackCooldown, 1.0);
-    }
-
-    public CustomPathfinderGoalRangedAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
-        super(goalOwner, attackCooldown, speedTowardsTarget);
-    }
-
-    @Override
-    protected void startExecutingMovement() {
-        super.startExecutingMovement();
-        this.targetSeenTicks = 0;
-    }
-
-    @Override
-    protected void tickMovement(EntityLiving goalTarget) {
-        super.tickMovement(goalTarget);
-
-        // repath to target if it can't be seen
-        // Note: checking if there is a way to get to the target doesn't seem to work
-        if (this.remainingRepathCooldown <= 0 && !this.goalOwner.getEntitySenses().a(goalTarget)) {
-            this.remainingRepathCooldown = this.repathCooldown;
-            this.targetSeenTicks = 0;
-        } else {
-            this.targetSeenTicks++;
-        }
-
-        if (this.targetSeenTicks < 5) {
-            this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget); // tryMoveTo()
-        } else {
-            this.goalOwner.getNavigation().o();                       // clearPath() (stands still)
-        }
+        super(goalOwner, attackCooldown);
     }
 
     @Override

@@ -15,16 +15,12 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
         & ICustomHostile /* & IAttackLevelingMob*/> extends CustomPathfinderGoalRangedHandheldAttack<T> {
 
     public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown) {
-        this(goalOwner, attackCooldown, 1.0);
-    }
-
-    public CustomPathfinderGoalRangedCrossbowAttack(T goalOwner, int attackCooldown, double speedTowardsTarget) {
-        super(goalOwner, Items.CROSSBOW, attackCooldown, speedTowardsTarget);
+        super(goalOwner, Items.CROSSBOW, attackCooldown);
     }
 
     @Override
-    protected void stopExecutingAttack() {
-        super.stopExecutingAttack();
+    public void d() {
+        super.d();
 
         // uncharge crossbow
         this.goalOwner.b(false);                               // setCharging()
@@ -32,21 +28,26 @@ public class CustomPathfinderGoalRangedCrossbowAttack<T extends EntityInsentient
     }
 
     @Override
-    protected void tickAttack(EntityLiving goalTarget) {
+    public void e() {
+        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
+        if (goalTarget == null) {
+            return;
+        }
+
         // animate crossbow: uncharged -> charging, charging -> charged, and charged -> uncharged states respectively
-        if (this.remainingAttackCooldown == this.attackCooldown - 1) {
+        if (this.remainingCooldownAttack == this.attackCooldown - 1) {
             this.goalOwner.c(ProjectileHelper.a(this.goalOwner, Items.CROSSBOW)); // setActiveHand()
             this.goalOwner.b(true);                                               // setCharging()
-        } else if (this.remainingAttackCooldown == 1) {
+        } else if (this.remainingCooldownAttack == 1) {
             this.goalOwner.releaseActiveItem();                                   // stopActiveHand(); doesn't seem to do anything, but it's from vanilla so I'll keep it in case
             this.goalOwner.b(false);                                              // setCharging()
-        } else if (this.remainingAttackCooldown == 0) {
+        } else if (this.remainingCooldownAttack == 0) {
             // getActiveItem() still seems to work despite releaseActiveItem() and literally setting it to
             // ItemStack.EMPTY; vanilla does this too in d() though so not that worried
             ItemCrossbow.a(this.goalOwner.getActiveItem(), false);                // setCrossbowCharged()
         }
 
-        super.tickAttack(goalTarget);
+        super.e();
     }
 
     @Override

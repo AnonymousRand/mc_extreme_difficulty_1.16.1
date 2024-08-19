@@ -84,7 +84,7 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
 
     @Override
     public void initPathfinder() {
-        super.initPathfinder();
+        super.initPathfinder(); // todo custom melee, movement
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this)); /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this)); /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomEntityPiglin.PathfinderGoalPiglinResetMemory(this)); /* custom goal that removes fear of zombie piglins etc. */

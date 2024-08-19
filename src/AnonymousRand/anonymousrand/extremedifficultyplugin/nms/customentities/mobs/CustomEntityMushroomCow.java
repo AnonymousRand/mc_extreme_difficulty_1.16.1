@@ -35,11 +35,8 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
         ItemStack heldItem = human.b(enumhand);
 
         if ((heldItem.getItem() == Items.BOWL && !this.isBaby()) || (heldItem.getItem() == Items.SHEARS && this.canShear())) {
-            /* mooshrooms inflict these effects when they are milked/sheared */
-            human.addEffect(new MobEffect(MobEffects.WEAKNESS, 1200, 255));
-            human.addEffect(new MobEffect(MobEffects.SLOWER_DIG, 1200, 255));
-
-            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY); /* mooshrooms explode massively and die when they are milked/sheared */
+            /* mooshrooms explode when they are milked/sheared */
+            this.world.createExplosion(this, this.locX(), this.locY(), this.locZ(), 20.0F, false, Explosion.Effect.DESTROY);
             this.die();
         }
 

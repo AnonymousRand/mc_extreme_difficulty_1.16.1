@@ -171,8 +171,8 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                 /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 80, 2, 2, 2, 0, false));        /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(5, new CustomEntityGhast.PathfinderGoalIdleMove(this));
-        // this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalLook(this));
-        this.goalSelector.a(8, new CustomEntityGhast.PathfinderGoalGhastFireball(this, 5));
+        this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalGhastFireball(this, 5));
+        this.goalSelector.a(7, new CustomEntityGhast.PathfinderGoalLook(this));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
@@ -202,97 +202,6 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     // Nested classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    static class PathfinderGoalGhastFireballOld extends PathfinderGoal {
-
-        private final CustomEntityGhast ghast;
-        private int chargeTime;
-        private int attackIncrement;
-        private boolean power3;
-        private boolean ring;
-
-        public PathfinderGoalGhastFireballOld(CustomEntityGhast ghast) {
-            this.ghast = ghast;
-            this.attackIncrement = 0;
-            this.power3 = false;
-            this.ring = false;
-        }
-
-        @Override
-        public boolean a() {
-            return this.ghast.getGoalTarget() != null;
-        }
-
-        @Override
-        public void c() {
-            this.chargeTime = 0;
-        }
-
-        @Override
-        public void d() {
-            this.ghast.t(false);
-        }
-
-        @Override
-        public void e() {
-            EntityLiving goalTarget = this.ghast.getGoalTarget();
-
-            if (NmsUtil.distSq(this.ghast, goalTarget, true) < 6400.0D) { /* removed line of sight requirement for ghast attack, and too much vertical distance no longer stops the ghast from firing */
-                World world = this.ghast.getWorld();
-
-                ++this.chargeTime;
-                if (this.chargeTime == 10 && !this.ghast.isSilent()) { // this doesn't seem to affect anything
-                    world.a(null, 1015, this.ghast.getChunkCoordinates(), 0);
-                }
-
-//                this.ghast.t(this.chargeTime > 2); // shooting animation only plays for 3 ticks
-//
-//                if (this.chargeTime == 5) { /* shoots a fireball every 5 ticks */
-//                    if (++this.attackIncrement == 6) { // attacks only count every 1.5 seconds, or 6 shots
-//                        this.ghast.increaseAttacks(1);
-//                        this.attackIncrement = 0;
-//                    }
-//
-//                    Vec3D vec3d = this.ghast.f(1.0F);
-//                    double d2 = goalTarget.locX() - (this.ghast.locX() + vec3d.x * 4.0D);
-//                    double d3 = goalTarget.e(0.5D) - (0.5D + this.ghast.e(0.5D));
-//                    double d4 = goalTarget.locZ() - (this.ghast.locZ() + vec3d.z * 4.0D);
-//
-//                    if (!this.ghast.isSilent()) {
-//                        world.a(null, 1016, this.ghast.getChunkCoordinates(), 0);
-//                    }
-//
-//                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 5 == 0 && this.ring) { // reset booleans for next cycle
-//                        this.ring = false;
-//                    }
-//
-//                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 7 == 0 && this.power3) { // reset booleans for next cycle
-//                        this.power3 = false;
-//                    }
-//
-//                    if (this.ghast.getAttacks() >= 30 && (this.ghast.getAttacks() - 30) % 6 == 0 && !this.ring) { /* after 30 attacks, the ghast shoots a ring of power 1 fireballs every 9 seconds */
-//                        this.ring = true;
-//                        new RunnableRingOfFireballs(this.ghast, 0.5, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 20L);
-//                    }
-//
-//                    CustomEntityLargeFireball largeFireball;
-//
-//                    if (this.ghast.getAttacks() >= 50 && (this.ghast.getAttacks() - 50) % 8 == 0 && !this.power3) { /* after 50 attacks, the ghast shoots a power 3 fireball every 12 seconds */
-//                        this.power3 = true;
-//                        largeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, 3);
-//                    } else {
-//                        largeFireball = new CustomEntityLargeFireball(world, this.ghast, d2, d3, d4, this.ghast.getPower());
-//                    }
-//
-//                    largeFireball.setPosition(this.ghast.locX() + vec3d.x * 4.0D, this.ghast.e(0.5D) + 0.5D, largeFireball.locZ() + vec3d.z * 4.0D);
-//                    world.addEntity(largeFireball);
-//                    this.chargeTime = 0;
-//                }
-            } else if (this.chargeTime > 0) {
-                --this.chargeTime;
-            }
-        }
-    }
-
     static class PathfinderGoalGhastFireball extends CustomPathfinderGoalRangedAttack<CustomEntityGhast> {
 
         public PathfinderGoalGhastFireball(CustomEntityGhast ghast, int attackCooldown) {
@@ -300,19 +209,27 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         }
 
         @Override
-        protected void startExecutingMovement() {}
+        public void c() {
+            super.c();
 
-        @Override
-        protected void stopExecutingMovement() {}
-
-        @Override
-        protected void tickAttack(EntityLiving goalTarget) {
-            this.goalOwner.t(this.remainingAttackCooldown <= 2); // `setAttacking()`; shooting animation // todo check
-            super.tickAttack(goalTarget);
+            // ghasts only play starting to shoot sound on first finding a target; otherwise too many overlapping sounds
+            if (!this.goalOwner.isSilent()) {
+                this.goalOwner.getWorld().a(null, 1015, this.goalOwner.getChunkCoordinates(), 0);
+            }
         }
 
         @Override
-        protected void tickMovement(EntityLiving goalTarget) {}
+        public void d() {
+            super.d();
+
+            this.goalOwner.t(false); // `setAttacking()`; controls shooting animation
+        }
+
+        @Override
+        public void e() {
+            this.goalOwner.t(this.remainingCooldownAttack <= 2);
+            super.e();
+        }
     }
 
     static class PathfinderGoalLook extends PathfinderGoal {
@@ -341,7 +258,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                 // else, look at goal target
                 EntityLiving goalTarget = this.ghast.getGoalTarget();
 
-                if (NmsUtil.distSq(this.ghast, goalTarget, true) < this.ghast.getDetectionRange()) {
+                if (NmsUtil.distSq(this.ghast, goalTarget, true) < this.getDetectionRangeSq()) {
                     double d1 = goalTarget.locX() - this.ghast.locX();
                     double d2 = goalTarget.locZ() - this.ghast.locZ();
 
@@ -349,6 +266,11 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
                     this.ghast.aH = this.ghast.yaw;
                 }
             }
+        }
+
+        private double getDetectionRangeSq() {
+            double detectionRange = this.ghast.getDetectionRange();
+            return detectionRange * detectionRange;
         }
     }
 
