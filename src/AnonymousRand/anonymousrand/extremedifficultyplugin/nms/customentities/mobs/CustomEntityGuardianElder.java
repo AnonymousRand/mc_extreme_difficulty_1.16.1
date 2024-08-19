@@ -157,9 +157,9 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         @Override
         public boolean a() {
-            EntityLiving entityLiving = this.entity.getGoalTarget();
+            EntityLiving goalTarget = this.entity.getGoalTarget();
 
-            return entityLiving != null && entityLiving.isAlive();
+            return goalTarget != null && goalTarget.isAlive();
         }
 
         @Override
@@ -179,12 +179,12 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
 
         @Override
         public void e() {
-            EntityLiving entityLiving = this.entity.getGoalTarget();
+            EntityLiving goalTarget = this.entity.getGoalTarget();
 
             this.entity.getNavigation().o();
-            this.entity.getControllerLook().a(entityLiving, 90.0F, 90.0F);
+            this.entity.getControllerLook().a(goalTarget, 90.0F, 90.0F);
 
-            if (entityLiving != null) {
+            if (goalTarget != null) {
                 ++this.b; /* laser no longer disengages when there is a block between guardian and player */
 
                 if (this.b == 0) {
@@ -203,11 +203,11 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                         f += 2.0F;
                     }
 
-                    entityLiving.damageEntity(DamageSource.c(this.entity, this.entity), f);
-                    entityLiving.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
+                    goalTarget.damageEntity(DamageSource.c(this.entity, this.entity), f);
+                    goalTarget.damageEntity(DamageSource.mobAttack(this.entity), (float) this.entity.b(GenericAttributes.ATTACK_DAMAGE));
                     this.entity.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 } else if (this.b + 40 == this.entity.eL()) { /* 2 seconds before laser finishes firing, the elder guardian will break all blocks between it and the player */ // todo test
-                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(entityLiving.locX() - this.entity.locX(), entityLiving.locY() - this.entity.locY(), entityLiving.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(NmsUtil.distSq(this.entity, entityLiving, false), 0.5) + 1);
+                    BlockIterator iterator = new BlockIterator(this.entity.getWorld().getWorld(), new Vector(this.entity.locX(), this.entity.locY(), this.entity.locZ()), new Vector(goalTarget.locX() - this.entity.locX(), goalTarget.locY() - this.entity.locY(), goalTarget.locZ() - this.entity.locZ()), 1.0, (int) Math.pow(NmsUtil.distSq(this.entity, goalTarget, false), 0.5) + 1);
 
                     while (iterator.hasNext()) {
                         new RunnableBreakBlocks(iterator.next().getLocation(), this.entity.getWorld().getWorld(), 1, 1, 1, 0, false).run();
@@ -215,7 +215,7 @@ public class CustomEntityGuardianElder extends EntityGuardianElder implements IC
                 }
 
                 if (this.b >= this.entity.eL() / 3.35 && this.entity.ticksLived % 3 == 0) { /* stronger tractor beam-like effect every 3 ticks for the latter ~70% of the laser charging period */
-                    LivingEntity bukkitEntity = (LivingEntity) entityLiving.getBukkitEntity();
+                    LivingEntity bukkitEntity = (LivingEntity) goalTarget.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.entity.locX() - bukkitEntity.getLocation().getX()) / 20.0, (this.entity.locY() - bukkitEntity.getLocation().getY()) / 20.0, (this.entity.locZ() - bukkitEntity.getLocation().getZ()) / 20.0));
                 }
             }

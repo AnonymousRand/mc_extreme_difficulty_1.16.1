@@ -48,13 +48,13 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
             return false;
         }
 
-        EntityLiving entityLiving = this.getGoalTarget();
+        EntityLiving goalTarget = this.getGoalTarget();
 
-        if (entityLiving == null) {
-            entityLiving = (EntityLiving) damageSource.getEntity();
+        if (goalTarget == null) {
+            goalTarget = (EntityLiving) damageSource.getEntity();
         }
 
-        if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
+        if (!(goalTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
             return true;
         }
 

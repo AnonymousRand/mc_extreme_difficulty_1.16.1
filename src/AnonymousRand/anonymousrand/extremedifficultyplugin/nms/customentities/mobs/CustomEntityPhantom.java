@@ -137,9 +137,11 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 30 attacks, phantoms get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             }
@@ -235,8 +237,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public boolean a() {
-            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
-            return entityLiving != null;
+            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
+            return goalTarget != null;
         }
 
         @Override
@@ -297,9 +299,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public boolean b() {
-            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
 
-            if (!EntityFilter.BASE.test(entityLiving)) {
+            if (!EntityFilter.BASE.test(goalTarget)) {
                 return false;
             }
 
@@ -321,16 +323,16 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public void e() {
-            EntityLiving entityLiving = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
 
             try {
-                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(entityLiving.locX(), entityLiving.e(0.5D), entityLiving.locZ()));
+                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(goalTarget.locX(), goalTarget.e(0.5D), goalTarget.locZ()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            if (CustomEntityPhantom.this.getBoundingBox().g(0.20000000298023224D).c(entityLiving.getBoundingBox())) {
-                CustomEntityPhantom.this.attackEntity(entityLiving);
+            if (CustomEntityPhantom.this.getBoundingBox().g(0.20000000298023224D).c(goalTarget.getBoundingBox())) {
+                CustomEntityPhantom.this.attackEntity(goalTarget);
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
                 if (!CustomEntityPhantom.this.isSilent()) {
                     CustomEntityPhantom.this.getWorld().triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);

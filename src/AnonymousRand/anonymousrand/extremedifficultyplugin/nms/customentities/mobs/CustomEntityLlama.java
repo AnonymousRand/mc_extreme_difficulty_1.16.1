@@ -80,9 +80,11 @@ public class CustomEntityLlama extends EntityLlama implements ICustomHostile, IA
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 15 attacks, llamas get 50 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);

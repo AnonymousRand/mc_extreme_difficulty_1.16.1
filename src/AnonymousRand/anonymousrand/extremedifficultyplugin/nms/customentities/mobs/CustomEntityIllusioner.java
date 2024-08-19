@@ -119,9 +119,11 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 40 attacks, illusioners get 50 max health and health, and regen 4 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);

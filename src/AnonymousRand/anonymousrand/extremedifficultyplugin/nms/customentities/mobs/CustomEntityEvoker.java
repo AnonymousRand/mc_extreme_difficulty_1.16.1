@@ -119,16 +119,18 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.world, new CustomEntityVex(this.world), 3, null, null, this, false, false);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 35 attacks, evokers gain regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (metThreshold == attackThresholds[2]) {
+            } else if (thresholdMet == attackThresholds[2]) {
                 /* After 60 attacks, evokers gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             }

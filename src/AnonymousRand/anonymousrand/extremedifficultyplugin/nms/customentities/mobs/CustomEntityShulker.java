@@ -164,9 +164,9 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
         @Override
         public boolean a() {
-            EntityLiving entityLiving = CustomEntityShulker.this.getGoalTarget();
+            EntityLiving goalTarget = CustomEntityShulker.this.getGoalTarget();
 
-            return entityLiving != null && entityLiving.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
+            return goalTarget != null && goalTarget.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
         }
 
         @Override

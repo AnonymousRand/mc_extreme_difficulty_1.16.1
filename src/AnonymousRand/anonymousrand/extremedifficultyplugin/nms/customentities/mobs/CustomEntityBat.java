@@ -164,22 +164,24 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]
-                    || metThreshold == attackThresholds[3]
-                    || metThreshold == attackThresholds[4]) {
+            if (thresholdMet == attackThresholds[0]
+                    || thresholdMet == attackThresholds[3]
+                    || thresholdMet == attackThresholds[4]) {
                 /* After 4 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /* After 28 attacks, all mobs within 64 block sphere shoot an arrow every 30 ticks and spawn a silverfish every 15 seconds */
                 /* After 40 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 20 ticks */
                 buffMobs.e(); // immediately apply buffs
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 8 attacks, bats gain regen 2, speed 1, and 12 max health and health */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.0);
                 this.setHealth(12.0F);
-            } else if (metThreshold == attackThresholds[2]) {
+            } else if (thresholdMet == attackThresholds[2]) {
                 /* After 15 attacks, bats gain speed 2 and 15 max health and health */
                 /* After 15 attacks, all mobs within 64 block sphere shoot an arrow every 40 ticks */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));

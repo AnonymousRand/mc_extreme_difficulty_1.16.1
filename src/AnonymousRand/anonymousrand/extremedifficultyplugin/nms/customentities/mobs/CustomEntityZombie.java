@@ -75,18 +75,18 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             return false;
         }
 
-        EntityLiving entityLiving = this.getGoalTarget();
+        EntityLiving goalTarget = this.getGoalTarget();
 
-        if (entityLiving == null) {
-            entityLiving = (EntityLiving) damageSource.getEntity();
+        if (goalTarget == null) {
+            goalTarget = (EntityLiving) damageSource.getEntity();
         }
 
-        if (!(entityLiving instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
+        if (!(goalTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
             return true;
         }
 
         if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
-            this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), entityLiving.locX(), entityLiving.locY(), entityLiving.locZ()));
+            this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), goalTarget.locX(), goalTarget.locY(), goalTarget.locZ()));
         }
 
         if ((double) random.nextDouble() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */

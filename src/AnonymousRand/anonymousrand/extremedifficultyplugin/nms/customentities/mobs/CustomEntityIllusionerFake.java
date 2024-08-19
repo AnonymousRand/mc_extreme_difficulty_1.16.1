@@ -58,14 +58,16 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalRangedSkeletonAttack.class)) {
                     ((CustomPathfinderGoalRangedSkeletonAttack<?>) goal).setAttackCooldown(random.nextInt(4) + 5);

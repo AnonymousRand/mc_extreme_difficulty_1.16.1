@@ -115,12 +115,14 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardian(this.world), 1, null, null, this, false, true);
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 350 attacks, drowned summon an elder guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false,
                         true);

@@ -105,15 +105,17 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 12 attacks, guardians gain regen 3 and 40 max health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (metThreshold == attackThresholds[2]) {
+            } else if (thresholdMet == attackThresholds[2]) {
                 /* After 40 attacks, guardians summon an elder guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false, true);
             }
@@ -180,9 +182,9 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
 
         @Override
         public boolean a() {
-            EntityLiving entityLiving = this.guardian.getGoalTarget();
+            EntityLiving goalTarget = this.guardian.getGoalTarget();
 
-            return entityLiving != null && entityLiving.isAlive();
+            return goalTarget != null && goalTarget.isAlive();
         }
 
         @Override
@@ -202,12 +204,12 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
 
         @Override
         public void e() {
-            EntityLiving entityLiving = this.guardian.getGoalTarget();
+            EntityLiving goalTarget = this.guardian.getGoalTarget();
 
             this.guardian.getNavigation().o();
-            this.guardian.getControllerLook().a(entityLiving, 90.0F, 90.0F);
+            this.guardian.getControllerLook().a(goalTarget, 90.0F, 90.0F);
 
-            if (entityLiving != null) {
+            if (goalTarget != null) {
                 ++this.b; /* laser no longer disengages when there is a block between guardian and player */
 
                 if (this.b == 0) {
@@ -227,22 +229,22 @@ public class CustomEntityGuardian extends EntityGuardian implements ICustomHosti
                     }
 
                     this.guardian.increaseAttacks(1);
-                    entityLiving.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
-                    entityLiving.damageEntity(DamageSource.mobAttack(this.guardian), (float) this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
+                    goalTarget.damageEntity(DamageSource.c(this.guardian, this.guardian), f);
+                    goalTarget.damageEntity(DamageSource.mobAttack(this.guardian), (float) this.guardian.b(GenericAttributes.ATTACK_DAMAGE));
                     this.guardian.setGoalTarget(null, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, false);
                 }
 
                 if (this.b >= this.guardian.eL() / 2.5 && this.guardian.ticksLived % (this.guardian.getAttacks() < 10 ? 4 : 3) == 0) { /* tractor beam-like effect every 4 ticks (3 after 10 attacks) for the latter 60% of the laser charging period */
-                    LivingEntity bukkitEntity = (LivingEntity) entityLiving.getBukkitEntity();
+                    LivingEntity bukkitEntity = (LivingEntity) goalTarget.getBukkitEntity();
                     bukkitEntity.setVelocity(new Vector((this.guardian.locX() - bukkitEntity.getLocation().getX()) / 48.0, (this.guardian.locY() - bukkitEntity.getLocation().getY()) / 48.0, (this.guardian.locZ() - bukkitEntity.getLocation().getZ()) / 48.0));
 
                     if (this.guardian.getAttacks() >= 35) { /* after 35 attacks, guardians inflict poison 1 while the tractor beam is engaged */
                         if (this.guardian.getAttacks() >= 55) { /* after 55 attacks, guardians inflict hunger 1 and weakness 1 while the tractor beam is engaged */
-                            entityLiving.addEffect(new MobEffect(MobEffects.HUNGER, 51, 0));
-                            entityLiving.addEffect(new MobEffect(MobEffects.WEAKNESS, 51, 0));
+                            goalTarget.addEffect(new MobEffect(MobEffects.HUNGER, 51, 0));
+                            goalTarget.addEffect(new MobEffect(MobEffects.WEAKNESS, 51, 0));
                         }
 
-                        entityLiving.addEffect(new MobEffect(MobEffects.POISON, 51, 0));
+                        goalTarget.addEffect(new MobEffect(MobEffects.POISON, 51, 0));
                     }
                 }
             }

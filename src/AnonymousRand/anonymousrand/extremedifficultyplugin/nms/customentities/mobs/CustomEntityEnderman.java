@@ -125,18 +125,20 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     public void increaseAttacks(int increase) {
-        for (int metThreshold : this.attackLevelingController.increaseAttacks(increase)) {
+        int[] thresholdsMet = this.attackLevelingController.increaseAttacks(increase);
+
+        for (int thresholdMet : thresholdsMet) {
             int[] attackThresholds = this.getAttacksThresholds();
-            if (metThreshold == attackThresholds[0]) {
+            if (thresholdMet == attackThresholds[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (metThreshold == attackThresholds[1]) {
+            } else if (thresholdMet == attackThresholds[1]) {
                 /* After 25 attacks, endermen get 40 max health and regen 3 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (metThreshold == attackThresholds[2]) {
+            } else if (thresholdMet == attackThresholds[2]) {
                 /* After 40 attacks, endermen summon 5 endermites */
                 new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 5, null, null, this, false, true);
             }

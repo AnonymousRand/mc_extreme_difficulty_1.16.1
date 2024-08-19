@@ -19,12 +19,13 @@ stopped after: evoker
 revise multiline comments in initpathfinder()s
 
 followrange should be an instance variable instead of set through the getfollowrange function? be mindful of changing it during attacks?
+    otherwise ignoresy and los shouldnt be static vars either? check if good practice
 
 increment attacks in attack method/goal instead of listener
 
 entity_ to just _
 
-convert classes with a lot of constructor args (e.g. spawnentity, target goals, entityfilter) to builder pattern
+convert classes with a lot of different constructors (e.g. spawnentity, target goals, entityfilter?) to builder pattern for anything beyond the basic, common constructor params?
 
 make buffmobs goal and possibly getbuffs less janky? such as not requiring manual e() activation and replacing of goal. and also buildbuffshashmap is awkward with having to manually reinput attack thresholds
 
@@ -173,8 +174,11 @@ thor general refactoring (sketchy ListenerLightningStrike.storm?)
 
 taming a cat or ocelot sumkins creepers nearby?
 
-all tickslived == 5 to spawn listener?
-    but also try to move stuff from listeners like listenermobdeath to the mobs themselves. or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
+try to move from listener to mobs if not too hard
+    but if no method on mob spawn in nms: all tickslived == 5 to spawn listener?
+    if no method on mob death (before death anim finishes): move all gethealth < 0.0 in tick() to death listener?
+    but also try to move stuff from listeners like listenermobdeath to the mobs themselves? note that die() might wait until death anim is over
+    or mob spawn to tickslived==1 if it fires on rejoining world/restarting server
 
 allow only one lightning effect storm and one tornado at a time with static variables or something
 
