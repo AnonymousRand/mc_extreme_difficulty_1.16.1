@@ -7,6 +7,12 @@ import net.minecraft.server.v1_16_R1.PathfinderGoal;
 
 import java.util.EnumSet;
 
+/**
+ * 
+ *
+ * @param <T>
+ */
+
 public abstract class CustomPathfinderGoalAttackMvmt<T extends EntityInsentient> extends PathfinderGoal {
 
     protected final T goalOwner;

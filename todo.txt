@@ -47,6 +47,8 @@ hoglins either have insane reach. also golems too? OR for golem: copy in enderma
 
 mobs when hit by a player further than detection range/cant see: they teleport to player. teleport util?
 
+when addign random + constant always have constant first?
+
 is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
 
 hurtbytarget rename to hurtbyplayer? otherwise target class must be passed in
