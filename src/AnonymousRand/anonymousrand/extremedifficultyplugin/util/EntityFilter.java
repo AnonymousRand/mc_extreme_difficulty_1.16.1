@@ -3,7 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.util;
 import net.minecraft.server.v1_16_R1.EntityHuman;
 import net.minecraft.server.v1_16_R1.EntityInsentient;
 import net.minecraft.server.v1_16_R1.EntityLiving;
-import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;

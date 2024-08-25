@@ -1,12 +1,13 @@
-# 1.16.1-Extreme-Difficulty
+# MC-Extreme-Difficulty-1.16.1
 
-**Plugin trailer on Iseburg's channel: https://www.youtube.com/watch?v=7Kl9jtCHIGg**
+Spigot plugin for Minecraft 1.16.1. Plugin trailer [on Iseburg's channel](https://www.youtube.com/watch?v=7Kl9jtCHIGg).
 
-### Warnings:
+# WARNING
+
 * Do not run on a 1998 Intel Celeron 333 or with low RAM allocation
 * I suggest turning off dynamic FOV (foreshadowing…)
 
-# Installation instructions:
+# Installation guide:
 
 ### Only for Spigot servers, version 1.16.1, and Java 8!
 1. Click on "Releases" near the right side of the screen

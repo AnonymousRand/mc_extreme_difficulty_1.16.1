@@ -2,7 +2,7 @@
   <artifact type="jar" name="1.16.1-Extreme-Difficulty:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/1_16_1_Extreme_Difficulty_jar</output-path>
     <root id="archive" name="1.16.1-Extreme-Difficulty.jar">
-      <element id="module-output" name="1.16.1-Extreme-Difficulty" />
+      <element id="module-output" name="mc-extreme-difficulty-1.16.1" />
       <element id="extracted-dir" path="$PROJECT_DIR$/spigot-1.16.1.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
     </root>

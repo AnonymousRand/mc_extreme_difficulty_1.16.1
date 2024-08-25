@@ -3,9 +3,6 @@ package AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customgoals.atta
 import AnonymousRand.anonymousrand.extremedifficultyplugin.nms.customentities.mobs.util.ICustomHostile;
 import AnonymousRand.anonymousrand.extremedifficultyplugin.util.EntityFilter;
 import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.Bukkit;
-
-import java.util.EnumSet;
 
 /**
  * The base attack goal in my rewrite of vanilla's attack goals.
