@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 public class RunnableBreakBlocks extends BukkitRunnable {
 
-    protected final Entity entity;
+    protected final Entity runnableOwner;
     protected final World bukkitWorld;
     protected Location bukkitLoc;
     protected final int radX, radY, radZ, offsetY;
@@ -31,9 +31,9 @@ public class RunnableBreakBlocks extends BukkitRunnable {
             && Predicates.notFireOrWitherRose.test(type);
     protected static final Random random = new Random();
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
-        this.entity = entity;
-        this.bukkitWorld = entity.getWorld().getWorld();
+    public RunnableBreakBlocks(Entity runnableOwner, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
+        this.runnableOwner = runnableOwner;
+        this.bukkitWorld = runnableOwner.getWorld().getWorld();
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
@@ -44,9 +44,9 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.maxCycleCount = 1;
     }
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int maxCycleCount) {
-        this.entity = entity;
-        this.bukkitWorld = entity.getWorld().getWorld();
+    public RunnableBreakBlocks(Entity runnableOwner, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int maxCycleCount) {
+        this.runnableOwner = runnableOwner;
+        this.bukkitWorld = runnableOwner.getWorld().getWorld();
         this.radX = radX;
         this.radY = radY;
         this.radZ = radZ;
@@ -58,7 +58,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     }
 
     public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
-        this.entity = null;
+        this.runnableOwner = null;
         this.bukkitLoc = bukkitLoc;
         this.bukkitWorld = bukkitWorld;
         this.radX = radX;
@@ -79,19 +79,19 @@ public class RunnableBreakBlocks extends BukkitRunnable {
             return;
         }
 
-        if (this.entity != null) {
-            this.baseX = (int) Math.floor(this.entity.getPositionVector().getX());
-            this.baseY = (int) Math.floor(this.entity.getPositionVector().getY()) + this.offsetY;
-            this.baseZ = (int) Math.floor(this.entity.getPositionVector().getZ());
+        if (this.runnableOwner != null) {
+            this.baseX = (int) Math.floor(this.runnableOwner.getPositionVector().getX());
+            this.baseY = (int) Math.floor(this.runnableOwner.getPositionVector().getY()) + this.offsetY;
+            this.baseZ = (int) Math.floor(this.runnableOwner.getPositionVector().getZ());
         } else {
             this.baseX = (int) Math.floor(this.bukkitLoc.getX());
             this.baseY = (int) Math.floor(this.bukkitLoc.getY()) + this.offsetY;
             this.baseZ = (int) Math.floor(this.bukkitLoc.getZ());
         }
 
-        if (this.entity instanceof EntityInsentient) {
-            if (((EntityInsentient) this.entity).getGoalTarget() != null) {
-                if (((EntityInsentient) this.entity).getGoalTarget().locY() < this.entity.locY()) { // move downwards if player is below entity
+        if (this.runnableOwner instanceof EntityInsentient) {
+            if (((EntityInsentient) this.runnableOwner).getGoalTarget() != null) {
+                if (((EntityInsentient) this.runnableOwner).getGoalTarget().locY() < this.runnableOwner.locY()) { // move downwards if player is below entity
                     this.baseY--;
                 }
             }

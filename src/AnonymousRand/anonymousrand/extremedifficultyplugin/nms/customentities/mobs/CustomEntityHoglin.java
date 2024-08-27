@@ -112,7 +112,7 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
 
         for (int metThresh : metThreshs) {
             if (metThresh == attackThreshs[0]) {
@@ -207,10 +207,10 @@ public class CustomEntityHoglin extends EntityHoglin implements ICustomHostile, 
 
         @Override
         public void e() {
-            int X = (int) Math.floor(this.entity.getPositionVector().getX());
-            int Y = (int) Math.floor(this.entity.getPositionVector().getY()) + offsetY;
-            int Z = (int) Math.floor(this.entity.getPositionVector().getZ());
-            org.bukkit.World bukkitWorld = this.entity.getWorld().getWorld();
+            int X = (int) Math.floor(this.goalOwner.getPositionVector().getX());
+            int Y = (int) Math.floor(this.goalOwner.getPositionVector().getY()) + offsetY;
+            int Z = (int) Math.floor(this.goalOwner.getPositionVector().getZ());
+            org.bukkit.World bukkitWorld = this.goalOwner.getWorld().getWorld();
             Block bukkitBlock;
             org.bukkit.Material bukkitMaterial;
 

@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class RunnableMobShootArrows extends BukkitRunnable {
 
-    private final EntityInsentient entity;
+    private final EntityInsentient runnableOwner;
     private final EntityLiving target;
     private final int numOfArrows, arrowType, pierce;
     private final double inaccuracy;
@@ -19,8 +19,8 @@ public class RunnableMobShootArrows extends BukkitRunnable {
     private final int maxCycleCount;
     private static final Random random = new Random();
 
-    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
-        this.entity = entity;
+    public RunnableMobShootArrows(EntityInsentient runnableOwner, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
+        this.runnableOwner = runnableOwner;
         this.target = target;
         this.numOfArrows = numOfArrows;
         this.arrowType = arrowType;
@@ -28,13 +28,13 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.pierce = pierce;
         this.onFire = onFire;
         this.noGravity = noGravity;
-        this.nmsWorld = entity.getWorld();
+        this.nmsWorld = runnableOwner.getWorld();
         this.cycleCount = 0;
         this.maxCycleCount = 1;
     }
 
-    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int maxCycleCount) {
-        this.entity = entity;
+    public RunnableMobShootArrows(EntityInsentient runnableOwner, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int maxCycleCount) {
+        this.runnableOwner = runnableOwner;
         this.target = target;
         this.numOfArrows = numOfArrows;
         this.arrowType = arrowType;
@@ -42,7 +42,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.pierce = pierce;
         this.onFire = onFire;
         this.noGravity = noGravity;
-        this.nmsWorld = entity.getWorld();
+        this.nmsWorld = runnableOwner.getWorld();
         this.cycleCount = 0;
         this.maxCycleCount = maxCycleCount;
     }
@@ -74,12 +74,12 @@ public class RunnableMobShootArrows extends BukkitRunnable {
                     break;
             }
 
-            entityArrow.setShooter(this.entity);
-            entityArrow.setPosition(this.entity.locX(), this.entity.locY() + 1.5, this.entity.locZ());
+            entityArrow.setShooter(this.runnableOwner);
+            entityArrow.setPosition(this.runnableOwner.locX(), this.runnableOwner.locY() + 1.5, this.runnableOwner.locZ());
             entityArrow.setPierceLevel((byte)this.pierce);
-            double d0 = this.target.locX() - this.entity.locX();
+            double d0 = this.target.locX() - this.runnableOwner.locX();
             double d1 = this.target.e(0.3333333333333333) - entityArrow.locY();
-            double d2 = this.target.locZ() - this.entity.locZ();
+            double d2 = this.target.locZ() - this.runnableOwner.locZ();
             double d3 = this.noGravity ? 0.0 : MathHelper.sqrt(d0 * d0 + d2 * d2); // this adjusts arrow height for distance
 
             if (this.onFire) {
@@ -92,11 +92,11 @@ public class RunnableMobShootArrows extends BukkitRunnable {
 
             entityArrow.shoot(d0, d1 + d3 * 0.2, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float) (this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /* mob-spawning arrows have no inaccuracy */
 
-            if (this.entity instanceof CustomEntityIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
+            if (this.runnableOwner instanceof CustomEntityIllusioner || this.runnableOwner instanceof CustomEntityPiglin || this.runnableOwner instanceof CustomEntityPillager || this.runnableOwner instanceof CustomEntitySkeleton || this.runnableOwner instanceof CustomEntitySkeletonStray) {
                 entityArrow.setDamage(1.5); /* illusioners, piglins, pillagers, skeletons and strays always do 3 damage with arrows and distance does not play a factor in determining damage */
             }
 
-            this.entity.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
+            this.runnableOwner.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
             this.nmsWorld.addEntity(entityArrow);
         }
     }

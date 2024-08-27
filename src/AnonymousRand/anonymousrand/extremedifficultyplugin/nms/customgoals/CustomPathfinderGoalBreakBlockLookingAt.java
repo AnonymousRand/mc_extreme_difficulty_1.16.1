@@ -7,15 +7,15 @@ import org.bukkit.entity.LivingEntity;
 
 public class CustomPathfinderGoalBreakBlockLookingAt extends PathfinderGoal {
 
-    private final EntityInsentient entity;
+    private final EntityInsentient goalOwner;
 
-    public CustomPathfinderGoalBreakBlockLookingAt(EntityInsentient entity) {
-        this.entity = entity;
+    public CustomPathfinderGoalBreakBlockLookingAt(EntityInsentient goalOwner) {
+        this.goalOwner = goalOwner;
     }
 
     @Override
     public boolean a() {
-        return this.entity.getGoalTarget() != null;
+        return this.goalOwner.getGoalTarget() != null;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class CustomPathfinderGoalBreakBlockLookingAt extends PathfinderGoal {
 
     @Override
     public void e() {
-        if (this.entity.ticksLived % 80 == 0) {
-            new RunnableBreakBlocks(((LivingEntity) this.entity.getBukkitEntity()).getTargetBlock(null, 40).getLocation(), this.entity.getWorld().getWorld(), 0, 0, 0, 0, false).run();
+        if (this.goalOwner.ticksLived % 80 == 0) {
+            new RunnableBreakBlocks(((LivingEntity) this.goalOwner.getBukkitEntity()).getTargetBlock(null, 40).getLocation(), this.goalOwner.getWorld().getWorld(), 0, 0, 0, 0, false).run();
         }
     }
 }

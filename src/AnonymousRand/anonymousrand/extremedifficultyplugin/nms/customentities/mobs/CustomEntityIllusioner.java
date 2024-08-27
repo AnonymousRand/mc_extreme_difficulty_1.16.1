@@ -121,7 +121,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
 
         for (int metThresh : metThreshs) {
             if (metThresh == attackThreshs[0]) {
@@ -326,7 +326,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     static class d extends PathfinderGoal { // from EntityRaider.java
 
-        private final EntityRaider entity;
+        private final EntityRaider illusioner;
         private final double b;
         private BlockPosition c;
         private final List<BlockPosition> d = Lists.newArrayList();
@@ -334,7 +334,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         private boolean f;
 
         public d(EntityRaider entityRaider, double d0, int i) {
-            this.entity = entityRaider;
+            this.illusioner = entityRaider;
             this.b = d0;
             this.e = i;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
@@ -343,17 +343,17 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         @Override
         public boolean a() {
             this.j();
-            return this.g() && this.h() && this.entity.getGoalTarget() == null;
+            return this.g() && this.h() && this.illusioner.getGoalTarget() == null;
         }
 
         private boolean g() {
-            return this.entity.fc() && !this.entity.fb().a();
+            return this.illusioner.fc() && !this.illusioner.fb().a();
         }
 
         private boolean h() {
-            WorldServer worldserver = (WorldServer) this.entity.getWorld();
-            BlockPosition blockPos = this.entity.getChunkCoordinates();
-            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPos, 48, this.entity.getRandom());
+            WorldServer worldserver = (WorldServer) this.illusioner.getWorld();
+            BlockPosition blockPos = this.illusioner.getChunkCoordinates();
+            Optional<BlockPosition> optional = worldserver.x().a((villageplacetype) -> villageplacetype == VillagePlaceType.r, this::a, VillagePlace.Occupancy.ANY, blockPos, 48, this.illusioner.getRandom());
 
             if (!optional.isPresent()) {
                 return false;
@@ -365,12 +365,12 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
         @Override
         public boolean b() {
-            return this.entity.getNavigation().m() ? false : this.entity.getGoalTarget() == null && !this.c.a(this.entity.getPositionVector(), (double) (this.entity.getWidth() + (float) this.e)) && !this.f;
+            return this.illusioner.getNavigation().m() ? false : this.illusioner.getGoalTarget() == null && !this.c.a(this.illusioner.getPositionVector(), (double) (this.illusioner.getWidth() + (float) this.e)) && !this.f;
         }
 
         @Override
         public void d() {
-            if (this.c.a(this.entity.getPositionVector(), this.e)) {
+            if (this.c.a(this.illusioner.getPositionVector(), this.e)) {
                 this.d.add(this.c);
             }
         }
@@ -378,19 +378,19 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         @Override
         public void c() {
             super.c();
-            this.entity.n(0);
-            this.entity.getNavigation().a(this.c.getX(), this.c.getY(), this.c.getZ(), this.b);
+            this.illusioner.n(0);
+            this.illusioner.getNavigation().a(this.c.getX(), this.c.getY(), this.c.getZ(), this.b);
             this.f = false;
         }
 
         @Override
         public void e() {
-            if (this.entity.getNavigation().m()) {
+            if (this.illusioner.getNavigation().m()) {
                 Vec3D vec3d = Vec3D.c(this.c);
-                Vec3D vec3d1 = RandomPositionGenerator.a(this.entity, 16, 7, vec3d, 0.3141592741012573);
+                Vec3D vec3d1 = RandomPositionGenerator.a(this.illusioner, 16, 7, vec3d, 0.3141592741012573);
 
                 if (vec3d1 == null) {
-                    vec3d1 = RandomPositionGenerator.b(this.entity, 8, 7, vec3d);
+                    vec3d1 = RandomPositionGenerator.b(this.illusioner, 8, 7, vec3d);
                 }
 
                 if (vec3d1 == null) {
@@ -398,7 +398,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
                     return;
                 }
 
-                this.entity.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
+                this.illusioner.getNavigation().a(vec3d1.x, vec3d1.y, vec3d1.z, this.b);
             }
         }
 

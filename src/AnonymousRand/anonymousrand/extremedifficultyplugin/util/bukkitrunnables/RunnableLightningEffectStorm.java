@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class RunnableLightningEffectStorm extends BukkitRunnable {
 
     private final CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal;
-    private final Entity entity;
+    private final Entity runnableOwner;
     private final World bukkitWorld;
     private int cycleCount;
     private final int maxCycleCount;
@@ -20,7 +20,7 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
 
     public RunnableLightningEffectStorm(CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal, int maxCycleCount) {
         this.thorGoal = thorGoal;
-        this.entity = thorGoal.thor;
+        this.runnableOwner = thorGoal.thor;
         this.bukkitWorld = thorGoal.bukkitWorld;
         this.cycleCount = 0;
         this.maxCycleCount = maxCycleCount;
@@ -29,10 +29,10 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
         ListenerLightningStrike.storm = true;
     }
 
-    public RunnableLightningEffectStorm(Entity entity, int maxCycleCount, boolean effect) {
+    public RunnableLightningEffectStorm(Entity runnableOwner, int maxCycleCount, boolean effect) {
         this.thorGoal = null;
-        this.entity = entity;
-        this.bukkitWorld = entity.getWorld().getWorld();
+        this.runnableOwner = runnableOwner;
+        this.bukkitWorld = runnableOwner.getWorld().getWorld();
         this.cycleCount = 0;
         this.maxCycleCount = maxCycleCount;
         this.effect = effect;
@@ -43,7 +43,7 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
     public void run() {
         this.cycleCount++;
         if (this.cycleCount > this.maxCycleCount) {
-            Location bukkitLoc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
+            Location bukkitLoc = new Location(this.bukkitWorld, this.runnableOwner.locX(), this.runnableOwner.locY(), this.runnableOwner.locZ());
 
             for (int i = 0; i < 4; i++) {
                 Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ()), 3.0, bukkitLoc.getY(), this.cycleCount * 13.0 + i * 60.0);

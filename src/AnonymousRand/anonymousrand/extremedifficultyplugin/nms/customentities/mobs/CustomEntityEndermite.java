@@ -81,7 +81,7 @@ public class CustomEntityEndermite extends EntityEndermite
     }
 
     public void increaseAttacks(int increase) {
-        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
         for (int metThresh : metThreshs) {
             int[] attackThreshs = this.getAttacksThreshs();
             if (metThresh == attackThreshs[0]) {

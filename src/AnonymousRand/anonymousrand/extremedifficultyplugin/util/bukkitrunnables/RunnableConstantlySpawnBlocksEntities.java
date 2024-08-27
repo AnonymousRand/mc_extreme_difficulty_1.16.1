@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
 
-    private final EntityLiving entity;
+    private final EntityLiving runnableOwner;
     private final Material material;
     private final Entity firstEntityToSpawn;
     private Entity entityToBeSpawned;
@@ -28,8 +28,8 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
 
-    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
-        this.entity = entity;
+    public RunnableConstantlySpawnBlocksEntities(EntityLiving runnableOwner, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
+        this.runnableOwner = runnableOwner;
         this.material = material;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.xRadius = xRadius;
@@ -37,13 +37,13 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
         this.zRadius = zRadius;
         this.offsetY = offsetY;
         this.terraform = terraform;
-        this.nmsWorld = entity.getWorld();
+        this.nmsWorld = runnableOwner.getWorld();
         this.cycleCount = 0;
         this.maxCycleCount = 1;
     }
 
-    public RunnableConstantlySpawnBlocksEntities(EntityLiving entity, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform, int maxCycleCount) {
-        this.entity = entity;
+    public RunnableConstantlySpawnBlocksEntities(EntityLiving runnableOwner, @Nullable Material material, @Nullable Entity firstEntityToSpawn, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform, int maxCycleCount) {
+        this.runnableOwner = runnableOwner;
         this.material = material;
         this.firstEntityToSpawn = firstEntityToSpawn;
         this.xRadius = xRadius;
@@ -51,7 +51,7 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
         this.zRadius = zRadius;
         this.offsetY = offsetY;
         this.terraform = terraform;
-        this.nmsWorld = entity.getWorld();
+        this.nmsWorld = runnableOwner.getWorld();
         this.cycleCount = 0;
         this.maxCycleCount = maxCycleCount;
     }
@@ -67,7 +67,7 @@ public class RunnableConstantlySpawnBlocksEntities extends BukkitRunnable {
         for (int x = -this.xRadius; x <= this.xRadius; x++) {
             for (int y = -this.yRadius; y <= this.yRadius; y++) {
                 for (int z = -this.zRadius; z <= this.zRadius; z++) {
-                    Location bukkitLoc = new Location(this.nmsWorld.getWorld(), this.entity.locX() + x, this.entity.locY() + this.offsetY + y, this.entity.locZ() + z);
+                    Location bukkitLoc = new Location(this.nmsWorld.getWorld(), this.runnableOwner.locX() + x, this.runnableOwner.locY() + this.offsetY + y, this.runnableOwner.locZ() + z);
 
                     if (this.material != null) {
                         this.bukkitBlock = bukkitLoc.getBlock();

@@ -9,12 +9,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class RunnableSpawnBlocksAround extends BukkitRunnable {
 
-    private final EntityInsentient entity;
+    private final EntityInsentient runnableOwner;
     private final org.bukkit.Material material;
     private final int radius;
 
-    public RunnableSpawnBlocksAround(EntityInsentient entity, Material material, int radius) {
-        this.entity = entity;
+    public RunnableSpawnBlocksAround(EntityInsentient runnableOwner, Material material, int radius) {
+        this.runnableOwner = runnableOwner;
         this.material = material;
         this.radius = radius;
     }
@@ -24,7 +24,7 @@ public class RunnableSpawnBlocksAround extends BukkitRunnable {
         for (int x = -this.radius; x <= this.radius; x++) {
             for (int y = -this.radius; y <= this.radius; y++) {
                 for (int z = -this.radius; z <= this.radius; z++) {
-                    Location bukkitLoc = new Location(this.entity.getWorld().getWorld(), Math.floor(this.entity.locX()) + x, Math.floor(this.entity.locY()) + y, Math.floor(this.entity.locZ()) + z);
+                    Location bukkitLoc = new Location(this.runnableOwner.getWorld().getWorld(), Math.floor(this.runnableOwner.locX()) + x, Math.floor(this.runnableOwner.locY()) + y, Math.floor(this.runnableOwner.locZ()) + z);
 
                     if (bukkitLoc.getBlock().getType() == org.bukkit.Material.AIR) {
                         bukkitLoc.getBlock().setType(this.material);

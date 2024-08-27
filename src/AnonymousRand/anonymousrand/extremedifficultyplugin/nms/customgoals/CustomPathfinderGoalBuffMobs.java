@@ -8,15 +8,15 @@ import java.util.*;
 
 public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLevelingMob> extends PathfinderGoal {
 
-    public T entity;
+    public T goalOwner;
     private final Class<? extends EntityLiving> targetClass;
     private final HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects;
     private final double rangeRadius;
     private final int attacksThresh, minTicksDelay, ticksDelayRandBound;
     private static final Random random = new Random();
 
-    public CustomPathfinderGoalBuffMobs(T entity, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThresh, int minTicksDelay, int ticksDelayRandBound) {
-        this.entity = entity;
+    public CustomPathfinderGoalBuffMobs(T goalOwner, Class<? extends EntityLiving> targetClass, HashMap<Integer, ArrayList<MobEffect>> attacksAndEffects, double rangeRadius, int attacksThresh, int minTicksDelay, int ticksDelayRandBound) {
+        this.goalOwner = goalOwner;
         this.targetClass = targetClass;
         this.attacksAndEffects = attacksAndEffects;
         this.rangeRadius = rangeRadius;
@@ -27,8 +27,8 @@ public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLe
 
     @Override
     public boolean a() {
-        if (this.entity.ticksLived % (random.nextInt(this.ticksDelayRandBound) + this.minTicksDelay) == 0) {
-            if (this.entity.getAttacks() >= this.attacksThresh) {
+        if (this.goalOwner.ticksLived % (random.nextInt(this.ticksDelayRandBound) + this.minTicksDelay) == 0) {
+            if (this.goalOwner.getAttacks() >= this.attacksThresh) {
                 return true;
             }
         }
@@ -43,9 +43,9 @@ public class CustomPathfinderGoalBuffMobs<T extends EntityInsentient & IAttackLe
 
     @Override
     public void e() {
-        int attacksLocal = this.entity.getAttacks();
-        this.entity.getWorld().getEntities(this.entity, this.entity.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
-            if (entity instanceof EntityPlayer || NmsUtil.distSq(this.entity, entity, false) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
+        int attacksLocal = this.goalOwner.getAttacks();
+        this.goalOwner.getWorld().getEntities(this.goalOwner, this.goalOwner.getBoundingBox().g(this.rangeRadius), this.targetClass::isInstance).forEach(entity -> {
+            if (entity instanceof EntityPlayer || NmsUtil.distSq(this.goalOwner, entity, false) > Math.pow(this.rangeRadius, 2)) { // ensures that the entities is in a sphere around the mob and not a cube
                 return;
             }
 

@@ -314,7 +314,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
         @Override
         public void run() {
             this.cycleCount = 0;
-            this.entity.getWorld().createExplosion(this.entity, this.entity.locX(), this.entity.locY(), this.entity.locZ(), 0.0F, false, Explosion.Effect.NONE); // constant explosion noises
+            this.runnableOwner.getWorld().createExplosion(this.runnableOwner, this.runnableOwner.locX(), this.runnableOwner.locY(), this.runnableOwner.locZ(), 0.0F, false, Explosion.Effect.NONE); // constant explosion noises
             super.run();
         }
     }

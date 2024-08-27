@@ -8,13 +8,13 @@ import java.util.Random;
 
 public class CustomPathfinderGoalBreakBlocksAround extends PathfinderGoal { // custom goal to break blocks around a mob
 
-    public EntityInsentient entity;
+    public EntityInsentient goalOwner;
     protected final int delayTimer, radX, radY, radZ, offsetY;
     private final boolean removeFluids;
     protected static final Random random = new Random();
 
-    public CustomPathfinderGoalBreakBlocksAround(EntityInsentient entity, int delayTimer, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
-        this.entity = entity;
+    public CustomPathfinderGoalBreakBlocksAround(EntityInsentient goalOwner, int delayTimer, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
+        this.goalOwner = goalOwner;
         this.delayTimer = delayTimer;
         this.radX = radX;
         this.radY = radY;
@@ -25,7 +25,7 @@ public class CustomPathfinderGoalBreakBlocksAround extends PathfinderGoal { // c
 
     @Override
     public boolean a() { // should execute
-        return this.entity.getGoalTarget() != null && !this.entity.getGoalTarget().isInvulnerable();
+        return this.goalOwner.getGoalTarget() != null && !this.goalOwner.getGoalTarget().isInvulnerable();
     }
 
     @Override
@@ -35,8 +35,8 @@ public class CustomPathfinderGoalBreakBlocksAround extends PathfinderGoal { // c
 
     @Override
     public void e() { // tick
-        if (this.entity.ticksLived % this.delayTimer == 0) {
-            new RunnableBreakBlocks(this.entity, this.radX, this.radY, this.radZ, this.offsetY, this.removeFluids).run();
+        if (this.goalOwner.ticksLived % this.delayTimer == 0) {
+            new RunnableBreakBlocks(this.goalOwner, this.radX, this.radY, this.radZ, this.offsetY, this.removeFluids).run();
         }
     }
 }

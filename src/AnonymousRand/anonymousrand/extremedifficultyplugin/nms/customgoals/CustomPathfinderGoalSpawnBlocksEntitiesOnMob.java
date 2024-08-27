@@ -8,15 +8,15 @@ import org.bukkit.Material;
 
 public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal {
 
-    protected final EntityInsentient entity;
+    protected final EntityInsentient goalOwner;
     protected Material material;
     protected Entity firstEntityToSpawn;
     protected int delayTimer, xRadius, yRadius, zRadius;
     protected double offsetY;
     protected boolean terraform;
 
-    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer) {
-        this.entity = entity;
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient goalOwner, Material material, int delayTimer) {
+        this.goalOwner = goalOwner;
         this.material = material;
         this.firstEntityToSpawn = null;
         this.delayTimer = delayTimer;
@@ -27,8 +27,8 @@ public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal
         this.terraform = false;
     }
 
-    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
-        this.entity = entity;
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient goalOwner, Material material, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY, boolean terraform) {
+        this.goalOwner = goalOwner;
         this.material = material;
         this.firstEntityToSpawn = null;
         this.delayTimer = delayTimer;
@@ -39,8 +39,8 @@ public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal
         this.terraform = terraform;
     }
 
-    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer) {
-        this.entity = entity;
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient goalOwner, Entity entityToBeSpawned, int delayTimer) {
+        this.goalOwner = goalOwner;
         this.material = null;
         this.firstEntityToSpawn = entityToBeSpawned;
         this.delayTimer = delayTimer;
@@ -51,8 +51,8 @@ public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal
         this.terraform = false;
     }
 
-    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient entity, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY) {
-        this.entity = entity;
+    public CustomPathfinderGoalSpawnBlocksEntitiesOnMob(EntityInsentient goalOwner, Entity entityToBeSpawned, int delayTimer, int xRadius, int yRadius, int zRadius, double offsetY) {
+        this.goalOwner = goalOwner;
         this.material = null;
         this.firstEntityToSpawn = entityToBeSpawned;
         this.delayTimer = delayTimer;
@@ -69,7 +69,7 @@ public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal
 
     @Override
     public boolean a() {
-        return this.entity.getGoalTarget() != null;
+        return this.goalOwner.getGoalTarget() != null;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class CustomPathfinderGoalSpawnBlocksEntitiesOnMob extends PathfinderGoal
 
     @Override
     public void e() {
-        if ((this.entity.ticksLived - 10) % this.delayTimer == 0) {
-            new RunnableConstantlySpawnBlocksEntities(this.entity, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.offsetY, this.terraform).run();
+        if ((this.goalOwner.ticksLived - 10) % this.delayTimer == 0) {
+            new RunnableConstantlySpawnBlocksEntities(this.goalOwner, this.material, this.firstEntityToSpawn, this.xRadius, this.yRadius, this.zRadius, this.offsetY, this.terraform).run();
         }
     }
 }

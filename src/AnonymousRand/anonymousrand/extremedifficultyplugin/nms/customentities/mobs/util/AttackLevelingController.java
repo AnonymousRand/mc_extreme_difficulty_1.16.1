@@ -15,9 +15,9 @@ public class AttackLevelingController {
     /**
      * Increases <code>attacks</code>.
      *
-     * @return all newly met or exceeded threshs
+     * @return all newly met or exceeded thresholds
      */
-    public int[] increaseAttacks(int increment) {
+    public int[] increaseAttacksAndCheckThreshs(int increment) {
         if (increment == 1) {
             this.attacks += increment;
             for (int attackThresh : this.attacksThreshs) {

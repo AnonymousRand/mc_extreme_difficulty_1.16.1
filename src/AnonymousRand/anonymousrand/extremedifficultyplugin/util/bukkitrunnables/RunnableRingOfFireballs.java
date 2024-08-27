@@ -8,24 +8,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class RunnableRingOfFireballs extends BukkitRunnable {
 
-    private final EntityInsentient entity;
+    private final EntityInsentient runnableOwner;
     private final World nmsWorld;
     private final double spacing;
     private int cycleCount;
     private final int maxCycleCount, type;
 
-    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int maxCycleCount) {
-        this.entity = entity;
-        this.nmsWorld = entity.getWorld();
+    public RunnableRingOfFireballs(EntityInsentient runnableOwner, double spacing, int maxCycleCount) {
+        this.runnableOwner = runnableOwner;
+        this.nmsWorld = runnableOwner.getWorld();
         this.spacing = spacing;
         this.type = 1;
         this.cycleCount = 0;
         this.maxCycleCount = maxCycleCount;
     }
 
-    public RunnableRingOfFireballs(EntityInsentient entity, double spacing, int type, int maxCycleCount) {
-        this.entity = entity;
-        this.nmsWorld = entity.getWorld();
+    public RunnableRingOfFireballs(EntityInsentient runnableOwner, double spacing, int type, int maxCycleCount) {
+        this.runnableOwner = runnableOwner;
+        this.nmsWorld = runnableOwner.getWorld();
         this.spacing = spacing;
         this.type = type;
         this.cycleCount = 0;
@@ -45,8 +45,8 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {
-                            CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.entity, x, y, z);
-                            smallFireball.setPosition(smallFireball.locX(), this.entity.e(0.5) + 0.5, smallFireball.locZ());
+                            CustomEntitySmallFireball smallFireball = new CustomEntitySmallFireball(this.nmsWorld, this.runnableOwner, x, y, z);
+                            smallFireball.setPosition(smallFireball.locX(), this.runnableOwner.e(0.5) + 0.5, smallFireball.locZ());
                             this.nmsWorld.addEntity(smallFireball);
                         }
                     }
@@ -56,8 +56,8 @@ public class RunnableRingOfFireballs extends BukkitRunnable {
                 for (double x = -1.0; x <= 1.0; x += this.spacing) {
                     for (double y = -1.0; y <= 1.0; y += this.spacing) {
                         for (double z = -1.0; z <= 1.0; z += this.spacing) {
-                            CustomEntityDragonFireball entityDragonFireball = new CustomEntityDragonFireball(this.nmsWorld, this.entity, x, y, z, false);
-                            entityDragonFireball.setPosition(entityDragonFireball.locX(), this.entity.e(0.5) + 0.5, entityDragonFireball.locZ());
+                            CustomEntityDragonFireball entityDragonFireball = new CustomEntityDragonFireball(this.nmsWorld, this.runnableOwner, x, y, z, false);
+                            entityDragonFireball.setPosition(entityDragonFireball.locX(), this.runnableOwner.e(0.5) + 0.5, entityDragonFireball.locZ());
                             this.nmsWorld.addEntity(entityDragonFireball);
                         }
                     }

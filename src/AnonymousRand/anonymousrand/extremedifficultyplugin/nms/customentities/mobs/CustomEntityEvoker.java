@@ -120,7 +120,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
 
         for (int metThresh : metThreshs) {
             if (metThresh == attackThreshs[0]) {
@@ -213,21 +213,18 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             return vexNearbyCount <= 10;
         }
 
-        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
-        @Override
+        @Override // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously
         protected int g() {
             return 100;
         }
 
-        // `getSpellCooldown()` 
-        @Override
+        @Override // `getSpellCooldown()`
         protected int h() {
             /* Evokers summon vexes every 25 seconds instead of 17 */
             return 500;
         }
 
-        // `castSpell()` 
-        @Override
+        @Override // `castSpell()`
         protected void j() {
             CustomEntityEvoker.this.increaseAttacks(6);
 
@@ -251,14 +248,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        // `getSpellPrepareSound()` 
-        @Override
+        @Override // `getSpellPrepareSound()`
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_SUMMON;
         }
 
-        // `getSpellType()` 
-        @Override
+        @Override // `getSpellType()`
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.SUMMON_VEX;
         }
@@ -266,26 +261,23 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     class PathfinderGoalFangSpell extends EntityIllagerWizard.c {
 
-        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
-        @Override
+        @Override // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
         protected int g() {
             return 100;
         }
 
-        // `getSpellCooldown()` 
-        @Override
+        @Override // `getSpellCooldown()`
         protected int h() {
             /* Evokers summon fangs every 85 ticks instead of 100 */
             return 85;
         }
 
-        // `castSpell()` 
-        @Override
+        @Override // `castSpell()`
         protected void j() {
             EntityLiving attackTarget = CustomEntityEvoker.this.getGoalTarget();
             double lowerEntityY = Math.min(attackTarget.locY(), CustomEntityEvoker.this.locY());
             double higherEntityY = Math.max(attackTarget.locY(), CustomEntityEvoker.this.locY()) + 1.0;
-            float angleToGoalTarget = (float) MathHelper.d(
+            float angleToAttackTarget = (float) MathHelper.d(
                     attackTarget.locZ() - CustomEntityEvoker.this.locZ(),
                     attackTarget.locX() - CustomEntityEvoker.this.locX());
 
@@ -294,7 +286,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 float yaw;
 
                 for (int i = 0; i < 5; i++) {
-                    yaw = angleToGoalTarget + (float) (i * 3.1415927 * 0.4);
+                    yaw = angleToAttackTarget + (float) (i * 3.1415927 * 0.4);
                     this.spawnFangs(
                             CustomEntityEvoker.this.locX() + MathHelper.cos(yaw) * 1.5,
                             CustomEntityEvoker.this.locZ() + MathHelper.sin(yaw) * 1.5,
@@ -305,7 +297,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 }
 
                 for (int i = 0; i < 8; i++) {
-                    yaw = angleToGoalTarget + (float) (i * 3.1415927 * 2.0 / 8.0 + 1.2566371);
+                    yaw = angleToAttackTarget + (float) (i * 3.1415927 * 2.0 / 8.0 + 1.2566371);
                     this.spawnFangs(
                             CustomEntityEvoker.this.locX() + MathHelper.cos(yaw) * 2.5,
                             CustomEntityEvoker.this.locZ() + MathHelper.sin(yaw) * 2.5,
@@ -316,15 +308,16 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 }
             } else {
                 // else, summon fangs in straight line
-                // evoker fang range synced to detection range */
-                for (int i = 0; i < CustomEntityEvoker.this.getDetectionRange(); i++) {
+                /* Evoker fang range synced to detection range */
+                double detectionRange = CustomEntityEvoker.this.getDetectionRange();
+                for (int i = 0; i < detectionRange; i++) {
                     double distMultiplier = 1.25 * (double) (i + 1);
                     this.spawnFangs(
-                            CustomEntityEvoker.this.locX() + MathHelper.cos(angleToGoalTarget) * distMultiplier,
-                            CustomEntityEvoker.this.locZ() + MathHelper.sin(angleToGoalTarget) * distMultiplier,
+                            CustomEntityEvoker.this.locX() + MathHelper.cos(angleToAttackTarget) * distMultiplier,
+                            CustomEntityEvoker.this.locZ() + MathHelper.sin(angleToAttackTarget) * distMultiplier,
                             lowerEntityY,
                             higherEntityY,
-                            angleToGoalTarget,
+                            angleToAttackTarget,
                             i);
                 }
             }
@@ -351,12 +344,10 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                         IBlockData blockData = CustomEntityEvoker.this.getWorld().getType(blockPos);
                         VoxelShape voxelShape = blockData.getCollisionShape(
                                 CustomEntityEvoker.this.getWorld(), blockPos);
-
                         if (!voxelShape.isEmpty()) {
                             yAddition = voxelShape.c(EnumDirection.EnumAxis.Y);
                         }
                     }
-
                     suitableYFound = true;
                     break;
                 }
@@ -426,14 +417,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        // `getSpellPrepareSound()` 
-        @Override
+        @Override // `getSpellPrepareSound()`
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_ATTACK;
         }
 
-        // `getSpellType()` 
-        @Override
+        @Override // `getSpellType()`
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.FANGS;
         }
@@ -486,8 +475,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             CustomEntityEvoker.this.setWololoTarget(null);
         }
 
-        // `castSpell()` 
-        @Override
+        @Override // `castSpell()`
         protected void j() {
             EntitySheep wololoTarget = CustomEntityEvoker.this.getWololoTarget();
 
@@ -505,32 +493,27 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        // `getSpellWarmupTime()` 
-        @Override
+        @Override // `getSpellWarmupTime()`
         protected int m() {
             return 40;
         }
 
-        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
-        @Override
+        @Override // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
         protected int g() {
             return 60;
         }
 
-        // `getSpellCooldown()` 
-        @Override
+        @Override // `getSpellCooldown()`
         protected int h() {
             return 140;
         }
 
-        // `getSpellPrepareSound()` 
-        @Override
+        @Override // `getSpellPrepareSound()`
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_WOLOLO;
         }
 
-        // `getSpellType()` 
-        @Override
+        @Override // `getSpellType()`
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.WOLOLO;
         }
@@ -600,8 +583,8 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         private final CustomEntityEvoker evoker;
         private final double speedTowardsTarget;
-        private BlockPosition blockPosTarget;
-        private final ArrayList<BlockPosition> blockPosPreviousTargets = new ArrayList<>();
+        private BlockPosition targetBlockPos;
+        private final ArrayList<BlockPosition> PreviousTargetsBlockPos = new ArrayList<>();
         private final int rememberTargetDist;
         private boolean cannotPathToTarget;
 
@@ -614,7 +597,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         @Override
         public boolean a() {
-            this.forgetReallyOldTargets();
+            this.prunePreviousTargetsMemory();
             return this.isRaidOngoing() && this.findTarget() && this.evoker.getGoalTarget() == null;
         }
 
@@ -625,8 +608,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
 
             return this.evoker.getGoalTarget() == null
-                    && !this.blockPosTarget.a( // `withinDistance()`; idk why it's negated but `this.rememberTargetDist = 1` anyway so ¯\_(ツ)_/¯
-                            this.evoker.getPositionVector(), this.evoker.getWidth() + (float) this.rememberTargetDist)
+                    // `a()` is `withinDistance()`; idk why it's negated but `this.rememberTargetDist = 1` anyway
+                    && !this.targetBlockPos.a(
+                            this.evoker.getPositionVector(), this.evoker.getWidth() + this.rememberTargetDist)
                     && !this.cannotPathToTarget;
         }
 
@@ -636,24 +620,24 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             this.evoker.n(0);              // `setIdleTime()`
             this.evoker.getNavigation().a( // `tryMoveToTarget()`
-                    this.blockPosTarget.getX(),
-                    this.blockPosTarget.getY(),
-                    this.blockPosTarget.getZ(),
+                    this.targetBlockPos.getX(),
+                    this.targetBlockPos.getY(),
+                    this.targetBlockPos.getZ(),
                     this.speedTowardsTarget);
             this.cannotPathToTarget = false;
         }
 
         @Override
         public void d() {
-            if (this.blockPosTarget.a(this.evoker.getPositionVector(), this.rememberTargetDist)) { // `withinDistance()`
-                this.blockPosPreviousTargets.add(this.blockPosTarget);
+            if (this.targetBlockPos.a(this.evoker.getPositionVector(), this.rememberTargetDist)) { // `withinDistance()`
+                this.PreviousTargetsBlockPos.add(this.targetBlockPos);
             }
         }
 
         @Override
         public void e() {
             if (this.evoker.getNavigation().m()) {                                                    // `noPath()`
-                Vec3D vec3d = Vec3D.c(this.blockPosTarget);
+                Vec3D vec3d = Vec3D.c(this.targetBlockPos);
                 Vec3D vec3d1 = RandomPositionGenerator.a(this.evoker, 16, 7, vec3d, 0.31415927);
 
                 if (vec3d1 == null) {
@@ -672,7 +656,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         private boolean findTarget() {
             WorldServer worldServer = (WorldServer) this.evoker.getWorld();
             BlockPosition blockPosEvoker = this.evoker.getChunkCoordinates();
-            Optional<BlockPosition> blockPosCandidateTarget = worldServer.x().a(
+            Optional<BlockPosition> candidateTargetBlockPos = worldServer.x().a(
                     (villagePlaceType) -> villagePlaceType == VillagePlaceType.r,
                     this::isNotAPreviousTarget,
                     VillagePlace.Occupancy.ANY,
@@ -680,23 +664,23 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     48,
                     this.evoker.getRandom());
 
-            if (!blockPosCandidateTarget.isPresent()) {
+            if (!candidateTargetBlockPos.isPresent()) {
                 return false;
             }
 
-            this.blockPosTarget = blockPosCandidateTarget.get().immutableCopy();
+            this.targetBlockPos = candidateTargetBlockPos.get().immutableCopy();
             return true;
         }
 
-        private void forgetReallyOldTargets() {
-            while (this.blockPosPreviousTargets.size() > 2) {
-                this.blockPosPreviousTargets.remove(0);
+        private void prunePreviousTargetsMemory() {
+            while (this.PreviousTargetsBlockPos.size() > 2) {
+                this.PreviousTargetsBlockPos.remove(0);
             }
         }
 
-        private boolean isNotAPreviousTarget(BlockPosition blockPosCandidateTarget) {
-            for (BlockPosition blockPos : this.blockPosPreviousTargets) {
-                if (Objects.equals(blockPosCandidateTarget, blockPos)) {
+        private boolean isNotAPreviousTarget(BlockPosition candidateTargetBlockPos) {
+            for (BlockPosition blockPos : this.PreviousTargetsBlockPos) {
+                if (Objects.equals(candidateTargetBlockPos, blockPos)) {
                     return false;
                 }
             }
@@ -711,12 +695,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     static class RunnableEvokerStopPlayer extends BukkitRunnable {
 
-        private final EntityLiving target;
+        private final LivingEntity bukkitTarget;
         private int cycleCount;
         private final int maxCycleCount;
 
         public RunnableEvokerStopPlayer(EntityLiving target, int maxCycleCount) {
-            this.target = target;
+            this.bukkitTarget = (LivingEntity) target.getBukkitEntity();
             this.cycleCount = 0;
             this.maxCycleCount = maxCycleCount;
         }
@@ -728,8 +712,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 return;
             }
 
-            LivingEntity bukkitEntity = (LivingEntity) target.getBukkitEntity();
-            bukkitEntity.setVelocity(new Vector(0.0, 0.0, 0.0));
+            this.bukkitTarget.setVelocity(new Vector(0.0, 0.0, 0.0));
         }
     }
 }

@@ -11,13 +11,13 @@ import java.util.Random;
 
 public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
 
-    public EntityInsentient entity;
+    public EntityInsentient goalOwner;
     private final double detectionRange, delayBeforeStarting, chancePerTick;
     private int teleportToPlayer;
     private static final Random random = new Random();
 
-    public CustomPathfinderGoalTeleportNearTarget(EntityInsentient entity, double initialDetectionRange, double delayBeforeStarting, double chancePerTick) {
-        this.entity = entity;
+    public CustomPathfinderGoalTeleportNearTarget(EntityInsentient goalOwner, double initialDetectionRange, double delayBeforeStarting, double chancePerTick) {
+        this.goalOwner = goalOwner;
         this.detectionRange = initialDetectionRange;
         this.delayBeforeStarting = delayBeforeStarting;
         this.chancePerTick = chancePerTick;
@@ -26,7 +26,7 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        return this.entity.getGoalTarget() == null;
+        return this.goalOwner.getGoalTarget() == null;
     }
 
     @Override
@@ -49,11 +49,11 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleport(double hypo) {
-        EntityHuman entityHuman = NmsUtil.getNearestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
+        EntityHuman entityHuman = NmsUtil.getNearestEntityFromList(this.goalOwner.getWorld().getPlayers(), null, this.goalOwner);
 
         if (entityHuman != null) {
-            BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(entityHuman.locX(), entityHuman.locY(), entityHuman.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
-            BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
+            BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(entityHuman.locX(), entityHuman.locY(), entityHuman.locZ()), hypo, this.goalOwner.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+            BlockPosition pos2 = this.goalOwner.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
             if (pos2 != null && pos2.getY() < 128.0) { // teleport to highest block if there is one in that location
                 this.teleportTo(pos2);
@@ -66,7 +66,7 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleportBreakBlocks(BlockPosition pos) {
-        Location bukkitLoc = new Location (this.entity.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        Location bukkitLoc = new Location (this.goalOwner.getWorld().getWorld(), pos.getX(), pos.getY(), pos.getZ());
         Block bukkitBlock;
         org.bukkit.Material bukkitMaterial;
 
@@ -96,28 +96,28 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     protected void teleportTo(BlockPosition pos) { // todo copy from enderman instead?
         BlockPosition.MutableBlockPosition blockPos_MutableBlockPosition = new BlockPosition.MutableBlockPosition(pos.getX(), pos.getY(), pos.getZ());
 
-        while (blockPos_MutableBlockPosition.getY() > 0 && !this.entity.getWorld().getType(blockPos_MutableBlockPosition).getMaterial().isSolid()) {
+        while (blockPos_MutableBlockPosition.getY() > 0 && !this.goalOwner.getWorld().getType(blockPos_MutableBlockPosition).getMaterial().isSolid()) {
             blockPos_MutableBlockPosition.c(EnumDirection.DOWN);
         }
 
-        IBlockData iblockdata = this.entity.getWorld().getType(blockPos_MutableBlockPosition);
+        IBlockData iblockdata = this.goalOwner.getWorld().getType(blockPos_MutableBlockPosition);
 
         if (iblockdata.getMaterial().isSolid()) {
-            if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.entity.isSilent()) {
-                this.entity.getWorld().playSound(null, this.entity.lastX, this.entity.lastY, this.entity.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
-                this.entity.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            if (this.teleportHelper(pos.getX(), pos.getY(), pos.getZ(), true) && !this.goalOwner.isSilent()) {
+                this.goalOwner.getWorld().playSound(null, this.goalOwner.lastX, this.goalOwner.lastY, this.goalOwner.lastZ, SoundEffects.ENTITY_ENDERMAN_TELEPORT, this.goalOwner.getSoundCategory(), 1.0F, 1.0F);
+                this.goalOwner.playSound(SoundEffects.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
         }
     }
 
     protected boolean teleportHelper(double d0, double d1, double d2, boolean flag) { // called a() in original living entity/whatever class
-        double d3 = this.entity.locX();
-        double d4 = this.entity.locY();
-        double d5 = this.entity.locZ();
+        double d3 = this.goalOwner.locX();
+        double d4 = this.goalOwner.locY();
+        double d5 = this.goalOwner.locZ();
         double d6 = d1;
         boolean flag1 = false;
         BlockPosition blockPos = new BlockPosition(d0, d1, d2);
-        World world = this.entity.getWorld();
+        World world = this.goalOwner.getWorld();
 
         if (world.isLoaded(blockPos)) {
             boolean flag2 = false;
@@ -135,23 +135,23 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
             }
 
             if (flag2) {
-                this.entity.enderTeleportTo(d0, d6, d2);
-                if (world.getCubes(this.entity)) { /* can teleport onto fluids */
+                this.goalOwner.enderTeleportTo(d0, d6, d2);
+                if (world.getCubes(this.goalOwner)) { /* can teleport onto fluids */
                     flag1 = true;
                 }
             }
         }
 
         if (!flag1) {
-            this.entity.enderTeleportTo(d3, d4, d5);
+            this.goalOwner.enderTeleportTo(d3, d4, d5);
             return false;
         } else {
             if (flag) {
-                world.broadcastEntityEffect(this.entity, (byte) 46);
+                world.broadcastEntityEffect(this.goalOwner, (byte) 46);
             }
 
-            if (this.entity instanceof EntityCreature) {
-                this.entity.getNavigation().o();
+            if (this.goalOwner instanceof EntityCreature) {
+                this.goalOwner.getNavigation().o();
             }
 
             return true;

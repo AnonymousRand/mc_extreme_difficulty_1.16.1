@@ -111,7 +111,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     public void increaseAttacks(int increase) {
-        this.attackLevelingController.increaseAttacks(increase);
+        this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
         /* Every attack, iron golems increase their stats by a bit */
         this.increaseStatsAdd(2.0, 0.5, 0.025);
     }

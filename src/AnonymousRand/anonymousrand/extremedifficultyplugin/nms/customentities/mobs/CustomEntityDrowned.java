@@ -118,7 +118,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacksAndCheckThreshs(increase);
 
         for (int metThresh : metThreshs) {
             if (metThresh == attackThreshs[0]) {
