@@ -5,6 +5,7 @@ comment syntax update
 line lengths
 space after cast
 TODO plural reference to mob changes
+TODO periods in all /**/ comments (same as javadoc)
 big comment separator for inner classes
 move instance variables to appropriate interface sections
 private instead of protected where possible
@@ -49,11 +50,11 @@ mobs when hit by a player further than detection range/cant see: they teleport t
 
 when addign random + constant always have constant first?
 
-is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not goal target
+is teleportneartarget really needed? just have y level teleport always? and make y level teleport to nearest player horizontally, not attack target
 
 hurtbytarget rename to hurtbyplayer? otherwise target class must be passed in
 
-piglin frenzy when you open chest; make frenzy have explosive effects and set goal target if possible
+piglin frenzy when you open chest; make frenzy have explosive effects and set attack target if possible
 
 make sure vec3d is mot_/direction_ and not vec+ or whatever; and make sure x/y/z are accessed via getters
 
@@ -153,9 +154,7 @@ rhs side of euqals red customentitycreeper explode()
 
 investigate why we need to remove goals, particularly nearestattackabletarget. e.g. zombie remoive vanilla villager aggro?
 
-all function comments + @override: comments on top?
-
-remove D for nunmber literals doubles, and fix floating point rounding errors
+all function comments + @override: comments on top
 
 check what happens when you dont allow friendly fire in custompathfindertargetcondition for bat and evoker
 
@@ -194,8 +193,6 @@ allow only one lightning effect storm and one tornado at a time with static vari
 convert num* to *count
     convert max* to *countmax?
 
-comment formatting: top-level (outside methods): multiline too. javadoc in the case of utils
-
 merge lightningeffectstorm and lightningstorm runnable with config for percentage actual lightning
 
 try to copy spider code for moving fast in cobwebs?
@@ -215,6 +212,8 @@ where do player projectiles fall faster? seems to be impacting drowned tridents?
 change TagsBlock.ENDERMAN_HOLDABLE blocks??? like end stone for example
 
 comment/javadoc custom goals functions, including inner classes. see customentityblaze inner class for example
+
+comment and javadoc order: which one first? see blockoverride
 
 attacks comments/docs all into initattack method instead of increase attacks?
 

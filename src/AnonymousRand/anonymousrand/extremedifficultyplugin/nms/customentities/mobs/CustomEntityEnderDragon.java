@@ -55,7 +55,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         this.targetSelector.a(1, new CustomEntityEnderDragon.PathfinderGoalNearestAttackableTarget(this, EntityPlayer.class)); /* Ignores y-level, line of sight, and invis/skulls to initially find a target or maintain it as the target (for the custom fireball goal) */
     }
 
-    @Override /* `onCrystalDestroyed()` */
+    @Override // `onCrystalDestroyed()` 
     public void a(EntityEnderCrystal enderCrystal, BlockPosition blockPos, DamageSource damageSource) {
         super.a(enderCrystal, blockPos, damageSource);
 
@@ -116,7 +116,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalFireball extends PathfinderGoal {
@@ -201,7 +201,7 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
                 }
 
                 double x = entity.locX() - this.enderDragon.locX();
-                double y = entity.e(0.5D) - this.enderDragon.e(0.5D);
+                double y = entity.e(0.5) - this.enderDragon.e(0.5);
                 double z = entity.locZ() - this.enderDragon.locZ();
 
                 /* 68% chance to shoot a custom normal fireball, 20% chance to shoot a power 2 ghast fireball,
@@ -236,29 +236,29 @@ public class CustomEntityEnderDragon extends EntityEnderDragon implements ICusto
         private final World nmsWorld;
         private final Entity targetEntity;
         private int cycleCount;
-        private final int cycleCountMax;
+        private final int maxCycleCount;
 
-        public RunnableDragonRapidShootFireballs(CustomEntityEnderDragon enderDragon, Entity target, int cycleCountMax) {
+        public RunnableDragonRapidShootFireballs(CustomEntityEnderDragon enderDragon, Entity target, int maxCycleCount) {
             this.enderDragon = enderDragon;
             this.nmsWorld = enderDragon.getWorld();
             this.targetEntity = target;
             this.cycleCount = 0;
-            this.cycleCountMax = cycleCountMax;
+            this.maxCycleCount = maxCycleCount;
         }
 
         @Override
         public void run() {
             this.cycleCount++;
-            if (this.cycleCount > this.cycleCountMax) {
+            if (this.cycleCount > this.maxCycleCount) {
                 this.cancel();
                 return;
             }
 
             double x = this.targetEntity.locX() - this.enderDragon.locX();
-            double y = this.targetEntity.e(0.5D) - this.enderDragon.e(0.5D);
+            double y = this.targetEntity.e(0.5) - this.enderDragon.e(0.5);
             double z = this.targetEntity.locZ() - this.enderDragon.locZ();
 
-            if (this.cycleCount == 1 || this.cycleCount == this.cycleCountMax) {
+            if (this.cycleCount == 1 || this.cycleCount == this.maxCycleCount) {
                 CustomEntityDragonFireballSuper newFireballSuper =
                         new CustomEntityDragonFireballSuper(this.nmsWorld, this.enderDragon, x, y, z, false);
                 newFireballSuper.setPosition(this.enderDragon.locX(), this.enderDragon.locY(), this.enderDragon.locZ());

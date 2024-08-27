@@ -12,7 +12,6 @@ import java.util.EnumSet;
  *
  * @param <T>
  */
-
 public abstract class CustomPathfinderGoalAttackMvmt<T extends EntityInsentient> extends PathfinderGoal {
 
     protected final T goalOwner;
@@ -49,14 +48,14 @@ public abstract class CustomPathfinderGoalAttackMvmt<T extends EntityInsentient>
 
     @Override
     public void e() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget == null) {
             return;
         }
 
         this.remainingCooldownRepath--;
 
-        this.goalOwner.getControllerLook().a(goalTarget, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
+        this.goalOwner.getControllerLook().a(attackTarget, 30.0F, 30.0F); // setLookPositionWithEntity(); faces target
     }
 
     public void setSpeedTowardsTarget(double speedTowardsTarget) {

@@ -40,27 +40,27 @@ public abstract class CustomPathfinderGoalTarget<T extends EntityInsentient & IC
         this.ignoreY = ignoreY;
     }
 
-    @Override /* `shouldExecute()` */
+    @Override // `shouldExecute()` 
     public boolean a() {
         this.candidateTarget = this.findNearestCandidateTarget(true);
         return this.targetCondition.test(this.goalOwner, this.candidateTarget);
     }
 
-    @Override /* `shouldContinueExecuting()` */
+    @Override // `shouldContinueExecuting()` 
     public boolean b() {
         /* Mobs, even those not ignoring line of sight, will no longer lose targets by breaking line of sight. Thus, the
            only ways to shake off a mob without dying is to leave its range or have it retarget to a nearer option. */
         return this.targetConditionIgnoreLOS.test(this.goalOwner, this.goalOwner.getGoalTarget());
     }
 
-    @Override /* `startExecuting()` */
+    @Override // `startExecuting()` 
     public void c() {
         this.goalOwner.setGoalTarget(this.candidateTarget, this.getTargetReason(this.candidateTarget), true);
         // automatically make sure target range is updated for predicate for those mobs that change their detection range // todo test eventually
         this.targetCondition.setDetectionRange(this.getDetectionRange());
     }
 
-    @Override /* `resetTask()` */
+    @Override // `resetTask()` 
     public void d() {
         this.goalOwner.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
     }

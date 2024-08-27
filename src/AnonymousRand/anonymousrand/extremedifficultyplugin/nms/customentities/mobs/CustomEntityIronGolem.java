@@ -121,7 +121,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Other custom functions
+    // Other Custom Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void increaseStatsAdd(double healthIncrease, double damageIncrease, double speedIncrease) {
@@ -148,7 +148,7 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -160,9 +160,9 @@ public class CustomEntityIronGolem extends EntityIronGolem implements ICustomHos
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 40, 2, 1, 2, 1, true)); /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(1, new CustomPathfinderGoalAttackMelee<>(this)); /* uses the custom melee attack goal that attacks regardless of the y-level */
         this.goalSelector.a(1, new CustomPathfinderGoalAttackMvmtMelee<>(this));
-        this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9D, 32.0F));
-        this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D, false));
-        this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6D));
+        this.goalSelector.a(2, new PathfinderGoalMoveTowardsTarget(this, 0.9, 32.0F));
+        this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6, false));
+        this.goalSelector.a(4, new PathfinderGoalStrollVillageGolem(this, 0.6));
         this.goalSelector.a(5, new PathfinderGoalOfferFlower(this));
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));

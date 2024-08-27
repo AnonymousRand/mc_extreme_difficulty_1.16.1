@@ -144,7 +144,7 @@ public class CustomEntityVex extends EntityVex implements ICustomHostile, IAttac
             this.world.getEntities(this, this.getBoundingBox().grow(32.0, 128.0, 32.0), entity -> (entity instanceof CustomEntityVex || entity instanceof EntityEvoker)).forEach(entity -> ((EntityLiving) entity).setHealth(11.0F));
         }
 
-        if (this.attacks >= 60 && !this.a60) { /* after 60 attacks, vexes teleport ASAP to their goal target, explode and die */
+        if (this.attacks >= 60 && !this.a60) { /* after 60 attacks, vexes teleport ASAP to their attack target, explode and die */
             if (this.getGoalTarget() != null) {
                 this.a60 = true;
                 this.setPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(), this.getGoalTarget().locZ());

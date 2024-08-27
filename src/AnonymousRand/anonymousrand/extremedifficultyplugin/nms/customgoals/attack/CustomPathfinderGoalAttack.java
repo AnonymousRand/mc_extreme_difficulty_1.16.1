@@ -46,27 +46,27 @@ public abstract class CustomPathfinderGoalAttack<T extends EntityInsentient & IC
 
     @Override
     public void e() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget == null) {
             return;
         }
 
         this.remainingCooldownAttack--;
         if (this.remainingCooldownAttack <= 0) {
-            if (this.checkAttack(goalTarget)) {
+            if (this.checkAttack(attackTarget)) {
                 // only reset cooldown if attack was successful
                 this.remainingCooldownAttack = this.attackCooldown;
                 // this.goalOwner.increaseAttacks(1); // todo uncomment eventually
-                this.attack(goalTarget);
+                this.attack(attackTarget);
             }
         }
     }
 
-    protected boolean checkAttack(EntityLiving goalTarget) {
+    protected boolean checkAttack(EntityLiving attackTarget) {
         return true;
     }
 
-    protected abstract void attack(EntityLiving goalTarget);
+    protected abstract void attack(EntityLiving attackTarget);
 
     public void setAttackCooldown(int attackCooldown) {
         this.attackCooldown = attackCooldown;

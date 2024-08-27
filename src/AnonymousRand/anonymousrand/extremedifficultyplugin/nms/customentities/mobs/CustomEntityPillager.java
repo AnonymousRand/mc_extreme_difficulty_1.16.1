@@ -54,12 +54,12 @@ public class CustomEntityPillager extends EntityPillager implements ICustomHosti
     }
 
     @Override
-    public void a(EntityLiving goalTarget, float distFactor) { // shoot()
+    public void a(EntityLiving attackTarget, float distFactor) { // shoot()
         if (++this.attackNum % 12 == 0) { // attacks only count every ~2 seconds, or 12 shots
             this.attacks++;
         }
 
-        new RunnableMobShootArrows(this, goalTarget, 1, this.attackNum % 18 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 1.0 : 0.075) ? 1 : 0, false, true).run(); /* shoots a knockback arrow every 18th attack; 7.5% of arrows shot are piercing 1 (100% for knockback arrow); arrows do not lose y-level */
+        new RunnableMobShootArrows(this, attackTarget, 1, this.attackNum % 18 == 0 ? 6 : 1, 3.0, random.nextDouble() < (this.attackNum % 24 == 0 ? 1.0 : 0.075) ? 1 : 0, false, true).run(); /* shoots a knockback arrow every 18th attack; 7.5% of arrows shot are piercing 1 (100% for knockback arrow); arrows do not lose y-level */
     }
 
     public double getDetectionRange() { /* pillagers have 24 block detection range */

@@ -16,7 +16,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
     private final boolean onFire, noGravity;
     private final World nmsWorld;
     private int cycleCount;
-    private final int cycleCountMax;
+    private final int maxCycleCount;
     private static final Random random = new Random();
 
     public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity) {
@@ -30,10 +30,10 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.noGravity = noGravity;
         this.nmsWorld = entity.getWorld();
         this.cycleCount = 0;
-        this.cycleCountMax = 1;
+        this.maxCycleCount = 1;
     }
 
-    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int cycleCountMax) {
+    public RunnableMobShootArrows(EntityInsentient entity, EntityLiving target, int numOfArrows, int arrowType, double inaccuracy, int pierce, boolean onFire, boolean noGravity, int maxCycleCount) {
         this.entity = entity;
         this.target = target;
         this.numOfArrows = numOfArrows;
@@ -44,13 +44,13 @@ public class RunnableMobShootArrows extends BukkitRunnable {
         this.noGravity = noGravity;
         this.nmsWorld = entity.getWorld();
         this.cycleCount = 0;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
     }
 
     @Override
     public void run() {
         this.cycleCount++;
-        if (this.cycleCount > this.cycleCountMax) {
+        if (this.cycleCount > this.maxCycleCount) {
             this.cancel();
             return;
         }
@@ -78,7 +78,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
             entityArrow.setPosition(this.entity.locX(), this.entity.locY() + 1.5, this.entity.locZ());
             entityArrow.setPierceLevel((byte)this.pierce);
             double d0 = this.target.locX() - this.entity.locX();
-            double d1 = this.target.e(0.3333333333333333D) - entityArrow.locY();
+            double d1 = this.target.e(0.3333333333333333) - entityArrow.locY();
             double d2 = this.target.locZ() - this.entity.locZ();
             double d3 = this.noGravity ? 0.0 : MathHelper.sqrt(d0 * d0 + d2 * d2); // this adjusts arrow height for distance
 
@@ -90,7 +90,7 @@ public class RunnableMobShootArrows extends BukkitRunnable {
                 entityArrow.setNoGravity(true);
             }
 
-            entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float) (this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /* mob-spawning arrows have no inaccuracy */
+            entityArrow.shoot(d0, d1 + d3 * 0.2, d2, 1.6F, (this.arrowType == 3 || this.inaccuracy == 0.0) ? 0.0F : (float) (this.inaccuracy - this.nmsWorld.getDifficulty().a() * 4)); /* mob-spawning arrows have no inaccuracy */
 
             if (this.entity instanceof CustomEntityIllusioner || this.entity instanceof CustomEntityPiglin || this.entity instanceof CustomEntityPillager || this.entity instanceof CustomEntitySkeleton || this.entity instanceof CustomEntitySkeletonStray) {
                 entityArrow.setDamage(1.5); /* illusioners, piglins, pillagers, skeletons and strays always do 3 damage with arrows and distance does not play a factor in determining damage */

@@ -127,19 +127,19 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 12 attacks, endermen gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 25 attacks, endermen get 40 max health and regen 3 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(40.0);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
                 this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); // update follow range
-            } else if (threshMet == attackThreshs[2]) {
+            } else if (metThresh == attackThreshs[2]) {
                 /* After 40 attacks, endermen summon 5 endermites */
                 new SpawnEntity(this.world, new CustomEntityEndermite(this.world), 5, null, null, this, false, true);
             }
@@ -151,7 +151,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Other custom functions
+    // Other Custom Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public boolean hasBeenLookedAt() {
@@ -163,7 +163,7 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -209,17 +209,17 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
 
         double dotProd = playerLookDirection.b(directionToPlayer);
         /* Endermen no longer need line of sight to aggro by sight (i.e. can be aggroed through blocks) */
-        return dotProd > 1.0 - 0.025D / directionToPlayerMagnitude;
+        return dotProd > 1.0 - 0.025 / directionToPlayerMagnitude;
     }
 
-    @Override /* `teleportRandomly()` */
+    @Override // `teleportRandomly()` 
     protected boolean eM() {
         if (!this.world.isClientSide && this.isAlive()) {
             /* Random teleportation range decreased to 10 blocks in each direction so that
                if it somehow teleports away it is likely still in range of the player */
-            double x = this.locX() + (random.nextDouble() - 0.5D) * 20.0D;
+            double x = this.locX() + (random.nextDouble() - 0.5) * 20.0;
             double y = this.locY() + random.nextInt(10);
-            double z = this.locZ() + (random.nextDouble() - 0.5D) * 20.0D;
+            double z = this.locZ() + (random.nextDouble() - 0.5) * 20.0;
 
             boolean teleportSuccess = this.teleportTo(x, y, z);
             return teleportSuccess;
@@ -311,21 +311,21 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
         super.tick();
         
         if (this.getGoalTarget() != null) {
-            EntityLiving goalTarget = this.getGoalTarget();
+            EntityLiving attackTarget = this.getGoalTarget();
 
             /* Endermen have a chance to teleport to target if target do not have line of sight or is on a different
                y-level. In the latter case, there is a higher chance the closer horizontally the player is (and thus
                the more likely they are towering). */
-            if ((!this.getEntitySenses().a(goalTarget) && this.random.nextDouble() < 0.01)
-                    || (Math.abs(this.locY() - goalTarget.locY()) >= 2.0 && this.random.nextDouble()
-                        < 0.05 / Math.max(NmsUtil.distSq(this, goalTarget, true), 0.05))) {
-                this.teleportTo(goalTarget);
+            if ((!this.getEntitySenses().a(attackTarget) && this.random.nextDouble() < 0.01)
+                    || (Math.abs(this.locY() - attackTarget.locY()) >= 2.0 && this.random.nextDouble()
+                        < 0.05 / Math.max(NmsUtil.distSq(this, attackTarget, true), 0.05))) {
+                this.teleportTo(attackTarget);
             }
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalPlayerWhoLookedAtTarget
@@ -346,9 +346,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             if (this.goalOwner.getRandom().nextDouble() < 0.1
                     && this.goalOwner.getMinecraftServer().getPlayerList() != null) {
                 for (UUID targetUUID : this.previousTargetUUIDs) {
-                    EntityPlayer goalTarget = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
-                    if (this.targetAgainCondition.test(this.goalOwner, goalTarget)) {
-                        this.candidateTarget = goalTarget;
+                    EntityPlayer attackTarget = this.goalOwner.getMinecraftServer().getPlayerList().getPlayer(targetUUID);
+                    if (this.targetAgainCondition.test(this.goalOwner, attackTarget)) {
+                        this.candidateTarget = attackTarget;
                         return true;
                     }
                 }
@@ -444,17 +444,17 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             Random random = this.enderman.getRandom();
             World world = this.enderman.getWorld();
 
-            int x = MathHelper.floor(this.enderman.locX() - 2.0D + random.nextDouble() * 4.0D);
-            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 3.0D);
-            int z = MathHelper.floor(this.enderman.locZ() - 2.0D + random.nextDouble() * 4.0D);
+            int x = MathHelper.floor(this.enderman.locX() - 2.0 + random.nextDouble() * 4.0);
+            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 3.0);
+            int z = MathHelper.floor(this.enderman.locZ() - 2.0 + random.nextDouble() * 4.0);
             BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
             IBlockData targetBlockData = world.getType(targetBlockPosition);
             Block targetBlock = targetBlockData.getBlock();
 
             Vec3D idk1 =
-                    new Vec3D((double) MathHelper.floor(this.enderman.locX()) + 0.5D, (double) y + 0.5D,
-                    (double) MathHelper.floor(this.enderman.locZ()) + 0.5D);
-            Vec3D idk2 = new Vec3D((double) x + 0.5D, (double) y + 0.5D, (double) z + 0.5D);
+                    new Vec3D((double) MathHelper.floor(this.enderman.locX()) + 0.5, (double) y + 0.5,
+                    (double) MathHelper.floor(this.enderman.locZ()) + 0.5);
+            Vec3D idk2 = new Vec3D((double) x + 0.5, (double) y + 0.5, (double) z + 0.5);
             MovingObjectPositionBlock movingObjectPositionBlock =
                     world.rayTrace(new RayTrace(idk1, idk2, RayTrace.BlockCollisionOption.OUTLINE,
                     RayTrace.FluidCollisionOption.NONE, this.enderman));
@@ -488,9 +488,9 @@ public class CustomEntityEnderman extends EntityEnderman implements ICustomHosti
             Random random = this.enderman.getRandom();
             World world = this.enderman.getWorld();
 
-            int x = MathHelper.floor(this.enderman.locX() - 1.0 + random.nextDouble() * 2.0D);
-            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 2.0D);
-            int z = MathHelper.floor(this.enderman.locZ() - 1.0 + random.nextDouble() * 2.0D);
+            int x = MathHelper.floor(this.enderman.locX() - 1.0 + random.nextDouble() * 2.0);
+            int y = MathHelper.floor(this.enderman.locY() + random.nextDouble() * 2.0);
+            int z = MathHelper.floor(this.enderman.locZ() - 1.0 + random.nextDouble() * 2.0);
             BlockPosition targetBlockPosition = new BlockPosition(x, y, z);
             IBlockData targetBlockData = world.getType(targetBlockPosition);
             BlockPosition targetBlockPositionBelow = targetBlockPosition.down();

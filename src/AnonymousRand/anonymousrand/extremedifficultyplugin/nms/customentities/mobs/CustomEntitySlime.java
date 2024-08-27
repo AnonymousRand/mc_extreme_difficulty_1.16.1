@@ -85,7 +85,7 @@ public class CustomEntitySlime extends EntitySlime implements ICustomHostile, IA
                     entitySlime.setNoAI(flag);
                     entitySlime.setInvulnerable(this.isInvulnerable());
                     entitySlime.setSize(j, true);
-                    entitySlime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5D, this.locZ() + (double) f2, random.nextFloat() * 360.0F, 0.0F);
+                    entitySlime.setPositionRotation(this.locX() + (double) f1, this.locY() + 0.5, this.locZ() + (double) f2, random.nextFloat() * 360.0F, 0.0F);
                     this.world.addEntity(entitySlime, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
                 }
             }

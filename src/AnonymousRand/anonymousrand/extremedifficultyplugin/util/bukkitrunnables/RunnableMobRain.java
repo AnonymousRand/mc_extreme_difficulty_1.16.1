@@ -22,7 +22,7 @@ public class RunnableMobRain extends BukkitRunnable {
     private final double radius;
     private final int wave;
     private int cycleCount;
-    private final int cycleCountMax;
+    private final int maxCycleCount;
     public HashMap<Integer, ArrayList<EntityLiving>> entitiesToSpawn = new HashMap<>();
     private final BlockPosition originPos;
     private static final Random random = new Random();
@@ -35,7 +35,7 @@ public class RunnableMobRain extends BukkitRunnable {
         this.radius = radius;
         this.wave = wave;
         this.cycleCount = 0;
-        this.cycleCountMax = wave == 1 ? 100 : 12;
+        this.maxCycleCount = wave == 1 ? 100 : 12;
         this.originPos = new BlockPosition(entity.locX(), entity.locY(), entity.locZ());
         this.initMobRainArrayLists(this.nmsWorld);
     }
@@ -49,13 +49,13 @@ public class RunnableMobRain extends BukkitRunnable {
         this.radius = radius;
         this.wave = wave;
         this.cycleCount = 0;
-        this.cycleCountMax = wave == 1 ? 100 : 12;
+        this.maxCycleCount = wave == 1 ? 100 : 12;
         this.initMobRainArrayLists(this.nmsWorld);
     }
 
     @Override
     public void run() {
-        if (++this.cycleCount > this.cycleCountMax) {
+        if (++this.cycleCount > this.maxCycleCount) {
             this.cancel();
             return;
         }

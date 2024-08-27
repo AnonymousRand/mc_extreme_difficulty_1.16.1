@@ -150,7 +150,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
             this.setPosition(d0, d1, d2);
             this.setYawPitch(this.yaw, this.pitch);
         } else if (!this.doAITick()) {
-            this.setMot(this.getMot().a(0.98D));
+            this.setMot(this.getMot().a(0.98));
         }
 
         if (this.bi > 0) {
@@ -163,16 +163,16 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
         double d5 = vec3d.y;
         double d6 = vec3d.z;
 
-        if (Math.abs(vec3d.x) < 0.003D) {
-            d4 = 0.0D;
+        if (Math.abs(vec3d.x) < 0.003) {
+            d4 = 0.0;
         }
 
-        if (Math.abs(vec3d.y) < 0.003D) {
-            d5 = 0.0D;
+        if (Math.abs(vec3d.y) < 0.003) {
+            d5 = 0.0;
         }
 
-        if (Math.abs(vec3d.z) < 0.003D) {
-            d6 = 0.0D;
+        if (Math.abs(vec3d.z) < 0.003) {
+            d6 = 0.0;
         }
 
         this.setMot(d4, d5, d6);
@@ -198,7 +198,7 @@ public class CustomEntityPufferfish extends EntityPufferFish implements ICustomH
                 d7 = this.b(TagsFluid.WATER);
             }
 
-            boolean flag = this.isInWater() && d7 > 0.0D;
+            boolean flag = this.isInWater() && d7 > 0.0;
             double d8 = this.cw();
 
             if (flag && (!this.onGround || d7 > d8)) {

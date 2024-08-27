@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-// All the line of sight/y-level checking vanillaly in the melee/ranged attack goals has been moved here
-// so those goals only have to deal with, well, attack
+// all the line of sight/y-level checking in the melee/ranged attack goals has been moved here so those goals only have
+// to deal with, well, attack
 public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         T extends EntityInsentient & ICustomHostile> extends CustomPathfinderGoalTarget<T> {
 
@@ -59,8 +59,8 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
         return super.a();
     }
 
-    /* Overridden to periodically change target to the nearest one (including y) to prevent strats like
-     * one player leading mobs away from another at build height, taking advantage of `ignoreY = true` */
+    // overridden to periodically change target to the nearest one (including y) to prevent strats like
+    // one player leading mobs away from another at build height, taking advantage of `ignoreY = true`
     // todo test with offline multimc 2 player? also test if this overrides hurtby/enderman look etc
     @Override
     public boolean b() {
@@ -68,11 +68,11 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
             return false;
         }
 
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (this.goalOwner.getRandom().nextDouble() < 0.025 && goalTarget != null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (this.goalOwner.getRandom().nextDouble() < 0.025 && attackTarget != null) {
             S nearestCandidateTarget = this.findNearestCandidateTarget(false);
             if (nearestCandidateTarget != null
-                    && nearestCandidateTarget.getUniqueID() != goalTarget.getUniqueID()) {
+                    && nearestCandidateTarget.getUniqueID() != attackTarget.getUniqueID()) {
                 this.goalOwner.setGoalTarget(nearestCandidateTarget);
             }
         }
@@ -95,7 +95,7 @@ public class CustomPathfinderGoalNearestAttackableTarget<S extends EntityLiving,
                     this.goalOwner);
         } else {
             return NmsUtil.getNearestEntityInRange(this.targetClass, targetCondition, this.goalOwner,
-                    this.getDetectionRange(), 4.0D, this.getDetectionRange());
+                    this.getDetectionRange(), 4.0, this.getDetectionRange());
         }
     }
 

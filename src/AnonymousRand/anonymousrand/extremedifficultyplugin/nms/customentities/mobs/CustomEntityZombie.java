@@ -77,18 +77,18 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
             return false;
         }
 
-        EntityLiving goalTarget = this.getGoalTarget();
+        EntityLiving attackTarget = this.getGoalTarget();
 
-        if (goalTarget == null) {
-            goalTarget = (EntityLiving) damageSource.getEntity();
+        if (attackTarget == null) {
+            attackTarget = (EntityLiving) damageSource.getEntity();
         }
 
-        if (!(goalTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
+        if (!(attackTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
             return true;
         }
 
         if (this.attacks >= 30) { /* after 30 attacks, zombies summon vanilla lightning on the player when it is hit */
-            this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), goalTarget.locX(), goalTarget.locY(), goalTarget.locZ()));
+            this.world.getWorld().strikeLightning(new Location(this.world.getWorld(), attackTarget.locX(), attackTarget.locY(), attackTarget.locZ()));
         }
 
         if ((double) random.nextDouble() < this.b(GenericAttributes.SPAWN_REINFORCEMENTS)) { /* zombies can now spawn reinforcements on any difficulty */
@@ -107,7 +107,7 @@ public class CustomEntityZombie extends EntityZombie implements ICustomHostile, 
 
                 if (SpawnerCreature.a(entityPositionTypes_Surface, this.world, blockPos, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPos, this.world.random)) {
                     newZombie.setPosition(i1, j1, k1);
-                    if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
+                    if (!this.world.isPlayerNearby(i1, j1, k1, 7.0) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
                         this.world.addEntity(newZombie);
                         newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                         this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies and their summoned reinforcement experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement */

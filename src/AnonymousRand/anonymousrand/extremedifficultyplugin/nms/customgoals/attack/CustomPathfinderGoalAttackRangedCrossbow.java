@@ -29,8 +29,8 @@ public class CustomPathfinderGoalAttackRangedCrossbow<T extends EntityInsentient
 
     @Override
     public void e() {
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget == null) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class CustomPathfinderGoalAttackRangedCrossbow<T extends EntityInsentient
     }
 
     @Override
-    protected void attack(EntityLiving goalTarget) {
-        this.goalOwner.a(goalTarget, 1.0F); // shoot()
+    protected void attack(EntityLiving attackTarget) {
+        this.goalOwner.a(attackTarget, 1.0F); // shoot()
     }
 }

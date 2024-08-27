@@ -50,13 +50,13 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
             return false;
         }
 
-        EntityLiving goalTarget = this.getGoalTarget();
+        EntityLiving attackTarget = this.getGoalTarget();
 
-        if (goalTarget == null) {
-            goalTarget = (EntityLiving) damageSource.getEntity();
+        if (attackTarget == null) {
+            attackTarget = (EntityLiving) damageSource.getEntity();
         }
 
-        if (!(goalTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
+        if (!(attackTarget instanceof EntityPlayer)) { /* only player damage can trigger reinforcement spawning */
             return true;
         }
 
@@ -77,7 +77,7 @@ public class CustomEntityZombieSuper extends EntityZombie implements ICustomHost
 
                     if (SpawnerCreature.a(entityPositiontypes_surface, this.world, blockPos, entityTypes) && EntityPositionTypes.a(entityTypes, this.world, EnumMobSpawn.REINFORCEMENT, blockPos, this.world.random)) {
                         newZombie.setPosition(i1, j1, k1);
-                        if (!this.world.isPlayerNearby(i1, j1, k1, 7.0D) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
+                        if (!this.world.isPlayerNearby(i1, j1, k1, 7.0) && this.world.i(newZombie) && this.world.getCubes(newZombie) && !this.world.containsLiquid(newZombie.getBoundingBox())) {
                             this.world.addEntity(newZombie);
                             newZombie.prepare(this.world, this.world.getDamageScaler(newZombie.getChunkCoordinates()), EnumMobSpawn.REINFORCEMENT, null, null);
                             this.getAttributeInstance(GenericAttributes.SPAWN_REINFORCEMENTS).addModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.125, AttributeModifier.Operation.ADDITION)); /* zombies experience a 12.5% decrease in reinforcement summon chance instead of 5% if summoned reinforcements or was summoned as reinforcement (15% after 7 attacks) */

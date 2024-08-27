@@ -18,7 +18,7 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -31,8 +31,8 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
     }
 
     @Override
-    public EnumInteractionResult b(EntityHuman human, EnumHand enumhand) {
-        ItemStack heldItem = human.b(enumhand);
+    public EnumInteractionResult b(EntityHuman entityHuman, EnumHand enumhand) {
+        ItemStack heldItem = entityHuman.b(enumhand);
 
         if ((heldItem.getItem() == Items.BOWL && !this.isBaby()) || (heldItem.getItem() == Items.SHEARS && this.canShear())) {
             /* mooshrooms explode when they are milked/sheared */
@@ -40,6 +40,6 @@ public class CustomEntityMushroomCow extends EntityMushroomCow {
             this.die();
         }
 
-        return super.b(human, enumhand);
+        return super.b(entityHuman, enumhand);
     }
 }

@@ -16,13 +16,13 @@ public class CustomEntityTNTPrimed extends EntityTNTPrimed {
     @Override
     public void tick() {
         if (!this.isNoGravity()) {
-            this.setMot(this.getMot().add(0.0D, -0.04D, 0.0D));
+            this.setMot(this.getMot().add(0.0, -0.04, 0.0));
         }
 
         this.move(EnumMoveType.SELF, this.getMot());
-        this.setMot(this.getMot().a(0.98D));
+        this.setMot(this.getMot().a(0.98));
         if (this.onGround) {
-            this.setMot(this.getMot().d(0.7D, -0.5D, 0.7D));
+            this.setMot(this.getMot().d(0.7, -0.5, 0.7));
         }
 
         this.setFuseTicks(this.getFuseTicks() - 1);
@@ -34,12 +34,12 @@ public class CustomEntityTNTPrimed extends EntityTNTPrimed {
         } else {
             this.aG();
             if (this.world.isClientSide) {
-                this.world.addParticle(Particles.SMOKE, this.locX(), this.locY() + 0.5D, this.locZ(), 0.0D, 0.0D, 0.0D);
+                this.world.addParticle(Particles.SMOKE, this.locX(), this.locY() + 0.5, this.locZ(), 0.0, 0.0, 0.0);
             }
         }
     }
 
     private void explode() {
-        this.world.explode(this, this.locX(), this.e(0.0625D), this.locZ(), this.explosionPower, Explosion.Effect.BREAK);
+        this.world.explode(this, this.locX(), this.e(0.0625), this.locZ(), this.explosionPower, Explosion.Effect.BREAK);
     }
 }

@@ -24,7 +24,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
      * as well as for retaliating against players. Line of sight is also ignored for melee attack pathfinding. */
     private static final boolean IGNORE_LOS = true;
     private static final boolean IGNORE_Y = false; // to reduce lag; detection range is so huge already
-    private boolean hasSpawnDeathFireballs;
+    private boolean hasSpawnedDeathFireballs;
 
     public CustomEntityGhast(World world) {
         super(EntityTypes.GHAST, world);
@@ -33,7 +33,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     }
 
     protected void initCustom() {
-        this.hasSpawnDeathFireballs = false;
+        this.hasSpawnedDeathFireballs = false;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,10 +108,10 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 120 attacks, ghasts get 16 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(16.0);
                 this.setHealth(16.0F);
@@ -127,41 +127,41 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
     // `IRangedEntity`
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Override /* `shoot()` */
-    public void a(EntityLiving goalTarget, float distFactor) {
+    @Override // `shoot()`
+    public void a(EntityLiving attackTarget, float distFactor) {
         if (!this.isSilent()) {
             world.a(null, 1016, this.getChunkCoordinates(), 0);
         }
         
-        Vec3D directionLook = this.f(1.0F);
-        double motX = goalTarget.locX() - (this.locX() + directionLook.getX() * 4.0D);
-        double motY = goalTarget.e(0.5D) - (0.5D + this.e(0.5D));
-        double motZ = goalTarget.locZ() - (this.locZ() + directionLook.getZ() * 4.0D);
+        Vec3D lookDirection = this.f(1.0F);
+        double motX = attackTarget.locX() - (this.locX() + lookDirection.getX() * 4.0);
+        double motY = attackTarget.e(0.5) - (0.5 + this.e(0.5));
+        double motZ = attackTarget.locZ() - (this.locZ() + lookDirection.getZ() * 4.0);
 
+        int attacks = this.getAttacks();
+        int[] attackThreshs = this.getAttacksThreshs();
         /* After 180 attacks, ghasts shoot a ring of power 1 fireballs every 40 attacks */
-        if (this.getAttacks() >= this.getAttacksThreshs()[1]
-                && (this.getAttacks() - this.getAttacksThreshs()[1]) % 40 == 0) {
+        if (attacks >= attackThreshs[1] && (attacks - attackThreshs[1]) % 40 == 0) {
             new RunnableRingOfFireballs(this, 0.5, 1).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 20L);
         }
 
         int fireballPower = this.getPower();
         /* After 300 attacks, ghasts shoot a power 3 fireball every 50 attacks */
-        if (this.getAttacks() >= this.getAttacksThreshs()[2]
-                && (this.getAttacks() - this.getAttacksThreshs()[2]) % 50 == 0) {
+        if (attacks >= attackThreshs[2] && (attacks - attackThreshs[2]) % 50 == 0) {
             fireballPower = 3;
         }
 
-        CustomEntityLargeFireball largeFireball = new CustomEntityLargeFireball(
-                world, this, motX, motY, motZ, fireballPower);
+        CustomEntityLargeFireball largeFireball =
+                new CustomEntityLargeFireball(world, this, motX, motY, motZ, fireballPower);
         largeFireball.setPosition(
-                this.locX() + directionLook.getX() * 4.0D,
-                this.e(0.5D) + 0.5D,
-                largeFireball.locZ() + directionLook.getZ() * 4.0D);
+                this.locX() + lookDirection.getX() * 4.0,
+                this.e(0.5) + 0.5,
+                largeFireball.locZ() + lookDirection.getZ() * 4.0);
         world.addEntity(largeFireball);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -177,7 +177,7 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
     @Override
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
-        /* Rebounded fireballs do not do damage to ghasts */
+        /* Rebounded fireballs do not damage ghasts */
         if (damageSource.j() instanceof EntityLargeFireball && damageSource.getEntity() instanceof EntityHuman) {
             return false;
         }
@@ -191,14 +191,16 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
 
         // do this here instead of in die() so that the fireballs don't have to wait until the death animation finishes
         // playing to start firing
-        if (this.getHealth() <= 0.0 && !this.hasSpawnDeathFireballs) {
-            this.hasSpawnDeathFireballs = true;
-            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < 50 ? 1 : 3).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 30L); /* when killed, ghasts summon a lot of power 1 fireballs in all directions (2.5x more) after 50 attacks */
+        /* When killed, ghasts summon a lot of power 1 fireballs in all directions (more after 300 attacks) */
+        if (this.getHealth() <= 0.0 && !this.hasSpawnedDeathFireballs) {
+            this.hasSpawnedDeathFireballs = true;
+            new RunnableRingOfFireballs(this, 0.5, this.getAttacks() < this.getAttacksThreshs()[2] ? 1 : 3)
+                    .runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 30L);
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalGhastFireball extends CustomPathfinderGoalAttackRanged<CustomEntityGhast> {
@@ -248,18 +250,18 @@ public class CustomEntityGhast extends EntityGhast implements ICustomHostile, IA
         @Override
         public void e() {
             if (this.ghast.getGoalTarget() == null) {
-                // if there's no goal target, look around randomly
-                Vec3D motGhast = this.ghast.getMot();
+                // if there's no attack target, look around randomly
+                Vec3D ghastMot = this.ghast.getMot();
 
-                this.ghast.yaw = (float) (-MathHelper.d(motGhast.getX(), motGhast.getZ()) * 57.295776F);
-                this.ghast.aH = this.ghast.yaw; // `renderYawOffset`
+                this.ghast.yaw = (float) (-MathHelper.d(ghastMot.getX(), ghastMot.getZ()) * 57.295776F);
+                this.ghast.aH = this.ghast.yaw; // `aH` is `renderYawOffset`
             } else {
-                // else, look at goal target
-                EntityLiving goalTarget = this.ghast.getGoalTarget();
+                // else, look at attack target
+                EntityLiving attackTarget = this.ghast.getGoalTarget();
 
-                if (NmsUtil.distSq(this.ghast, goalTarget, true) < this.getDetectionRangeSq()) {
-                    double distX = goalTarget.locX() - this.ghast.locX();
-                    double distZ = goalTarget.locZ() - this.ghast.locZ();
+                if (NmsUtil.distSq(this.ghast, attackTarget, true) < this.getDetectionRangeSq()) {
+                    double distX = attackTarget.locX() - this.ghast.locX();
+                    double distZ = attackTarget.locZ() - this.ghast.locZ();
 
                     this.ghast.yaw = (float) (-(MathHelper.d(distX, distZ)) * 57.295776F);
                     this.ghast.aH = this.ghast.yaw;

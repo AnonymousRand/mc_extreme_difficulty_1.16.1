@@ -76,8 +76,8 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
         this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.0);
     }
 
-    /* From Spigot forums again
-     * (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/) */
+    // from Spigot forums again
+    // (https://www.spigotmc.org/threads/custom-entities-and-pathfindergoals-simplified-1-16-x.469053/)
     private void registerGenericAttribute(org.bukkit.entity.Entity bukkitEntity, Attribute attribute)
             throws IllegalAccessException {
         AttributeMapBase attributeMapBase = ((CraftLivingEntity) bukkitEntity).getHandle().getAttributeMap();
@@ -166,23 +166,23 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]
-                    || threshMet == attackThreshs[3]
-                    || threshMet == attackThreshs[4]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]
+                    || metThresh == attackThreshs[3]
+                    || metThresh == attackThreshs[4]) {
                 /* After 4 attacks, all mobs within 32 block sphere get speed 1, strength 1, and regen 2 for 4 minutes */
                 /* After 28 attacks, all mobs within 64 block sphere shoot an arrow every 30 ticks and spawn a silverfish every 15 seconds */
                 /* After 40 attacks, all mobs within 64 block sphere get regen 3 for 4 minutes and shoot an arrow every 20 ticks */
                 buffMobs.e(); // immediately apply buffs
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 8 attacks, bats gain regen 2, speed 1, and 12 max health and health */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(12.0);
                 this.setHealth(12.0F);
-            } else if (threshMet == attackThreshs[2]) {
+            } else if (metThresh == attackThreshs[2]) {
                 /* After 15 attacks, bats gain speed 2 and 15 max health and health */
                 /* After 15 attacks, all mobs within 64 block sphere shoot an arrow every 40 ticks */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 1));
@@ -203,7 +203,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Other custom functions
+    // Other Custom Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     protected HashMap<Integer, ArrayList<MobEffect>> buildBuffsHashmap() {
@@ -231,7 +231,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -286,7 +286,7 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
             }
 
             if (this.targetPosition == null) {
-                // always flies towards goal target if possible
+                // always flies towards attack target if possible
                 if (this.getGoalTarget() != null) {
                     this.targetPosition =
                             new BlockPosition(this.getGoalTarget().locX(), this.getGoalTarget().locY(),
@@ -294,22 +294,22 @@ public class CustomEntityBat extends EntityBat implements ICustomHostile, IAttac
                 } else { // default random attackmvmt if no target
                     this.targetPosition =
                             new BlockPosition(this.locX() + (double) random.nextInt(7) - (double) random.nextInt(7),
-                            this.locY() + (double) random.nextInt(6) - 2.0D,
+                            this.locY() + (double) random.nextInt(6) - 2.0,
                             this.locZ() + (double) random.nextInt(7) - (double) random.nextInt(7));
                 }
             }
 
-            double d0 = (double) this.targetPosition.getX() + 0.5D - this.locX();
-            double d1 = (double) this.targetPosition.getY() + 0.1D - this.locY();
-            double d2 = (double) this.targetPosition.getZ() + 0.5D - this.locZ();
+            double d0 = (double) this.targetPosition.getX() + 0.5 - this.locX();
+            double d1 = (double) this.targetPosition.getY() + 0.1 - this.locY();
+            double d2 = (double) this.targetPosition.getZ() + 0.5 - this.locZ();
             Vec3D currentMotion = this.getMot();
             Vec3D newMotion =
-                    currentMotion.add((Math.signum(d0) * 0.5D - currentMotion.x) * 0.1D,
-                    (Math.signum(d1) * 1.0 - currentMotion.y) * 0.1D,
-                    (Math.signum(d2) * 0.5D - currentMotion.z) * 0.1D);
+                    currentMotion.add((Math.signum(d0) * 0.5 - currentMotion.x) * 0.1,
+                    (Math.signum(d1) * 1.0 - currentMotion.y) * 0.1,
+                    (Math.signum(d2) * 0.5 - currentMotion.z) * 0.1);
 
             this.setMot(newMotion);
-            float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875D) - 90.0F;
+            float f = (float) (MathHelper.d(newMotion.z, newMotion.x) * 57.2957763671875) - 90.0F;
             float yawIncrease = MathHelper.g(f - this.yaw);
 
             this.ba = 0.5F;

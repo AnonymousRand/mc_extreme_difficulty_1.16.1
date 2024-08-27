@@ -16,9 +16,9 @@ public class CustomPathfinderGoalAttackRanged<T extends EntityInsentient & IRang
     }
 
     @Override
-    protected void attack(EntityLiving goalTarget) {
-        float distFactor = (float) MathHelper.a(NmsUtil.dist(this.goalOwner, goalTarget, false)
+    protected void attack(EntityLiving attackTarget) {
+        float distFactor = (float) MathHelper.a(NmsUtil.dist(this.goalOwner, attackTarget, false)
                 / this.goalOwner.getDetectionRange(), 0.1, 1.0);
-        this.goalOwner.a(goalTarget, distFactor); // `shoot()`
+        this.goalOwner.a(attackTarget, distFactor); // `shoot()`
     }
 }

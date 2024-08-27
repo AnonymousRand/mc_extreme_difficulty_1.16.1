@@ -43,8 +43,8 @@ public class CustomPathfinderGoalAttackMvmtMelee<T extends EntityInsentient> ext
     public void c() {
         super.c();
 
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget != null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget != null) {
             this.oldTargetX = Double.MAX_VALUE;
             this.oldTargetY = Double.MAX_VALUE;
             this.oldTargetZ = Double.MAX_VALUE;
@@ -57,31 +57,31 @@ public class CustomPathfinderGoalAttackMvmtMelee<T extends EntityInsentient> ext
     public void e() {
         super.e();
 
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget == null) {
             return;
         }
 
         // repath to target once remainingCooldownRepath is up if it's more than 1 block away from the target (or 10% random chance if it is)
         boolean shouldRepathToTarget =
                 this.remainingCooldownRepath <= 0
-                        && (NmsUtil.distSq(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(),
+                        && (NmsUtil.distSq(attackTarget.locX(), attackTarget.locY(), attackTarget.locZ(),
                         this.oldTargetX, this.oldTargetY, this.oldTargetZ, false) >= 1.0
                         || this.goalOwner.getRandom().nextFloat() < 0.1F); // increased from vanilla 0.05 to 0.1
         if (shouldRepathToTarget) {
-            this.oldTargetX = goalTarget.locX();
-            this.oldTargetY = goalTarget.locY();
-            this.oldTargetZ = goalTarget.locZ();
+            this.oldTargetX = attackTarget.locX();
+            this.oldTargetY = attackTarget.locY();
+            this.oldTargetZ = attackTarget.locZ();
             this.remainingCooldownRepath = this.repathCooldown;
 
-            double distSqToTarget = NmsUtil.distSq(this.goalOwner, goalTarget, false);
+            double distSqToTarget = NmsUtil.distSq(this.goalOwner, attackTarget, false);
             if (distSqToTarget > 1024.0) {
                 this.remainingCooldownRepath += 10;
             } else if (distSqToTarget > 256.0) {
                 this.remainingCooldownRepath += 5;
             }
 
-            if (!this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget)) { // tryMoveTo()
+            if (!this.goalOwner.getNavigation().a(attackTarget, this.speedTowardsTarget)) { // tryMoveTo()
                 this.remainingCooldownRepath += 15;
             }
         }

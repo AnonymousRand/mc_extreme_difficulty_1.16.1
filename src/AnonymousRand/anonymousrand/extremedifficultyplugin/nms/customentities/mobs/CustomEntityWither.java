@@ -67,16 +67,16 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
     }
 
     @Override
-    public void a(EntityLiving goalTarget, float distFactor) { // shoot() for main head
-        this.shootSkullToEntity(0, goalTarget);
+    public void a(EntityLiving attackTarget, float distFactor) { // shoot() for main head
+        this.shootSkullToEntity(0, attackTarget);
     }
 
     protected void shootSkullToEntity(int i, EntityLiving entityLiving) {
-        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), false);
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5, entityLiving.locZ(), false);
     }
 
     protected void shootSkullToEntity(int i, EntityLiving entityLiving, boolean alwaysBlue) {
-        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5D, entityLiving.locZ(), alwaysBlue);
+        this.shootSkullToCoords(i, entityLiving.locX(), entityLiving.locY() + (double) entityLiving.getHeadHeight() * 0.5, entityLiving.locZ(), alwaysBlue);
     }
 
     protected void shootSkullToCoords(int i, double d0, double d1, double d2, boolean alwaysBlue) {
@@ -211,12 +211,12 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
             float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.cos(f);
 
-            return this.locX() + (double) f1 * 1.3D;
+            return this.locX() + (double) f1 * 1.3;
         }
     }
 
     protected double getHeadY(int i) {
-        return i <= 0 ? this.locY() + 3.0D : this.locY() + 2.2D;
+        return i <= 0 ? this.locY() + 3.0 : this.locY() + 2.2;
     }
 
     protected double getHeadZ(int i) {
@@ -226,7 +226,7 @@ public class CustomEntityWither extends EntityWither implements ICustomHostile {
             float f = (this.aH + (float) (180 * (i - 1))) * 0.017453292F;
             float f1 = MathHelper.sin(f);
 
-            return this.locZ() + (double) f1 * 1.3D;
+            return this.locZ() + (double) f1 * 1.3;
         }
     }
 

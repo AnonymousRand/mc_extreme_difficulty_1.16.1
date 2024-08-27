@@ -15,26 +15,26 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
     private final Entity entity;
     private final World bukkitWorld;
     private int cycleCount;
-    private final int cycleCountMax;
+    private final int maxCycleCount;
     private final boolean effect;
 
-    public RunnableLightningEffectStorm(CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal, int cycleCountMax) {
+    public RunnableLightningEffectStorm(CustomEntityZombieThor.PathfinderGoalThorSummonLightning thorGoal, int maxCycleCount) {
         this.thorGoal = thorGoal;
         this.entity = thorGoal.thor;
         this.bukkitWorld = thorGoal.bukkitWorld;
         this.cycleCount = 0;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
         this.effect = true;
         this.thorGoal.storm = true;
         ListenerLightningStrike.storm = true;
     }
 
-    public RunnableLightningEffectStorm(Entity entity, int cycleCountMax, boolean effect) {
+    public RunnableLightningEffectStorm(Entity entity, int maxCycleCount, boolean effect) {
         this.thorGoal = null;
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.cycleCount = 0;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
         this.effect = effect;
         ListenerLightningStrike.storm = true;
     }
@@ -42,7 +42,7 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
     @Override
     public void run() {
         this.cycleCount++;
-        if (this.cycleCount > this.cycleCountMax) {
+        if (this.cycleCount > this.maxCycleCount) {
             Location bukkitLoc = new Location(this.bukkitWorld, this.entity.locX(), this.entity.locY(), this.entity.locZ());
 
             for (int i = 0; i < 4; i++) {
@@ -54,7 +54,7 @@ public class RunnableLightningEffectStorm extends BukkitRunnable {
                     this.bukkitWorld.strikeLightning(bukkitLoc2);
                 }
             }
-        } else if (this.cycleCount - 5 >= this.cycleCountMax) {
+        } else if (this.cycleCount - 5 >= this.maxCycleCount) {
             this.cancel();
 
             if (this.thorGoal != null) {

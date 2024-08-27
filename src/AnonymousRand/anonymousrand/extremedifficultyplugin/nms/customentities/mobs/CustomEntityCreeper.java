@@ -114,7 +114,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Other custom functions
+    // Other Custom Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setFuseTicks(int fuseTicks) {
@@ -134,7 +134,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -147,7 +147,7 @@ public class CustomEntityCreeper extends EntityCreeper implements ICustomHostile
         this.goalSelector.a(1, new CustomPathfinderGoalTeleportNearTarget(this, this.getDetectionRange(), 300.0, 0.001));             /* Occasionally teleports to a spot near its target */
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalSwell(this));                                                                        // this includes moving to target
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
+        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class));                        /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */

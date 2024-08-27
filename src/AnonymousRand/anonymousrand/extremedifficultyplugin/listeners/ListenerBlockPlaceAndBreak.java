@@ -227,18 +227,18 @@ public class ListenerBlockPlaceAndBreak implements Listener {
         private final World nmsWorld;
         private final Location bukkitLoc;
         private int cycleCount;
-        private final int cycleCountMax;
+        private final int maxCycleCount;
 
-        public RunnableConduitSummonMobs(World nmsWorld, Location bukkitLoc, int cycleCountMax) {
+        public RunnableConduitSummonMobs(World nmsWorld, Location bukkitLoc, int maxCycleCount) {
             this.nmsWorld = nmsWorld;
             this.bukkitLoc = bukkitLoc;
             this.cycleCount = 0;
-            this.cycleCountMax = cycleCountMax;
+            this.maxCycleCount = maxCycleCount;
         }
 
         @Override
         public void run() {
-            if (++this.cycleCount > this.cycleCountMax) {
+            if (++this.cycleCount > this.maxCycleCount) {
                 this.cancel();
                 return;
             }

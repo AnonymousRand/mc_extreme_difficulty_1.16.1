@@ -82,10 +82,10 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 15 attacks, trader llamas get 50 max health and health */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);
@@ -98,7 +98,7 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -108,24 +108,24 @@ public class CustomEntityLlamaTrader extends EntityLlamaTrader implements ICusto
         /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.0999999046325684D));
-        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25D, 40, 20.0F)); // todo custom, attackmvmt too
+        this.goalSelector.a(2, new PathfinderGoalLlamaFollow(this, 2.1));
+        this.goalSelector.a(3, new PathfinderGoalArrowAttack(this, 1.25, 40, 20.0F)); // todo custom, attackmvmt too
         this.goalSelector.a(4, new PathfinderGoalBreed(this, 1.0));
         this.goalSelector.a(5, new PathfinderGoalFollowParent(this, 1.0));
-        this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7D));
+        this.goalSelector.a(6, new PathfinderGoalRandomStrollLand(this, 0.7));
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* custom goal that allows llama to keep spitting indefinitely and prevents mobs from retaliating against other mobs in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage */
         this.targetSelector.a(1, new CustomPathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class)); /* Ignores invis/skulls for initially finding a player target and maintaining it as the target, and periodically retargets the nearest option */
     }
 
-    public void a(EntityLiving goalTarget, float distFactor) { // shoot()s custom spit instead of vanilla
+    public void a(EntityLiving attackTarget, float distFactor) { // shoot()s custom spit instead of vanilla
         this.increaseAttacks(1);
 
         CustomEntityLlamaSpit entityLlamaspit = new CustomEntityLlamaSpit(this.world, this, this.getAttacks() < 6 ? 12.0 : 18.0); /* after 6 attacks, trader llamas do 18 damage */
-        double d0 = goalTarget.locX() - this.locX();
-        double d1 = goalTarget.e(0.3333333333333333D) - entityLlamaspit.locY();
-        double d2 = goalTarget.locZ() - this.locZ();
+        double d0 = attackTarget.locX() - this.locX();
+        double d1 = attackTarget.e(0.3333333333333333) - entityLlamaspit.locY();
+        double d2 = attackTarget.locZ() - this.locZ();
         distFactor = MathHelper.sqrt(d0 * d0 + d2 * d2) * 0.2F;
 
         entityLlamaspit.shoot(d0, d1 + (double) distFactor, d2, 1.5F, 10.0F);

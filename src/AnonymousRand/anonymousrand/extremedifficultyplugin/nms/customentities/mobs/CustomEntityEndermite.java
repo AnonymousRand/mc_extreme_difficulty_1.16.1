@@ -81,13 +81,13 @@ public class CustomEntityEndermite extends EntityEndermite
     }
 
     public void increaseAttacks(int increase) {
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
-        for (int threshMet : threshsMet) {
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
+        for (int metThresh : metThreshs) {
             int[] attackThreshs = this.getAttacksThreshs();
-            if (threshMet == attackThreshs[0]) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 35 attacks, endermites get more knockback */
                 this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(1.5);
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 60 attacks, endermites get even more knockback, 14 max health and regen 2 */
                 this.getAttributeInstance(GenericAttributes.ATTACK_KNOCKBACK).setValue(2.5);
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(14);
@@ -118,7 +118,7 @@ public class CustomEntityEndermite extends EntityEndermite
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

@@ -20,7 +20,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
     protected final int radX, radY, radZ, offsetY;
     protected final boolean removeFluids, immuneBlocks;
     protected int cycleCount;
-    protected final int cycleCountMax;
+    protected final int maxCycleCount;
     protected int baseX, baseY, baseZ;
     protected Block bukkitBlock;
     protected Material bukkitMaterial;
@@ -41,10 +41,10 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
         this.cycleCount = 0;
-        this.cycleCountMax = 1;
+        this.maxCycleCount = 1;
     }
 
-    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int cycleCountMax) {
+    public RunnableBreakBlocks(Entity entity, int radX, int radY, int radZ, int offsetY, boolean removeFluids, boolean immuneBlocks, int maxCycleCount) {
         this.entity = entity;
         this.bukkitWorld = entity.getWorld().getWorld();
         this.radX = radX;
@@ -54,7 +54,7 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.removeFluids = removeFluids;
         this.immuneBlocks = immuneBlocks;
         this.cycleCount = 0;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
     }
 
     public RunnableBreakBlocks(Location bukkitLoc, World bukkitWorld, int radX, int radY, int radZ, int offsetY, boolean removeFluids) {
@@ -68,13 +68,13 @@ public class RunnableBreakBlocks extends BukkitRunnable {
         this.removeFluids = removeFluids;
         this.immuneBlocks = true;
         this.cycleCount = 0;
-        this.cycleCountMax = 1;
+        this.maxCycleCount = 1;
     }
 
     @Override
     public void run() {
         this.cycleCount++;
-        if (this.cycleCount > this.cycleCountMax) {
+        if (this.cycleCount > this.maxCycleCount) {
             this.cancel();
             return;
         }

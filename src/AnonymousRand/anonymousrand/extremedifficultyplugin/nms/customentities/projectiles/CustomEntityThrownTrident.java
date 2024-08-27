@@ -74,7 +74,7 @@ public class CustomEntityThrownTrident extends EntityThrownTrident {
             }
         }
 
-        this.setMot(this.getMot().d(-0.01D, -0.1D, -0.01D));
+        this.setMot(this.getMot().d(-0.01, -0.1, -0.01));
         float f1 = 1.0F;
 
         if (this.world instanceof WorldServer && this.world.T() && EnchantmentManager.h(this.trident)) {

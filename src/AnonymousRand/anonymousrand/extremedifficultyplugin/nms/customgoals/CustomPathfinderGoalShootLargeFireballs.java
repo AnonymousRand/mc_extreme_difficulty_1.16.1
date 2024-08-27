@@ -42,12 +42,12 @@ public class CustomPathfinderGoalShootLargeFireballs extends PathfinderGoal {
             }
 
             Vec3D vec3d = this.entity.f(1.0F);
-            double d2 = entityLiving.locX() - (this.entity.locX() + vec3d.x * 4.0D);
-            double d3 = entityLiving.e(0.5D) - (0.5D + this.entity.e(0.5D));
-            double d4 = entityLiving.locZ() - (this.entity.locZ() + vec3d.z * 4.0D);
+            double d2 = entityLiving.locX() - (this.entity.locX() + vec3d.x * 4.0);
+            double d3 = entityLiving.e(0.5) - (0.5 + this.entity.e(0.5));
+            double d4 = entityLiving.locZ() - (this.entity.locZ() + vec3d.z * 4.0);
 
             CustomEntityLargeFireball largeFireball = new CustomEntityLargeFireball(this.entity.getWorld(), this.entity, d2, d3, d4, this.intYield, this.summonLightning);
-            largeFireball.setPosition(this.entity.locX() + vec3d.x * 4.0D, this.entity.e(0.5D) + 0.5D, largeFireball.locZ() + vec3d.z * 4.0D);
+            largeFireball.setPosition(this.entity.locX() + vec3d.x * 4.0, this.entity.e(0.5) + 0.5, largeFireball.locZ() + vec3d.z * 4.0);
             this.entity.getWorld().addEntity(largeFireball);
             largeFireball.getBukkitEntity().setVelocity(largeFireball.getBukkitEntity().getVelocity().add(new Vector(d2 / 3.0, d3 / 3.0, d4 / 3.0))); /* fireballs move much faster */
         }

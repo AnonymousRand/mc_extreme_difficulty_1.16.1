@@ -27,17 +27,17 @@ public class AttackLevelingController {
             }
         } else {
             // check for multiple crossed threshs if incrementing by multiple
-            ArrayList<Integer> threshMets = new ArrayList<>();
+            ArrayList<Integer> metThreshs = new ArrayList<>();
             int attacksBefore = this.attacks;
             this.attacks += increment;
             for (int attackThresh : this.attacksThreshs) {
                 if (attacksBefore < attackThresh && this.attacks >= attackThresh) {
-                    threshMets.add(attackThresh);
+                    metThreshs.add(attackThresh);
                 }
             }
 
             // dankly convert ArrayList<Integer> to int[]
-            return threshMets.stream().mapToInt(Integer::intValue).toArray();
+            return metThreshs.stream().mapToInt(Integer::intValue).toArray();
         }
 
         return new int[]{};

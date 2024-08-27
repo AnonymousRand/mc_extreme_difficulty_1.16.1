@@ -49,10 +49,10 @@ public class CustomPathfinderGoalTeleportNearTarget extends PathfinderGoal {
     }
 
     protected void initiateTeleport(double hypo) {
-        EntityHuman human = NmsUtil.getNearestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
+        EntityHuman entityHuman = NmsUtil.getNearestEntityFromList(this.entity.getWorld().getPlayers(), null, this.entity);
 
-        if (human != null) {
-            BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(human.locX(), human.locY(), human.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
+        if (entityHuman != null) {
+            BlockPosition pos = CustomMathHelper.coordsFromHypotAndAngle(new BlockPosition(entityHuman.locX(), entityHuman.locY(), entityHuman.locZ()), hypo, this.entity.locY() + 2.0, 361.0); // gets coords for a random angle (0-360) with fixed hypotenuse to teleport to (so possible teleport area is a washer-like disc around the player)
             BlockPosition pos2 = this.entity.getWorld().getHighestBlockYAt(HeightMap.Type.MOTION_BLOCKING, pos); // highest block at those coords
 
             if (pos2 != null && pos2.getY() < 128.0) { // teleport to highest block if there is one in that location

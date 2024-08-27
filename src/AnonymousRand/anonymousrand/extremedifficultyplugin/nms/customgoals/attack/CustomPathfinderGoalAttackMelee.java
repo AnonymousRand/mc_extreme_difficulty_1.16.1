@@ -22,7 +22,7 @@ public class CustomPathfinderGoalAttackMelee<T extends EntityInsentient & ICusto
     }
 
     public CustomPathfinderGoalAttackMelee(T goalOwner, int attackCooldown) {
-        /* Default minimum attack reach is 2.0 blocks to help baby zombies out */
+        // default minimum attack reach is 2.0 blocks to help baby zombies out
         this(goalOwner, attackCooldown, 2.0);
     }
 
@@ -32,14 +32,14 @@ public class CustomPathfinderGoalAttackMelee<T extends EntityInsentient & ICusto
     }
 
     @Override
-    protected boolean checkAttack(EntityLiving goalTarget) {
-        return NmsUtil.distSq(this.goalOwner, goalTarget, false) <= this.getAttackReachSq(goalTarget);
+    protected boolean checkAttack(EntityLiving attackTarget) {
+        return NmsUtil.distSq(this.goalOwner, attackTarget, false) <= this.getAttackReachSq(attackTarget);
     }
 
     @Override
-    protected void attack(EntityLiving goalTarget) {
+    protected void attack(EntityLiving attackTarget) {
         this.goalOwner.swingHand(EnumHand.MAIN_HAND);
-        this.goalOwner.attackEntity(goalTarget);
+        this.goalOwner.attackEntity(attackTarget);
     }
 
     protected double getAttackReachSq(EntityLiving target) {

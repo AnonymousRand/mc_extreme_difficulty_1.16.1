@@ -47,7 +47,7 @@ public class CustomEntitySpider extends EntitySpider implements ICustomHostile, 
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
         this.goalSelector.a(4, new CustomPathfinderGoalAttackMelee<>(this));
         this.goalSelector.a(4, new CustomPathfinderGoalAttackMvmtMelee<>(this));
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8D));
+        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 0.8));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 8.0F));
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));               /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */

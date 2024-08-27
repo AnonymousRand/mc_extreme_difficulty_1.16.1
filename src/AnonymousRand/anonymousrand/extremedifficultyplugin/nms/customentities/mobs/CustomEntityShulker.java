@@ -50,7 +50,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
     public boolean damageEntity(DamageSource damageSource, float damageAmount) {
         boolean damageSuccess = super.damageEntity(damageSource, damageAmount);
 
-        if (damageSuccess && this.getHealth() < this.getMaxHealth() * 0.5D && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
+        if (damageSuccess && this.getHealth() < this.getMaxHealth() * 0.5 && this.random.nextInt(2) == 0) { /* shulkers now have a 50% chance to teleport instead of 25% chance when damaged below half health */
             this.eL();
         }
 
@@ -164,9 +164,9 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
 
         @Override
         public boolean a() {
-            EntityLiving goalTarget = CustomEntityShulker.this.getGoalTarget();
+            EntityLiving attackTarget = CustomEntityShulker.this.getGoalTarget();
 
-            return goalTarget != null && goalTarget.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
+            return attackTarget != null && attackTarget.isAlive() ? CustomEntityShulker.this.getWorld().getDifficulty() != EnumDifficulty.PEACEFUL : false;
         }
 
         @Override
@@ -189,7 +189,7 @@ public class CustomEntityShulker extends EntityShulker implements ICustomHostile
                 CustomEntityShulker.this.getControllerLook().a(target, 180.0F, 180.0F);
                 double distSqToTarget = NmsUtil.distSq(CustomEntityShulker.this, target, true);
 
-                if (distSqToTarget < 400.0D) { // todo getfollowrange?
+                if (distSqToTarget < 400.0) { // todo getfollowrange?
                     if (this.b <= 0) {
                         CustomEntityShulker.this.attacks++;
 

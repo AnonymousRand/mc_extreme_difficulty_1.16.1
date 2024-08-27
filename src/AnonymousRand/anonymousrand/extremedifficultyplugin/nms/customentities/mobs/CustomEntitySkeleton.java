@@ -62,15 +62,15 @@ public class CustomEntitySkeleton extends EntitySkeleton implements ICustomHosti
     }
 
     @Override
-    public void a(EntityLiving goalTarget, float distFactor) { // shoot()
+    public void a(EntityLiving attackTarget, float distFactor) { // shoot()
         this.attacks++;
 
         if (this.attacks >= 14 && this.attacks <= 30 && this.attacks % 8 == 6) { /* between these attack counts, shoot exploding arrows every 8 shots */
-            new RunnableMobShootArrows(this, goalTarget, 10, 2, 40.0, 0, false, false).run();
+            new RunnableMobShootArrows(this, attackTarget, 10, 2, 40.0, 0, false, false).run();
         } else if (this.attacks < 30) { /* shoots 50 arrows at a time with increased inaccuracy to seem like a cone */
-            new RunnableMobShootArrows(this, goalTarget, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /* 2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y-level */
+            new RunnableMobShootArrows(this, attackTarget, 50, 1, 25.0, random.nextDouble() < 0.025 ? 1 : 0, this.attacks >= 15, this.attacks >= 15).run(); /* 2.5% of arrows shot are piercing 1, and after 15 attacks, arrows are on fire and do not lose y-level */
         } else { /* if more than 30 attacks, rapid fire; if more than 40, even faster rapid fire */
-            new RunnableMobShootArrows(this, goalTarget, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /* 5% of arrows shot are piercing 1 */
+            new RunnableMobShootArrows(this, attackTarget, this.attacks < 40 ? 10 : 1, 1, this.attacks < 40 ? 30.0 : 0.0, random.nextDouble() < 0.05 ? 1 : 0, true, this.attacks >= 40, this.attacks < 40 ? 8 : 40).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, this.attacks < 40 ? 5L : 1L); /* 5% of arrows shot are piercing 1 */
         }
     }
 

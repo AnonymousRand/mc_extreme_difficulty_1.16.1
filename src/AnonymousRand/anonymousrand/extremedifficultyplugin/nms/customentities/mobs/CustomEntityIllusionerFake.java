@@ -62,15 +62,15 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 20 attacks, summoned fake illusioners attack faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalAttackRangedSkeleton.class)) {
                     ((CustomPathfinderGoalAttackRangedSkeleton<?>) goal).setAttackCooldown(random.nextInt(9) + 12);
                 }
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 40 attacks, summoned fake illusioners attack even faster */
                 for (PathfinderGoal goal : VanillaPathfinderGoalsRemove.getGoals(this.goalSelector.d().collect(Collectors.toSet()), CustomPathfinderGoalAttackRangedSkeleton.class)) {
                     ((CustomPathfinderGoalAttackRangedSkeleton<?>) goal).setAttackCooldown(random.nextInt(4) + 5);
@@ -84,7 +84,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -93,7 +93,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
         this.goalSelector.a(5, new CustomEntityIllusioner.c(this));
-        this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
+        this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.045, 1));
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
@@ -103,7 +103,7 @@ public class CustomEntityIllusionerFake extends CustomEntityIllusioner {
         this.goalSelector.a(1, new EntityIllagerWizard.b());
         this.goalSelector.a(6, new CustomPathfinderGoalAttackRangedSkeleton<>(this, random.nextInt(11) + 20));
         this.goalSelector.a(6, new CustomPathfinderGoalAttackMvmtRangedSkeleton<>(this));
-        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
+        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));

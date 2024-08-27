@@ -18,28 +18,28 @@ public class RunnableLightningStorm extends BukkitRunnable {
     private final Location bukkitLoc;
     private final double radius;
     private int cycleCount;
-    private final int cycleCountMax;
+    private final int maxCycleCount;
     private final boolean customLightning;
     private static final Random random = new Random();
 
-    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, int cycleCountMax) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, int maxCycleCount) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.bukkitLoc = bukkitLoc;
         this.cycleCount = 0;
         this.radius = 100.0;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
         this.customLightning = true;
         ListenerLightningStrike.storm = true;
     }
 
-    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, double radius, int cycleCountMax, boolean customLightning) {
+    public RunnableLightningStorm(net.minecraft.server.v1_16_R1.World nmsWorld, Location bukkitLoc, double radius, int maxCycleCount, boolean customLightning) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.bukkitLoc = bukkitLoc;
         this.cycleCount = 0;
         this.radius = radius;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
         this.customLightning = customLightning;
         ListenerLightningStrike.storm = true;
     }
@@ -47,13 +47,13 @@ public class RunnableLightningStorm extends BukkitRunnable {
     @Override
     public void run() {
         this.cycleCount++;
-        if (this.cycleCount - 5 >= this.cycleCountMax) { // todo what is letting cycleCount go 5 past for
+        if (this.cycleCount - 5 >= this.maxCycleCount) { // todo what is letting cycleCount go 5 past for
             this.cancel();
             ListenerLightningStrike.storm = false;
             return;
         }
 
-        if (this.cycleCount <= this.cycleCountMax) {
+        if (this.cycleCount <= this.maxCycleCount) {
             Location bukkitLoc2 = CustomMathHelper.coordsFromHypotAndAngle(this.bukkitWorld, new BlockPosition(this.bukkitLoc.getX(), this.bukkitLoc.getY(), this.bukkitLoc.getZ()), random.nextDouble() * this.radius, this.bukkitWorld.getHighestBlockYAt(this.bukkitLoc), 361.0);
 
             if (this.customLightning) {

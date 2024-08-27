@@ -120,22 +120,22 @@ public class CustomEntityBlaze extends EntityBlaze
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 75 attacks, blazes shoot an exploding fireball with power 1 */
                 double d1 = this.getGoalTarget().locX() - this.locX();
-                double d2 = this.getGoalTarget().e(0.5D) - this.e(0.5D);
+                double d2 = this.getGoalTarget().e(0.5) - this.e(0.5);
                 double d3 = this.getGoalTarget().locZ() - this.locZ();
                 CustomEntityLargeFireball largeFireball =
                         new CustomEntityLargeFireball(this.world, this, d1, d2, d3, 1);
-                largeFireball.setPosition(largeFireball.locX(), this.e(0.5D) + 0.5D, largeFireball.locZ());
+                largeFireball.setPosition(largeFireball.locX(), this.e(0.5) + 0.5, largeFireball.locZ());
                 this.world.addEntity(largeFireball);
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 150 attacks, blazes shoot out a ring of fireballs */
                 new RunnableRingOfFireballs(this, 0.5, 1).run();
-            } else if (threshMet == attackThreshs[2]) {
+            } else if (metThresh == attackThreshs[2]) {
                 /* After 250 attacks, blazes enter rapid fire state, which reduces attack cooldown to 4 ticks */
                 this.pathfinderGoalFireballAttack.setAttackCooldown(4);
                 this.rapidFire = true;
@@ -165,11 +165,11 @@ public class CustomEntityBlaze extends EntityBlaze
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* For IRangedEntity */
-    @Override /* `shoot()` */
+    @Override // `shoot()` 
     public void a(EntityLiving target, float distanceFactor) {
         if (!this.isSilent()) {
             this.world.a(null, 1018, this.getChunkCoordinates(), 0);
@@ -177,7 +177,7 @@ public class CustomEntityBlaze extends EntityBlaze
 
         float vanillaInaccuracy = MathHelper.c(MathHelper.sqrt(NmsUtil.distSq(this, target, false))) * 0.5F;
         double distToTargetX = target.locX() - this.locX();
-        double distToTargetY = target.e(0.5D) - this.e(0.5D); // e() is getEyeLevel()
+        double distToTargetY = target.e(0.5) - this.e(0.5); // e() is getEyeLevel()
         double distToTargetZ = target.locZ() - this.locZ();
         CustomEntitySmallFireball smallFireball;
 
@@ -188,7 +188,7 @@ public class CustomEntityBlaze extends EntityBlaze
                                 distToTargetX + this.getRandom().nextGaussian() * vanillaInaccuracy * 2.5,
                                 distToTargetY,
                                 distToTargetZ + this.getRandom().nextGaussian() * vanillaInaccuracy * 2.5);
-                smallFireball.setPosition(smallFireball.locX(), this.e(0.5D) + 0.5D, smallFireball.locZ());
+                smallFireball.setPosition(smallFireball.locX(), this.e(0.5) + 0.5, smallFireball.locZ());
                 this.world.addEntity(smallFireball);
             }
         } else {
@@ -196,7 +196,7 @@ public class CustomEntityBlaze extends EntityBlaze
                             distToTargetX + this.random.nextGaussian() * vanillaInaccuracy * 0.2,
                             distToTargetY,
                             distToTargetZ + this.random.nextGaussian() * vanillaInaccuracy * 0.2);
-            smallFireball.setPosition(smallFireball.locX(), this.e(0.5D) + 0.5D, smallFireball.locZ());
+            smallFireball.setPosition(smallFireball.locX(), this.e(0.5) + 0.5, smallFireball.locZ());
             this.world.addEntity(smallFireball);
         }
     }
@@ -220,7 +220,7 @@ public class CustomEntityBlaze extends EntityBlaze
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalAttackMelee extends CustomPathfinderGoalAttackMelee<CustomEntityBlaze> {
@@ -230,15 +230,15 @@ public class CustomEntityBlaze extends EntityBlaze
         }
 
         @Override
-        protected void attack(EntityLiving goalTarget) {
-            super.attack(goalTarget);
+        protected void attack(EntityLiving attackTarget) {
+            super.attack(attackTarget);
 
             /* Blaze melee attack creates a power 0.5 explosion on the player's location */
             this.goalOwner.getWorld().createExplosion(
                     this.goalOwner,
-                    goalTarget.locX(),
-                    goalTarget.locY(),
-                    goalTarget.locZ(),
+                    attackTarget.locX(),
+                    attackTarget.locY(),
+                    attackTarget.locZ(),
                     0.5F,
                     false,
                     Explosion.Effect.DESTROY);

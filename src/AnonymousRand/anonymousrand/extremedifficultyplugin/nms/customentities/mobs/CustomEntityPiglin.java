@@ -118,19 +118,19 @@ public class CustomEntityPiglin extends EntityPiglin implements ICustomHostile, 
     }
 
     @Override
-    public void a(EntityLiving goalTarget, float distFactor) { // shoot()
+    public void a(EntityLiving attackTarget, float distFactor) { // shoot()
         this.attacks++;
         this.setHealth((float) (this.getHealth() + 0.75)); /* piglins heal by 0.75 every time its attacks increase by 1 */
 
         if (this.attacks == 1) { /* first attack always shoots knockback arrows */
-            new RunnableMobShootArrows(this, goalTarget, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
+            new RunnableMobShootArrows(this, attackTarget, 15, 6, 25.0, random.nextDouble() < 0.2 ? 1 : 0, false, false).run();
         } else {
             int rand = random.nextInt(4);
 
             if (rand < 2) { /* shoots 15 arrows at a time with increased inaccuracy to seem like a cone; 25% of arrows shot are piercing 1 */
-                new RunnableMobShootArrows(this, goalTarget, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /* 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
+                new RunnableMobShootArrows(this, attackTarget, 15, 1, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run(); /* 50% chance to shoot normal arrows, 25% chance to shoot arrows that give bad status effects, and 25% chance to shoot extreme knockback arrows */
             } else {
-                new RunnableMobShootArrows(this, goalTarget, 15, 2 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run();
+                new RunnableMobShootArrows(this, attackTarget, 15, 2 + rand, 25.0, random.nextDouble() < 0.25 ? 1 : 0, false, false).run();
             }
         }
     }

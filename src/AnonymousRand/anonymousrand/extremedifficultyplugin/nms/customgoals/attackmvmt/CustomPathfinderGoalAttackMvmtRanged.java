@@ -25,14 +25,14 @@ public class CustomPathfinderGoalAttackMvmtRanged<T extends EntityInsentient> ex
     public void e() {
         super.e();
 
-        EntityLiving goalTarget = this.goalOwner.getGoalTarget();
-        if (goalTarget == null) {
+        EntityLiving attackTarget = this.goalOwner.getGoalTarget();
+        if (attackTarget == null) {
             return;
         }
 
         // repath to target if it can't be seen
-        // Note: checking if there is a way to get to the target doesn't seem to work
-        if (this.remainingCooldownRepath <= 0 && !this.goalOwner.getEntitySenses().a(goalTarget)) {
+        // note: checking if there is a way to get to the target doesn't seem to work
+        if (this.remainingCooldownRepath <= 0 && !this.goalOwner.getEntitySenses().a(attackTarget)) {
             this.remainingCooldownRepath = this.repathCooldown;
             this.targetSeenTicks = 0;
         } else {
@@ -40,7 +40,7 @@ public class CustomPathfinderGoalAttackMvmtRanged<T extends EntityInsentient> ex
         }
 
         if (this.targetSeenTicks < 5) {
-            this.goalOwner.getNavigation().a(goalTarget, this.speedTowardsTarget); // tryMoveTo()
+            this.goalOwner.getNavigation().a(attackTarget, this.speedTowardsTarget); // tryMoveTo()
         } else {
             this.goalOwner.getNavigation().o();                       // clearPath() (stands still)
         }

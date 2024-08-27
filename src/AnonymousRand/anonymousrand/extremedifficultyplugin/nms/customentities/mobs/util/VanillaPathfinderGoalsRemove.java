@@ -10,7 +10,7 @@ public abstract class VanillaPathfinderGoalsRemove {
 
     private static Field goals;
 
-    /* Get list of goals from original entity (not just running/active goals from `targetSelector.d()`) */
+    // get list of goals from original entity (not just running/active goals from `targetSelector.d()`)
     static {
         try {
             goals = PathfinderGoalSelector.class.getDeclaredField("d");

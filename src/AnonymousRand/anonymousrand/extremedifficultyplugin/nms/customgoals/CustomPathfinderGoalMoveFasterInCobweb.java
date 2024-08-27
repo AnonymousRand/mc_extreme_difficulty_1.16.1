@@ -31,13 +31,13 @@ public class CustomPathfinderGoalMoveFasterInCobweb extends PathfinderGoal {
                     if (bukkitWorld.getBlockAt(x - 1, y, z - 1).getType() == org.bukkit.Material.COBWEB) { // the hitboxes seem to be off so I need x - 1 and z - 1
                         this.entity.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, 6, 10)); /* non-player mobs gain Speed 11 while in a cobweb (approx original speed) */
 
-                        if (this.entity.getGoalTarget() != null) { /* mobs also move faster vertically and horizontally through cobwebs if their goal target is on a different y-level by 1 or more */
-                            EntityLiving goalTarget = this.entity.getGoalTarget();
+                        if (this.entity.getGoalTarget() != null) { /* mobs also move faster vertically and horizontally through cobwebs if their attack target is on a different y-level by 1 or more */
+                            EntityLiving attackTarget = this.entity.getGoalTarget();
 
-                            if (this.entity.locY() - goalTarget.locY() > 1) {
-                                this.entity.setMot((goalTarget.locX() - this.entity.locX()) / 2.0, -40.0, (goalTarget.locZ() - this.entity.locZ()) / 2.0);
-                            } else if (this.entity.locY() - goalTarget.locY() < -1) {
-                                this.entity.setMot((goalTarget.locX() - this.entity.locX()) / 2.0, 40.0, (goalTarget.locZ() - this.entity.locZ()) / 2.0);
+                            if (this.entity.locY() - attackTarget.locY() > 1) {
+                                this.entity.setMot((attackTarget.locX() - this.entity.locX()) / 2.0, -40.0, (attackTarget.locZ() - this.entity.locZ()) / 2.0);
+                            } else if (this.entity.locY() - attackTarget.locY() < -1) {
+                                this.entity.setMot((attackTarget.locX() - this.entity.locX()) / 2.0, 40.0, (attackTarget.locZ() - this.entity.locZ()) / 2.0);
                             }
                         }
 

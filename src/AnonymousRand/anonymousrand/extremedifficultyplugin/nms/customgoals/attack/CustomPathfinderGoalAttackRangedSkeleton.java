@@ -16,14 +16,14 @@ public class CustomPathfinderGoalAttackRangedSkeleton<T extends EntityInsentient
     }
 
     @Override
-    protected boolean checkAttack(EntityLiving goalTarget) {
+    protected boolean checkAttack(EntityLiving attackTarget) {
         return this.goalOwner.isHandRaised();
     }
 
     @Override
-    protected void attack(EntityLiving goalTarget) {
+    protected void attack(EntityLiving attackTarget) {
         // ItemBow.a() gets the attack power for a corresponding charge of the bow in ticks (we are manually setting it
         // to the normal 20 here to allow rapid fire, to mimic having charged the bow for the full 20 ticks already)
-        this.goalOwner.a(goalTarget, ItemBow.a(20)); // shoot()
+        this.goalOwner.a(attackTarget, ItemBow.a(20)); // shoot()
     }
 }

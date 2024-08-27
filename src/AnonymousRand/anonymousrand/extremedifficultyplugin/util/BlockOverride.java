@@ -8,12 +8,12 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+// code from GitHub/Bukkit forums; I unfortunately can't find the link anymore
 /**
  * Overrides particular values on blocks.
  *
  * @author Kristian
  */
-// Code from GitHub/Bukkit forums; I unfortunately can't find the link anymore
 public class BlockOverride {
 
     private final Block block;

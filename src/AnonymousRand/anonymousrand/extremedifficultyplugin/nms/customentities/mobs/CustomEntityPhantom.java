@@ -138,10 +138,10 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 30 attacks, phantoms get regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
             }
@@ -153,7 +153,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -221,7 +221,7 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         protected boolean g() {
             try {
-                return ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0D;
+                return ((Vec3D)CustomEntityPhantom.this.orbitOffset.get(CustomEntityPhantom.this)).c(CustomEntityPhantom.this.locX(), CustomEntityPhantom.this.locY(), CustomEntityPhantom.this.locZ()) < 4.0;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 return false;
@@ -237,8 +237,8 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public boolean a() {
-            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
-            return goalTarget != null;
+            EntityLiving attackTarget = CustomEntityPhantom.this.getGoalTarget();
+            return attackTarget != null;
         }
 
         @Override
@@ -299,9 +299,9 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public boolean b() {
-            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving attackTarget = CustomEntityPhantom.this.getGoalTarget();
 
-            if (!EntityFilter.BASE.test(goalTarget)) {
+            if (!EntityFilter.BASE.test(attackTarget)) {
                 return false;
             }
 
@@ -323,16 +323,16 @@ public class CustomEntityPhantom extends EntityPhantom implements ICustomHostile
 
         @Override
         public void e() {
-            EntityLiving goalTarget = CustomEntityPhantom.this.getGoalTarget();
+            EntityLiving attackTarget = CustomEntityPhantom.this.getGoalTarget();
 
             try {
-                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(goalTarget.locX(), goalTarget.e(0.5D), goalTarget.locZ()));
+                CustomEntityPhantom.this.orbitOffset.set(CustomEntityPhantom.this, new Vec3D(attackTarget.locX(), attackTarget.e(0.5), attackTarget.locZ()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            if (CustomEntityPhantom.this.getBoundingBox().g(0.20000000298023224D).c(goalTarget.getBoundingBox())) {
-                CustomEntityPhantom.this.attackEntity(goalTarget);
+            if (CustomEntityPhantom.this.getBoundingBox().g(0.2).c(attackTarget.getBoundingBox())) {
+                CustomEntityPhantom.this.attackEntity(attackTarget);
                 CustomEntityPhantom.this.attackPhase = CustomEntityPhantom.AttackPhase.CIRCLE;
                 if (!CustomEntityPhantom.this.isSilent()) {
                     CustomEntityPhantom.this.getWorld().triggerEffect(1039, CustomEntityPhantom.this.getChunkCoordinates(), 0);

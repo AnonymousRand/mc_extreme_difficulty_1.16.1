@@ -121,10 +121,10 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 40 attacks, illusioners get 50 max health and health, and regen 4 */
                 ((LivingEntity) this.getBukkitEntity()).setMaxHealth(50.0);
                 this.setHealth(50.0F);
@@ -138,7 +138,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -146,7 +146,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(1, new EntityRaider.b<>(this));
         this.goalSelector.a(3, new PathfinderGoalRaid<>(this));
         this.goalSelector.a(5, new CustomEntityIllusioner.c(this));
-        this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.0499999523162842D, 1));
+        this.goalSelector.a(4, new CustomEntityIllusioner.d(this, 1.05, 1));
         /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));
         /* Takes buffs from bats, piglins, etc. */
@@ -158,7 +158,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         this.goalSelector.a(5, new PathfinderGoalIllusionerBlindnessSpell());
         this.goalSelector.a(6, new CustomPathfinderGoalAttackRangedSkeleton<>(this, 25)); /* illusioners attack every 25 ticks instead of 20; uses the custom goal that attacks regardless of the y-level (the old goal stopped the mob from attack even if the mob has already recognized a target via CustomNearestAttackableTarget goal) */
         this.goalSelector.a(6, new CustomPathfinderGoalAttackMvmtRangedSkeleton<>(this));
-        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
+        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this));
@@ -167,17 +167,17 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
     }
 
     @Override
-    public void a(EntityLiving goalTarget, float distFactor) {
+    public void a(EntityLiving attackTarget, float distFactor) {
         this.increaseAttacks(1);
 
         ItemStack itemstack = this.f(this.b(ProjectileHelper.a(this, Items.BOW)));
         EntityArrow entityArrow = ProjectileHelper.a(this, itemstack, distFactor);
-        double d0 = goalTarget.locX() - this.locX();
-        double d1 = goalTarget.e(0.3333333333333333D) - entityArrow.locY();
-        double d2 = goalTarget.locZ() - this.locZ();
+        double d0 = attackTarget.locX() - this.locX();
+        double d1 = attackTarget.e(0.3333333333333333) - entityArrow.locY();
+        double d2 = attackTarget.locZ() - this.locZ();
         double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 
-        entityArrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 0.0F); /* arrows have no inaccuracy */
+        entityArrow.shoot(d0, d1 + d3 * 0.2, d2, 1.6F, 0.0F); /* arrows have no inaccuracy */
         this.playSound(SoundEffects.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.random.nextFloat() * 0.4F + 0.8F));
         this.world.addEntity(entityArrow);
     }
@@ -387,7 +387,7 @@ public class CustomEntityIllusioner extends EntityIllagerIllusioner implements I
         public void e() {
             if (this.entity.getNavigation().m()) {
                 Vec3D vec3d = Vec3D.c(this.c);
-                Vec3D vec3d1 = RandomPositionGenerator.a(this.entity, 16, 7, vec3d, 0.3141592741012573D);
+                Vec3D vec3d1 = RandomPositionGenerator.a(this.entity, 16, 7, vec3d, 0.3141592741012573);
 
                 if (vec3d1 == null) {
                     vec3d1 = RandomPositionGenerator.b(this.entity, 8, 7, vec3d);

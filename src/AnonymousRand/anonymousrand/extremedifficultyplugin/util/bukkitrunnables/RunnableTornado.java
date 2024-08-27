@@ -23,27 +23,27 @@ public class RunnableTornado extends BukkitRunnable {
     private final Location bukkitLoc;
     private final double radius;
     private int cycleCount;
-    private final int cycleCountMax;
+    private final int maxCycleCount;
     private final ArrayList<Entity> nmsEntitiesAll = new ArrayList<>();
     private final ArrayList<Block> bukkitBlocksTemp = new ArrayList<>();
     private final HashMap<FallingBlock, Integer> fallingBlocksAll = new HashMap<>();
     private final HashMap<Entity, Boolean> playerBreakBlocks = new HashMap<>();
     private static final Random random = new Random();
 
-    public RunnableTornado(World nmsWorld, BlockPosition pos, double radius, int cycleCountMax) {
+    public RunnableTornado(World nmsWorld, BlockPosition pos, double radius, int maxCycleCount) {
         this.nmsWorld = nmsWorld;
         this.bukkitWorld = nmsWorld.getWorld();
         this.pos = pos;
         this.bukkitLoc = new Location(this.bukkitWorld, this.pos.getX(), this.pos.getY() + 1.0, this.pos.getZ());
         this.radius = radius;
-        this.cycleCountMax = cycleCountMax;
+        this.maxCycleCount = maxCycleCount;
         ListenerLightningStrike.storm = true;
     }
 
     @Override
     public void run() {
         this.cycleCount++;
-        if (this.cycleCount > this.cycleCountMax) {
+        if (this.cycleCount > this.maxCycleCount) {
             this.cancel();
             ListenerLightningStrike.storm = false;
 
@@ -74,7 +74,7 @@ public class RunnableTornado extends BukkitRunnable {
 
                 if (nmsEntity instanceof EntityPlayer && (!this.playerBreakBlocks.containsKey(nmsEntity) || !this.playerBreakBlocks.get(nmsEntity))) {
                     this.playerBreakBlocks.put(nmsEntity, true);
-                    new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, false, this.cycleCountMax - this.cycleCount).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L); // because a player's noclip is instantly turned off if not in spectator
+                    new RunnableBreakBlocks(nmsEntity, 1, 1, 1, 1, false, false, this.maxCycleCount - this.cycleCount).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 1L); // because a player's noclip is instantly turned off if not in spectator
                 }
 
                 nmsEntity.getBukkitEntity().setVelocity(new Vector((this.pos.getX() - nmsEntity.locX()) / 15.0, (this.pos.getY() - nmsEntity.locY()) / 15.0, (this.pos.getZ() - nmsEntity.locZ()) / 15.0));

@@ -120,17 +120,17 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 25 attacks, evokers summon 3 vexes and gain regen 2 */
                 new SpawnEntity(this.world, new CustomEntityVex(this.world), 3, null, null, this, false, false);
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1));
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 35 attacks, evokers gain regen 3 */
                 this.addEffect(new MobEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2));
-            } else if (threshMet == attackThreshs[2]) {
+            } else if (metThresh == attackThreshs[2]) {
                 /* After 60 attacks, evokers gain speed 1 */
                 this.addEffect(new MobEffect(MobEffects.FASTER_MOVEMENT, Integer.MAX_VALUE, 0));
             }
@@ -142,7 +142,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -154,18 +154,18 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         this.goalSelector.a(4, new PathfinderGoalInvadeHome(this, 1.05, 1));
         this.goalSelector.a(5, new PathfinderGoalCelebrateRaidLoss(this));
         // from `EntityMonsterPatrolling`
-        this.goalSelector.a(4, new EntityMonsterPatrolling.a(this, 0.7D, 0.595D));
+        this.goalSelector.a(4, new EntityMonsterPatrolling.a(this, 0.7, 0.595));
         // other
         this.goalSelector.a(0, new CustomPathfinderGoalMoveFasterInCobweb(this));                                /* Still moves fast in cobwebs */
         this.goalSelector.a(0, new CustomPathfinderGoalGetBuffedByMobs(this));                                   /* Takes buffs from bats, piglins, etc. */
         this.goalSelector.a(0, new CustomPathfinderGoalBreakBlocksAround(this, 20, 2, 1, 2, 2, true));           /* Breaks most blocks around the mob periodically */
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new CustomEntityEvoker.PathfinderGoalCastSpell());
-        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6D, 1.0));
+        this.goalSelector.a(2, new PathfinderGoalAvoidTarget<>(this, EntityPlayer.class, 8.0F, 0.6, 1.0));
         this.goalSelector.a(4, new CustomEntityEvoker.PathfinderGoalSummonVexSpell());
         this.goalSelector.a(5, new CustomEntityEvoker.PathfinderGoalFangSpell());
         this.goalSelector.a(6, new CustomEntityEvoker.PathfinderGoalWololoSpell());
-        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6D));
+        this.goalSelector.a(8, new PathfinderGoalRandomStroll(this, 0.6));
         this.goalSelector.a(9, new PathfinderGoalLookAtPlayer(this, EntityPlayer.class, 3.0F, 1.0F));
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
         this.targetSelector.a(0, new CustomPathfinderGoalHurtByTarget<>(this, EntityRaider.class));              /* Always retaliates against players and teleports to them if they are out of range/do not have line of sight, but doesn't retaliate against other mobs (in case the EntityDamageByEntityEvent listener doesn't register and cancel the damage) */
@@ -194,7 +194,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* If this is static it goes "waaaah but but no enclosing instance :(" like i hate you */
@@ -213,20 +213,20 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             return vexNearbyCount <= 10;
         }
 
-        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
+        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
         @Override
         protected int g() {
             return 100;
         }
 
-        /* `getSpellCooldown()` */
+        // `getSpellCooldown()` 
         @Override
         protected int h() {
             /* Evokers summon vexes every 25 seconds instead of 17 */
             return 500;
         }
 
-        /* `castSpell()` */
+        // `castSpell()` 
         @Override
         protected void j() {
             CustomEntityEvoker.this.increaseAttacks(6);
@@ -251,13 +251,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        /* `getSpellPrepareSound()` */
+        // `getSpellPrepareSound()` 
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_SUMMON;
         }
 
-        /* `getSpellType()` */
+        // `getSpellType()` 
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.SUMMON_VEX;
@@ -266,30 +266,30 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
     class PathfinderGoalFangSpell extends EntityIllagerWizard.c {
 
-        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
+        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
         @Override
         protected int g() {
             return 100;
         }
 
-        /* `getSpellCooldown()` */
+        // `getSpellCooldown()` 
         @Override
         protected int h() {
             /* Evokers summon fangs every 85 ticks instead of 100 */
             return 85;
         }
 
-        /* `castSpell()` */
+        // `castSpell()` 
         @Override
         protected void j() {
-            EntityLiving goalTarget = CustomEntityEvoker.this.getGoalTarget();
-            double lowerEntityY = Math.min(goalTarget.locY(), CustomEntityEvoker.this.locY());
-            double higherEntityY = Math.max(goalTarget.locY(), CustomEntityEvoker.this.locY()) + 1.0;
+            EntityLiving attackTarget = CustomEntityEvoker.this.getGoalTarget();
+            double lowerEntityY = Math.min(attackTarget.locY(), CustomEntityEvoker.this.locY());
+            double higherEntityY = Math.max(attackTarget.locY(), CustomEntityEvoker.this.locY()) + 1.0;
             float angleToGoalTarget = (float) MathHelper.d(
-                    goalTarget.locZ() - CustomEntityEvoker.this.locZ(),
-                    goalTarget.locX() - CustomEntityEvoker.this.locX());
+                    attackTarget.locZ() - CustomEntityEvoker.this.locZ(),
+                    attackTarget.locX() - CustomEntityEvoker.this.locX());
 
-            if (NmsUtil.distSq(CustomEntityEvoker.this, goalTarget, true) < 9.0) {
+            if (NmsUtil.distSq(CustomEntityEvoker.this, attackTarget, true) < 9.0) {
                 // if target is within 3 blocks away, summon fangs in 2 circles
                 float yaw;
 
@@ -331,12 +331,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
             /* Every time the fangs attack, the target player is slowed for 1.2 seconds
              * (regardless of if the fangs were dodged) */
-            new RunnableEvokerStopPlayer(goalTarget, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L);
+            new RunnableEvokerStopPlayer(attackTarget, 8).runTaskTimer(ExtremeDifficultyPlugin.plugin, 0L, 3L);
         }
 
         public void spawnFangs(
                 double x, double z, double lowerEntityY, double higherEntityY, float yaw, int spawnDelay) {
-            EntityLiving goalTarget = CustomEntityEvoker.this.getGoalTarget();
+            EntityLiving attackTarget = CustomEntityEvoker.this.getGoalTarget();
             BlockPosition blockPos = new BlockPosition(x, higherEntityY, z);
             boolean suitableYFound = false;
             double yAddition = 0.0;
@@ -379,9 +379,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                                 CustomEntityEvoker.this.locY(),
                                 CustomEntityEvoker.this.locZ()),
                         new Vector(
-                                goalTarget.locX() - CustomEntityEvoker.this.locX(),
-                                goalTarget.locY() - CustomEntityEvoker.this.locY(),
-                                goalTarget.locZ() - CustomEntityEvoker.this.locZ()),
+                                attackTarget.locX() - CustomEntityEvoker.this.locX(),
+                                attackTarget.locY() - CustomEntityEvoker.this.locY(),
+                                attackTarget.locZ() - CustomEntityEvoker.this.locZ()),
                         1.0,
                         (int) Math.ceil(CustomEntityEvoker.this.getDetectionRange()));
                 /* Every time fangs are summoned, evokers breaks all blocks within follow distance of itself towards the
@@ -426,13 +426,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        /* `getSpellPrepareSound()` */
+        // `getSpellPrepareSound()` 
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_ATTACK;
         }
 
-        /* `getSpellType()` */
+        // `getSpellType()` 
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.FANGS;
@@ -486,7 +486,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             CustomEntityEvoker.this.setWololoTarget(null);
         }
 
-        /* `castSpell()` */
+        // `castSpell()` 
         @Override
         protected void j() {
             EntitySheep wololoTarget = CustomEntityEvoker.this.getWololoTarget();
@@ -505,31 +505,31 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
         }
 
-        /* `getSpellWarmupTime()` */
+        // `getSpellWarmupTime()` 
         @Override
         protected int m() {
             return 40;
         }
 
-        /* `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously */
+        // `getGlobalSpellCooldown()`; prevents spells from being cast simultaneously 
         @Override
         protected int g() {
             return 60;
         }
 
-        /* `getSpellCooldown()` */
+        // `getSpellCooldown()` 
         @Override
         protected int h() {
             return 140;
         }
 
-        /* `getSpellPrepareSound()` */
+        // `getSpellPrepareSound()` 
         @Override
         protected SoundEffect k() {
             return SoundEffects.ENTITY_EVOKER_PREPARE_WOLOLO;
         }
 
-        /* `getSpellType()` */
+        // `getSpellType()` 
         @Override
         protected EntityIllagerWizard.Spell l() {
             return EntityIllagerWizard.Spell.WOLOLO;
@@ -602,13 +602,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         private final double speedTowardsTarget;
         private BlockPosition blockPosTarget;
         private final ArrayList<BlockPosition> blockPosPreviousTargets = new ArrayList<>();
-        private final int distRememberTarget;
-        private boolean noPathToTarget;
+        private final int rememberTargetDist;
+        private boolean cannotPathToTarget;
 
-        public PathfinderGoalInvadeHome(CustomEntityEvoker evoker, double speedTowardsTarget, int distRememberTarget) {
+        public PathfinderGoalInvadeHome(CustomEntityEvoker evoker, double speedTowardsTarget, int rememberTargetDist) {
             this.evoker = evoker;
             this.speedTowardsTarget = speedTowardsTarget;
-            this.distRememberTarget = distRememberTarget;
+            this.rememberTargetDist = rememberTargetDist;
             this.a(EnumSet.of(PathfinderGoal.Type.MOVE));
         }
 
@@ -625,9 +625,9 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
             }
 
             return this.evoker.getGoalTarget() == null
-                    && !this.blockPosTarget.a( // `withinDistance()`; idk why it's negated but `this.distRememberTarget = 1` anyway so ¯\_(ツ)_/¯
-                            this.evoker.getPositionVector(), this.evoker.getWidth() + (float) this.distRememberTarget)
-                    && !this.noPathToTarget;
+                    && !this.blockPosTarget.a( // `withinDistance()`; idk why it's negated but `this.rememberTargetDist = 1` anyway so ¯\_(ツ)_/¯
+                            this.evoker.getPositionVector(), this.evoker.getWidth() + (float) this.rememberTargetDist)
+                    && !this.cannotPathToTarget;
         }
 
         @Override
@@ -640,12 +640,12 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                     this.blockPosTarget.getY(),
                     this.blockPosTarget.getZ(),
                     this.speedTowardsTarget);
-            this.noPathToTarget = false;
+            this.cannotPathToTarget = false;
         }
 
         @Override
         public void d() {
-            if (this.blockPosTarget.a(this.evoker.getPositionVector(), this.distRememberTarget)) { // `withinDistance()`
+            if (this.blockPosTarget.a(this.evoker.getPositionVector(), this.rememberTargetDist)) { // `withinDistance()`
                 this.blockPosPreviousTargets.add(this.blockPosTarget);
             }
         }
@@ -661,7 +661,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
                 }
 
                 if (vec3d1 == null) {
-                    this.noPathToTarget = true;
+                    this.cannotPathToTarget = true;
                     return;
                 }
 
@@ -713,17 +713,17 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
 
         private final EntityLiving target;
         private int cycleCount;
-        private final int cycleCountMax;
+        private final int maxCycleCount;
 
-        public RunnableEvokerStopPlayer(EntityLiving target, int cycleCountMax) {
+        public RunnableEvokerStopPlayer(EntityLiving target, int maxCycleCount) {
             this.target = target;
             this.cycleCount = 0;
-            this.cycleCountMax = cycleCountMax;
+            this.maxCycleCount = maxCycleCount;
         }
 
         @Override
         public void run() {
-            if (++this.cycleCount > this.cycleCountMax) {
+            if (++this.cycleCount > this.maxCycleCount) {
                 this.cancel();
                 return;
             }

@@ -118,13 +118,13 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
 
     public void increaseAttacks(int increase) {
         int[] attackThreshs = this.getAttacksThreshs();
-        int[] threshsMet = this.attackLevelingController.increaseAttacks(increase);
+        int[] metThreshs = this.attackLevelingController.increaseAttacks(increase);
 
-        for (int threshMet : threshsMet) {
-            if (threshMet == attackThreshs[0]) {
+        for (int metThresh : metThreshs) {
+            if (metThresh == attackThreshs[0]) {
                 /* After 150 attacks, drowned summon a guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardian(this.world), 1, null, null, this, false, true);
-            } else if (threshMet == attackThreshs[1]) {
+            } else if (metThresh == attackThreshs[1]) {
                 /* After 350 attacks, drowned summon an elder guardian */
                 new SpawnEntity(this.world, new CustomEntityGuardianElder(this.world), 1, null, null, this, false,
                         true);
@@ -137,7 +137,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Overridden vanilla functions
+    // Overridden Vanilla Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -160,7 +160,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Nested classes
+    // Nested Classes
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     static class PathfinderGoalGoToBeach extends PathfinderGoalGotoTarget {
@@ -178,7 +178,7 @@ public class CustomEntityDrowned extends EntityDrowned implements ICustomHostile
                     && this.drowned.locY() >= (double) (this.drowned.getWorld().getSeaLevel() - 3);
         }
 
-        @Override /* `shouldMoveTo()` */
+        @Override // `shouldMoveTo()` 
         protected boolean a(IWorldReader iWorldReader, BlockPosition blockPos) {
             BlockPosition blockPos1 = blockPos.up();
 

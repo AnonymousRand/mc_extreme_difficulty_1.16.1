@@ -60,7 +60,7 @@ public class CustomEntityZoglin extends EntityZoglin implements ICustomHostile, 
         } else if (damageSuccess && damageSource.getEntity() instanceof EntityLiving) {
             EntityLiving entityLiving = (EntityLiving) damageSource.getEntity();
 
-            if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0D)) { /* only retaliate against players */
+            if (entityLiving instanceof EntityPlayer && !BehaviorUtil.a(this, entityLiving, 4.0)) { /* only retaliate against players */
                 this.k(entityLiving);
             }
 
