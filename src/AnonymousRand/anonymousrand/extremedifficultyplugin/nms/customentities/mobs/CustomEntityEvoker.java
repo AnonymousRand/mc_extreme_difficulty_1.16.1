@@ -584,7 +584,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         private final CustomEntityEvoker evoker;
         private final double speedTowardsTarget;
         private BlockPosition targetBlockPos;
-        private final ArrayList<BlockPosition> PreviousTargetsBlockPos = new ArrayList<>();
+        private final ArrayList<BlockPosition> previousTargetsBlockPos = new ArrayList<>();
         private final int rememberTargetDist;
         private boolean cannotPathToTarget;
 
@@ -630,7 +630,7 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         @Override
         public void d() {
             if (this.targetBlockPos.a(this.evoker.getPositionVector(), this.rememberTargetDist)) { // `withinDistance()`
-                this.PreviousTargetsBlockPos.add(this.targetBlockPos);
+                this.previousTargetsBlockPos.add(this.targetBlockPos);
             }
         }
 
@@ -673,13 +673,13 @@ public class CustomEntityEvoker extends EntityEvoker implements ICustomHostile, 
         }
 
         private void prunePreviousTargetsMemory() {
-            while (this.PreviousTargetsBlockPos.size() > 2) {
-                this.PreviousTargetsBlockPos.remove(0);
+            while (this.previousTargetsBlockPos.size() > 2) {
+                this.previousTargetsBlockPos.remove(0);
             }
         }
 
         private boolean isNotAPreviousTarget(BlockPosition candidateTargetBlockPos) {
-            for (BlockPosition blockPos : this.PreviousTargetsBlockPos) {
+            for (BlockPosition blockPos : this.previousTargetsBlockPos) {
                 if (Objects.equals(candidateTargetBlockPos, blockPos)) {
                     return false;
                 }
