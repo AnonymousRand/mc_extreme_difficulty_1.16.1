@@ -4,8 +4,8 @@ Spigot plugin for Minecraft 1.16.1. Plugin trailer [on Iseburg's channel](https:
 
 # WARNING
 
-* Do not run on a 1998 Intel Celeron 333 or with low RAM allocation
-* I suggest turning off dynamic FOV (foreshadowing…)
+- Good hardware required
+- I suggest turning off dynamic FOV (foreshadowing…)
 
 # Installation guide:
 
