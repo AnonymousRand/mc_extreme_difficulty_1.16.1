@@ -5,7 +5,7 @@ Spigot plugin for Minecraft 1.16.1. Plugin trailer [on Iseburg's channel](https:
 # WARNING
 
 - Good hardware required
-- I suggest turning off dynamic FOV (foreshadowing…)
+- I recommend turning off dynamic FOV (foreshadowing…)
 
 # Installation guide:
 
