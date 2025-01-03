@@ -87,13 +87,10 @@ change this.entity in goals to this.goalowner?
 
 personalize all doc comments with mob name?
 
-FINAL line continutation indents:
-    multiline function param dec and call:
-        two tabs
-        avoid any parems on first line unless its another multiline construct and its the only param and param token (besides kw)
-        closing paren on same line as last arg unless to remove ambiguiity for nested func call in the middle of param list (app/blog/blogpage/util.py end). in latter case one tab indent
-        don't force new line per arg unless mroe than 1 line
-    two tabs otherwise
+standardize function etc multiline formatting:
+func(
+    params
+)
 
 `` all code in comments
 
