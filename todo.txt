@@ -167,6 +167,8 @@ does bL() need to be in icustomhostile? is it possible to globalize it like g() 
 
 investigate why some mobs dont need bl() (maxfallheight) or checkdespawn()
 
+some mob gains levitation when youre on higher y level? which would be the funniest mob that doesnt already have a y-level mitigatino feature. also make mob break blocks around it as it ascends
+
 all util classes not abstract, but include private constryuctor
 
 optimize predicates (not bedrock into base? etc)
