@@ -1,4 +1,4 @@
-# MC-Extreme-Difficulty-1.16.1
+# Minecraft: Extreme Difficulty (1.16.1)
 
 Spigot plugin for Minecraft 1.16.1. Plugin trailer [on Iseburg's channel](https://www.youtube.com/watch?v=7Kl9jtCHIGg).
 
@@ -39,4 +39,4 @@ Spigot plugin for Minecraft 1.16.1. Plugin trailer [on Iseburg's channel](https:
    pause
    ```
    and run it. You will probably also need to create a `plugins/` folder manually.
-5. To build the plugin JAR, go to **Build > Build Artifacts... > Build**. By default, this artifact should be located in the output directory [out/artifacts/extreme-difficulty-1.16.1-jar/extreme_difficulty_1.16.1.jar](out/artifacts/extreme-difficulty-1.16.1-jar/extreme_difficulty_1.16.1.jar). Copy this into the `plugins/` folder in `.minecraft/[server folder]/`.
+5. To build the plugin JAR, go to **Build > Build Artifacts... > Build**. By default, this artifact should be located in the output directory [out/artifacts/extreme_difficulty_1.16.1_jar/extreme_difficulty_1.16.1.jar](out/artifacts/extreme-difficulty-1.16.1-jar/extreme_difficulty_1.16.1.jar). Copy this into the `plugins/` folder in `.minecraft/[server folder]/`.
