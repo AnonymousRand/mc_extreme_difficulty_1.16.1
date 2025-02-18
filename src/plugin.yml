@@ -1,6 +1,6 @@
 name: extreme_difficulty_1.16.1
 version: 1.16.1
 author: AnonymousRand
-main: AnonymousRand.anonymousrand.extremedifficultyplugin.ExtremeDifficultyPlugin
+main: AnonymousRand.anonymousrand.plugin.ExtremeDifficultyPlugin
 api-version: 1.16
 load: STARTUP
