@@ -76,6 +76,8 @@ wrap spawnentity in util function that creates runnable instance so we dont need
 
 all utils should be static
 
+static methods referenced within same class: make sure class name reference!
+
 
 
 
@@ -420,3 +422,4 @@ striders die faster (find number!)
 aggressive villager move speed multiplier 1 -> 3
 aggressive villager damage 12 -> 10
 zoglin no longer throws players around erractically after 25 attack
+
